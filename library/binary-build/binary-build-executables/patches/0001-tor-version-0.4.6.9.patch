@@ -1,0 +1,24 @@
+From a64e465aab7782b809805807c496698bb1bce5c9 Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Wed, 19 Jan 2022 23:12:31 -0500
+Subject: [PATCH] set tor version 0.4.6.9
+
+---
+ projects/tor/config | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/projects/tor/config b/projects/tor/config
+index d86f0bf5..59bbc89e 100644
+--- a/projects/tor/config
++++ b/projects/tor/config
+@@ -1,6 +1,6 @@
+ # vim: filetype=yaml sw=2
+ filename: '[% project %]-[% c("version") %]-[% c("var/osname") %]-[% c("var/build_id") %]'
+-version: 0.4.7.3-alpha
++version: 0.4.6.9
+ git_hash: 'tor-[% c("version") %]'
+ git_url: https://git.torproject.org/tor.git
+ git_submodule: 1
+-- 
+2.32.0
+
