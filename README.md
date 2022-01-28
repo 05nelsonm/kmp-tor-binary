@@ -3,23 +3,23 @@
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)  
 
 ![android](https://camo.githubusercontent.com/b1d9ad56ab51c4ad1417e9a5ad2a8fe63bcc4755e584ec7defef83755c23f923/687474703a2f2f696d672e736869656c64732e696f2f62616467652f706c6174666f726d2d616e64726f69642d3645444238442e7376673f7374796c653d666c6174)
-![jvm](https://camo.githubusercontent.com/700f5dcd442fd835875568c038ae5cd53518c80ae5a0cf12c7c5cf4743b5225b/687474703a2f2f696d672e736869656c64732e696f2f62616467652f706c6174666f726d2d6a766d2d4442343133442e7376673f7374796c653d666c6174)
+![jvm](https://camo.githubusercontent.com/700f5dcd442fd835875568c038ae5cd53518c80ae5a0cf12c7c5cf4743b5225b/687474703a2f2f696d672e736869656c64732e696f2f62616467652f706c6174666f726d2d6a766d2d4442343133442e7376673f7374796c653d666c6174)  
 
-Tor binary distribution for the [kmp-tor](https://github.com/05nelsonm/kmp-tor) project
+Tor binary distribution for the [kmp-tor](https://github.com/05nelsonm/kmp-tor) project  
 
 ## Get Started
 
 With the exception of **Jvm/NodeJs**, the [kmp-tor](https://github.com/05nelsonm/kmp-tor) 
-dependency automatically imports the necessary binaries for you.
+dependency automatically imports the necessary binaries for you.  
 
-Note that the `kmp-tor-binary-geoip` dependency is included with 
-[kmp-tor](https://github.com/05nelsonm/kmp-tor) for all targets.
+Note that the [kmp-tor](https://github.com/05nelsonm/kmp-tor) dependency automatically 
+imports the `kmp-tor-binary-geoip` dependency for **all** targets.  
 
 <details>
     <summary>Android Configuration</summary>
 
 Android requires some configuration so binaries will be appropriately extracted to your 
-app's `nativeLibraryDir` upon application installation.
+app's `nativeLibraryDir` upon application installation.  
 
 Ensure JavaVersion is greater than or equal to 11
 ```kotlin
@@ -92,15 +92,15 @@ android {
 <details>
     <summary>Java/NodeJS Configuration</summary>
 
-Binaries for Java/NodeJS are not automatically imported with the 
+Binaries for Java/NodeJS are **not** automatically imported with the 
 [kmp-tor](https://github.com/05nelsonm/kmp-tor) dependency. You will need 
-to explicitly add the platform specific dependencies you wish to support; for example:
+to explicitly add the platform specific dependencies you wish to support, for example:
 
 ```kotlin
 // build.gradle.kts
 dependencies {
-    val (vKmpTor, vKmpTorBinaries) = Pair("0.1.0", "0.4.6.9") // <-- see repo for latest versions
-    implementation("io.matthewnelson.kotlin-components:kmp-tor:$vKmpTor+$vKmpTorBinaries")
+    val (vKmpTorBinaries, vKmpTor) = Pair("0.4.6.9", "0.1.0-alpha1") // <-- see kmp-tor repo for latest versions
+    implementation("io.matthewnelson.kotlin-components:kmp-tor:$vKmpTorBinaries+$vKmpTor")
 
     // Linux x86_64
     implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx64:$vKmpTorBinaries")
@@ -130,7 +130,7 @@ $ git submodule update --init
 
 ## Where do the binaries come from?
 
-Binaries are reproducibly built via Tor Project's <a href="https://gitweb.torproject.org/builders/tor-browser-build.git/" target="_blank">tor-browser-build</a>.
+Binaries for Jvm and Android are reproducibly built via Tor Project's <a href="https://gitweb.torproject.org/builders/tor-browser-build.git/" target="_blank">tor-browser-build</a>.
 
 ## Building Yourself
 
