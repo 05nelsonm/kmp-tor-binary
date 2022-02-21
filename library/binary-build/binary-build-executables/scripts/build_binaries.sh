@@ -57,7 +57,7 @@ fi
 
 changeDir "$TOR_BUILD_DIR"
 # Apply patches here
-git apply "$DIR/../patches/0001-tor-version-0.4.6.9.patch"
+git apply "$DIR/../patches/0001-set-tor-version-0.4.6.10.patch"
 
 EXIT_CODE=0
 function buildAndroid() {
@@ -175,20 +175,23 @@ function buildDesktop() {
   local DIRECTORY=
   local KMP_TOR_ZIP_MANIFEST=
   local KMP_GEOIP_ZIP_MANIFEST=
+  local SORTED=
   for DIRECTORY in "$(pwd)"/*; do
     mkdir "$DIRECTORY/tor"
     tar -xzf "$DIRECTORY/tor.tar.gz" -C "$DIRECTORY/tor"
     sleep 1
     changeDir "$DIRECTORY/tor/$TAR_CONTENT_PATH"
     find . -exec touch -t $ZIP_TOUCH_TIME {} +
-    zip -r -t $ZIP_TIME "$KMP_TOR_ZIP" .
+    SORTED=$(find . -type f | sort)
+    zip -t $ZIP_TIME "$KMP_TOR_ZIP" $SORTED
     KMP_TOR_ZIP_MANIFEST=$(zip -sf "$KMP_TOR_ZIP" | grep -v "Archive contains:" | grep -v "Total " | awk '{$1=$1};1')
 
     if [ $EXTRACT_GEOIP == true ]; then
       # Only occurs for linux-x86_64 target
       changeDir "$DIRECTORY/tor/Data/Tor"
       find . -exec touch -t $ZIP_TOUCH_TIME {} +
-      zip -r -t $ZIP_TIME "$GEOIP_ZIP" .
+      SORTED=$(find . -type f | sort)
+      zip -t $ZIP_TIME "$GEOIP_ZIP" $SORTED
       KMP_GEOIP_ZIP_MANIFEST=$(zip -sf "$GEOIP_ZIP" | grep -v "Archive contains:" | grep -v "Total " | awk '{$1=$1};1')
     fi
 
@@ -354,7 +357,7 @@ function checkExit() {
 
     changeDir "$TOR_BUILD_DIR"
     # Revert patches here (reverse order)
-    git apply -R "$DIR/../patches/0001-tor-version-0.4.6.9.patch"
+    git apply -R "$DIR/../patches/0001-set-tor-version-0.4.6.10.patch"
     exit $EXIT_CODE
   fi
 }
