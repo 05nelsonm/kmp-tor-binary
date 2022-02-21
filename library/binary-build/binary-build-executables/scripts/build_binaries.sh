@@ -57,7 +57,7 @@ fi
 
 changeDir "$TOR_BUILD_DIR"
 # Apply patches here
-git apply "$DIR/../patches/0001-tor-version-0.4.6.9.patch"
+git apply "$DIR/../patches/0001-set-tor-version-0.4.6.10.patch"
 
 EXIT_CODE=0
 function buildAndroid() {
@@ -357,7 +357,7 @@ function checkExit() {
 
     changeDir "$TOR_BUILD_DIR"
     # Revert patches here (reverse order)
-    git apply -R "$DIR/../patches/0001-tor-version-0.4.6.9.patch"
+    git apply -R "$DIR/../patches/0001-set-tor-version-0.4.6.10.patch"
     exit $EXIT_CODE
   fi
 }

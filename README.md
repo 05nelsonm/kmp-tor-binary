@@ -166,9 +166,5 @@ cd ../
 ```
 
 Building a target will automatically extract, package, and move binaries/geoip files 
-to the appropriate `kmp-tor-binary-*` module and update sha256sum/manifest constants.  
-
-Currently, `.zip` packaging results in different sha256sums, but the contents 
-(binaries/geoip files), once extracted and compared are in fact the same. See 
-[this issue](https://github.com/05nelsonm/kmp-tor-binary/issues/5) for more information and/or,
-to suggest soltions.
+to the appropriate `kmp-tor-binary-*` module and update sha256sum/manifest constants. 
+As binaries are reproducibly built, running `git diff` should show no changes.

@@ -17,7 +17,7 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 @Suppress("ObjectPropertyName", "SpellCheckingInspection")
 actual object ConstantsBinaries {
-    private const val _ZIP_SHA256_GEOIP = "45e6e697b9d738ea04e25d323902765172ac75d3d6668cd4a2c07a9f6649253e"
+    private const val _ZIP_SHA256_GEOIP = "6c7065ee430edecb3c2ac37da3c567e4a4c2b63085bc19b739d8976686cae92a"
     private const val _FILE_NAME_GEOIPS_ZIP = "geoips.zip"
     private const val _FILE_NAME_GEOIPS_ZIP_SHA256 = "$_FILE_NAME_GEOIPS_ZIP.sha256sum"
 
@@ -27,11 +27,11 @@ actual object ConstantsBinaries {
     actual val FILE_NAME_GEOIPS_ZIP: String get() = _FILE_NAME_GEOIPS_ZIP
     actual val FILE_NAME_GEOIPS_ZIP_SHA256: String get() = _FILE_NAME_GEOIPS_ZIP_SHA256
 
-    const val ZIP_SHA256_LINUX_X64 = "b20d26afdf3756f1477e6439eca5c032bd9631f7ce0083113b025a3d332660a7"
-    const val ZIP_SHA256_LINUX_X86 = "c7a2446a68364ef5b465909f1d6084c77c173c3c60f56046ef93c2068fddd8f6"
-    const val ZIP_SHA256_MACOS_X64 = "4c31390efc5876ff6c0f6a43bee6234e391e0a81c44d5daef283023ffd7cea00"
-    const val ZIP_SHA256_MINGW_X64 = "7f1c6fdd1865d78da906c920391f343d7e119cf40d55dd49b41070f9662359c1"
-    const val ZIP_SHA256_MINGW_X86 = "791d6958a5db1d22647703cebc6b0b97d4db77a5db912b1e87055e8f47609cbb"
+    const val ZIP_SHA256_LINUX_X64 = "16a364ff7c6a154c2296a7c8c8106ef00a95bb8d794d485236ed95c0797b5cab"
+    const val ZIP_SHA256_LINUX_X86 = "42221d0c3188ae838513bdc6f16489086c329ba0d4dddf458afa00a296c29cfd"
+    const val ZIP_SHA256_MACOS_X64 = "ded77048302600429f9ba5bd6241589b5574397ecdde242ffe043c6d96fbfe88"
+    const val ZIP_SHA256_MINGW_X64 = "c5b8f06c3b6be3ffb572c7cea25ae6b96aabd8e322e04d5fcd9b08208e89f03a"
+    const val ZIP_SHA256_MINGW_X86 = "6f42f18e15278dba90132ae3234c2a7de1d646101ce63c6029d8ffafdcff5eb7"
 
     const val FILE_NAME_KMPTOR_ZIP = "kmptor.zip"
     const val FILE_NAME_KMPTOR_ZIP_SHA256 = "$FILE_NAME_KMPTOR_ZIP.sha256sum"
