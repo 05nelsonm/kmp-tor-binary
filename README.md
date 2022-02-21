@@ -99,7 +99,7 @@ to explicitly add the platform specific dependencies you wish to support, for ex
 ```kotlin
 // build.gradle.kts
 dependencies {
-    val (vKmpTorBinaries, vKmpTor) = Pair("0.4.6.9", "0.1.0-alpha1") // <-- see kmp-tor repo for latest versions
+    val (vKmpTorBinaries, vKmpTor) = Pair("0.4.6.10", "0.1.0-alpha4") // <-- see kmp-tor repo for latest versions
     implementation("io.matthewnelson.kotlin-components:kmp-tor:$vKmpTorBinaries+$vKmpTor")
 
     // Linux x86_64

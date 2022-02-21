@@ -62,7 +62,7 @@ plugins {
 
 kmpPublish {
     setupRootProject(
-        versionName = "0.4.6.10-SNAPSHOT",
+        versionName = "0.4.6.10",
         //    0.4.6.9  == 00_04_06_09_00
         //    0.4.6.9a == 00_04_06_09_01
         //    0.4.6.9b == 00_04_06_09_02
