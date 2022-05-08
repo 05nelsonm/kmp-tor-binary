@@ -1,5 +1,5 @@
 # kmp-tor-binary
-[![Kotlin](https://img.shields.io/badge/kotlin-1.6.10-blue.svg?logo=kotlin)](http://kotlinlang.org)
+[![Kotlin](https://img.shields.io/badge/kotlin-1.6.21-blue.svg?logo=kotlin)](http://kotlinlang.org)
 [![GitHub license](https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat)](https://www.apache.org/licenses/LICENSE-2.0)  
 
 ![android](https://camo.githubusercontent.com/b1d9ad56ab51c4ad1417e9a5ad2a8fe63bcc4755e584ec7defef83755c23f923/687474703a2f2f696d672e736869656c64732e696f2f62616467652f706c6174666f726d2d616e64726f69642d3645444238442e7376673f7374796c653d666c6174)
@@ -35,6 +35,16 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+}
+```
+
+Enable legacy packaging for JniLibs
+```kotlin
+// build.gradle.kts
+android {
+    packagingOptions {
+        jniLibs.useLegacyPackaging = true
     }
 }
 ```
@@ -99,19 +109,20 @@ to explicitly add the platform specific dependencies you wish to support, for ex
 ```kotlin
 // build.gradle.kts
 dependencies {
-    val (vKmpTorBinaries, vKmpTor) = Pair("0.4.6.10", "0.1.0-alpha4") // <-- see kmp-tor repo for latest versions
-    implementation("io.matthewnelson.kotlin-components:kmp-tor:$vKmpTorBinaries+$vKmpTor")
+    val vTor = "0.4.7.7"
+    val vKmpTor = "0.1.2" // <-- see kmp-tor repo for latest versions
+    implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor+$vKmpTor")
 
     // Linux x86_64
-    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx64:$vKmpTorBinaries")
+    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx64:$vTor")
     // Linux i686
-    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx86:$vKmpTorBinaries")
+    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx86:$vTor")
     // MacOS x86_64
-    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosx64:$vKmpTorBinaries")
+    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosx64:$vTor")
     // Windows x86_64
-    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-mingwx64:$vKmpTorBinaries")
+    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-mingwx64:$vTor")
     // Windows i686
-    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-mingwx86:$vKmpTorBinaries")
+    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-mingwx86:$vTor")
 }
 ```
 
