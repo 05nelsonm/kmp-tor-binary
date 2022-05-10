@@ -250,8 +250,8 @@ function buildDesktop() {
 
   local JVM_JS_RES_DIR=
   local JVM_JS_CONSTANTS_KT=
-  JVM_JS_RES_DIR="$DIR/../../../kmp-tor-binary-$PLATFORM$ARCH/src/jvmJsCommonMain/resources/kmptor/$PLATFORM/$ARCH"
-  JVM_JS_CONSTANTS_KT="$KMP_EXTRACT_SRC_DIR/jvmJsCommonMain/$KMP_EXTRACT_CONSTANTS_KT_PATH"
+  JVM_JS_RES_DIR="$DIR/../../../kmp-tor-binary-$PLATFORM$ARCH/src/jvmJsMain/resources/kmptor/$PLATFORM/$ARCH"
+  JVM_JS_CONSTANTS_KT="$KMP_EXTRACT_SRC_DIR/jvmJsMain/$KMP_EXTRACT_CONSTANTS_KT_PATH"
 
   if ! checkFileExists "$JVM_JS_CONSTANTS_KT"; then
     echo "ERROR: Something went wrong... $JVM_JS_CONSTANTS_KT does not exist"
@@ -278,7 +278,7 @@ function buildDesktop() {
     GEOIP_SRC="$DIR/../../../kmp-tor-binary-geoip/src"
     GEOIP_CONSTANTS_KT_ANDROID="$KMP_EXTRACT_SRC_DIR/androidMain/$KMP_EXTRACT_CONSTANTS_KT_PATH"
     GEOIP_CONSTANTS_KT_JVM_JS="$JVM_JS_CONSTANTS_KT"
-    GEOIP_CONSTANTS_KT_NATIVE="$KMP_EXTRACT_SRC_DIR/nativeCommonMain/$KMP_EXTRACT_CONSTANTS_KT_PATH"
+    GEOIP_CONSTANTS_KT_NATIVE="$KMP_EXTRACT_SRC_DIR/nativeMain/$KMP_EXTRACT_CONSTANTS_KT_PATH"
 
     if ! checkFileExists "$GEOIP_CONSTANTS_KT_ANDROID"; then
         echo "ERROR: Something went wrong... $GEOIP_CONSTANTS_KT_ANDROID does not exist"
@@ -299,12 +299,12 @@ function buildDesktop() {
     fi
 
     mkdir -p "$GEOIP_SRC/androidMain/assets/kmptor/"
-    mkdir -p "$GEOIP_SRC/jvmJsCommonMain/resources/kmptor/"
-    mkdir -p "$GEOIP_SRC/nativeCommonMain/resources/kmptor/"
+    mkdir -p "$GEOIP_SRC/jvmJsMain/resources/kmptor/"
+    mkdir -p "$GEOIP_SRC/nativeMain/resources/kmptor/"
 
     cp "$GEOIP_ZIP" "$GEOIP_SRC/androidMain/assets/kmptor/"
-    cp "$GEOIP_ZIP" "$GEOIP_SRC/jvmJsCommonMain/resources/kmptor/"
-    cp "$GEOIP_ZIP" "$GEOIP_SRC/nativeCommonMain/resources/kmptor/"
+    cp "$GEOIP_ZIP" "$GEOIP_SRC/jvmJsMain/resources/kmptor/"
+    cp "$GEOIP_ZIP" "$GEOIP_SRC/nativeMain/resources/kmptor/"
 
     sed -i "s|private const val _ZIP_SHA256_GEOIP = .*|private const val _ZIP_SHA256_GEOIP = \"$SHA256_GEOIP\"|g" "$GEOIP_CONSTANTS_KT_ANDROID"
     sed -i "s|private const val _ZIP_SHA256_GEOIP = .*|private const val _ZIP_SHA256_GEOIP = \"$SHA256_GEOIP\"|g" "$GEOIP_CONSTANTS_KT_JVM_JS"

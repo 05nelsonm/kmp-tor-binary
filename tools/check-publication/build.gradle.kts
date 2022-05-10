@@ -15,8 +15,11 @@
  **/
 import io.matthewnelson.kotlin.components.dependencies.versions
 import io.matthewnelson.kotlin.components.kmp.KmpTarget
+import io.matthewnelson.kotlin.components.kmp.publish.isSnapshotVersion
 import io.matthewnelson.kotlin.components.kmp.publish.kmpPublishRootProjectConfiguration
-import io.matthewnelson.kotlin.components.kmp.util.sourceSetJvmJsCommonMain
+import io.matthewnelson.kotlin.components.kmp.util.includeSnapshotsRepoIfTrue
+import io.matthewnelson.kotlin.components.kmp.util.includeStagingRepoIfTrue
+import io.matthewnelson.kotlin.components.kmp.util.sourceSetJvmJsMain
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 
 plugins {
@@ -25,18 +28,8 @@ plugins {
 
 val pConfig = kmpPublishRootProjectConfiguration!!
 
-repositories {
-    if (pConfig.versionName.endsWith("-SNAPSHOT")) {
-        maven("https://oss.sonatype.org/content/repositories/snapshots/")
-    } else {
-        maven("https://oss.sonatype.org/content/groups/staging") {
-            credentials {
-                username = rootProject.ext.get("mavenCentralUsername").toString()
-                password = rootProject.ext.get("mavenCentralPassword").toString()
-            }
-        }
-    }
-}
+includeSnapshotsRepoIfTrue(pConfig.isSnapshotVersion)
+includeStagingRepoIfTrue(!pConfig.isSnapshotVersion)
 
 kmpConfiguration {
     setupMultiplatform(
@@ -74,12 +67,14 @@ kmpConfiguration {
             KmpTarget.NonJvm.JS(
                 compilerType = KotlinJsCompilerType.BOTH,
                 browser = null,
-                node = KmpTarget.NonJvm.JS.Node(
-                    jsNodeDsl = null
-                )
+                node = KmpTarget.NonJvm.JS.Node()
             ),
 
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.All.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.Arm32.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.Arm64.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.X64.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.SimulatorArm64.DEFAULT,
+
 //            KmpTarget.NonJvm.Native.Unix.Darwin.Macos.Arm64.DEFAULT,
             KmpTarget.NonJvm.Native.Unix.Darwin.Macos.X64(
                 mainSourceSet = {
@@ -88,8 +83,17 @@ kmpConfiguration {
                     }
                 },
             ),
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Tvos.All.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.All.DEFAULT,
+
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Tvos.Arm64.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Tvos.X64.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Tvos.SimulatorArm64.DEFAULT,
+//
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.Arm32.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.Arm64.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.X64.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.X86.DEFAULT,
+//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.SimulatorArm64.DEFAULT,
+
             KmpTarget.NonJvm.Native.Unix.Linux.X64(
                 mainSourceSet = {
                     dependencies {
@@ -113,7 +117,7 @@ kmpConfiguration {
             }
         },
         kotlin = {
-            sourceSetJvmJsCommonMain {
+            sourceSetJvmJsMain {
                 dependencies {
                     // TODO: Uncomment once JS is published
 //                    implementation("${pConfig.group}:kmp-tor-binary-linuxx64:${pConfig.versionName}")

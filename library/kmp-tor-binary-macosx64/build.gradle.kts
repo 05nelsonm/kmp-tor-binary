@@ -30,10 +30,7 @@ kmpConfiguration {
             KmpTarget.NonJvm.JS(
                 compilerType = KotlinJsCompilerType.BOTH,
                 browser = null,
-                node = KmpTarget.NonJvm.JS.Node(
-                    jsNodeDsl = null
-                ),
-                mainSourceSet = null,
+                node = KmpTarget.NonJvm.JS.Node(),
             ),
 
             KmpTarget.NonJvm.Native.Unix.Darwin.Macos.X64.DEFAULT,
