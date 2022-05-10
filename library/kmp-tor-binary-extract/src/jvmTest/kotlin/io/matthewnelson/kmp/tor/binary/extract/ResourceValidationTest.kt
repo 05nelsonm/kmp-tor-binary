@@ -50,7 +50,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenLinuxX64_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryLinuxX64SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/linux/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/linux/x64/$FILE_NAME_KMPTOR_ZIP"
         )
         val actual = sha256Sum(kmptorDotZip)
         assertEquals(ZIP_SHA256_LINUX_X64, actual)
@@ -60,7 +60,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenLinuxX64_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryLinuxX64SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/linux/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/linux/x64/$FILE_NAME_KMPTOR_ZIP"
         )
 
         // filter out directories from the manifest
@@ -87,7 +87,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenLinuxX86_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryLinuxX86SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/linux/x86/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/linux/x86/$FILE_NAME_KMPTOR_ZIP"
         )
         val actual = sha256Sum(kmptorDotZip)
         assertEquals(ZIP_SHA256_LINUX_X86, actual)
@@ -97,7 +97,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenLinuxX86_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryLinuxX86SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/linux/x86/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/linux/x86/$FILE_NAME_KMPTOR_ZIP"
         )
 
         // filter out directories from the manifest
@@ -124,7 +124,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMacosX64_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryMacosX64SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/macos/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/macos/x64/$FILE_NAME_KMPTOR_ZIP"
         )
         val actual = sha256Sum(kmptorDotZip)
         assertEquals(ZIP_SHA256_MACOS_X64, actual)
@@ -134,7 +134,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMacosX64_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryMacosX64SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/macos/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/macos/x64/$FILE_NAME_KMPTOR_ZIP"
         )
 
         // filter out directories from the manifest
@@ -161,7 +161,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMingwX64_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryMingwX64SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/mingw/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/mingw/x64/$FILE_NAME_KMPTOR_ZIP"
         )
         val actual = sha256Sum(kmptorDotZip)
         assertEquals(ZIP_SHA256_MINGW_X64, actual)
@@ -171,7 +171,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMingwX64_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryMingwX64SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/mingw/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/mingw/x64/$FILE_NAME_KMPTOR_ZIP"
         )
 
         // filter out directories from the manifest
@@ -198,7 +198,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMingwX86_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryMingwX86SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/mingw/x86/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/mingw/x86/$FILE_NAME_KMPTOR_ZIP"
         )
         val actual = sha256Sum(kmptorDotZip)
         assertEquals(ZIP_SHA256_MINGW_X86, actual)
@@ -208,7 +208,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMingwX86_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryMingwX86SrcDir,
-            "/jvmJsCommonMain/resources/kmptor/mingw/x86/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/mingw/x86/$FILE_NAME_KMPTOR_ZIP"
         )
 
         // filter out directories from the manifest
@@ -245,7 +245,7 @@ class ResourceValidationTest {
     fun givenGeoipResource_whenJvmJsCommon_sha256SumMatchesConstants() {
         val geoipsDotZip = File(
             geoipSrcDir,
-            "/jvmJsCommonMain/resources/kmptor/geoips.zip"
+            "/jvmJsMain/resources/kmptor/geoips.zip"
         )
         val actual = sha256Sum(geoipsDotZip)
         assertEquals(ZIP_SHA256_GEOIP, actual)
@@ -255,7 +255,7 @@ class ResourceValidationTest {
     fun givenGeoipResource_whenNativeCommon_sha256SumMatchesConstants() {
         val geoipsDotZip = File(
             geoipSrcDir,
-            "/nativeCommonMain/resources/kmptor/geoips.zip"
+            "/nativeMain/resources/kmptor/geoips.zip"
         )
         val actual = sha256Sum(geoipsDotZip)
         assertEquals(ZIP_SHA256_GEOIP, actual)
@@ -265,7 +265,7 @@ class ResourceValidationTest {
     fun givenGeoipResource_whenAny_extractedMatchesManifest() {
         val geoipsDotZip = File(
             geoipSrcDir,
-            "/nativeCommonMain/resources/kmptor/geoips.zip"
+            "/nativeMain/resources/kmptor/geoips.zip"
         )
 
         // filter out directories from the manifest
