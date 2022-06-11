@@ -37,10 +37,11 @@ kmpConfiguration {
                 target = {
                     publishLibraryVariants("release")
                 },
-                androidMainSourceSet = {
-                    manifest.srcFile("$projectDir/src/$KmpAndroidMain/AndroidManifest.xml")
-                    assets.srcDir("$projectDir/src/$KmpAndroidMain/assets")
-                }
+                androidConfig = {
+                    sourceSets.getByName("main") {
+                        assets.srcDir("$projectDir/src/$KmpAndroidMain/assets")
+                    }
+                },
             ),
 
             KmpTarget.NonJvm.JS(

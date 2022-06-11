@@ -34,10 +34,11 @@ kmpConfiguration {
                 target = {
                     publishLibraryVariants("release")
                 },
-                androidMainSourceSet = {
-                    manifest.srcFile("$projectDir/src/$KmpAndroidMain/AndroidManifest.xml")
-                    jniLibs.srcDir("$projectDir/src/$KmpAndroidMain/jniLibs")
-                }
+                androidConfig = {
+                    sourceSets.getByName("main") {
+                        jniLibs.srcDir("$projectDir/src/$KmpAndroidMain/jniLibs")
+                    }
+                },
             )
 
         )
