@@ -20,8 +20,8 @@ import io.matthewnelson.kotlin.components.kmp.KmpTarget.Jvm.Android.Companion.SO
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 
 plugins {
-    id("kmp-configuration")
-    id("kmp-publish")
+    id(pluginId.kmp.configuration)
+    id(pluginId.kmp.publish)
 }
 
 kmpConfiguration {
