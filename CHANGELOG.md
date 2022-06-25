@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 0.4.7.8 (2022-06-24)
+ - Updates Tor to 0.4.7.8
+ - Updates geoip files
+
 ## Version 0.4.7.7 (2022-05-08)
  - Updates Tor to 0.4.7.7
  - Updates geoip files
