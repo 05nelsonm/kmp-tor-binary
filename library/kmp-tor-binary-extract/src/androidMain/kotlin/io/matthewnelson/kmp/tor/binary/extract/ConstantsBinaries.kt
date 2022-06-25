@@ -17,7 +17,7 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 @Suppress("ObjectPropertyName", "SpellCheckingInspection")
 actual object ConstantsBinaries {
-    private const val _ZIP_SHA256_GEOIP = "cf995a23ce327cbb65821e3a31f6bb15345b35e5c9abceb482ba5feb39ea9ffa"
+    private const val _ZIP_SHA256_GEOIP = "bcd9aa2d70565d48ae5e1defd483237149fe7ccba8d66f71fd9a4e20fa136905"
     private const val _FILE_NAME_GEOIPS_ZIP = "geoips.zip"
     private const val _FILE_NAME_GEOIPS_ZIP_SHA256 = "$_FILE_NAME_GEOIPS_ZIP.sha256sum"
 
