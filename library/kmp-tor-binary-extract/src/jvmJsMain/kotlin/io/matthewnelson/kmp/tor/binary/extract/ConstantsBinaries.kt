@@ -17,7 +17,7 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 @Suppress("ObjectPropertyName", "SpellCheckingInspection")
 actual object ConstantsBinaries {
-    private const val _ZIP_SHA256_GEOIP = "bcd9aa2d70565d48ae5e1defd483237149fe7ccba8d66f71fd9a4e20fa136905"
+    private const val _ZIP_SHA256_GEOIP = "2dce16ea6a5ae3e82c90a1b82bb5ff2eb2a91be98ec2ed539ad722c246752705"
     private const val _FILE_NAME_GEOIPS_ZIP = "geoips.zip"
     private const val _FILE_NAME_GEOIPS_ZIP_SHA256 = "$_FILE_NAME_GEOIPS_ZIP.sha256sum"
 
@@ -27,11 +27,11 @@ actual object ConstantsBinaries {
     actual val FILE_NAME_GEOIPS_ZIP: String get() = _FILE_NAME_GEOIPS_ZIP
     actual val FILE_NAME_GEOIPS_ZIP_SHA256: String get() = _FILE_NAME_GEOIPS_ZIP_SHA256
 
-    const val ZIP_SHA256_LINUX_X64 = "fb683004fc1e728620b9f9bf021a8075ffe5e7f8011db783fc8eb5540cf327e5"
-    const val ZIP_SHA256_LINUX_X86 = "77550f5c40b4c1d58d7a4ca5b15bdbf3716ab4f4a03920f75be719f205254ea0"
-    const val ZIP_SHA256_MACOS_X64 = "7de9535cf6d527becc6fcbbc0515c8a8a4603898742cb6fd99d90691b71b86d8"
-    const val ZIP_SHA256_MINGW_X64 = "860595649e4855b97d833430f3a53d06392b39e26ebb43a55b9115fb43526b10"
-    const val ZIP_SHA256_MINGW_X86 = "cf4ec2b27b30ebab970b5d1ce80af5d9d8d5fcbea66f48d756afdd4ee2e25353"
+    const val ZIP_SHA256_LINUX_X64 = "5003d1866d9718d6d2a3c523baf3d91d0a66abc3c75e4ad872ff6d8a879bc6e0"
+    const val ZIP_SHA256_LINUX_X86 = "18e1ec895bbb19a59b7ccb73266cafed8d852e19dfc8de0164ccac2642a410fa"
+    const val ZIP_SHA256_MACOS_X64 = "23b24fe40c4294b5dfadadca1d13a2950acc08feddbd97bf06cbe4603f64558d"
+    const val ZIP_SHA256_MINGW_X64 = "46e195b4e9bceafa5e0ffa4eace400368439b03af6e0718ac3cf265b5b2ac871"
+    const val ZIP_SHA256_MINGW_X86 = "dfa4f7c8aac4e50a5646606ac81b3e33b55380b2acb3d9db3dab2530d80249cd"
 
     const val FILE_NAME_KMPTOR_ZIP = "kmptor.zip"
     const val FILE_NAME_KMPTOR_ZIP_SHA256 = "$FILE_NAME_KMPTOR_ZIP.sha256sum"
@@ -39,6 +39,6 @@ actual object ConstantsBinaries {
     val ZIP_MANIFEST_LINUX_X64 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++/libstdc++.so.6", "tor")
     val ZIP_MANIFEST_LINUX_X86 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++/libstdc++.so.6", "tor")
     val ZIP_MANIFEST_MACOS_X64 get() = listOf("libevent-2.1.7.dylib", "tor")
-    val ZIP_MANIFEST_MINGW_X64 get() = listOf("libcrypto-1_1-x64.dll", "libevent-2-1-7.dll", "libevent_core-2-1-7.dll", "libevent_extra-2-1-7.dll", "libgcc_s_seh-1.dll", "libssl-1_1-x64.dll", "libssp-0.dll", "libwinpthread-1.dll", "tor.exe", "zlib1.dll")
-    val ZIP_MANIFEST_MINGW_X86 get() = listOf("libcrypto-1_1.dll", "libevent-2-1-7.dll", "libevent_core-2-1-7.dll", "libevent_extra-2-1-7.dll", "libgcc_s_dw2-1.dll", "libssl-1_1.dll", "libssp-0.dll", "libwinpthread-1.dll", "tor.exe", "zlib1.dll")
+    val ZIP_MANIFEST_MINGW_X64 get() = listOf("tor.exe")
+    val ZIP_MANIFEST_MINGW_X86 get() = listOf("tor.exe")
 }
