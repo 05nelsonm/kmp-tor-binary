@@ -1,3 +1,6 @@
 [submodule "kotlin-components"]
 	path = kotlin-components
 	url = https://github.com/05nelsonm/kotlin-components.git
+[submodule "library/binary-build/binary-build-executables/tor-browser-build"]
+	path = library/binary-build/binary-build-executables/tor-browser-build
+	url = https://gitlab.torproject.org/tpo/applications/tor-browser-build.git
