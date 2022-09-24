@@ -109,8 +109,8 @@ to explicitly add the platform specific dependencies you wish to support, for ex
 ```kotlin
 // build.gradle.kts
 dependencies {
-    val vTor = "0.4.7.8"
-    val vKmpTor = "1.0.0" // <-- see kmp-tor repo for latest versions
+    val vTor = "0.4.7.10"
+    val vKmpTor = "1.3.1" // <-- see kmp-tor repo for latest versions
     implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor+$vKmpTor")
 
     // Linux x86_64

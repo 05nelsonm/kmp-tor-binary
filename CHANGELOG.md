@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 0.4.7.10 (2022-09-24)
+ - Updates `tor-browser-build` submodule source
+     - FROM: `https://gitweb.torproject.org/builders/tor-browser-build.git/`
+     - TO: `https://gitlab.torproject.org/tpo/applications/tor-browser-build.git`
+ - Updates Tor to 0.4.7.10
+
 ## Version 0.4.7.8 (2022-06-24)
  - Updates Tor to 0.4.7.8
  - Updates geoip files
