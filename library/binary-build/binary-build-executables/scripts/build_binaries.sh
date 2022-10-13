@@ -86,15 +86,33 @@ function buildAndroid() {
   changeDir "$TOR_OUT_DIR"
   local TEMP_DIR=
   TEMP_DIR=$(mktemp -d -p "$DIR")
-  mkdir "$TEMP_DIR/jniLibs"
 
-  local DIRECTORY=
-  for DIRECTORY in "$(pwd)"/*; do
-    mkdir "$DIRECTORY/tor"
-    tar -xzf "$DIRECTORY/tor.tar.gz" -C "$DIRECTORY/tor"
+  local TOR_TAR_GZ=
+  local ARCH=
+  for TOR_TAR_GZ in "$(pwd)"/*.tar.gz; do
+    tar -xzf "$TOR_TAR_GZ"
     sleep 1
-    cp -r "$DIRECTORY/tor/jniLibs/." "$TEMP_DIR/jniLibs/"
-    rm -rf "$DIRECTORY/tor"
+
+    if echo "$TOR_TAR_GZ" | grep "android-aarch64" >/dev/null; then
+        ARCH="arm64-v8a"
+    elif echo "$TOR_TAR_GZ" | grep "android-armv7" >/dev/null; then
+        ARCH="armeabi-v7a"
+    elif echo "$TOR_TAR_GZ" | grep "android-x86_64" >/dev/null; then
+        ARCH="x86_64"
+    elif echo "$TOR_TAR_GZ" | grep "android-x86" >/dev/null; then
+        ARCH="x86"
+    else
+      echo "ERROR: Something went wrong. Could not identify architecture for $TOR_TAR_GZ"
+      EXIT_CODE=1
+      return 1
+    fi
+
+    mkdir -p "$TEMP_DIR/jniLibs/$ARCH"
+    cp -r "$TOR_OUT_DIR/tor/libTor.so" "$TEMP_DIR/jniLibs/$ARCH/"
+
+    rm -rf "$TOR_OUT_DIR/tor"
+    rm -rf "$TOR_OUT_DIR/data"
+    sleep 1
   done
 
   if ! checkDirExists "$TEMP_DIR/jniLibs"; then
@@ -121,8 +139,8 @@ function buildDesktop() {
   local ARCH=
   local PLATFORM=
   local CONST_KT_NAME=
-  local TAR_CONTENT_PATH="Tor"
   local EXTRACT_GEOIP=false
+
   if [ "$1" == "linux-i686" ]; then
     ARCH="x86"
     PLATFORM="linux"
@@ -148,7 +166,6 @@ function buildDesktop() {
     ARCH="x64"
     PLATFORM="macos"
     CONST_KT_NAME="MACOS_X64"
-    TAR_CONTENT_PATH="Contents/MacOS/Tor"
     ./rbm/rbm build tor --target release --target torbrowser-osx-x86_64
   else
     echo "$1 is not a recognized target. Run script again w/o args to see help."
@@ -172,15 +189,14 @@ function buildDesktop() {
   KMP_TOR_ZIP="$TEMP_DIR/$PLATFORM/$ARCH/kmptor.zip"
   GEOIP_ZIP="$TEMP_DIR/kmptor/geoips.zip"
 
-  local DIRECTORY=
+  local TOR_TAR_GZ=
   local KMP_TOR_ZIP_MANIFEST=
   local KMP_GEOIP_ZIP_MANIFEST=
   local SORTED=
-  for DIRECTORY in "$(pwd)"/*; do
-    mkdir "$DIRECTORY/tor"
-    tar -xzf "$DIRECTORY/tor.tar.gz" -C "$DIRECTORY/tor"
+  for TOR_TAR_GZ in "$(pwd)"/*.tar.gz; do
+    tar -xzf "$TOR_TAR_GZ"
     sleep 1
-    changeDir "$DIRECTORY/tor/$TAR_CONTENT_PATH"
+    changeDir "$TOR_OUT_DIR/tor"
     find . -exec touch -t $ZIP_TOUCH_TIME {} +
     SORTED=$(find . -type f | sort)
     zip -t $ZIP_TIME "$KMP_TOR_ZIP" $SORTED
@@ -188,14 +204,15 @@ function buildDesktop() {
 
     if [ $EXTRACT_GEOIP == true ]; then
       # Only occurs for linux-x86_64 target
-      changeDir "$DIRECTORY/tor/Data/Tor"
+      changeDir "$TOR_OUT_DIR/data"
       find . -exec touch -t $ZIP_TOUCH_TIME {} +
       SORTED=$(find . -type f | sort)
       zip -t $ZIP_TIME "$GEOIP_ZIP" $SORTED
       KMP_GEOIP_ZIP_MANIFEST=$(zip -sf "$GEOIP_ZIP" | grep -v "Archive contains:" | grep -v "Total " | awk '{$1=$1};1')
     fi
 
-    rm -rf "$DIRECTORY/tor"
+    rm -rf "$TOR_OUT_DIR/tor"
+    rm -rf "$TOR_OUT_DIR/data"
 
     break
   done
