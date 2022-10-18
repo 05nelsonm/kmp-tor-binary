@@ -119,6 +119,8 @@ dependencies {
     implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx86:$vTor")
     // MacOS x86_64
     implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosx64:$vTor")
+    // MacOS aarch64
+    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosarm64:$vTor")
     // Windows x86_64
     implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-mingwx64:$vTor")
     // Windows i686
