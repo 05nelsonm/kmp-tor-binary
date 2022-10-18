@@ -87,25 +87,26 @@ function buildAndroid() {
   local TEMP_DIR=
   TEMP_DIR=$(mktemp -d -p "$DIR")
 
-  local TOR_TAR_GZ=
+  local FILE_TOR_TAR_GZ=
   local ARCH=
-  for TOR_TAR_GZ in "$(pwd)"/*.tar.gz; do
-    tar -xzf "$TOR_TAR_GZ"
-    sleep 1
+  for FILE_TOR_TAR_GZ in "$(pwd)"/*.tar.gz; do
 
-    if echo "$TOR_TAR_GZ" | grep "android-aarch64" >/dev/null; then
+    if echo "$FILE_TOR_TAR_GZ" | grep "android-aarch64" >/dev/null; then
         ARCH="arm64-v8a"
-    elif echo "$TOR_TAR_GZ" | grep "android-armv7" >/dev/null; then
+    elif echo "$FILE_TOR_TAR_GZ" | grep "android-armv7" >/dev/null; then
         ARCH="armeabi-v7a"
-    elif echo "$TOR_TAR_GZ" | grep "android-x86_64" >/dev/null; then
+    elif echo "$FILE_TOR_TAR_GZ" | grep "android-x86_64" >/dev/null; then
         ARCH="x86_64"
-    elif echo "$TOR_TAR_GZ" | grep "android-x86" >/dev/null; then
+    elif echo "$FILE_TOR_TAR_GZ" | grep "android-x86" >/dev/null; then
         ARCH="x86"
     else
-      echo "ERROR: Something went wrong. Could not identify architecture for $TOR_TAR_GZ"
+      echo "ERROR: Something went wrong. Could not identify architecture for $FILE_TOR_TAR_GZ"
       EXIT_CODE=1
       return 1
     fi
+
+    tar -xzf "$FILE_TOR_TAR_GZ"
+    sleep 1
 
     mkdir -p "$TEMP_DIR/jniLibs/$ARCH"
     cp -r "$TOR_OUT_DIR/tor/libTor.so" "$TEMP_DIR/jniLibs/$ARCH/"
@@ -139,6 +140,8 @@ function buildDesktop() {
   local ARCH=
   local PLATFORM=
   local CONST_KT_NAME=
+  local TOR_RESOURCE_NATIVE_KT=
+  local BINARY_DIR_SRC_SET="commonMain"
   local EXTRACT_GEOIP=false
 
   if [ "$1" == "linux-i686" ]; then
@@ -151,6 +154,7 @@ function buildDesktop() {
     PLATFORM="linux"
     CONST_KT_NAME="LINUX_X64"
     EXTRACT_GEOIP=true
+    TOR_RESOURCE_NATIVE_KT="$DIR/../../../kmp-tor-binary-extract/src/linuxX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
     ./rbm/rbm build tor --target release --target torbrowser-linux-x86_64
   elif [ "$1" == "windows-i686" ]; then
     ARCH="x86"
@@ -161,11 +165,13 @@ function buildDesktop() {
     ARCH="x64"
     PLATFORM="mingw"
     CONST_KT_NAME="MINGW_X64"
+    TOR_RESOURCE_NATIVE_KT="$DIR/../../../kmp-tor-binary-extract/src/mingwX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
     ./rbm/rbm build tor --target release --target torbrowser-windows-x86_64
   elif [ "$1" == "osx-x86_64" ]; then
     ARCH="x64"
     PLATFORM="macos"
     CONST_KT_NAME="MACOS_X64"
+    BINARY_DIR_SRC_SET="jvmJsMain"
     ./rbm/rbm build tor --target release --target torbrowser-osx-x86_64
   else
     echo "$1 is not a recognized target. Run script again w/o args to see help."
@@ -173,168 +179,142 @@ function buildDesktop() {
     return 1
   fi
 
-  # All files within the directory prior to being zipped need to have their
-  # timestamps set to a static value for reproducibility.
-  local ZIP_TOUCH_TIME=198401010000.01
-  local ZIP_TIME=01011984
+  local TOR_RESOURCE_JVMJS_KT=
+  local TOR_RESOURCE_COMMON_KT=
+  TOR_RESOURCE_JVMJS_KT="$DIR/../../../kmp-tor-binary-extract/src/jvmJsMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+  TOR_RESOURCE_COMMON_KT="$DIR/../../../kmp-tor-binary-extract/src/commonMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
 
-  changeDir "$TOR_OUT_DIR"
-  local TEMP_DIR
-  TEMP_DIR=$(mktemp -d -p "$DIR")
-  mkdir -p "$TEMP_DIR/$PLATFORM/$ARCH"
-  mkdir "$TEMP_DIR/kmptor"
-
-  local KMP_TOR_ZIP=
-  local GEOIP_ZIP=
-  KMP_TOR_ZIP="$TEMP_DIR/$PLATFORM/$ARCH/kmptor.zip"
-  GEOIP_ZIP="$TEMP_DIR/kmptor/geoips.zip"
-
-  local TOR_TAR_GZ=
-  local KMP_TOR_ZIP_MANIFEST=
-  local KMP_GEOIP_ZIP_MANIFEST=
-  local SORTED=
-  for TOR_TAR_GZ in "$(pwd)"/*.tar.gz; do
-    tar -xzf "$TOR_TAR_GZ"
-    sleep 1
-    changeDir "$TOR_OUT_DIR/tor"
-    find . -exec touch -t $ZIP_TOUCH_TIME {} +
-    SORTED=$(find . -type f | sort)
-    zip -t $ZIP_TIME "$KMP_TOR_ZIP" $SORTED
-    KMP_TOR_ZIP_MANIFEST=$(zip -sf "$KMP_TOR_ZIP" | grep -v "Archive contains:" | grep -v "Total " | awk '{$1=$1};1')
-
-    if [ $EXTRACT_GEOIP == true ]; then
-      # Only occurs for linux-x86_64 target
-      changeDir "$TOR_OUT_DIR/data"
-      find . -exec touch -t $ZIP_TOUCH_TIME {} +
-      SORTED=$(find . -type f | sort)
-      zip -t $ZIP_TIME "$GEOIP_ZIP" $SORTED
-      KMP_GEOIP_ZIP_MANIFEST=$(zip -sf "$GEOIP_ZIP" | grep -v "Archive contains:" | grep -v "Total " | awk '{$1=$1};1')
-    fi
-
-    rm -rf "$TOR_OUT_DIR/tor"
-    rm -rf "$TOR_OUT_DIR/data"
-
-    break
-  done
-
-  changeDir "$TOR_OUT_DIR"
-
-  local MANIFEST_STRING_TOR=
-  local LINE=
-  for LINE in $KMP_TOR_ZIP_MANIFEST; do
-    if [ "$MANIFEST_STRING_TOR" == "" ]; then
-      MANIFEST_STRING_TOR="\"$LINE\""
-    else
-      MANIFEST_STRING_TOR="$MANIFEST_STRING_TOR, \"$LINE\""
-    fi
-  done
-
-  local MANIFEST_STRING_GEOIP=
-  if [ $EXTRACT_GEOIP == true ]; then
-    for LINE in $KMP_GEOIP_ZIP_MANIFEST; do
-      if [ "$MANIFEST_STRING_GEOIP" == "" ]; then
-        MANIFEST_STRING_GEOIP="\"$LINE\""
-      else
-        MANIFEST_STRING_GEOIP="$MANIFEST_STRING_GEOIP, \"$LINE\""
-      fi
-    done
-  fi
-
-
-  sleep 1
-
-  if ! checkFileExists "$KMP_TOR_ZIP"; then
-    echo "ERROR: Something went wrong... $KMP_TOR_ZIP does not exist"
+  if ! checkFileExists "$TOR_RESOURCE_JVMJS_KT"; then
+    echo "ERROR: Something went wrong... ConstantsBinaries.kt file for jvm/js does not exist"
     EXIT_CODE=1
     return 1
   fi
 
-  if [ $EXTRACT_GEOIP == true ]; then
-    if ! checkFileExists "$GEOIP_ZIP"; then
-      echo "ERROR: Something went wrong... $GEOIP_ZIP does not exist"
+  if ! checkFileExists "$TOR_RESOURCE_COMMON_KT"; then
+    echo "ERROR: Something went wrong... ConstantsGeoip.kt file does not exist"
+    EXIT_CODE=1
+    return 1
+  fi
+
+  if [ "$TOR_RESOURCE_NATIVE_KT" != "" ]; then
+    if ! checkFileExists "$TOR_RESOURCE_NATIVE_KT"; then
+      echo "ERROR: Something went wrong... ConstantsBinaries.kt file for native does not exist"
       EXIT_CODE=1
       return 1
     fi
   fi
 
-  local SHA256_KMP_TOR_ZIP=
-  SHA256_KMP_TOR_ZIP=$(sha256sum "$KMP_TOR_ZIP" | cut -d ' ' -f 1)
+  changeDir "$TOR_OUT_DIR"
 
-  local KMP_EXTRACT_SRC_DIR=
-  local KMP_EXTRACT_CONSTANTS_KT_PATH=
-  KMP_EXTRACT_SRC_DIR="$DIR/../../../kmp-tor-binary-extract/src"
-  KMP_EXTRACT_CONSTANTS_KT_PATH="kotlin/io/matthewnelson/kmp/tor/binary/extract/ConstantsBinaries.kt"
+  # Extract files
+  local FILE_TOR_TAR_GZ=
+  for FILE_TOR_TAR_GZ in "$(pwd)"/*.tar.gz; do
+    tar -xzf "$FILE_TOR_TAR_GZ"
+    sleep 1
 
-  local JVM_JS_RES_DIR=
-  local JVM_JS_CONSTANTS_KT=
-  JVM_JS_RES_DIR="$DIR/../../../kmp-tor-binary-$PLATFORM$ARCH/src/jvmJsMain/resources/kmptor/$PLATFORM/$ARCH"
-  JVM_JS_CONSTANTS_KT="$KMP_EXTRACT_SRC_DIR/jvmJsMain/$KMP_EXTRACT_CONSTANTS_KT_PATH"
+    break
+  done
 
-  if ! checkFileExists "$JVM_JS_CONSTANTS_KT"; then
-    echo "ERROR: Something went wrong... $JVM_JS_CONSTANTS_KT does not exist"
-    EXIT_CODE=1
-    return 1
+  # Compress everything
+  gzip -rn "tor"
+  gzip -rn "data"
+
+  # Get manifest of tor files
+  local MANIFEST_TOR=
+  changeDir "$TOR_OUT_DIR/tor"
+  MANIFEST_TOR=$(find . -type f | sort)
+
+  # Get sha256sum value of all tor files
+  #
+  # Creates a string with sha256sum values for each
+  # file on a new line, then takes the sha256sum
+  # value of that string.
+  local SHA256SUM_TOR=
+  SHA256SUM_TOR=$(sha256sum $MANIFEST_TOR | cut -d ' ' -f 1 | sha256sum | cut -d ' ' -f 1)
+
+  # Copy files
+  local BINARY_DIR=
+  BINARY_DIR="$DIR/../../../kmp-tor-binary-$PLATFORM$ARCH/src/$BINARY_DIR_SRC_SET/resources/kmptor/$PLATFORM/$ARCH"
+
+  mkdir -p "$BINARY_DIR"
+  cp -r . "$BINARY_DIR"
+
+  # Build the manifest string to write to our kotlin constants file
+  local MANIFEST_STRING_TOR=
+  local LINE=
+  for LINE in $MANIFEST_TOR; do
+    # Strip ./
+    local STRIPPED=
+    STRIPPED=$(echo "${LINE:2}")
+
+    if [ "$MANIFEST_STRING_TOR" == "" ]; then
+      MANIFEST_STRING_TOR="\"$STRIPPED\""
+    else
+      MANIFEST_STRING_TOR="$MANIFEST_STRING_TOR, \"$STRIPPED\""
+    fi
+  done
+
+  # Write sha256sum & manifest values
+  sed -i "s|/\* $CONST_KT_NAME \*/ override val resourceManifest: List<String> get() = .*|/\* $CONST_KT_NAME \*/ override val resourceManifest: List<String> get() = listOf($MANIFEST_STRING_TOR)|g" "$TOR_RESOURCE_JVMJS_KT"
+  sed -i "s|/\* $CONST_KT_NAME \*/ override val sha256sum: String get() = .*|/\* $CONST_KT_NAME \*/ override val sha256sum: String get() = \"$SHA256SUM_TOR\"|g" "$TOR_RESOURCE_JVMJS_KT"
+
+  if [ "$TOR_RESOURCE_NATIVE_KT" != "" ]; then
+    sed -i "s|/\* $CONST_KT_NAME \*/ override val resourceManifest: List<String> get() = .*|/\* $CONST_KT_NAME \*/ override val resourceManifest: List<String> get() = listOf($MANIFEST_STRING_TOR)|g" "$TOR_RESOURCE_NATIVE_KT"
+    sed -i "s|/\* $CONST_KT_NAME \*/ override val sha256sum: String get() = .*|/\* $CONST_KT_NAME \*/ override val sha256sum: String get() = \"$SHA256SUM_TOR\"|g" "$TOR_RESOURCE_NATIVE_KT"
   fi
 
-  mkdir -p "$JVM_JS_RES_DIR"
-  mv "$KMP_TOR_ZIP" "$JVM_JS_RES_DIR"
-  echo "Binaries have been extracted and moved to $JVM_JS_RES_DIR"
-
-  sed -i "s|const val ZIP_SHA256_$CONST_KT_NAME = .*|const val ZIP_SHA256_$CONST_KT_NAME = \"$SHA256_KMP_TOR_ZIP\"|g" "$JVM_JS_CONSTANTS_KT"
-  sed -i "s|val ZIP_MANIFEST_$CONST_KT_NAME get() = listOf(.*|val ZIP_MANIFEST_$CONST_KT_NAME get() = listOf($MANIFEST_STRING_TOR)|g" "$JVM_JS_CONSTANTS_KT"
+  echo ""
+  echo "Tor files have been copied to module kmp-tor-binary-$PLATFORM$ARCH..."
+  echo ""
 
   if [ $EXTRACT_GEOIP == true ]; then
-    echo "Extracting geoip files..."
-    local SHA256_GEOIP=
-    SHA256_GEOIP=$(sha256sum "$GEOIP_ZIP" | cut -d ' ' -f 1)
 
-    local GEOIP_SRC=
-    local GEOIP_CONSTANTS_KT_ANDROID=
-    local GEOIP_CONSTANTS_KT_JVM_JS=
-    local GEOIP_CONSTANTS_KT_NATIVE=
-    GEOIP_SRC="$DIR/../../../kmp-tor-binary-geoip/src"
-    GEOIP_CONSTANTS_KT_ANDROID="$KMP_EXTRACT_SRC_DIR/androidMain/$KMP_EXTRACT_CONSTANTS_KT_PATH"
-    GEOIP_CONSTANTS_KT_JVM_JS="$JVM_JS_CONSTANTS_KT"
-    GEOIP_CONSTANTS_KT_NATIVE="$KMP_EXTRACT_SRC_DIR/nativeMain/$KMP_EXTRACT_CONSTANTS_KT_PATH"
+    changeDir "$TOR_OUT_DIR/data"
 
-    if ! checkFileExists "$GEOIP_CONSTANTS_KT_ANDROID"; then
-        echo "ERROR: Something went wrong... $GEOIP_CONSTANTS_KT_ANDROID does not exist"
-        EXIT_CODE=1
-        return 1
+    if ! checkFileExists "geoip.gz"; then
+      echo "ERROR: Something went wrong... geoip file does not exist"
+      EXIT_CODE=1
+      return 1
     fi
 
-    if ! checkFileExists "$GEOIP_CONSTANTS_KT_JVM_JS"; then
-        echo "ERROR: Something went wrong... $GEOIP_CONSTANTS_KT_JVM_JS does not exist"
-        EXIT_CODE=1
-        return 1
+    if ! checkFileExists "geoip6.gz"; then
+      echo "ERROR: Something went wrong... geoip6 file does not exist"
+      EXIT_CODE=1
+      return 1
     fi
 
-    if ! checkFileExists "$GEOIP_CONSTANTS_KT_NATIVE"; then
-        echo "ERROR: Something went wrong... $GEOIP_CONSTANTS_KT_NATIVE does not exist"
-        EXIT_CODE=1
-        return 1
-    fi
+    # Get sha256sum for geoip files
+    local SHA256SUM_GEOIP=
+    local SHA256SUM_GEOIP6=
+    SHA256SUM_GEOIP=$(sha256sum "geoip.gz" | cut -d ' ' -f 1)
+    SHA256SUM_GEOIP6=$(sha256sum "geoip6.gz" | cut -d ' ' -f 1)
 
-    mkdir -p "$GEOIP_SRC/androidMain/assets/kmptor/"
-    mkdir -p "$GEOIP_SRC/jvmJsMain/resources/kmptor/"
-    mkdir -p "$GEOIP_SRC/nativeMain/resources/kmptor/"
+    # Copy files
+    local GEOIP_MODULE_SRC_DIR=
+    GEOIP_MODULE_SRC_DIR="$DIR/../../../kmp-tor-binary-geoip/src"
 
-    cp "$GEOIP_ZIP" "$GEOIP_SRC/androidMain/assets/kmptor/"
-    cp "$GEOIP_ZIP" "$GEOIP_SRC/jvmJsMain/resources/kmptor/"
-    cp "$GEOIP_ZIP" "$GEOIP_SRC/nativeMain/resources/kmptor/"
+    mkdir -p "$GEOIP_MODULE_SRC_DIR/androidMain/assets/kmptor/"
+    mkdir -p "$GEOIP_MODULE_SRC_DIR/jvmJsMain/resources/kmptor/"
+    mkdir -p "$GEOIP_MODULE_SRC_DIR/nativeMain/resources/kmptor/"
+    cp -R . "$GEOIP_MODULE_SRC_DIR/androidMain/assets/kmptor/"
+    cp -R . "$GEOIP_MODULE_SRC_DIR/jvmJsMain/resources/kmptor/"
+    cp -R . "$GEOIP_MODULE_SRC_DIR/nativeMain/resources/kmptor/"
 
-    sed -i "s|private const val _ZIP_SHA256_GEOIP = .*|private const val _ZIP_SHA256_GEOIP = \"$SHA256_GEOIP\"|g" "$GEOIP_CONSTANTS_KT_ANDROID"
-    sed -i "s|private const val _ZIP_SHA256_GEOIP = .*|private const val _ZIP_SHA256_GEOIP = \"$SHA256_GEOIP\"|g" "$GEOIP_CONSTANTS_KT_JVM_JS"
-    sed -i "s|private const val _ZIP_SHA256_GEOIP = .*|private const val _ZIP_SHA256_GEOIP = \"$SHA256_GEOIP\"|g" "$GEOIP_CONSTANTS_KT_NATIVE"
+    # Write sha256sum values
+    sed -i "s|/\* GEOIP \*/ override val sha256sum: String get() = .*|/\* GEOIP \*/ override val sha256sum: String get() = \"$SHA256SUM_GEOIP\"|g" "$TOR_RESOURCE_COMMON_KT"
+    sed -i "s|/\* GEOIP6 \*/ override val sha256sum: String get() = .*|/\* GEOIP6 \*/ override val sha256sum: String get() = \"$SHA256SUM_GEOIP6\"|g" "$TOR_RESOURCE_COMMON_KT"
 
-    sed -i "s|actual val ZIP_MANIFEST_GEOIP: List<String> get() = listOf(.*|actual val ZIP_MANIFEST_GEOIP: List<String> get() = listOf($MANIFEST_STRING_GEOIP)|g" "$GEOIP_CONSTANTS_KT_ANDROID"
-    sed -i "s|actual val ZIP_MANIFEST_GEOIP: List<String> get() = listOf(.*|actual val ZIP_MANIFEST_GEOIP: List<String> get() = listOf($MANIFEST_STRING_GEOIP)|g" "$GEOIP_CONSTANTS_KT_JVM_JS"
-    sed -i "s|actual val ZIP_MANIFEST_GEOIP: List<String> get() = listOf(.*|actual val ZIP_MANIFEST_GEOIP: List<String> get() = listOf($MANIFEST_STRING_GEOIP)|g" "$GEOIP_CONSTANTS_KT_NATIVE"
-  else
-    echo "Skipping geoip file extraction..."
+    echo ""
+    echo "Geoip files have been copied to module kmp-tor-binary-geoip..."
+    echo ""
   fi
 
-  rm -rf "$TEMP_DIR"
+  # Cleanup
+  changeDir "$TOR_OUT_DIR"
+
+  rm -rf "$TOR_OUT_DIR/data"
+  rm -rf "$TOR_OUT_DIR/debug"
+  rm -rf "$TOR_OUT_DIR/tor"
 }
 
 function help() {
@@ -379,6 +359,29 @@ function checkExit() {
   fi
 }
 
+function buildDesktopAll() {
+  echo "Building desktop-all..."
+
+  buildDesktop "linux-i686"
+  sleep 1
+  checkExit
+
+  buildDesktop "linux-x86_64"
+  sleep 1
+  checkExit
+
+  buildDesktop "osx-x86_64"
+  sleep 1
+  checkExit
+
+  buildDesktop "windows-i686"
+  sleep 1
+  checkExit
+
+  buildDesktop "windows-x86_64"
+  sleep 1
+}
+
 case $1 in
   "all")
     echo "Building android-all..."
@@ -386,26 +389,7 @@ case $1 in
     sleep 1
     checkExit
 
-    echo "Building desktop-all..."
-
-    buildDesktop "linux-i686"
-    sleep 1
-    checkExit
-
-    buildDesktop "linux-x86_64"
-    sleep 1
-    checkExit
-
-    buildDesktop "osx-x86_64"
-    sleep 1
-    checkExit
-
-    buildDesktop "windows-i686"
-    sleep 1
-    checkExit
-
-    buildDesktop "windows-x86_64"
-    sleep 1
+    buildDesktopAll
     ;;
   "android-all")
     buildAndroid "$1"
@@ -423,24 +407,7 @@ case $1 in
     buildAndroid "$1"
     ;;
   "desktop-all")
-    buildDesktop "linux-i686"
-    sleep 1
-    checkExit
-
-    buildDesktop "linux-x86_64"
-    sleep 1
-    checkExit
-
-    buildDesktop "osx-x86_64"
-    sleep 1
-    checkExit
-
-    buildDesktop "windows-i686"
-    sleep 1
-    checkExit
-
-    buildDesktop "windows-x86_64"
-    sleep 1
+    buildDesktopAll
     ;;
   "linux-i686")
     buildDesktop "$1"
