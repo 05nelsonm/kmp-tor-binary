@@ -34,7 +34,8 @@ actual class Extractor {
         destination: String,
         cleanExtraction: Boolean
     ) {
-        TODO()
+        // TODO
+        throw ExtractionException("Not yet implemented")
     }
 
     /**

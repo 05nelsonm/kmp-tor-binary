@@ -33,7 +33,8 @@ actual class Extractor {
         destination: String,
         cleanExtraction: Boolean
     ) {
-        TODO()
+        // TODO
+        throw ExtractionException("Not yet implemented")
     }
 
     /**
@@ -50,6 +51,7 @@ actual class Extractor {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        TODO()
+        // TODO
+        throw ExtractionException("Not yet implemented")
     }
 }
