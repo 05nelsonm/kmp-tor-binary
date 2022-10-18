@@ -28,6 +28,7 @@ class TorResourceValidationUnitTest {
     private val resDirLinuxX64: File = File(projectDir, "../kmp-tor-binary-linuxx64/src/commonMain/resources/kmptor/linux/x64")
     private val resDirLinuxX86: File = File(projectDir, "../kmp-tor-binary-linuxx86/src/commonMain/resources/kmptor/linux/x86")
     private val resDirMacosX64: File = File(projectDir, "../kmp-tor-binary-macosx64/src/jvmJsMain/resources/kmptor/macos/x64")
+    private val resDirMacosArm64: File = File(projectDir, "../kmp-tor-binary-macosarm64/src/jvmJsMain/resources/kmptor/macos/arm64")
     private val resDirMingwX64: File = File(projectDir, "../kmp-tor-binary-mingwx64/src/commonMain/resources/kmptor/mingw/x64")
     private val resDirMingwX86: File = File(projectDir, "../kmp-tor-binary-mingwx86/src/commonMain/resources/kmptor/mingw/x86")
     private val srcDirGeoip: File = File(projectDir, "../kmp-tor-binary-geoip/src")
@@ -109,6 +110,11 @@ class TorResourceValidationUnitTest {
     @Test
     fun givenBinaryResource_whenMacosX64_thenSha256SumsMatch() {
         assertBinaryResources(resDirMacosX64, TorResourceMacosX64)
+    }
+
+    @Test
+    fun givenBinaryResource_whenMacosArm64_thenSha256SumsMatch() {
+        assertBinaryResources(resDirMacosArm64, TorResourceMacosArm64)
     }
 
     @Test

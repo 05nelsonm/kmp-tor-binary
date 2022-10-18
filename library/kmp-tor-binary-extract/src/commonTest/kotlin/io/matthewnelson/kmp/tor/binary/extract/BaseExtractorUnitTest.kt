@@ -48,11 +48,13 @@ abstract class BaseExtractorUnitTest {
         resource: TorResource.Binaries,
         testDir: String = tmpBinaryDir,
     ): List<String> {
-        extractor.extract(
+        val torFilePath = extractor.extract(
             resource = resource,
             destinationDir = testDir,
             cleanExtraction = true,
         )
+
+        println("Tor: $torFilePath")
 
         val paths = resource.resourceManifest.mapManifestToDestination(testDir) { _, _ -> }
 

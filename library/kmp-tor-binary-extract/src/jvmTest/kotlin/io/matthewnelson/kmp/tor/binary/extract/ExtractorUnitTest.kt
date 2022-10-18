@@ -134,6 +134,12 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     // TODO: Move to jvmJsMain.BaseExtractorJvmJsUnitTest
     @Test
+    fun givenExtractor_whenExtractMacosArm64Resource_thenIsSuccessful() {
+        assertBinaryResourceExtractionIsSuccessful(TorResourceMacosArm64)
+    }
+
+    // TODO: Move to jvmJsMain.BaseExtractorJvmJsUnitTest
+    @Test
     fun givenExtractor_whenExtractMingwX64Resource_thenIsSuccessful() {
         assertBinaryResourceExtractionIsSuccessful(TorResourceMingwX64)
     }
@@ -141,7 +147,7 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
     // TODO: Move to jvmJsMain.BaseExtractorJvmJsUnitTest
     @Test
     fun givenExtractor_whenExtractMingwX86Resource_thenIsSuccessful() {
-        assertBinaryResourceExtractionIsSuccessful(TorResourceLinuxX86)
+        assertBinaryResourceExtractionIsSuccessful(TorResourceMingwX86)
     }
 
     // TODO: Move to jvmJsMain.BaseExtractorJvmJsUnitTest
