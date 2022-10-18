@@ -15,7 +15,9 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.kmp.tor.binary.extract.annotation.InternalTorBinaryApi
 
+@InternalTorBinaryApi
 // TODO: Move to platform specific locations
 @Suppress("ObjectPropertyName", "SpellCheckingInspection")
 actual object ConstantsBinaries {

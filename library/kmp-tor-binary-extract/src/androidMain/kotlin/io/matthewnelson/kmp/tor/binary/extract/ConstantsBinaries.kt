@@ -15,6 +15,9 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.kmp.tor.binary.extract.annotation.InternalTorBinaryApi
+
+@InternalTorBinaryApi
 @Suppress("ObjectPropertyName", "SpellCheckingInspection")
 actual object ConstantsBinaries {
     private const val _ARCHIVE_SHA256_VALUE_GEOIP = "2dce16ea6a5ae3e82c90a1b82bb5ff2eb2a91be98ec2ed539ad722c246752705"

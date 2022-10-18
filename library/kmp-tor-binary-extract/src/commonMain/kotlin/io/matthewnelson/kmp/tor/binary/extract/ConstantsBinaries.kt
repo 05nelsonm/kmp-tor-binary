@@ -15,6 +15,9 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.kmp.tor.binary.extract.annotation.InternalTorBinaryApi
+
+@InternalTorBinaryApi
 @Suppress("SpellCheckingInspection")
 expect object ConstantsBinaries {
     val ARCHIVE_SHA256_VALUE_GEOIP: String

@@ -30,10 +30,12 @@ import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_SHA256_
 import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_SHA256_VALUE_MINGW_X64
 import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_SHA256_VALUE_MINGW_X86
 import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ZIP_SHA256_MACOS_X64
+import io.matthewnelson.kmp.tor.binary.extract.annotation.InternalTorBinaryApi
 import kotlin.test.assertEquals
 import java.io.File
 import java.security.MessageDigest
 
+@OptIn(InternalTorBinaryApi::class)
 class ResourceValidationTest {
 
     private val projectDir: File = File(System.getProperty("user.dir")!!)

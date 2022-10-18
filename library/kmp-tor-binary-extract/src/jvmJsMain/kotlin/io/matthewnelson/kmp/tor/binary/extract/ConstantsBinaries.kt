@@ -15,9 +15,11 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.kmp.tor.binary.extract.annotation.InternalTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.extract.internal.PlatformConstants
 import kotlin.jvm.JvmStatic
 
+@InternalTorBinaryApi
 @Suppress("SpellCheckingInspection")
 actual object ConstantsBinaries {
     @JvmStatic
