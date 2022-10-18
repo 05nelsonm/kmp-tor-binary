@@ -106,6 +106,11 @@ Binaries for Java/NodeJS are **not** automatically imported with the
 [kmp-tor](https://github.com/05nelsonm/kmp-tor) dependency. You will need 
 to explicitly add the platform specific dependencies you wish to support, for example:
 
+<!-- TODO: Add
+    // MacOS aarch64
+    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosarm64:$vTor")
+-->
+
 ```kotlin
 // build.gradle.kts
 dependencies {
@@ -119,8 +124,6 @@ dependencies {
     implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx86:$vTor")
     // MacOS x86_64
     implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosx64:$vTor")
-    // MacOS aarch64
-    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosarm64:$vTor")
     // Windows x86_64
     implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-mingwx64:$vTor")
     // Windows i686
