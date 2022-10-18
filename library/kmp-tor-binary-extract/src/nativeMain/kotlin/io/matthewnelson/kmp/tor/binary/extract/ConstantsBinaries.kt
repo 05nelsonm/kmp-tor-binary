@@ -21,8 +21,8 @@ import io.matthewnelson.kmp.tor.binary.extract.annotation.InternalTorBinaryApi
 // TODO: Move to platform specific locations
 @Suppress("ObjectPropertyName", "SpellCheckingInspection")
 actual object ConstantsBinaries {
-    private const val _ARCHIVE_SHA256_VALUE_GEOIP = "2dce16ea6a5ae3e82c90a1b82bb5ff2eb2a91be98ec2ed539ad722c246752705"
-    private const val _ARCHIVE_FILE_NAME_GEOIP = "geoips.zip"
+    private const val _ARCHIVE_SHA256_VALUE_GEOIP = "d25e55d538b0628a17795ff45b94ff772f8e1bec2808f3dbc162c383a0cd0a41"
+    private const val _ARCHIVE_FILE_NAME_GEOIP = "geoips.tar.gz"
 
     actual val ARCHIVE_SHA256_VALUE_GEOIP: String get() = _ARCHIVE_SHA256_VALUE_GEOIP
     actual val ARCHIVE_MANIFEST_GEOIP: List<String> get() = listOf("geoip", "geoip6")

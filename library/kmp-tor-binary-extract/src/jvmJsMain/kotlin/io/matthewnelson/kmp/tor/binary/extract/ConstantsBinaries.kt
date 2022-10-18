@@ -33,15 +33,15 @@ actual object ConstantsBinaries {
     actual val ARCHIVE_SHA256_FILE_NAME_GEOIP: String get() = "$ARCHIVE_FILE_NAME_GEOIP.sha256sum"
 
     @JvmStatic
-    val ARCHIVE_SHA256_VALUE_LINUX_X64 get() = PlatformConstants.ARCHIVE_SHA256_LINUX_X64
+    val ARCHIVE_SHA256_VALUE_LINUX_X64 get() = PlatformConstants.ARCHIVE_SHA256_VALUE_LINUX_X64
     @JvmStatic
-    val ARCHIVE_SHA256_VALUE_LINUX_X86 get() = PlatformConstants.ARCHIVE_SHA256_LINUX_X86
+    val ARCHIVE_SHA256_VALUE_LINUX_X86 get() = PlatformConstants.ARCHIVE_SHA256_VALUE_LINUX_X86
     @JvmStatic
-    val ARCHIVE_SHA256_VALUE_MACOS_X64 get() = PlatformConstants.ARCHIVE_SHA256_MACOS_X64
+    val ARCHIVE_SHA256_VALUE_MACOS_X64 get() = PlatformConstants.ARCHIVE_SHA256_VALUE_MACOS_X64
     @JvmStatic
-    val ARCHIVE_SHA256_VALUE_MINGW_X64 get() = PlatformConstants.ARCHIVE_SHA256_MINGW_X64
+    val ARCHIVE_SHA256_VALUE_MINGW_X64 get() = PlatformConstants.ARCHIVE_SHA256_VALUE_MINGW_X64
     @JvmStatic
-    val ARCHIVE_SHA256_VALUE_MINGW_X86 get() = PlatformConstants.ARCHIVE_SHA256_MINGW_X86
+    val ARCHIVE_SHA256_VALUE_MINGW_X86 get() = PlatformConstants.ARCHIVE_SHA256_VALUE_MINGW_X86
 
     @JvmStatic
     val ARCHIVE_FILE_NAME_KMPTOR get() = PlatformConstants.ARCHIVE_FILE_NAME_KMPTOR
@@ -49,15 +49,15 @@ actual object ConstantsBinaries {
     val ARCHIVE_SHA256_FILE_NAME_KMPTOR get() = "$ARCHIVE_FILE_NAME_KMPTOR.sha256sum"
 
     @JvmStatic
-    val ARCHIVE_MANIFEST_LINUX_X64 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++/libstdc++.so.6", "tor")
+    val ARCHIVE_MANIFEST_LINUX_X64 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++.so.6", "tor")
     @JvmStatic
-    val ARCHIVE_MANIFEST_LINUX_X86 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++/libstdc++.so.6", "tor")
+    val ARCHIVE_MANIFEST_LINUX_X86 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++.so.6", "tor")
     @JvmStatic
     val ARCHIVE_MANIFEST_MACOS_X64 get() = listOf("libevent-2.1.7.dylib", "tor")
     @JvmStatic
-    val ARCHIVE_MANIFEST_MINGW_X64 get() = listOf("tor.exe")
+    val ARCHIVE_MANIFEST_MINGW_X64 get() = listOf("tor.exe", "tor-gencert.exe")
     @JvmStatic
-    val ARCHIVE_MANIFEST_MINGW_X86 get() = listOf("tor.exe")
+    val ARCHIVE_MANIFEST_MINGW_X86 get() = listOf("tor.exe", "tor-gencert.exe")
 
     @JvmStatic
     @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_GEOIP"))

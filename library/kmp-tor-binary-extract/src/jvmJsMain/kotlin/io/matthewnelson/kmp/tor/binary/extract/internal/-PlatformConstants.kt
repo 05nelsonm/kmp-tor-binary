@@ -20,10 +20,10 @@ internal expect object PlatformConstants {
     internal val ARCHIVE_SHA256_VALUE_GEOIP: String
     internal val ARCHIVE_FILE_NAME_GEOIP: String
 
-    internal val ARCHIVE_SHA256_LINUX_X64: String
-    internal val ARCHIVE_SHA256_LINUX_X86: String
-    internal val ARCHIVE_SHA256_MACOS_X64: String
-    internal val ARCHIVE_SHA256_MINGW_X64: String
-    internal val ARCHIVE_SHA256_MINGW_X86: String
+    internal val ARCHIVE_SHA256_VALUE_LINUX_X64: String
+    internal val ARCHIVE_SHA256_VALUE_LINUX_X86: String
+    internal val ARCHIVE_SHA256_VALUE_MACOS_X64: String
+    internal val ARCHIVE_SHA256_VALUE_MINGW_X64: String
+    internal val ARCHIVE_SHA256_VALUE_MINGW_X86: String
     internal val ARCHIVE_FILE_NAME_KMPTOR: String
 }
