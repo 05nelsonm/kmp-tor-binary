@@ -63,6 +63,7 @@ kmpConfiguration {
         commonTestSourceSet = {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(deps.components.encoding.base16)
                 implementation(project(":library:kmp-tor-binary-geoip"))
             }
         },
