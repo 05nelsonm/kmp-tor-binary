@@ -15,30 +15,94 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-@Suppress("ObjectPropertyName", "SpellCheckingInspection")
+import io.matthewnelson.kmp.tor.binary.extract.internal.PlatformConstants
+import kotlin.jvm.JvmStatic
+
+@Suppress("SpellCheckingInspection")
 actual object ConstantsBinaries {
-    private const val _ZIP_SHA256_GEOIP = "2dce16ea6a5ae3e82c90a1b82bb5ff2eb2a91be98ec2ed539ad722c246752705"
-    private const val _FILE_NAME_GEOIPS_ZIP = "geoips.zip"
-    private const val _FILE_NAME_GEOIPS_ZIP_SHA256 = "$_FILE_NAME_GEOIPS_ZIP.sha256sum"
+    @JvmStatic
+    actual val ARCHIVE_SHA256_VALUE_GEOIP: String get() = PlatformConstants.ARCHIVE_SHA256_VALUE_GEOIP
+    @JvmStatic
+    actual val ARCHIVE_MANIFEST_GEOIP: List<String> get() = listOf("geoip", "geoip6")
 
-    actual val ZIP_SHA256_GEOIP: String get() = _ZIP_SHA256_GEOIP
-    actual val ZIP_MANIFEST_GEOIP: List<String> get() = listOf("geoip", "geoip6")
+    @JvmStatic
+    actual val ARCHIVE_FILE_NAME_GEOIP: String get() = PlatformConstants.ARCHIVE_FILE_NAME_GEOIP
+    @JvmStatic
+    actual val ARCHIVE_SHA256_FILE_NAME_GEOIP: String get() = "$ARCHIVE_FILE_NAME_GEOIP.sha256sum"
 
-    actual val FILE_NAME_GEOIPS_ZIP: String get() = _FILE_NAME_GEOIPS_ZIP
-    actual val FILE_NAME_GEOIPS_ZIP_SHA256: String get() = _FILE_NAME_GEOIPS_ZIP_SHA256
+    @JvmStatic
+    val ARCHIVE_SHA256_VALUE_LINUX_X64 get() = PlatformConstants.ARCHIVE_SHA256_LINUX_X64
+    @JvmStatic
+    val ARCHIVE_SHA256_VALUE_LINUX_X86 get() = PlatformConstants.ARCHIVE_SHA256_LINUX_X86
+    @JvmStatic
+    val ARCHIVE_SHA256_VALUE_MACOS_X64 get() = PlatformConstants.ARCHIVE_SHA256_MACOS_X64
+    @JvmStatic
+    val ARCHIVE_SHA256_VALUE_MINGW_X64 get() = PlatformConstants.ARCHIVE_SHA256_MINGW_X64
+    @JvmStatic
+    val ARCHIVE_SHA256_VALUE_MINGW_X86 get() = PlatformConstants.ARCHIVE_SHA256_MINGW_X86
 
-    const val ZIP_SHA256_LINUX_X64 = "5003d1866d9718d6d2a3c523baf3d91d0a66abc3c75e4ad872ff6d8a879bc6e0"
-    const val ZIP_SHA256_LINUX_X86 = "18e1ec895bbb19a59b7ccb73266cafed8d852e19dfc8de0164ccac2642a410fa"
-    const val ZIP_SHA256_MACOS_X64 = "23b24fe40c4294b5dfadadca1d13a2950acc08feddbd97bf06cbe4603f64558d"
-    const val ZIP_SHA256_MINGW_X64 = "46e195b4e9bceafa5e0ffa4eace400368439b03af6e0718ac3cf265b5b2ac871"
-    const val ZIP_SHA256_MINGW_X86 = "dfa4f7c8aac4e50a5646606ac81b3e33b55380b2acb3d9db3dab2530d80249cd"
+    @JvmStatic
+    val ARCHIVE_FILE_NAME_KMPTOR get() = PlatformConstants.ARCHIVE_FILE_NAME_KMPTOR
+    @JvmStatic
+    val ARCHIVE_SHA256_FILE_NAME_KMPTOR get() = "$ARCHIVE_FILE_NAME_KMPTOR.sha256sum"
 
-    const val FILE_NAME_KMPTOR_ZIP = "kmptor.zip"
-    const val FILE_NAME_KMPTOR_ZIP_SHA256 = "$FILE_NAME_KMPTOR_ZIP.sha256sum"
+    @JvmStatic
+    val ARCHIVE_MANIFEST_LINUX_X64 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++/libstdc++.so.6", "tor")
+    @JvmStatic
+    val ARCHIVE_MANIFEST_LINUX_X86 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++/libstdc++.so.6", "tor")
+    @JvmStatic
+    val ARCHIVE_MANIFEST_MACOS_X64 get() = listOf("libevent-2.1.7.dylib", "tor")
+    @JvmStatic
+    val ARCHIVE_MANIFEST_MINGW_X64 get() = listOf("tor.exe")
+    @JvmStatic
+    val ARCHIVE_MANIFEST_MINGW_X86 get() = listOf("tor.exe")
 
-    val ZIP_MANIFEST_LINUX_X64 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++/libstdc++.so.6", "tor")
-    val ZIP_MANIFEST_LINUX_X86 get() = listOf("libcrypto.so.1.1", "libevent-2.1.so.7", "libssl.so.1.1", "libstdc++/libstdc++.so.6", "tor")
-    val ZIP_MANIFEST_MACOS_X64 get() = listOf("libevent-2.1.7.dylib", "tor")
-    val ZIP_MANIFEST_MINGW_X64 get() = listOf("tor.exe")
-    val ZIP_MANIFEST_MINGW_X86 get() = listOf("tor.exe")
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_GEOIP"))
+    actual val ZIP_SHA256_GEOIP: String get() = ARCHIVE_SHA256_VALUE_GEOIP
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_MANIFEST_GEOIP"))
+    actual val ZIP_MANIFEST_GEOIP: List<String> get() = ARCHIVE_MANIFEST_GEOIP
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_FILE_NAME_GEOIP"))
+    actual val FILE_NAME_GEOIPS_ZIP: String get() = ARCHIVE_FILE_NAME_GEOIP
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_FILE_NAME_GEOIP"))
+    actual val FILE_NAME_GEOIPS_ZIP_SHA256: String get() = ARCHIVE_SHA256_FILE_NAME_GEOIP
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_LINUX_X64"))
+    val ZIP_SHA256_LINUX_X64 get() = ARCHIVE_SHA256_VALUE_LINUX_X64
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_LINUX_X86"))
+    val ZIP_SHA256_LINUX_X86 get() = ARCHIVE_SHA256_VALUE_LINUX_X86
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_MACOS_X64"))
+    val ZIP_SHA256_MACOS_X64 get() = ARCHIVE_SHA256_VALUE_MACOS_X64
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_MINGW_X64"))
+    val ZIP_SHA256_MINGW_X64 get() = ARCHIVE_SHA256_VALUE_MINGW_X64
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_MINGW_X86"))
+    val ZIP_SHA256_MINGW_X86 get() = ARCHIVE_SHA256_VALUE_MINGW_X86
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_FILE_NAME_KMPTOR"))
+    val FILE_NAME_KMPTOR_ZIP get() = ARCHIVE_FILE_NAME_KMPTOR
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_FILE_NAME_KMPTOR"))
+    val FILE_NAME_KMPTOR_ZIP_SHA256 get() = ARCHIVE_SHA256_FILE_NAME_KMPTOR
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_MANIFEST_LINUX_X64"))
+    val ZIP_MANIFEST_LINUX_X64 get() = ARCHIVE_MANIFEST_LINUX_X64
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_MANIFEST_LINUX_X86"))
+    val ZIP_MANIFEST_LINUX_X86 get() = ARCHIVE_MANIFEST_LINUX_X86
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_MANIFEST_MACOS_X64"))
+    val ZIP_MANIFEST_MACOS_X64 get() = ARCHIVE_MANIFEST_MACOS_X64
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_MANIFEST_MINGW_X64"))
+    val ZIP_MANIFEST_MINGW_X64 get() = ARCHIVE_MANIFEST_MINGW_X64
+    @JvmStatic
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_MANIFEST_MINGW_X86"))
+    val ZIP_MANIFEST_MINGW_X86 get() = ARCHIVE_MANIFEST_MINGW_X86
 }

@@ -17,9 +17,18 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 @Suppress("SpellCheckingInspection")
 expect object ConstantsBinaries {
-    val ZIP_SHA256_GEOIP: String
-    val ZIP_MANIFEST_GEOIP: List<String>
+    val ARCHIVE_SHA256_VALUE_GEOIP: String
+    val ARCHIVE_MANIFEST_GEOIP: List<String>
 
-    val FILE_NAME_GEOIPS_ZIP: String
-    val FILE_NAME_GEOIPS_ZIP_SHA256: String
+    val ARCHIVE_FILE_NAME_GEOIP: String
+    val ARCHIVE_SHA256_FILE_NAME_GEOIP: String
+
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_GEOIP"))
+    actual val ZIP_SHA256_GEOIP: String
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_MANIFEST_GEOIP"))
+    actual val ZIP_MANIFEST_GEOIP: List<String>
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_FILE_NAME_GEOIP"))
+    actual val FILE_NAME_GEOIPS_ZIP: String
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_FILE_NAME_GEOIP"))
+    actual val FILE_NAME_GEOIPS_ZIP_SHA256: String
 }

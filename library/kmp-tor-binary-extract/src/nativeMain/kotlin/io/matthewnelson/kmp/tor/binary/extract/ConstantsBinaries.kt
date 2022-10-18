@@ -15,14 +15,25 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+
+// TODO: Move to platform specific locations
 @Suppress("ObjectPropertyName", "SpellCheckingInspection")
 actual object ConstantsBinaries {
-    private const val _ZIP_SHA256_GEOIP = "2dce16ea6a5ae3e82c90a1b82bb5ff2eb2a91be98ec2ed539ad722c246752705"
-    private const val _FILE_NAME_GEOIPS_ZIP = "geoips.zip"
-    private const val _FILE_NAME_GEOIPS_ZIP_SHA256 = "$_FILE_NAME_GEOIPS_ZIP.sha256sum"
+    private const val _ARCHIVE_SHA256_VALUE_GEOIP = "2dce16ea6a5ae3e82c90a1b82bb5ff2eb2a91be98ec2ed539ad722c246752705"
+    private const val _ARCHIVE_FILE_NAME_GEOIP = "geoips.zip"
 
-    actual val ZIP_SHA256_GEOIP: String get() = _ZIP_SHA256_GEOIP
-    actual val ZIP_MANIFEST_GEOIP: List<String> get() = listOf("geoip", "geoip6")
-    actual val FILE_NAME_GEOIPS_ZIP: String get() = _FILE_NAME_GEOIPS_ZIP
-    actual val FILE_NAME_GEOIPS_ZIP_SHA256: String get() = _FILE_NAME_GEOIPS_ZIP_SHA256
+    actual val ARCHIVE_SHA256_VALUE_GEOIP: String get() = _ARCHIVE_SHA256_VALUE_GEOIP
+    actual val ARCHIVE_MANIFEST_GEOIP: List<String> get() = listOf("geoip", "geoip6")
+
+    actual val ARCHIVE_FILE_NAME_GEOIP: String get() = _ARCHIVE_FILE_NAME_GEOIP
+    actual val ARCHIVE_SHA256_FILE_NAME_GEOIP: String get() = "$ARCHIVE_FILE_NAME_GEOIP.sha256sum"
+
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_VALUE_GEOIP"))
+    actual val ZIP_SHA256_GEOIP: String get() = ARCHIVE_SHA256_VALUE_GEOIP
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_MANIFEST_GEOIP"))
+    actual val ZIP_MANIFEST_GEOIP: List<String> get() = ARCHIVE_MANIFEST_GEOIP
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_FILE_NAME_GEOIP"))
+    actual val FILE_NAME_GEOIPS_ZIP: String get() = ARCHIVE_FILE_NAME_GEOIP
+    @Deprecated("Variable name changed", ReplaceWith("ARCHIVE_SHA256_FILE_NAME_GEOIP"))
+    actual val FILE_NAME_GEOIPS_ZIP_SHA256: String get() = ARCHIVE_SHA256_FILE_NAME_GEOIP
 }

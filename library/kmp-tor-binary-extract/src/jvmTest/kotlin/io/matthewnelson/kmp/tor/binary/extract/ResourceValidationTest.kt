@@ -17,13 +17,19 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 import org.junit.*
 import io.matthewnelson.component.encoding.base16.encodeBase16
-import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ZIP_SHA256_GEOIP
-import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ZIP_SHA256_LINUX_X64
-import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ZIP_SHA256_LINUX_X86
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_FILE_NAME_KMPTOR
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_MANIFEST_GEOIP
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_MANIFEST_LINUX_X64
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_MANIFEST_LINUX_X86
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_MANIFEST_MACOS_X64
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_MANIFEST_MINGW_X64
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_MANIFEST_MINGW_X86
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_SHA256_VALUE_GEOIP
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_SHA256_VALUE_LINUX_X64
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_SHA256_VALUE_LINUX_X86
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_SHA256_VALUE_MINGW_X64
+import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ARCHIVE_SHA256_VALUE_MINGW_X86
 import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ZIP_SHA256_MACOS_X64
-import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ZIP_SHA256_MINGW_X64
-import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.ZIP_SHA256_MINGW_X86
-import io.matthewnelson.kmp.tor.binary.extract.ConstantsBinaries.FILE_NAME_KMPTOR_ZIP
 import kotlin.test.assertEquals
 import java.io.File
 import java.security.MessageDigest
@@ -50,21 +56,21 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenLinuxX64_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryLinuxX64SrcDir,
-            "/jvmJsMain/resources/kmptor/linux/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/linux/x64/$ARCHIVE_FILE_NAME_KMPTOR"
         )
         val actual = sha256Sum(kmptorDotZip)
-        assertEquals(ZIP_SHA256_LINUX_X64, actual)
+        assertEquals(ARCHIVE_SHA256_VALUE_LINUX_X64, actual)
     }
 
     @Test
     fun givenBinaryResource_whenLinuxX64_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryLinuxX64SrcDir,
-            "/jvmJsMain/resources/kmptor/linux/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/linux/x64/$ARCHIVE_FILE_NAME_KMPTOR"
         )
 
         // filter out directories from the manifest
-        val expectedManifest = ConstantsBinaries.ZIP_MANIFEST_LINUX_X64.filter { !it.endsWith('/') }
+        val expectedManifest = ARCHIVE_MANIFEST_LINUX_X64.filter { !it.endsWith('/') }
         var entryCount = 0
 
         ZipArchiveExtractor.selective(
@@ -87,21 +93,21 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenLinuxX86_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryLinuxX86SrcDir,
-            "/jvmJsMain/resources/kmptor/linux/x86/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/linux/x86/$ARCHIVE_FILE_NAME_KMPTOR"
         )
         val actual = sha256Sum(kmptorDotZip)
-        assertEquals(ZIP_SHA256_LINUX_X86, actual)
+        assertEquals(ARCHIVE_SHA256_VALUE_LINUX_X86, actual)
     }
 
     @Test
     fun givenBinaryResource_whenLinuxX86_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryLinuxX86SrcDir,
-            "/jvmJsMain/resources/kmptor/linux/x86/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/linux/x86/$ARCHIVE_FILE_NAME_KMPTOR"
         )
 
         // filter out directories from the manifest
-        val expectedManifest = ConstantsBinaries.ZIP_MANIFEST_LINUX_X86.filter { !it.endsWith('/') }
+        val expectedManifest = ARCHIVE_MANIFEST_LINUX_X86.filter { !it.endsWith('/') }
         var entryCount = 0
 
         ZipArchiveExtractor.selective(
@@ -124,7 +130,7 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMacosX64_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryMacosX64SrcDir,
-            "/jvmJsMain/resources/kmptor/macos/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/macos/x64/$ARCHIVE_FILE_NAME_KMPTOR"
         )
         val actual = sha256Sum(kmptorDotZip)
         assertEquals(ZIP_SHA256_MACOS_X64, actual)
@@ -134,11 +140,11 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMacosX64_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryMacosX64SrcDir,
-            "/jvmJsMain/resources/kmptor/macos/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/macos/x64/$ARCHIVE_FILE_NAME_KMPTOR"
         )
 
         // filter out directories from the manifest
-        val expectedManifest = ConstantsBinaries.ZIP_MANIFEST_MACOS_X64.filter { !it.endsWith('/') }
+        val expectedManifest = ARCHIVE_MANIFEST_MACOS_X64.filter { !it.endsWith('/') }
         var entryCount = 0
 
         ZipArchiveExtractor.selective(
@@ -161,21 +167,21 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMingwX64_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryMingwX64SrcDir,
-            "/jvmJsMain/resources/kmptor/mingw/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/mingw/x64/$ARCHIVE_FILE_NAME_KMPTOR"
         )
         val actual = sha256Sum(kmptorDotZip)
-        assertEquals(ZIP_SHA256_MINGW_X64, actual)
+        assertEquals(ARCHIVE_SHA256_VALUE_MINGW_X64, actual)
     }
 
     @Test
     fun givenBinaryResource_whenMingwX64_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryMingwX64SrcDir,
-            "/jvmJsMain/resources/kmptor/mingw/x64/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/mingw/x64/$ARCHIVE_FILE_NAME_KMPTOR"
         )
 
         // filter out directories from the manifest
-        val expectedManifest = ConstantsBinaries.ZIP_MANIFEST_MINGW_X64.filter { !it.endsWith('/') }
+        val expectedManifest = ARCHIVE_MANIFEST_MINGW_X64.filter { !it.endsWith('/') }
         var entryCount = 0
 
         ZipArchiveExtractor.selective(
@@ -198,21 +204,21 @@ class ResourceValidationTest {
     fun givenBinaryResource_whenMingwX86_sha256SumMatchesConstants() {
         val kmptorDotZip = File(
             binaryMingwX86SrcDir,
-            "/jvmJsMain/resources/kmptor/mingw/x86/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/mingw/x86/$ARCHIVE_FILE_NAME_KMPTOR"
         )
         val actual = sha256Sum(kmptorDotZip)
-        assertEquals(ZIP_SHA256_MINGW_X86, actual)
+        assertEquals(ARCHIVE_SHA256_VALUE_MINGW_X86, actual)
     }
 
     @Test
     fun givenBinaryResource_whenMingwX86_extractedMatchesManifest() {
         val kmptorDotZip = File(
             binaryMingwX86SrcDir,
-            "/jvmJsMain/resources/kmptor/mingw/x86/$FILE_NAME_KMPTOR_ZIP"
+            "/jvmJsMain/resources/kmptor/mingw/x86/$ARCHIVE_FILE_NAME_KMPTOR"
         )
 
         // filter out directories from the manifest
-        val expectedManifest = ConstantsBinaries.ZIP_MANIFEST_MINGW_X86.filter { !it.endsWith('/') }
+        val expectedManifest = ARCHIVE_MANIFEST_MINGW_X86.filter { !it.endsWith('/') }
         var entryCount = 0
 
         ZipArchiveExtractor.selective(
@@ -238,7 +244,7 @@ class ResourceValidationTest {
             "/androidMain/assets/kmptor/geoips.zip"
         )
         val actual = sha256Sum(geoipsDotZip)
-        assertEquals(ZIP_SHA256_GEOIP, actual)
+        assertEquals(ARCHIVE_SHA256_VALUE_GEOIP, actual)
     }
 
     @Test
@@ -248,7 +254,7 @@ class ResourceValidationTest {
             "/jvmJsMain/resources/kmptor/geoips.zip"
         )
         val actual = sha256Sum(geoipsDotZip)
-        assertEquals(ZIP_SHA256_GEOIP, actual)
+        assertEquals(ARCHIVE_SHA256_VALUE_GEOIP, actual)
     }
 
     @Test
@@ -258,7 +264,7 @@ class ResourceValidationTest {
             "/nativeMain/resources/kmptor/geoips.zip"
         )
         val actual = sha256Sum(geoipsDotZip)
-        assertEquals(ZIP_SHA256_GEOIP, actual)
+        assertEquals(ARCHIVE_SHA256_VALUE_GEOIP, actual)
     }
 
     @Test
@@ -269,7 +275,7 @@ class ResourceValidationTest {
         )
 
         // filter out directories from the manifest
-        val expectedManifest = ConstantsBinaries.ZIP_MANIFEST_GEOIP.filter { !it.endsWith('/') }
+        val expectedManifest = ARCHIVE_MANIFEST_GEOIP.filter { !it.endsWith('/') }
         var entryCount = 0
 
         ZipArchiveExtractor.selective(
