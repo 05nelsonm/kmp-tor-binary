@@ -173,6 +173,12 @@ function buildDesktop() {
     CONST_KT_NAME="MACOS_X64"
     BINARY_DIR_SRC_SET="jvmJsMain"
     ./rbm/rbm build tor --target release --target torbrowser-osx-x86_64
+  elif [ "$1" == "osx-aarch64" ]; then
+    ARCH="arm64"
+    PLATFORM="macos"
+    CONST_KT_NAME="MACOS_ARM64"
+    BINARY_DIR_SRC_SET="jvmJsMain"
+    ./rbm/rbm build tor --target release --target torbrowser-osx-aarch64
   else
     echo "$1 is not a recognized target. Run script again w/o args to see help."
     EXIT_CODE=1
@@ -336,6 +342,7 @@ function help() {
   echo "                linux-i686"
   echo "                linux-x86_64"
   echo "                osx-x86_64"
+  echo "                osx-aarch64"
   echo "                windows-i686"
   echo "                windows-x86_64"
   echo ""
@@ -371,6 +378,10 @@ function buildDesktopAll() {
   checkExit
 
   buildDesktop "osx-x86_64"
+  sleep 1
+  checkExit
+
+  buildDesktop "osx-aarch64"
   sleep 1
   checkExit
 
@@ -416,6 +427,9 @@ case $1 in
     buildDesktop "$1"
     ;;
   "osx-x86_64")
+    buildDesktop "$1"
+    ;;
+  "osx-aarch64")
     buildDesktop "$1"
     ;;
   "windows-i686")
