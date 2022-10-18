@@ -14,6 +14,7 @@ if (CHECK_PUBLICATION != null) {
     include(":library:kmp-tor-binary-linuxx64")
     include(":library:kmp-tor-binary-linuxx86")
     include(":library:kmp-tor-binary-macosx64")
+    include(":library:kmp-tor-binary-macosarm64")
     include(":library:kmp-tor-binary-mingwx64")
     include(":library:kmp-tor-binary-mingwx86")
 }

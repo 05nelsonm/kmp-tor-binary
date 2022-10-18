@@ -74,6 +74,7 @@ kmpConfiguration {
                     implementation(project(":library:kmp-tor-binary-linuxx64"))
                     implementation(project(":library:kmp-tor-binary-linuxx86"))
                     implementation(project(":library:kmp-tor-binary-macosx64"))
+                    implementation(project(":library:kmp-tor-binary-macosarm64"))
                     implementation(project(":library:kmp-tor-binary-mingwx64"))
                     implementation(project(":library:kmp-tor-binary-mingwx86"))
                 }
