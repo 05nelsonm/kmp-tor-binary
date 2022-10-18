@@ -45,6 +45,7 @@ kmpConfiguration {
                         implementation("${pConfig.group}:kmp-tor-binary-linuxx64:${pConfig.versionName}")
                         implementation("${pConfig.group}:kmp-tor-binary-linuxx86:${pConfig.versionName}")
                         implementation("${pConfig.group}:kmp-tor-binary-macosx64:${pConfig.versionName}")
+                        implementation("${pConfig.group}:kmp-tor-binary-macosarm64:${pConfig.versionName}")
                         implementation("${pConfig.group}:kmp-tor-binary-mingwx64:${pConfig.versionName}")
                         implementation("${pConfig.group}:kmp-tor-binary-mingwx86:${pConfig.versionName}")
                     }
