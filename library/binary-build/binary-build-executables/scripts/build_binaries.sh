@@ -171,13 +171,13 @@ function buildDesktop() {
     ARCH="x64"
     PLATFORM="macos"
     CONST_KT_NAME="MACOS_X64"
-    BINARY_DIR_SRC_SET="jvmJsMain"
+    BINARY_DIR_SRC_SET="jvmMain"
     ./rbm/rbm build tor --target release --target torbrowser-osx-x86_64
   elif [ "$1" == "osx-aarch64" ]; then
     ARCH="arm64"
     PLATFORM="macos"
     CONST_KT_NAME="MACOS_ARM64"
-    BINARY_DIR_SRC_SET="jvmJsMain"
+    BINARY_DIR_SRC_SET="jvmMain"
     ./rbm/rbm build tor --target release --target torbrowser-osx-aarch64
   else
     echo "$1 is not a recognized target. Run script again w/o args to see help."
@@ -300,10 +300,10 @@ function buildDesktop() {
     GEOIP_MODULE_SRC_DIR="$DIR/../../../kmp-tor-binary-geoip/src"
 
     mkdir -p "$GEOIP_MODULE_SRC_DIR/androidMain/assets/kmptor/"
-    mkdir -p "$GEOIP_MODULE_SRC_DIR/jvmJsMain/resources/kmptor/"
+    mkdir -p "$GEOIP_MODULE_SRC_DIR/jvmMain/resources/kmptor/"
     mkdir -p "$GEOIP_MODULE_SRC_DIR/nativeMain/resources/kmptor/"
     cp -R . "$GEOIP_MODULE_SRC_DIR/androidMain/assets/kmptor/"
-    cp -R . "$GEOIP_MODULE_SRC_DIR/jvmJsMain/resources/kmptor/"
+    cp -R . "$GEOIP_MODULE_SRC_DIR/jvmMain/resources/kmptor/"
     cp -R . "$GEOIP_MODULE_SRC_DIR/nativeMain/resources/kmptor/"
 
     # Write sha256sum values
