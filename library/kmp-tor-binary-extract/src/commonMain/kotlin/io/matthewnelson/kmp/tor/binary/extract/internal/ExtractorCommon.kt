@@ -20,6 +20,10 @@ import io.matthewnelson.kmp.tor.binary.extract.*
 internal const val FILE_NAME_SHA256_SUFFIX = "_sha256.txt"
 internal const val FILE_NAME_SHA256_TOR = "tor$FILE_NAME_SHA256_SUFFIX"
 
+/**
+ * Platform-agnostic implementation for extracting [TorResource]es
+ * to desired locations.
+ * */
 abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
 
     protected abstract fun String.toFile(): F
@@ -172,6 +176,10 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
 
             throw ExtractionException("Failed to extract $resource to $destinationDir", e)
         }
+    }
+
+    protected open fun resourceNotFound(resource: String, t: Throwable): ExtractionException {
+        return ExtractionException("Resource not found: $resource", t)
     }
 
     /**

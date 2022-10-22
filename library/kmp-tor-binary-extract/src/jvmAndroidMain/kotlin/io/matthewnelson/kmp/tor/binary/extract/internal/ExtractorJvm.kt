@@ -21,6 +21,11 @@ import java.io.FileOutputStream
 import java.io.InputStream
 import java.util.zip.GZIPInputStream
 
+/**
+ * Base abstraction for Jvm/Android
+ *
+ * @see [ExtractorCommon]
+ * */
 abstract class ExtractorJvm internal constructor(): ExtractorCommon<File, InputStream>() {
 
     final override fun String.toFile(): File = File(this)
@@ -37,9 +42,7 @@ abstract class ExtractorJvm internal constructor(): ExtractorCommon<File, InputS
     final override fun gunzip(stream: InputStream): InputStream = GZIPInputStream(stream)
 
     final override fun readText(file: File): String = file.readText()
-    final override fun writeText(file: File, text: String) {
-        file.writeText(text)
-    }
+    final override fun writeText(file: File, text: String) { file.writeText(text) }
 
     final override fun File.write(stream: InputStream) {
         stream.use { iStream ->
@@ -57,13 +60,17 @@ abstract class ExtractorJvm internal constructor(): ExtractorCommon<File, InputS
                 throw ExtractionException("Failed to create file $this")
             }
 
-            FileOutputStream(this).use { oStream ->
-                val buffer = ByteArray(4096)
-                while (true) {
-                    val read = iStream.read(buffer)
-                    if (read == -1) break
-                    oStream.write(buffer, 0, read)
+            try {
+                FileOutputStream(this).use { oStream ->
+                    val buffer = ByteArray(4096)
+                    while (true) {
+                        val read = iStream.read(buffer)
+                        if (read == -1) break
+                        oStream.write(buffer, 0, read)
+                    }
                 }
+            } catch (t: Throwable) {
+                throw ExtractionException("Failed to write data to $this", t)
             }
         }
     }

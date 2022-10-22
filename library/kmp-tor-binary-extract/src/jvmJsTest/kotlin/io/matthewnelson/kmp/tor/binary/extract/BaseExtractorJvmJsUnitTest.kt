@@ -15,6 +15,42 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import kotlin.test.Test
+
 abstract class BaseExtractorJvmJsUnitTest: BaseExtractorUnitTest() {
 
+    @Test
+    fun givenExtractor_whenExtractLinuxX64Resource_thenIsSuccessful() {
+        assertBinaryResourceExtractionIsSuccessful(TorResourceLinuxX64)
+    }
+
+    @Test
+    fun givenExtractor_whenExtractLinuxX86Resource_thenIsSuccessful() {
+        assertBinaryResourceExtractionIsSuccessful(TorResourceLinuxX86)
+    }
+
+    @Test
+    fun givenExtractor_whenExtractMacosX64Resource_thenIsSuccessful() {
+        assertBinaryResourceExtractionIsSuccessful(TorResourceMacosX64)
+    }
+
+    @Test
+    fun givenExtractor_whenExtractMacosArm64Resource_thenIsSuccessful() {
+        assertBinaryResourceExtractionIsSuccessful(TorResourceMacosArm64)
+    }
+
+    @Test
+    fun givenExtractor_whenExtractMingwX64Resource_thenIsSuccessful() {
+        assertBinaryResourceExtractionIsSuccessful(TorResourceMingwX64)
+    }
+
+    @Test
+    fun givenExtractor_whenExtractMingwX86Resource_thenIsSuccessful() {
+        assertBinaryResourceExtractionIsSuccessful(TorResourceMingwX86)
+    }
+
+    @Test
+    fun givenBinaryFileExists_whenCleanExtractionFalse_thenNotExtracted() {
+        assertBinaryResourceCleanExtractionFalseNotExtracted(TorResourceLinuxX64)
+    }
 }

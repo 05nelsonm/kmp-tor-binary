@@ -44,6 +44,7 @@ expect class Extractor {
      *
      * @param [destinationDir] The directory to write files to
      * @param [cleanExtraction] Performs a clean extraction of all files for the [resource]
+     *   by deleting the [destinationDir], and re-extracting.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)

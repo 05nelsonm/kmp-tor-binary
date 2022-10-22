@@ -15,9 +15,13 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorCommon
+
 /**
  * Extracts [TorResource]es to their desired
  * locations.
+ *
+ * @see [ExtractorCommon]
  * */
 actual class Extractor {
 
@@ -26,6 +30,7 @@ actual class Extractor {
      *
      * @param [destination] The file to write to
      * @param [cleanExtraction] Perform a clean extraction of the [resource]
+     *   by deleting the old file, and re-extracting the file.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
@@ -45,6 +50,7 @@ actual class Extractor {
      *
      * @param [destinationDir] The directory to write files to
      * @param [cleanExtraction] Performs a clean extraction of all files for the [resource]
+     *   by deleting the [destinationDir], and re-extracting all files.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)

@@ -20,6 +20,8 @@ import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorJvm
 /**
  * Extracts [TorResource]es to their desired
  * locations.
+ *
+ * @see [ExtractorJvm]
  * */
 actual class Extractor: ExtractorJvm() {
 
@@ -28,6 +30,7 @@ actual class Extractor: ExtractorJvm() {
      *
      * @param [destination] The file to write to
      * @param [cleanExtraction] Perform a clean extraction of the [resource]
+     *   by deleting the old file, and re-extracting the file.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
@@ -37,7 +40,11 @@ actual class Extractor: ExtractorJvm() {
         cleanExtraction: Boolean
     ) {
         extract(resource, destination, cleanExtraction) { resourcePath ->
-            javaClass.getResourceAsStream("/$resourcePath")!!
+            try {
+                javaClass.getResourceAsStream("/$resourcePath")!!
+            } catch (t: Throwable) {
+                throw ExtractionException("Resource not found: $resourcePath", t)
+            }
         }
     }
 
@@ -48,6 +55,7 @@ actual class Extractor: ExtractorJvm() {
      *
      * @param [destinationDir] The directory to write files to
      * @param [cleanExtraction] Performs a clean extraction of all files for the [resource]
+     *   by deleting the [destinationDir], and re-extracting all files.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
@@ -57,7 +65,11 @@ actual class Extractor: ExtractorJvm() {
         cleanExtraction: Boolean,
     ): TorFilePath {
         return extract(resource, destinationDir, cleanExtraction) { resourcePath ->
-            javaClass.getResourceAsStream("/$resourcePath")!!
+            try {
+                javaClass.getResourceAsStream("/$resourcePath")!!
+            } catch (t: Throwable) {
+                throw ExtractionException("Resource not found: $resourcePath", t)
+            }
         }
     }
 }
