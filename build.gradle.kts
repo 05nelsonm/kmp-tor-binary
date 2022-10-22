@@ -70,11 +70,11 @@ plugins {
 
 kmpPublish {
     setupRootProject(
-        versionName = "4.7.11-1",
+        versionName = "4.7.10-1",
         //     4.6.9-0 == 00_04_06_09_00
         //     4.6.9-1 == 00_04_06_09_01
         //     4.6.9-2 == 00_04_06_09_02
-        versionCode = /*00_0*/4_07_11_01,
+        versionCode = /*00_0*/4_07_10_01,
         pomInceptionYear = 2021,
     )
 }
