@@ -28,9 +28,11 @@ abstract class BaseExtractorUnitTest {
     protected abstract val tmpDir: String
     protected val tmpBinaryDir: String get() = "$tmpDir${fsSeparator}.kmptor"
 
-    abstract fun fileExists(path: String): Boolean
-    abstract fun fileSize(path: String): Long
-    abstract fun fileLastModified(path: String): Long
+    protected abstract fun fileExists(path: String): Boolean
+    protected abstract fun fileSize(path: String): Long
+    protected abstract fun fileLastModified(path: String): Long
+    protected abstract fun fileSha256Sum(path: String): String
+    protected abstract fun sha256Sum(bytes: ByteArray): String
 
     @AfterTest
     open fun deleteTestDir() {
@@ -58,10 +60,17 @@ abstract class BaseExtractorUnitTest {
 
         val paths = resource.resourceManifest.mapManifestToDestination(testDir) { _, _ -> }
 
+        val sha256SumActual = StringBuilder()
+
         paths.forEach { path ->
             assertTrue(fileExists(path))
             assertTrue(fileSize(path) > 0)
+
+            sha256SumActual.append(fileSha256Sum(path))
+            sha256SumActual.appendLine()
         }
+
+        assertEquals(resource.sha256sum, sha256Sum(sha256SumActual.toString().encodeToByteArray()))
 
         val sha256Path = testDir + fsSeparator + FILE_NAME_SHA256_TOR
         assertTrue(fileExists(sha256Path))

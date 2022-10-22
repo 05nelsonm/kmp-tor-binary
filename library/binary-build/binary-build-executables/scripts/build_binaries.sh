@@ -191,20 +191,20 @@ function buildDesktop() {
   TOR_RESOURCE_COMMON_KT="$DIR/../../../kmp-tor-binary-extract/src/commonMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
 
   if ! checkFileExists "$TOR_RESOURCE_JVMJS_KT"; then
-    echo "ERROR: Something went wrong... ConstantsBinaries.kt file for jvm/js does not exist"
+    echo "ERROR: Something went wrong... TorResource.kt file for jvmJsMain does not exist"
     EXIT_CODE=1
     return 1
   fi
 
   if ! checkFileExists "$TOR_RESOURCE_COMMON_KT"; then
-    echo "ERROR: Something went wrong... ConstantsGeoip.kt file does not exist"
+    echo "ERROR: Something went wrong... TorResource.kt file for commonMain does not exist"
     EXIT_CODE=1
     return 1
   fi
 
   if [ "$TOR_RESOURCE_NATIVE_KT" != "" ]; then
     if ! checkFileExists "$TOR_RESOURCE_NATIVE_KT"; then
-      echo "ERROR: Something went wrong... ConstantsBinaries.kt file for native does not exist"
+      echo "ERROR: Something went wrong... TorResource.kt file for native does not exist"
       EXIT_CODE=1
       return 1
     fi
@@ -221,10 +221,6 @@ function buildDesktop() {
     break
   done
 
-  # Compress everything
-  gzip -rn "tor"
-  gzip -rn "data"
-
   # Get manifest of tor files
   local MANIFEST_TOR=
   changeDir "$TOR_OUT_DIR/tor"
@@ -237,6 +233,9 @@ function buildDesktop() {
   # value of that string.
   local SHA256SUM_TOR=
   SHA256SUM_TOR=$(sha256sum $MANIFEST_TOR | cut -d ' ' -f 1 | sha256sum | cut -d ' ' -f 1)
+
+  # Compress files
+  gzip -rn "$TOR_OUT_DIR/tor"
 
   # Copy files
   local BINARY_DIR=
@@ -254,9 +253,9 @@ function buildDesktop() {
     STRIPPED=$(echo "${LINE:2}")
 
     if [ "$MANIFEST_STRING_TOR" == "" ]; then
-      MANIFEST_STRING_TOR="\"$STRIPPED\""
+      MANIFEST_STRING_TOR="\"$STRIPPED.gz\""
     else
-      MANIFEST_STRING_TOR="$MANIFEST_STRING_TOR, \"$STRIPPED\""
+      MANIFEST_STRING_TOR="$MANIFEST_STRING_TOR, \"$STRIPPED.gz\""
     fi
   done
 
@@ -277,6 +276,15 @@ function buildDesktop() {
 
     changeDir "$TOR_OUT_DIR/data"
 
+    # Get sha256sum for geoip files
+    local SHA256SUM_GEOIP=
+    local SHA256SUM_GEOIP6=
+    SHA256SUM_GEOIP=$(sha256sum "geoip" | cut -d ' ' -f 1)
+    SHA256SUM_GEOIP6=$(sha256sum "geoip6" | cut -d ' ' -f 1)
+
+    # Compress files
+    gzip -rn "$TOR_OUT_DIR/data"
+
     if ! checkFileExists "geoip.gz"; then
       echo "ERROR: Something went wrong... geoip file does not exist"
       EXIT_CODE=1
@@ -288,12 +296,6 @@ function buildDesktop() {
       EXIT_CODE=1
       return 1
     fi
-
-    # Get sha256sum for geoip files
-    local SHA256SUM_GEOIP=
-    local SHA256SUM_GEOIP6=
-    SHA256SUM_GEOIP=$(sha256sum "geoip.gz" | cut -d ' ' -f 1)
-    SHA256SUM_GEOIP6=$(sha256sum "geoip6.gz" | cut -d ' ' -f 1)
 
     # Copy files
     local GEOIP_MODULE_SRC_DIR=

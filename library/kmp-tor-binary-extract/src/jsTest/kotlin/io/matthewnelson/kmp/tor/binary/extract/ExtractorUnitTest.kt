@@ -15,20 +15,39 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import okio.ByteString.Companion.toByteString
 import okio.NodeJsFileSystem
+import okio.Path
 import okio.Path.Companion.toPath
+import kotlin.test.Test
 
 actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override val extractor: Extractor = Extractor()
     override val fsSeparator: Char get() = ((path?.sep) as? String ?: "/").first()
-    override val tmpDir: String by lazy { (os?.tmpdir() as? String ?: "/tmp") + fsSeparator + "tmp.kmp_tor_binary.js" }
+    private val _tmpDir: Path by lazy {
+        val path = ((os?.tmpdir() as? String ?: "/tmp") + fsSeparator + "tmp.kmp_tor_binary.js").toPath()
+        NodeJsFileSystem.deleteRecursively(path)
+        try {
+            NodeJsFileSystem.createDirectories(path, mustCreate = true)
+        } catch (t: Throwable) {
+            t.printStackTrace()
+        }
+        path
+    }
+    override val tmpDir: String get() = _tmpDir.toString()
 
     override fun fileExists(path: String): Boolean = NodeJsFileSystem.exists(path.toPath())
     override fun fileSize(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).size!!
     override fun fileLastModified(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).lastModifiedAtMillis!!
+    override fun fileSha256Sum(path: String): String = NodeJsFileSystem.read(path.toPath()) { sha256Sum(readByteArray()) }
+    override fun sha256Sum(bytes: ByteArray): String = bytes.toByteString().sha256().toString()
 
     override fun deleteTestDir() {
-        fs?.rm(tmpDir, recursive = true, force = true)
+        println(tmpDir)
+        NodeJsFileSystem.deleteRecursively(_tmpDir)
     }
+
+    @Test
+    fun stub() {}
 }

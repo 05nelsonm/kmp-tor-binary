@@ -15,7 +15,9 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.component.encoding.base16.encodeBase16
 import java.io.File
+import java.security.MessageDigest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -32,6 +34,14 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
     override fun fileExists(path: String): Boolean = File(path).exists()
     override fun fileSize(path: String): Long = File(path).length()
     override fun fileLastModified(path: String): Long = File(path).lastModified()
+    override fun fileSha256Sum(path: String): String = sha256Sum(File(path).readBytes())
+
+    override fun sha256Sum(bytes: ByteArray): String {
+        val digest = MessageDigest.getInstance("SHA-256")
+        digest.reset()
+        digest.update(bytes, 0, bytes.size)
+        return digest.digest().encodeBase16().lowercase()
+    }
 
     override fun deleteTestDir() {
         _tmpDir.walkBottomUp().iterator().forEach { file ->
@@ -59,6 +69,7 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
         assertTrue(fileSize(destination) > 0)
         assertTrue(fileExists(destination + FILE_NAME_SHA256_SUFFIX))
         assertTrue(fileSize(destination + FILE_NAME_SHA256_SUFFIX) > 0)
+        assertEquals(TorResourceGeoip.sha256sum, fileSha256Sum(destination))
     }
 
     // TODO: Move to commonTest.BaseExtractorUnitTest
@@ -78,6 +89,7 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
         assertTrue(fileSize(destination) > 0)
         assertTrue(fileExists(destination + FILE_NAME_SHA256_SUFFIX))
         assertTrue(fileSize(destination + FILE_NAME_SHA256_SUFFIX) > 0)
+        assertEquals(TorResourceGeoip6.sha256sum, fileSha256Sum(destination))
     }
 
     // TODO: Move to commonTest.BaseExtractorUnitTest
