@@ -92,6 +92,8 @@ actual class Extractor: ExtractorCommon<String, Any>() {
 
 
     override fun String.toFile(): String = this
+    override fun String.normalize(): String = normalize(this)
+    override val fsSeparator: Char get() = try { sep.first() } catch (_: Throwable) { '/' }
     override fun isFile(file: String): Boolean = lstatSync(file).isFile()
     override fun isDirectory(file: String): Boolean = lstatSync(file).isDirectory()
     override fun nameWithoutExtension(file: String): String = file.substringAfterLast(sep).substringBeforeLast('.')

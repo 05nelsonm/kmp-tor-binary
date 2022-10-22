@@ -27,6 +27,8 @@ internal const val FILE_NAME_SHA256_TOR = "tor$FILE_NAME_SHA256_SUFFIX"
 abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
 
     protected abstract fun String.toFile(): F
+    protected abstract fun String.normalize(): String
+    protected open val fsSeparator: Char get() = '/'
     protected abstract fun isFile(file: F): Boolean
     protected abstract fun isDirectory(file: F): Boolean
     protected abstract fun nameWithoutExtension(file: F): String
@@ -52,14 +54,15 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
         provideStream: (resourcePath: String) -> S,
     ) {
         try {
-            val destinationFile = destination.toFile()
+            val destinationNormalized = destination.normalize()
+            val destinationFile = destinationNormalized.toFile()
 
             if (exists(destinationFile) && isDirectory(destinationFile)) {
                 throw ExtractionException("destination for ${resource.resourcePath} extraction cannot be a directory")
             }
 
             val sha256SumValue = resource.sha256sum
-            val sha256SumFile = "$destination$FILE_NAME_SHA256_SUFFIX".toFile()
+            val sha256SumFile = "$destinationNormalized$FILE_NAME_SHA256_SUFFIX".toFile()
             val isSha256SumValid = checkSha256SumFile(sha256SumFile, sha256SumValue)
 
             if (!cleanExtraction && exists(destinationFile) && isSha256SumValid) {
@@ -104,10 +107,15 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
         cleanExtraction: Boolean,
         provideStream: (resourcePath: String) -> S
     ): TorFilePath {
+        val destinationDirNormalized = try {
+            destinationDir.normalize()
+        } catch (t: Throwable) {
+            throw ExtractionException("Failed to normalize destinationDir: $destinationDir")
+        }
+
         val manifest = resource.resourceManifest
-        val sha256SumFile = "$destinationDir/$FILE_NAME_SHA256_TOR".toFile()
-        val filesWritten = ArrayList<F>(manifest.size + 1).apply { add(sha256SumFile) }
-        val extractionToDir = destinationDir.toFile()
+        val filesWritten = ArrayList<F>(manifest.size + 1)
+        val extractionToDir = destinationDirNormalized.toFile()
 
         try {
             if (exists(extractionToDir)) {
@@ -126,6 +134,9 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
                 }
             }
 
+            val sha256SumFile = "$destinationDirNormalized$fsSeparator$FILE_NAME_SHA256_TOR".normalize().toFile()
+            filesWritten.add(sha256SumFile)
+
             val sha256SumValue = resource.sha256sum
             val isSha256SumValid = checkSha256SumFile(sha256SumFile, sha256SumValue)
 
@@ -135,7 +146,7 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
 
             var torFile: F? = null
 
-            manifest.mapManifestToDestination(destinationDir) { manifestItem, destination ->
+            manifest.mapManifestToDestination(destinationDirNormalized) { manifestItem, destination ->
                 val writeTo = destination.toFile()
                 extractResourceTo.add(Pair("$resourceDirPath/$manifestItem", writeTo))
 

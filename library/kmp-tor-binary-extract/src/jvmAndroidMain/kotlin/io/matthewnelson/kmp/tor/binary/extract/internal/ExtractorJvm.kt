@@ -29,6 +29,8 @@ import java.util.zip.GZIPInputStream
 abstract class ExtractorJvm internal constructor(): ExtractorCommon<File, InputStream>() {
 
     final override fun String.toFile(): File = File(this)
+    final override fun String.normalize(): String = File(this).normalize().path
+    final override val fsSeparator: Char get() = File.separatorChar
     final override fun isFile(file: File): Boolean = file.isFile
     final override fun isDirectory(file: File): Boolean = file.isDirectory
     final override fun nameWithoutExtension(file: File): String = file.nameWithoutExtension

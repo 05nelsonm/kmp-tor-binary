@@ -18,3 +18,5 @@
 package io.matthewnelson.kmp.tor.binary.extract.internal
 
 internal external val sep: String
+
+internal external fun normalize(path: String): String
