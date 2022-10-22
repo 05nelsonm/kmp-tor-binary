@@ -15,13 +15,13 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorCommon
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegate
 
 /**
  * Extracts [TorResource]es to their desired
  * locations.
  *
- * @see [ExtractorCommon]
+ * @see [ExtractorDelegate]
  * */
 actual class Extractor {
 

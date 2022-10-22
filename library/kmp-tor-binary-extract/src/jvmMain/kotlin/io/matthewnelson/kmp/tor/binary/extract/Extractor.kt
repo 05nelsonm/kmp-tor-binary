@@ -15,15 +15,15 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorJvm
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndroid
 
 /**
  * Extracts [TorResource]es to their desired
  * locations.
- *
- * @see [ExtractorJvm]
  * */
-actual class Extractor: ExtractorJvm() {
+actual class Extractor {
+
+    private val delegate = ExtractorDelegateJvmAndroid()
 
     /**
      * Extracts geoip files.
@@ -39,11 +39,11 @@ actual class Extractor: ExtractorJvm() {
         destination: String,
         cleanExtraction: Boolean
     ) {
-        extract(resource, destination, cleanExtraction) { resourcePath ->
+        delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
             try {
                 javaClass.getResourceAsStream("/$resourcePath")!!
             } catch (t: Throwable) {
-                throw ExtractionException("Resource not found: $resourcePath", t)
+                throw delegate.resourceNotFound(resourcePath, t)
             }
         }
     }
@@ -64,11 +64,11 @@ actual class Extractor: ExtractorJvm() {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        return extract(resource, destinationDir, cleanExtraction) { resourcePath ->
+        return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
             try {
                 javaClass.getResourceAsStream("/$resourcePath")!!
             } catch (t: Throwable) {
-                throw ExtractionException("Resource not found: $resourcePath", t)
+                throw delegate.resourceNotFound(resourcePath, t)
             }
         }
     }

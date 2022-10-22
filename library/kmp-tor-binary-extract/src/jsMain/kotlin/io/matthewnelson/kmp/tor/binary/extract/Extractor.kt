@@ -15,19 +15,17 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-import io.matthewnelson.kmp.tor.binary.extract.internal.*
-import io.matthewnelson.kmp.tor.binary.extract.internal.existsSync
-import io.matthewnelson.kmp.tor.binary.extract.internal.lstatSync
-import io.matthewnelson.kmp.tor.binary.extract.internal.realpathSync
-import io.matthewnelson.kmp.tor.binary.extract.internal.sep
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJs
+import io.matthewnelson.kmp.tor.binary.extract.internal.readFileSync
+
 
 /**
  * Extracts [TorResource]es to their desired
  * locations.
- *
- * @see [ExtractorCommon]
  * */
-actual class Extractor: ExtractorCommon<String, Any>() {
+actual class Extractor {
+
+    private val delegate = ExtractorDelegateJs()
 
     /**
      * Extracts geoip files.
@@ -42,13 +40,13 @@ actual class Extractor: ExtractorCommon<String, Any>() {
         destination: String,
         cleanExtraction: Boolean
     ) {
-        extract(resource, destination, cleanExtraction) { resourcePath ->
+        delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
             val modulePath = "kmp-tor-binary-geoip/$resourcePath"
 
             val resolvedPath = try {
                 resolveResource(modulePath)
             } catch (t: Throwable) {
-                throw resourceNotFound(modulePath, t)
+                throw delegate.resourceNotFound(modulePath, t)
             }
 
             readFileSync(resolvedPath)
@@ -70,7 +68,7 @@ actual class Extractor: ExtractorCommon<String, Any>() {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        return extract(resource, destinationDir, cleanExtraction) { resourcePath ->
+        return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
             val modulePath = when (resource) {
                 is TorResourceLinuxX64 -> "kmp-tor-binary-linuxx64"
                 is TorResourceLinuxX86 -> "kmp-tor-binary-linuxx86"
@@ -83,72 +81,10 @@ actual class Extractor: ExtractorCommon<String, Any>() {
             val resolvedPath = try {
                 resolveResource(modulePath)
             } catch (t: Throwable) {
-                throw resourceNotFound(modulePath, t)
+                throw delegate.resourceNotFound(modulePath, t)
             }
 
             readFileSync(resolvedPath)
-        }
-    }
-
-
-    override fun String.toFile(): String = this
-    override fun String.normalize(): String = normalize(this)
-    override val fsSeparator: Char get() = try { sep.first() } catch (_: Throwable) { '/' }
-    override fun isFile(file: String): Boolean = lstatSync(file).isFile()
-    override fun isDirectory(file: String): Boolean = lstatSync(file).isDirectory()
-    override fun nameWithoutExtension(file: String): String = file.substringAfterLast(sep).substringBeforeLast('.')
-    override fun canonicalPath(file: String?): String? = file?.let { realpathSync(it) }
-    override fun exists(file: String): Boolean = existsSync(file)
-
-    override fun deleteFile(file: String): Boolean {
-        try {
-            rmSync(file, OptionForce().apply {
-                force = true
-            })
-        } catch (_: Throwable) {}
-
-        return exists(file)
-    }
-
-    override fun deleteDirectory(file: String): Boolean {
-        try {
-            rmdirSync(file, OptionRecursive().apply {
-                recursive = true
-            })
-        } catch (_: Throwable) {}
-
-        return exists(file)
-    }
-
-    override fun mkdirs(file: String): Boolean {
-        try {
-            mkdirSync(file)
-        } catch (_: Throwable) {}
-
-        return exists(file) && isDirectory(file)
-    }
-
-    override fun gunzip(stream: Any): Any { return gunzipSync(stream) }
-
-    override fun readText(file: String): String = readFileSync(file, OptionEncoding().apply { encoding = "utf8" }) as String
-    override fun writeText(file: String, text: String) { writeFileSync(file, text) }
-
-    override fun String.write(stream: Any) {
-        val parentDir = substringBeforeLast(sep)
-        if (parentDir != this) {
-            if (!exists(parentDir) && !mkdirs(parentDir)) {
-                throw ExtractionException("Failed to create directory $parentDir")
-            }
-        }
-
-        if (exists(this) && !deleteFile(this)) {
-            throw ExtractionException("Failed to delete file $this before overwriting it.")
-        }
-
-        try {
-            writeFileSync(this, stream)
-        } catch (t: Throwable) {
-            throw ExtractionException("Failed to write data to $this", t)
         }
     }
 

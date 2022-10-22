@@ -24,9 +24,9 @@ import java.util.zip.GZIPInputStream
 /**
  * Base abstraction for Jvm/Android
  *
- * @see [ExtractorCommon]
+ * @see [ExtractorDelegate]
  * */
-abstract class ExtractorJvm internal constructor(): ExtractorCommon<File, InputStream>() {
+internal open class ExtractorDelegateJvmAndroid: ExtractorDelegate<File, InputStream>() {
 
     final override fun String.toFile(): File = File(this)
     final override fun String.normalize(): String = File(this).normalize().path

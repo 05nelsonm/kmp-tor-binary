@@ -16,17 +16,22 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import android.content.Context
-import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorJvm
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndroid
 
 /**
  * Extracts [TorResource]es to their desired
  * locations.
  *
- * @see [ExtractorJvm]
+ * @see [ExtractorDelegateJvmAndroid]
  * */
-actual class Extractor(context: Context): ExtractorJvm() {
+actual class Extractor(context: Context) {
 
     private val appContext = context.applicationContext
+    private val delegate = object : ExtractorDelegateJvmAndroid() {
+        override fun resourceNotFound(resource: String, t: Throwable): ExtractionException {
+            return ExtractionException("Asset not found: $resource", t)
+        }
+    }
 
     /**
      * Extracts geoip files.
@@ -42,11 +47,11 @@ actual class Extractor(context: Context): ExtractorJvm() {
         destination: String,
         cleanExtraction: Boolean,
     ) {
-        extract(resource, destination, cleanExtraction) { resourcePath ->
+        delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
             try {
                 appContext.assets.open(resourcePath)
             } catch (t: Throwable) {
-                throw resourceNotFound(resourcePath, t)
+                throw delegate.resourceNotFound(resourcePath, t)
             }
         }
     }
@@ -67,18 +72,12 @@ actual class Extractor(context: Context): ExtractorJvm() {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        return extract(
-            resource, destinationDir, cleanExtraction
-        ) { resourcePath ->
+        return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
             try {
                 appContext.assets.open(resourcePath)
             } catch (t: Throwable) {
-                throw resourceNotFound(resourcePath, t)
+                throw delegate.resourceNotFound(resourcePath, t)
             }
         }
-    }
-
-    override fun resourceNotFound(resource: String, t: Throwable): ExtractionException {
-        return ExtractionException("Asset not found: $resource", t)
     }
 }

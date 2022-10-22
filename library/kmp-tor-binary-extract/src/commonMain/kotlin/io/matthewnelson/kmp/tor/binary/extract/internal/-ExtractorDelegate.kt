@@ -24,7 +24,7 @@ internal const val FILE_NAME_SHA256_TOR = "tor$FILE_NAME_SHA256_SUFFIX"
  * Platform-agnostic implementation for extracting [TorResource]es
  * to desired locations.
  * */
-abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
+internal abstract class ExtractorDelegate <F: Any, S: Any> {
 
     protected abstract fun String.toFile(): F
     protected abstract fun String.normalize(): String
@@ -47,7 +47,7 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
     protected abstract fun F.write(stream: S)
 
     @Throws(ExtractionException::class)
-    protected fun extract(
+    internal fun extract(
         resource: TorResource.Geoips,
         destination: String,
         cleanExtraction: Boolean,
@@ -101,7 +101,7 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
     }
 
     @Throws(ExtractionException::class)
-    protected fun extract(
+    internal fun extract(
         resource: TorResource.Binaries,
         destinationDir: String,
         cleanExtraction: Boolean,
@@ -191,7 +191,7 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
         }
     }
 
-    protected open fun resourceNotFound(resource: String, t: Throwable): ExtractionException {
+    internal open fun resourceNotFound(resource: String, t: Throwable): ExtractionException {
         return ExtractionException("Resource not found: $resource", t)
     }
 
