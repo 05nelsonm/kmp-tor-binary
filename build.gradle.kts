@@ -33,6 +33,7 @@ buildscript {
         classpath(io.matthewnelson.kotlin.components.dependencies.plugins.android.gradle)
         classpath(io.matthewnelson.kotlin.components.dependencies.plugins.kotlin.gradle)
         classpath(io.matthewnelson.kotlin.components.dependencies.plugins.mavenPublish)
+        classpath(io.matthewnelson.kotlin.components.dependencies.plugins.npmPublish)
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle.kts files
@@ -69,11 +70,11 @@ plugins {
 
 kmpPublish {
     setupRootProject(
-        versionName = "0.4.7.11",
-        //    0.4.6.9  == 00_04_06_09_00
-        //    0.4.6.9a == 00_04_06_09_01
-        //    0.4.6.9b == 00_04_06_09_02
-        versionCode = /*00_0*/4_07_11_00,
+        versionName = "4.7.11-1",
+        //     4.6.9-0 == 00_04_06_09_00
+        //     4.6.9-1 == 00_04_06_09_01
+        //     4.6.9-2 == 00_04_06_09_02
+        versionCode = /*00_0*/4_07_11_01,
         pomInceptionYear = 2021,
     )
 }
