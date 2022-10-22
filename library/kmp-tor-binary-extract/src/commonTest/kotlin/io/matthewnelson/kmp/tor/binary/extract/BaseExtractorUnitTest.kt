@@ -15,6 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.kmp.tor.binary.extract.internal.FILE_NAME_SHA256_TOR
 import io.matthewnelson.kmp.tor.binary.extract.internal.mapManifestToDestination
 import kotlin.test.AfterTest
 import kotlin.test.assertEquals

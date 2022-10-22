@@ -17,9 +17,6 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 typealias TorFilePath = String
 
-internal const val FILE_NAME_SHA256_SUFFIX = "_sha256.txt"
-internal const val FILE_NAME_SHA256_TOR = "tor$FILE_NAME_SHA256_SUFFIX"
-
 /**
  * Extracts [TorResource]es to their desired
  * locations.

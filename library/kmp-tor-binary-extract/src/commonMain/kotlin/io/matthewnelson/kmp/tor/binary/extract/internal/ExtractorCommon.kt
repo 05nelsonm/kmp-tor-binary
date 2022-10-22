@@ -1,0 +1,197 @@
+/*
+ * Copyright (c) 2022 Matthew Nelson
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *         https://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ **/
+package io.matthewnelson.kmp.tor.binary.extract.internal
+
+import io.matthewnelson.kmp.tor.binary.extract.*
+
+internal const val FILE_NAME_SHA256_SUFFIX = "_sha256.txt"
+internal const val FILE_NAME_SHA256_TOR = "tor$FILE_NAME_SHA256_SUFFIX"
+
+abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
+
+    protected abstract fun String.toFile(): F
+    protected abstract fun isFile(file: F): Boolean
+    protected abstract fun isDirectory(file: F): Boolean
+    protected abstract fun nameWithoutExtension(file: F): String
+    protected abstract fun canonicalPath(file: F?): String?
+    protected abstract fun exists(file: F): Boolean
+
+    protected abstract fun deleteFile(file: F): Boolean
+    protected abstract fun deleteDirectory(file: F): Boolean
+    protected abstract fun mkdirs(file: F): Boolean
+
+    protected abstract fun gunzip(stream: S): S
+
+    protected abstract fun readText(file: F): String
+    protected abstract fun writeText(file: F, text: String)
+    @Throws(ExtractionException::class)
+    protected abstract fun F.write(stream: S)
+
+    @Throws(ExtractionException::class)
+    protected fun extract(
+        resource: TorResource.Geoips,
+        destination: String,
+        cleanExtraction: Boolean,
+        provideStream: (resourcePath: String) -> S,
+    ) {
+        try {
+            val destinationFile = destination.toFile()
+
+            if (exists(destinationFile) && isDirectory(destinationFile)) {
+                throw ExtractionException("destination for ${resource.resourcePath} extraction cannot be a directory")
+            }
+
+            val sha256SumValue = resource.sha256sum
+            val sha256SumFile = "$destination$FILE_NAME_SHA256_SUFFIX".toFile()
+            val isSha256SumValid = checkSha256SumFile(sha256SumFile, sha256SumValue)
+
+            if (!cleanExtraction && exists(destinationFile) && isSha256SumValid) {
+                return
+            }
+
+            val gunzipStream = try {
+                gunzip(provideStream.invoke(resource.resourcePath))
+            } catch (t: Throwable) {
+                throw ExtractionException("Failed to open stream for ${resource.resourcePath}", t)
+            }
+
+            try {
+                destinationFile.write(gunzipStream)
+            } catch (t: Throwable) {
+                deleteFile(destinationFile)
+                throw t
+            }
+
+            if (isSha256SumValid) return
+
+            try {
+                writeText(sha256SumFile, sha256SumValue)
+            } catch (t: Throwable) {
+                deleteFile(destinationFile)
+                deleteFile(sha256SumFile)
+                throw ExtractionException("Failed to write sha256sum to file $sha256SumFile", t)
+            }
+        } catch (e: ExtractionException) {
+            throw e
+        } catch (t: Throwable) {
+            throw ExtractionException("Failed to extract ${resource.resourcePath} to $destination", t)
+        }
+    }
+
+    @Throws(ExtractionException::class)
+    protected fun extract(
+        resource: TorResource.Binaries,
+        destinationDir: String,
+        cleanExtraction: Boolean,
+        provideStream: (resourcePath: String) -> S
+    ): TorFilePath {
+        val manifest = resource.resourceManifest
+        val sha256SumFile = "$destinationDir/$FILE_NAME_SHA256_TOR".toFile()
+        val filesWritten = ArrayList<F>(manifest.size + 1).apply { add(sha256SumFile) }
+        val extractionToDir = destinationDir.toFile()
+
+        try {
+            if (exists(extractionToDir)) {
+                if (!isDirectory(extractionToDir) && !deleteDirectory(extractionToDir)) {
+                    throw ExtractionException(
+                        "Directory specified ($destinationDir) exists, " +
+                        "is not a directory, and failed to delete prior to " +
+                        "extracting resources."
+                    )
+                }
+            } else {
+                if (!mkdirs(extractionToDir)) {
+                    throw ExtractionException(
+                        "Failed to create destinationDir ($destinationDir) to extract $resource to."
+                    )
+                }
+            }
+
+            val sha256SumValue = resource.sha256sum
+            val isSha256SumValid = checkSha256SumFile(sha256SumFile, sha256SumValue)
+
+            val resourceDirPath = resource.resourceDirPath
+            val extractResourceTo = ArrayList<Pair<String, F>>(manifest.size)
+            var shouldExtract = !isSha256SumValid || cleanExtraction
+
+            var torFile: F? = null
+
+            manifest.mapManifestToDestination(destinationDir) { manifestItem, destination ->
+                val writeTo = destination.toFile()
+                extractResourceTo.add(Pair("$resourceDirPath/$manifestItem", writeTo))
+
+                if (nameWithoutExtension(writeTo).lowercase() == "tor") {
+                    torFile = writeTo
+                }
+
+                if (!exists(writeTo)) {
+                    shouldExtract = true
+                }
+            }
+
+            if (shouldExtract) {
+                extractResourceTo.forEach { item ->
+                    filesWritten.add(item.second)
+                    val gunzipStream = gunzip(provideStream.invoke(item.first))
+                    item.second.write(gunzipStream)
+                }
+            }
+
+            if (!isSha256SumValid) {
+                writeText(sha256SumFile ,sha256SumValue)
+            }
+
+            return canonicalPath(torFile) ?: throw NullPointerException("Tor binary file was not found after extraction")
+        } catch (e: ExtractionException) {
+            for (file in filesWritten) {
+                try {
+                    deleteFile(file)
+                } catch (_: Exception) {}
+            }
+
+            throw e
+        } catch (e: Exception) {
+            for (file in filesWritten) {
+                try {
+                    deleteFile(file)
+                } catch (_: Exception) {}
+            }
+
+            throw ExtractionException("Failed to extract $resource to $destinationDir", e)
+        }
+    }
+
+    /**
+     * The [TorResource.sha256sum] is persisted to the filesystem after
+     * each [extract] in order to mitigate unnecessary extraction on every
+     * Tor start.
+     * */
+    private fun checkSha256SumFile(file: F, sha256Sum: String): Boolean {
+        return try {
+            if (exists(file)) {
+                if (isFile(file)) {
+                    readText(file) == sha256Sum
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        } catch (_: Throwable) {
+            false
+        }
+    }
+}

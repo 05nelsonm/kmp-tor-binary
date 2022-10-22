@@ -16,7 +16,7 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import android.content.Context
-import java.io.File
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorJvm
 
 /**
  * Extracts [TorResource]es to their desired
@@ -39,8 +39,8 @@ actual class Extractor(context: Context): ExtractorJvm() {
         destination: String,
         cleanExtraction: Boolean,
     ) {
-        extract(resource, destination, cleanExtraction) {
-            appContext.assets.open(resource.resourcePath)
+        extract(resource, destination, cleanExtraction) { resourcePath ->
+            appContext.assets.open(resourcePath)
         }
     }
 
@@ -59,6 +59,10 @@ actual class Extractor(context: Context): ExtractorJvm() {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        throw ExtractionException("Android has no binary resources to extract")
+        return extract(
+            resource, destinationDir, cleanExtraction
+        ) { resourcePath ->
+            appContext.assets.open(resourcePath)
+        }
     }
 }

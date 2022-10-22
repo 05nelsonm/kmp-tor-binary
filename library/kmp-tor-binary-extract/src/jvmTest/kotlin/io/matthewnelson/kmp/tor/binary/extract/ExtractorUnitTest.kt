@@ -16,6 +16,7 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import io.matthewnelson.component.encoding.base16.encodeBase16
+import io.matthewnelson.kmp.tor.binary.extract.internal.FILE_NAME_SHA256_SUFFIX
 import java.io.File
 import java.security.MessageDigest
 import kotlin.test.Test
