@@ -143,14 +143,6 @@ diff@5.0.0:
   resolved "https://registry.yarnpkg.com/diff/-/diff-5.0.0.tgz#7ed6ad76d859d030787ec35855f5b1daf31d852b"
   integrity sha512-/VTCrvm5Z0JGty/BWHljh+BAiw3IK+2j87NGMu8Nwc/f48WoDAC395uomO9ZD117ZOBaHmkX1oyLvkVM/aIT3w==
 
-dukat@0.5.8-rc.4:
-  version "0.5.8-rc.4"
-  resolved "http://localhost:4873/dukat/-/dukat-0.5.8-rc.4.tgz#90384dcb50b14c26f0e99dae92b2dea44f5fce21"
-  integrity sha512-ZnMt6DGBjlVgK2uQamXfd7uP/AxH7RqI0BL9GLrrJb2gKdDxvJChWy+M9AQEaL+7/6TmxzJxFOsRiInY9oGWTA==
-  dependencies:
-    google-protobuf "3.12.2"
-    typescript "3.9.5"
-
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
@@ -224,11 +216,6 @@ glob@7.1.7:
     minimatch "^3.0.4"
     once "^1.3.0"
     path-is-absolute "^1.0.0"
-
-google-protobuf@3.12.2:
-  version "3.12.2"
-  resolved "http://localhost:4873/google-protobuf/-/google-protobuf-3.12.2.tgz#50ce9f9b6281235724eb243d6a83e969a2176e53"
-  integrity sha512-4CZhpuRr1d6HjlyrxoXoocoGFnRYgKULgMtikMddA9ztRyYR59Aondv2FioyxWVamRo0rF2XpYawkTCBEQOSkA==
 
 growl@1.10.5:
   version "1.10.5"
@@ -308,41 +295,6 @@ js-yaml@4.1.0:
   integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
   dependencies:
     argparse "^2.0.1"
-
-kmp-tor-binary-geoip@4.7.11-1:
-  version "4.7.11-1"
-  resolved "http://localhost:4873/kmp-tor-binary-geoip/-/kmp-tor-binary-geoip-4.7.11-1.tgz#1f4ef2626ab69fa663123694cb9434ea45e1babd"
-  integrity sha512-jpPTnepKoCocd7rs3KmPqOAUgwPk7Bv9aG5PXLbjyZN+Xwu2B+xtcKWtCBIklRZrRy1EJ03Mw/ge7FrzZDLsmA==
-
-kmp-tor-binary-linuxx64@4.7.11-1:
-  version "4.7.11-1"
-  resolved "http://localhost:4873/kmp-tor-binary-linuxx64/-/kmp-tor-binary-linuxx64-4.7.11-1.tgz#86af7bcc562f498ca76534d793c7e0ac0e38a41b"
-  integrity sha512-PEQ6nMbZAc1zIBGuuwAWkcCaGYvfC8mirDn3XK/CPbzbJ9gy9wZMnjiJJktayI/Zluq7v53KOrSIgJgaIruweg==
-
-kmp-tor-binary-linuxx86@4.7.11-1:
-  version "4.7.11-1"
-  resolved "http://localhost:4873/kmp-tor-binary-linuxx86/-/kmp-tor-binary-linuxx86-4.7.11-1.tgz#ce6743cc247b5a83b3c6ad96b36aacf8b49b8e6b"
-  integrity sha512-tp5iapvK9Sh81Qn4HHd629Sjv7+6PaBpE5We6H2eUuZwzrJbrHkxWNtQhsXUgr6qQkVV+76vWRCvpvxUhKFY2w==
-
-kmp-tor-binary-macosarm64@4.7.11-1:
-  version "4.7.11-1"
-  resolved "http://localhost:4873/kmp-tor-binary-macosarm64/-/kmp-tor-binary-macosarm64-4.7.11-1.tgz#628996be83c0810bb92da1810fcc4546ac024f68"
-  integrity sha512-UebkcNOwUEIDPlc3jTAWKvoM+M+5DWF3rDfuve1BBUiMz9Mke27bL1oaSds7B9Dtd155Gev+TEVP60LbX2BF9w==
-
-kmp-tor-binary-macosx64@4.7.11-1:
-  version "4.7.11-1"
-  resolved "http://localhost:4873/kmp-tor-binary-macosx64/-/kmp-tor-binary-macosx64-4.7.11-1.tgz#95cac65ea18c1ad4ce958f55c6e31c66ba4e2239"
-  integrity sha512-JfElXfA4mjhLjFNDcrdoQlamzOO6V2B76bdlVge6WMxLvJe4cXDPgpLOwOAgtzs6zYoIw2guIa6Lu5AKdZrSxA==
-
-kmp-tor-binary-mingwx64@4.7.11-1:
-  version "4.7.11-1"
-  resolved "http://localhost:4873/kmp-tor-binary-mingwx64/-/kmp-tor-binary-mingwx64-4.7.11-1.tgz#a093e23ade340f845c1e983ba7b4b3b0791f80cb"
-  integrity sha512-cXWl5oxcau0QfUT8UoQGqLgueAEJllRqTkXHu3CH1ETusta0RZFILZpX0t1xChhCjZwH1NHiiNfnSfV8DKXUjQ==
-
-kmp-tor-binary-mingwx86@4.7.11-1:
-  version "4.7.11-1"
-  resolved "http://localhost:4873/kmp-tor-binary-mingwx86/-/kmp-tor-binary-mingwx86-4.7.11-1.tgz#c8f793d7e3de4924d62ae0e18e403e0d66c2e5d3"
-  integrity sha512-lY5sjHR42QalChgMfs15i434vlgAXdv1N72AMhG3zatIY0Rh62F6lAJFgakwJ/Wk5yzZD1WeFUylqzeD1d7Wjg==
 
 locate-path@^6.0.0:
   version "6.0.0"
@@ -544,11 +496,6 @@ to-regex-range@^5.0.1:
   integrity sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==
   dependencies:
     is-number "^7.0.0"
-
-typescript@3.9.5:
-  version "3.9.5"
-  resolved "http://localhost:4873/typescript/-/typescript-3.9.5.tgz#586f0dba300cde8be52dd1ac4f7e1009c1b13f36"
-  integrity sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
 
 which@2.0.2:
   version "2.0.2"
