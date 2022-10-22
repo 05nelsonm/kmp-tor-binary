@@ -14,11 +14,12 @@
  * limitations under the License.
  **/
 import io.matthewnelson.kotlin.components.kmp.KmpTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import io.matthewnelson.kotlin.components.kmp.util.npmPublish
 
 plugins {
     id(pluginId.kmp.configuration)
     id(pluginId.kmp.publish)
+    id(pluginId.npmPublish)
 }
 
 kmpConfiguration {
@@ -27,11 +28,6 @@ kmpConfiguration {
 
             KmpTarget.Jvm.Jvm.DEFAULT,
 
-            KmpTarget.NonJvm.JS(
-                compilerType = KotlinJsCompilerType.BOTH,
-                browser = null,
-                node = KmpTarget.NonJvm.JS.Node(),
-            ),
         )
     )
 }
@@ -40,4 +36,19 @@ kmpPublish {
     setupModule(
         pomDescription = "Kotlin Components' TorBinary distribution for Mingw x86",
     )
+}
+
+npmPublish {
+    description = "npm distribution of Mingw x86 Tor binary files for the kmp-tor project"
+    files {
+        from(projectDir) {
+            include("index.js")
+        }
+        from("$projectDir/src/commonMain/resources") {
+            include("kmptor/**")
+        }
+    }
+    packageJson {
+        keywords = jsonArray("tor", "kmp-tor")
+    }
 }
