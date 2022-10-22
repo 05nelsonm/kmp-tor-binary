@@ -41,7 +41,6 @@ kmpConfiguration {
                         implementation("${pConfig.group}:kmp-tor-binary-extract:${pConfig.versionName}")
                         implementation("${pConfig.group}:kmp-tor-binary-geoip:${pConfig.versionName}")
 
-                        // TODO: Remove once JS is published
                         implementation("${pConfig.group}:kmp-tor-binary-linuxx64:${pConfig.versionName}")
                         implementation("${pConfig.group}:kmp-tor-binary-linuxx86:${pConfig.versionName}")
                         implementation("${pConfig.group}:kmp-tor-binary-macosx64:${pConfig.versionName}")
@@ -68,7 +67,19 @@ kmpConfiguration {
             KmpTarget.NonJvm.JS(
                 compilerType = KotlinJsCompilerType.BOTH,
                 browser = null,
-                node = KmpTarget.NonJvm.JS.Node()
+                node = KmpTarget.NonJvm.JS.Node(),
+                mainSourceSet = {
+                    dependencies {
+                        implementation("${pConfig.group}:kmp-tor-binary-extract:${pConfig.versionName}")
+                        implementation(npm("kmp-tor-binary-geoip", pConfig.versionName))
+                        implementation(npm("kmp-tor-binary-linuxx64", pConfig.versionName))
+                        implementation(npm("kmp-tor-binary-linuxx86", pConfig.versionName))
+                        implementation(npm("kmp-tor-binary-macosx64", pConfig.versionName))
+                        implementation(npm("kmp-tor-binary-macosarm64", pConfig.versionName))
+                        implementation(npm("kmp-tor-binary-mingwx64", pConfig.versionName))
+                        implementation(npm("kmp-tor-binary-mingwx86", pConfig.versionName))
+                    }
+                }
             ),
 
 //            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.Arm32.DEFAULT,
@@ -117,17 +128,5 @@ kmpConfiguration {
 //                implementation("${pConfig.group}:kmp-tor-binary-geoip:${pConfig.versionName}")
             }
         },
-        kotlin = {
-            sourceSetJvmJsMain {
-                dependencies {
-                    // TODO: Uncomment once JS is published
-//                    implementation("${pConfig.group}:kmp-tor-binary-linuxx64:${pConfig.versionName}")
-//                    implementation("${pConfig.group}:kmp-tor-binary-linuxx86:${pConfig.versionName}")
-//                    implementation("${pConfig.group}:kmp-tor-binary-macosx64:${pConfig.versionName}")
-//                    implementation("${pConfig.group}:kmp-tor-binary-mingwx64:${pConfig.versionName}")
-//                    implementation("${pConfig.group}:kmp-tor-binary-mingwx86:${pConfig.versionName}")
-                }
-            }
-        }
     )
 }
