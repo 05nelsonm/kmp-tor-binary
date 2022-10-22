@@ -68,6 +68,8 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
 
             val gunzipStream = try {
                 gunzip(provideStream.invoke(resource.resourcePath))
+            } catch (e: ExtractionException) {
+                throw e
             } catch (t: Throwable) {
                 throw ExtractionException("Failed to open stream for ${resource.resourcePath}", t)
             }
@@ -109,7 +111,7 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
 
         try {
             if (exists(extractionToDir)) {
-                if (!isDirectory(extractionToDir) && !deleteDirectory(extractionToDir)) {
+                if (!isDirectory(extractionToDir) && !deleteFile(extractionToDir)) {
                     throw ExtractionException(
                         "Directory specified ($destinationDir) exists, " +
                         "is not a directory, and failed to delete prior to " +
@@ -155,7 +157,7 @@ abstract class ExtractorCommon <F: Any, S: Any> internal constructor() {
             }
 
             if (!isSha256SumValid) {
-                writeText(sha256SumFile ,sha256SumValue)
+                writeText(sha256SumFile, sha256SumValue)
             }
 
             return canonicalPath(torFile) ?: throw NullPointerException("Tor binary file was not found after extraction")

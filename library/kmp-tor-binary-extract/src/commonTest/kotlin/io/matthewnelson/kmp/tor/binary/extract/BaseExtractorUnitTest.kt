@@ -38,6 +38,11 @@ abstract class BaseExtractorUnitTest {
         error("deleteTestDir must be overridden")
     }
 
+    @BeforeTest
+    fun setupDirs() {
+        tmpDir
+    }
+
     /* Helper for testing cleanExtraction by checking lastModified */
     protected fun threadSleep(loopCount: Int = 1_000_000) {
         var count = 0
@@ -51,7 +56,7 @@ abstract class BaseExtractorUnitTest {
     ): List<String> {
         val torFilePath = extractor.extract(
             resource = resource,
-            destinationDir = testDir,
+            destinationDir = "$testDir/",
             cleanExtraction = true,
         )
 
@@ -130,7 +135,7 @@ abstract class BaseExtractorUnitTest {
 
     @Test
     fun givenExtractor_whenExtractGeoipResource_thenIsSuccessful() {
-        val destination = "$tmpDir${fsSeparator}geoip"
+        val destination = "$tmpDir${fsSeparator}geoips${fsSeparator}geoip"
 
         assertFalse(fileExists(destination))
 
@@ -149,9 +154,8 @@ abstract class BaseExtractorUnitTest {
 
     @Test
     fun givenExtractor_whenExtractGeoip6Resource_thenIsSuccessful() {
-        val destination = "$tmpDir${fsSeparator}geoip6"
+        val destination = "$tmpDir${fsSeparator}geoips${fsSeparator}geoip6"
 
-        println(destination)
         assertFalse(fileExists(destination))
 
         extractor.extract(
@@ -169,7 +173,7 @@ abstract class BaseExtractorUnitTest {
 
     @Test
     fun givenGeoipFileExists_whenCleanExtractionFalse_thenNotExtracted() {
-        val destination = "$tmpDir${fsSeparator}geoip"
+        val destination = "$tmpDir${fsSeparator}geoips${fsSeparator}geoip"
 
         assertFalse(fileExists(destination))
 

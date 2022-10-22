@@ -100,7 +100,7 @@ actual class Extractor: ExtractorCommon<String, Any>() {
 
     override fun deleteFile(file: String): Boolean {
         try {
-            rmSync(file, RmOptions().apply {
+            rmSync(file, OptionForce().apply {
                 force = true
             })
         } catch (_: Throwable) {}
@@ -110,7 +110,7 @@ actual class Extractor: ExtractorCommon<String, Any>() {
 
     override fun deleteDirectory(file: String): Boolean {
         try {
-            rmdirSync(file, RmDirOptions().apply {
+            rmdirSync(file, OptionRecursive().apply {
                 recursive = true
             })
         } catch (_: Throwable) {}
@@ -128,15 +128,13 @@ actual class Extractor: ExtractorCommon<String, Any>() {
 
     override fun gunzip(stream: Any): Any { return gunzipSync(stream) }
 
-    override fun readText(file: String): String = readFileSync(file, ReadFileOptions().apply { encoding = "utf8" }) as String
-    override fun writeText(file: String, text: String) {
-        writeFileSync(file, text)
-    }
+    override fun readText(file: String): String = readFileSync(file, OptionEncoding().apply { encoding = "utf8" }) as String
+    override fun writeText(file: String, text: String) { writeFileSync(file, text) }
 
     override fun String.write(stream: Any) {
         val parentDir = substringBeforeLast(sep)
         if (parentDir != this) {
-            if (!exists(parentDir) && !mkdirs(this)) {
+            if (!exists(parentDir) && !mkdirs(parentDir)) {
                 throw ExtractionException("Failed to create directory $parentDir")
             }
         }
