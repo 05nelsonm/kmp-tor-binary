@@ -80,7 +80,9 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
             try {
                 destinationFile.write(gunzipStream)
             } catch (t: Throwable) {
-                deleteFile(destinationFile)
+                try {
+                    deleteFile(destinationFile)
+                } catch (_: Throwable) {}
                 throw t
             }
 
@@ -89,8 +91,12 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
             try {
                 writeText(sha256SumFile, sha256SumValue)
             } catch (t: Throwable) {
-                deleteFile(destinationFile)
-                deleteFile(sha256SumFile)
+                try {
+                    deleteFile(destinationFile)
+                } catch (_: Throwable) {}
+                try {
+                    deleteFile(sha256SumFile)
+                } catch (_: Throwable) {}
                 throw ExtractionException("Failed to write sha256sum to file $sha256SumFile", t)
             }
         } catch (e: ExtractionException) {
