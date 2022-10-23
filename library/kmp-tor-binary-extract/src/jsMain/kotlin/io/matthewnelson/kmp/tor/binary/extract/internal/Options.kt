@@ -15,16 +15,8 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract.internal
 
-internal inline fun List<String>.mapManifestToDestination(
-    destinationDir: String,
-    onMappedItem: (manifestItem: String, destination: String) -> Unit,
-): List<String> {
-    val separator: Char = if (destinationDir.first() == '/') '/' else '\\'
+@Suppress("unused")
+internal class OptionsReadFile(val encoding: String? = "utf8")
 
-    return map { item ->
-        val sep = if (destinationDir.endsWith(separator)) "" else separator
-        val mapped = destinationDir + sep + item.replace('/', separator).substringBeforeLast(".gz")
-        onMappedItem.invoke(item, mapped)
-        mapped
-    }
-}
+@Suppress("unused")
+internal class OptionsRm(val force: Boolean = true, val recursive: Boolean = true)
