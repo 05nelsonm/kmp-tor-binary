@@ -301,10 +301,10 @@ function buildDesktop() {
     local GEOIP_MODULE_SRC_DIR=
     GEOIP_MODULE_SRC_DIR="$DIR/../../../kmp-tor-binary-geoip/src"
 
-    mkdir -p "$GEOIP_MODULE_SRC_DIR/androidMain/assets/kmptor/"
+    mkdir -p "$GEOIP_MODULE_SRC_DIR/androidMain/res/raw/"
     mkdir -p "$GEOIP_MODULE_SRC_DIR/jvmMain/resources/kmptor/"
     mkdir -p "$GEOIP_MODULE_SRC_DIR/nativeMain/resources/kmptor/"
-    cp -R . "$GEOIP_MODULE_SRC_DIR/androidMain/assets/kmptor/"
+    cp -R . "$GEOIP_MODULE_SRC_DIR/androidMain/res/raw/"
     cp -R . "$GEOIP_MODULE_SRC_DIR/jvmMain/resources/kmptor/"
     cp -R . "$GEOIP_MODULE_SRC_DIR/nativeMain/resources/kmptor/"
 
