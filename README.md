@@ -153,32 +153,6 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
    }
    ```
 
-<!-- TAG_VERSION -->
-
-<!-- TODO: Uncomment
- - Alternatively, you can import **all** platforms' binary dependencies (available since `4.7.10-1`):
-
-   ```kotlin
-   // build.gradle.kts
-
-   dependencies {
-       val vTor = "4.7.10-1"
-       val vKmpTor = "1.3.1" // <-- see kmp-tor repo for latest version
-       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
-
-       // Linux x86_64
-       // Linux i686
-       // macOS aarch64
-       // macOS x86_64
-       // Windows x86_64
-       // Windows i686
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-platform-all:$vTor")
-   }
-   ```
-    - This can be beneficial when updating versions, as if new platforms become available they 
-      will automatically be imported for you instead of having to add the individual platform 
-      dependency.  
--->
 
 ### That's it, you should be good to go for your `Java` project!
 
@@ -218,32 +192,6 @@ TAG_VERSION
       implementation(npm("kmp-tor-binary-mingwx86", vTor))
   }
   ```
-
-TODO: Comment out
-TAG_VERSION
-
- - Alternatively, you can import **all** platforms' binary dependencies:
-
-   ```kotlin
-   // build.gradle.kts
-
-   dependencies {
-       val vTor = "4.7.10-1"
-       val vKmpTor = "1.4.0" // <-- see kmp-tor repo for latest version
-       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
-
-       // Linux x86_64
-       // Linux i686
-       // macOS aarch64
-       // macOS x86_64
-       // Windows x86_64
-       // Windows i686
-       implementation(npm("kmp-tor-binary-platform-all", vTor))
-   }
-   ```
-    - This can be beneficial when updating versions, as if new platforms become available they 
-      will automatically be imported for you instead of having to add the individual platform 
-      dependency.  
 
 
 ### That's it, you should be good to go for your `Node.js` project!
