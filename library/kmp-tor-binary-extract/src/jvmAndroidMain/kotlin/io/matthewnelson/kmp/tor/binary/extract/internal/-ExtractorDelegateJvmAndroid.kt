@@ -18,6 +18,7 @@ package io.matthewnelson.kmp.tor.binary.extract.internal
 import io.matthewnelson.kmp.tor.binary.extract.ExtractionException
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.util.zip.GZIPInputStream
 
@@ -31,21 +32,24 @@ internal open class ExtractorDelegateJvmAndroid: ExtractorDelegate<File, InputSt
     final override fun String.toFile(): File = File(this)
     final override fun String.normalize(): String = File(this).normalize().path
     final override val fsSeparator: Char get() = File.separatorChar
+
     final override fun isFile(file: File): Boolean = file.isFile
     final override fun isDirectory(file: File): Boolean = file.isDirectory
-    final override fun nameWithoutExtension(file: File): String = file.nameWithoutExtension
-    final override fun canonicalPath(file: File?): String? = file?.canonicalPath
     final override fun exists(file: File): Boolean = file.exists()
 
-    final override fun deleteFile(file: File): Boolean = file.delete()
-    final override fun deleteDirectory(file: File): Boolean = file.deleteRecursively()
+    final override fun nameWithoutExtension(file: File): String = file.nameWithoutExtension
+    final override fun canonicalPath(file: File?): String? = file?.canonicalPath
+
+    final override fun setExecutable(file: File) { file.setExecutable(true) }
+
+    final override fun delete(file: File): Boolean = file.deleteRecursively()
     final override fun mkdirs(file: File): Boolean = file.mkdirs()
 
     final override fun gunzip(stream: InputStream): InputStream = GZIPInputStream(stream)
 
     final override fun readText(file: File): String = file.readText()
     final override fun writeText(file: File, text: String) { file.writeText(text) }
-
+    @Throws(ExtractionException::class)
     final override fun File.write(stream: InputStream) {
         stream.use { iStream ->
             parentFile?.let { pf ->

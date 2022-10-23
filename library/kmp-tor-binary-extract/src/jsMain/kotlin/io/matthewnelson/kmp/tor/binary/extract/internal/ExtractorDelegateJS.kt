@@ -27,30 +27,26 @@ internal class ExtractorDelegateJs: ExtractorDelegate<String, Any>() {
     override fun String.toFile(): String = this
     override fun String.normalize(): String = normalize(this)
     override val fsSeparator: Char get() = try { sep.first() } catch (_: Throwable) { '/' }
+
     override fun isFile(file: String): Boolean = lstatSync(file).isFile()
     override fun isDirectory(file: String): Boolean = lstatSync(file).isDirectory()
-    override fun nameWithoutExtension(file: String): String = file.substringAfterLast(sep).substringBeforeLast('.')
-    override fun canonicalPath(file: String?): String? = file?.let { realpathSync(it) }
     override fun exists(file: String): Boolean = existsSync(file)
 
-    override fun deleteFile(file: String): Boolean {
-        try {
-            rmSync(file, OptionForce().apply {
-                force = true
-            })
-        } catch (_: Throwable) {}
+    override fun nameWithoutExtension(file: String): String = file.substringAfterLast(sep).substringBeforeLast('.')
+    override fun canonicalPath(file: String?): String? = file?.let { realpathSync(it) }
 
-        return exists(file)
+    override fun setExecutable(file: String) {
+        try {
+            chmodSync(file, S_IXUSR)
+        } catch (_: Throwable) {}
     }
 
-    override fun deleteDirectory(file: String): Boolean {
+    override fun delete(file: String): Boolean {
         try {
-            rmdirSync(file, OptionRecursive().apply {
-                recursive = true
-            })
+            rmSync(file, OptionsRm())
         } catch (_: Throwable) {}
 
-        return exists(file)
+        return !exists(file)
     }
 
     override fun mkdirs(file: String): Boolean {
@@ -63,18 +59,17 @@ internal class ExtractorDelegateJs: ExtractorDelegate<String, Any>() {
 
     override fun gunzip(stream: Any): Any { return gunzipSync(stream) }
 
-    override fun readText(file: String): String = readFileSync(file, OptionEncoding().apply { encoding = "utf8" }) as String
+    override fun readText(file: String): String = readFileSync(file, OptionsReadFile()) as String
     override fun writeText(file: String, text: String) { writeFileSync(file, text) }
 
     override fun String.write(stream: Any) {
         val parentDir = substringBeforeLast(sep)
-        if (parentDir != this) {
-            if (!exists(parentDir) && !mkdirs(parentDir)) {
-                throw ExtractionException("Failed to create directory $parentDir")
-            }
+
+        if (!exists(parentDir) && !mkdirs(parentDir)) {
+            throw ExtractionException("Failed to create directory $parentDir")
         }
 
-        if (exists(this) && !deleteFile(this)) {
+        if (exists(this) && !delete(this)) {
             throw ExtractionException("Failed to delete file $this before overwriting it.")
         }
 
@@ -83,5 +78,9 @@ internal class ExtractorDelegateJs: ExtractorDelegate<String, Any>() {
         } catch (t: Throwable) {
             throw ExtractionException("Failed to write data to $this", t)
         }
+    }
+
+    companion object {
+        private var S_IXUSR = 0xf100 // fs.constants.S_IXUSR
     }
 }

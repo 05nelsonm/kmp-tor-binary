@@ -29,14 +29,17 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
     protected abstract fun String.toFile(): F
     protected abstract fun String.normalize(): String
     protected open val fsSeparator: Char get() = '/'
+
     protected abstract fun isFile(file: F): Boolean
     protected abstract fun isDirectory(file: F): Boolean
-    protected abstract fun nameWithoutExtension(file: F): String
-    protected abstract fun canonicalPath(file: F?): String?
     protected abstract fun exists(file: F): Boolean
 
-    protected abstract fun deleteFile(file: F): Boolean
-    protected abstract fun deleteDirectory(file: F): Boolean
+    protected abstract fun nameWithoutExtension(file: F): String
+    protected abstract fun canonicalPath(file: F?): String?
+
+    protected abstract fun setExecutable(file: F)
+
+    protected abstract fun delete(file: F): Boolean
     protected abstract fun mkdirs(file: F): Boolean
 
     protected abstract fun gunzip(stream: S): S
@@ -81,7 +84,7 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
                 destinationFile.write(gunzipStream)
             } catch (t: Throwable) {
                 try {
-                    deleteFile(destinationFile)
+                    delete(destinationFile)
                 } catch (_: Throwable) {}
                 throw t
             }
@@ -92,10 +95,10 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
                 writeText(sha256SumFile, sha256SumValue)
             } catch (t: Throwable) {
                 try {
-                    deleteFile(destinationFile)
+                    delete(destinationFile)
                 } catch (_: Throwable) {}
                 try {
-                    deleteFile(sha256SumFile)
+                    delete(sha256SumFile)
                 } catch (_: Throwable) {}
                 throw ExtractionException("Failed to write sha256sum to file $sha256SumFile", t)
             }
@@ -125,7 +128,7 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
 
         try {
             if (exists(extractionToDir)) {
-                if (!isDirectory(extractionToDir) && !deleteFile(extractionToDir)) {
+                if (!isDirectory(extractionToDir) && !delete(extractionToDir)) {
                     throw ExtractionException(
                         "Directory specified ($destinationDir) exists, " +
                         "is not a directory, and failed to delete prior to " +
@@ -153,7 +156,7 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
             var torFile: F? = null
 
             manifest.mapManifestToDestination(destinationDirNormalized) { manifestItem, destination ->
-                val writeTo = destination.toFile()
+                val writeTo = destination.normalize().toFile()
                 extractResourceTo.add(Pair("$resourceDirPath/$manifestItem", writeTo))
 
                 if (nameWithoutExtension(writeTo).lowercase() == "tor") {
@@ -165,12 +168,15 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
                 }
             }
 
-            if (shouldExtract) {
-                extractResourceTo.forEach { item ->
-                    filesWritten.add(item.second)
+            extractResourceTo.forEach { item ->
+                filesWritten.add(item.second)
+
+                if (shouldExtract) {
                     val gunzipStream = gunzip(provideStream.invoke(item.first))
                     item.second.write(gunzipStream)
                 }
+
+                setExecutable(item.second)
             }
 
             if (!isSha256SumValid) {
@@ -181,7 +187,7 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
         } catch (e: ExtractionException) {
             for (file in filesWritten) {
                 try {
-                    deleteFile(file)
+                    delete(file)
                 } catch (_: Exception) {}
             }
 
@@ -189,7 +195,7 @@ internal abstract class ExtractorDelegate <F: Any, S: Any> {
         } catch (e: Exception) {
             for (file in filesWritten) {
                 try {
-                    deleteFile(file)
+                    delete(file)
                 } catch (_: Exception) {}
             }
 

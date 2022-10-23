@@ -20,7 +20,7 @@ package io.matthewnelson.kmp.tor.binary.extract.internal
 internal external fun mkdirSync(path: String): String?
 
 // Can potentially return a Buffer if ReadFileOptions.encoding is null...
-internal external fun readFileSync(path: String, options: OptionEncoding): Any
+internal external fun readFileSync(path: String, options: OptionsReadFile): Any
 
 // Returns a Buffer
 internal external fun readFileSync(path: String): Any
@@ -30,25 +30,14 @@ internal external fun writeFileSync(path: String, data: Any)
 
 internal external fun realpathSync(path: String): String
 
-internal external fun rmdirSync(path: String, options: OptionRecursive)
-
-internal external fun rmSync(path: String, options: OptionForce)
+internal external fun rmSync(path: String, options: OptionsRm)
 
 internal external fun lstatSync(path: String): Stats
 
 internal external fun existsSync(path: String): Boolean
 
-internal open external class OptionEncoding {
-    open var encoding: String?
-}
-
-internal open external class OptionForce {
-    open var force: Boolean
-}
-
-internal open external class OptionRecursive {
-    open var recursive: Boolean
-}
+// https://nodejs.org/api/fs.html#file-modes
+internal external fun chmodSync(path: String, mode: Int)
 
 internal open external class Stats {
     fun isFile(): Boolean
