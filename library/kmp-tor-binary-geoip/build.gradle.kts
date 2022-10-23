@@ -16,7 +16,6 @@
 import io.matthewnelson.kotlin.components.dependencies.versions
 import io.matthewnelson.kotlin.components.kmp.KmpTarget
 import io.matthewnelson.kotlin.components.kmp.util.npmPublish
-import io.matthewnelson.kotlin.components.kmp.KmpTarget.Jvm.Android.Companion.SOURCE_SET_MAIN_NAME as KmpAndroidMain
 
 plugins {
     id(pluginId.kmp.configuration)
@@ -36,11 +35,6 @@ kmpConfiguration {
                 minSdk = versions.android.sdkMin16,
                 target = {
                     publishLibraryVariants("release")
-                },
-                androidConfig = {
-                    sourceSets.getByName("main") {
-                        assets.srcDir("$projectDir/src/$KmpAndroidMain/assets")
-                    }
                 },
             ),
 
