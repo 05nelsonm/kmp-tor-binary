@@ -116,18 +116,7 @@ app's `nativeLibraryDir` upon application installation.
     <summary>Java</summary>
 
 Tor binaries for `Java` are **not** automatically imported with the [kmp-tor][url-kmp-tor] 
-dependency. You need to add the dependencies for the platform(s) you wish to support.  
-
-<!-- TODO: Add macOS aarch64
-    // macOS aarch64
-    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosarm64:$vTor")
--->
-
-<!-- TODO: Update version scheme
-    val vTor = "4.7.10-1"
-    val vKmpTor = "1.3.1" // <-- see kmp-tor repo for latest version
-    implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
--->
+dependency. You need to add the dependencies for the platform(s) you wish to support.
 
 <!-- TAG_VERSION -->
 
@@ -136,14 +125,16 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
    // build.gradle.kts
 
    dependencies {
-       val vTor = "0.4.7.10"
+       val vTor = "4.7.10-1"
        val vKmpTor = "1.3.1" // <-- see kmp-tor repo for latest version
-       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor+$vKmpTor")
+       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
        // Linux x86_64
        implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx64:$vTor")
        // Linux i686
        implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx86:$vTor")
+       // macOS aarch64
+       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosarm64:$vTor")
        // macOS x86_64
        implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosx64:$vTor")
        // Windows x86_64
@@ -256,7 +247,7 @@ to the appropriate `kmp-tor-binary-*` module and update sha256sum/manifest const
 As binaries are reproducibly built, running `git diff` should show no changes.
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-0.4.7.10-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
+[badge-latest-release]: https://img.shields.io/badge/latest--release-4.7.10--1-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->

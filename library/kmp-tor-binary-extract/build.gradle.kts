@@ -71,17 +71,15 @@ kmpConfiguration {
                         implementation(deps.square.okio.okio)
                         implementation(deps.square.okio.nodeFileSys)
 
-                        // TODO: Uncomment upon release. Cannot merge to master b/c
-                        //  have not published to npmjs.
-//                        val versionName = kmpPublishRootProjectConfiguration?.versionName!!
-//
-//                        implementation(npm("kmp-tor-binary-geoip", versionName))
-//                        implementation(npm("kmp-tor-binary-linuxx64", versionName))
-//                        implementation(npm("kmp-tor-binary-linuxx86", versionName))
-//                        implementation(npm("kmp-tor-binary-macosarm64", versionName))
-//                        implementation(npm("kmp-tor-binary-macosx64", versionName))
-//                        implementation(npm("kmp-tor-binary-mingwx64", versionName))
-//                        implementation(npm("kmp-tor-binary-mingwx86", versionName))
+                        val versionName = kmpPublishRootProjectConfiguration?.versionName!!
+
+                        implementation(npm("kmp-tor-binary-geoip", versionName))
+                        implementation(npm("kmp-tor-binary-linuxx64", versionName))
+                        implementation(npm("kmp-tor-binary-linuxx86", versionName))
+                        implementation(npm("kmp-tor-binary-macosarm64", versionName))
+                        implementation(npm("kmp-tor-binary-macosx64", versionName))
+                        implementation(npm("kmp-tor-binary-mingwx64", versionName))
+                        implementation(npm("kmp-tor-binary-mingwx86", versionName))
                     }
                 }
             ),

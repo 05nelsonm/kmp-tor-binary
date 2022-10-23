@@ -25,7 +25,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
-class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
+actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override val extractor: Extractor = Extractor()
     override val fsSeparator: Char = File.separatorChar
