@@ -221,7 +221,7 @@ Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-br
        nano README
        ```
 
- - Initialize tor-browser-build's `rbm` submodule:
+ - Initialize `tor-browser-build`'s `rbm` submodule:
    ```
    make submodule-update
    ```
