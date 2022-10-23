@@ -18,7 +18,6 @@ package io.matthewnelson.kmp.tor.binary.extract.internal
 import io.matthewnelson.kmp.tor.binary.extract.ExtractionException
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.InputStream
 import java.util.zip.GZIPInputStream
 
@@ -27,30 +26,30 @@ import java.util.zip.GZIPInputStream
  *
  * @see [ExtractorDelegate]
  * */
-internal open class ExtractorDelegateJvmAndroid: ExtractorDelegate<File, InputStream>() {
+internal class ExtractorDelegateJvmAndroid: ExtractorDelegate<File, InputStream>() {
 
-    final override fun String.toFile(): File = File(this)
-    final override fun String.normalize(): String = File(this).normalize().path
-    final override val fsSeparator: Char get() = File.separatorChar
+    override fun String.toFile(): File = File(this)
+    override fun String.normalize(): String = File(this).normalize().path
+    override val fsSeparator: Char get() = File.separatorChar
 
-    final override fun isFile(file: File): Boolean = file.isFile
-    final override fun isDirectory(file: File): Boolean = file.isDirectory
-    final override fun exists(file: File): Boolean = file.exists()
+    override fun isFile(file: File): Boolean = file.isFile
+    override fun isDirectory(file: File): Boolean = file.isDirectory
+    override fun exists(file: File): Boolean = file.exists()
 
-    final override fun nameWithoutExtension(file: File): String = file.nameWithoutExtension
-    final override fun canonicalPath(file: File?): String? = file?.canonicalPath
+    override fun nameWithoutExtension(file: File): String = file.nameWithoutExtension
+    override fun canonicalPath(file: File?): String? = file?.canonicalPath
 
-    final override fun setExecutable(file: File) { file.setExecutable(true) }
+    override fun setExecutable(file: File) { file.setExecutable(true) }
 
-    final override fun delete(file: File): Boolean = file.deleteRecursively()
-    final override fun mkdirs(file: File): Boolean = file.mkdirs()
+    override fun delete(file: File): Boolean = file.deleteRecursively()
+    override fun mkdirs(file: File): Boolean = file.mkdirs()
 
-    final override fun gunzip(stream: InputStream): InputStream = GZIPInputStream(stream)
+    override fun gunzip(stream: InputStream): InputStream = GZIPInputStream(stream)
 
-    final override fun readText(file: File): String = file.readText()
-    final override fun writeText(file: File, text: String) { file.writeText(text) }
+    override fun readText(file: File): String = file.readText()
+    override fun writeText(file: File, text: String) { file.writeText(text) }
     @Throws(ExtractionException::class)
-    final override fun File.write(stream: InputStream) {
+    override fun File.write(stream: InputStream) {
         stream.use { iStream ->
             parentFile?.let { pf ->
                 if (!pf.exists() && !pf.mkdirs()) {

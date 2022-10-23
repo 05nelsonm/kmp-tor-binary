@@ -50,6 +50,16 @@ kmpConfiguration {
                 target = {
                     publishLibraryVariants("release")
                 },
+                mainSourceSet = {
+                    dependencies {
+                        compileOnly(project(":library:kmp-tor-binary-geoip"))
+                    }
+                },
+                testSourceSet = {
+                    dependencies {
+                        implementation(project(":library:kmp-tor-binary-geoip"))
+                    }
+                }
             ),
 
             KmpTarget.NonJvm.JS(

@@ -16,8 +16,8 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import android.content.Context
+import android.content.res.Resources
 import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndroid
-import java.io.InputStream
 
 /**
  * Extracts [TorResource]es to their desired
@@ -28,11 +28,7 @@ import java.io.InputStream
 actual class Extractor(context: Context) {
 
     private val appContext = context.applicationContext
-    private val delegate = object : ExtractorDelegateJvmAndroid() {
-        override fun resourceNotFound(resource: String, t: Throwable): ExtractionException {
-            return ExtractionException("Asset not found: $resource", t)
-        }
-    }
+    private val delegate = ExtractorDelegateJvmAndroid()
 
     /**
      * Extracts geoip files.
@@ -49,7 +45,16 @@ actual class Extractor(context: Context) {
         cleanExtraction: Boolean,
     ) {
         delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
-            openAssetFileStream(resourcePath)
+            when (resource) {
+                TorResourceGeoip -> R.raw.geoip
+                TorResourceGeoip6 -> R.raw.geoip6
+            }.let { resource ->
+                try {
+                    appContext.resources.openRawResource(resource)
+                } catch (e: Resources.NotFoundException) {
+                    throw delegate.resourceNotFound(resourcePath, e)
+                }
+            }
         }
     }
 
@@ -69,25 +74,6 @@ actual class Extractor(context: Context) {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
-            openAssetFileStream(resourcePath)
-        }
-    }
-
-    @Throws(ExtractionException::class)
-    private fun openAssetFileStream(resourcePath: String): InputStream {
-        // Packaging gzipped files in the assets directory results in the
-        // stripping of the .gz file extension when the apk is built. So
-        // we check first for path w/o the .gz extension, then with it.
-
-        return try {
-            appContext.assets.open(resourcePath.dropLast(3))
-        } catch (_: Throwable) {
-            try {
-                appContext.assets.open(resourcePath)
-            } catch (t: Throwable) {
-                throw delegate.resourceNotFound(resourcePath, t)
-            }
-        }
+        throw ExtractionException("Android has no binary resources to extract")
     }
 }
