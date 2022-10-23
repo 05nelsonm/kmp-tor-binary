@@ -16,7 +16,9 @@
 import io.matthewnelson.kotlin.components.dependencies.deps
 import io.matthewnelson.kotlin.components.dependencies.versions
 import io.matthewnelson.kotlin.components.kmp.KmpTarget
-import io.matthewnelson.kotlin.components.kmp.util.sourceSetJvmJsTest
+import io.matthewnelson.kotlin.components.kmp.publish.kmpPublishRootProjectConfiguration
+import io.matthewnelson.kotlin.components.kmp.util.sourceSetJvmAndroidTest
+import io.matthewnelson.kotlin.components.kmp.util.sourceSetNativeTest
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 
 plugins {
@@ -28,7 +30,18 @@ kmpConfiguration {
     setupMultiplatform(
         setOf(
 
-            KmpTarget.Jvm.Jvm.DEFAULT,
+            KmpTarget.Jvm.Jvm(
+                testSourceSet = {
+                    dependencies {
+                        implementation(project(":library:kmp-tor-binary-linuxx64"))
+                        implementation(project(":library:kmp-tor-binary-linuxx86"))
+                        implementation(project(":library:kmp-tor-binary-macosx64"))
+                        implementation(project(":library:kmp-tor-binary-macosarm64"))
+                        implementation(project(":library:kmp-tor-binary-mingwx64"))
+                        implementation(project(":library:kmp-tor-binary-mingwx86"))
+                    }
+                }
+            ),
 
             KmpTarget.Jvm.Android(
                 buildTools = versions.android.buildTools,
@@ -47,6 +60,18 @@ kmpConfiguration {
                     dependencies {
                         implementation(deps.square.okio.okio)
                         implementation(deps.square.okio.nodeFileSys)
+
+                        // TODO: Uncomment upon release. Cannot merge to master b/c
+                        //  have not published to npmjs.
+//                        val versionName = kmpPublishRootProjectConfiguration?.versionName!!
+//
+//                        implementation(npm("kmp-tor-binary-geoip", versionName))
+//                        implementation(npm("kmp-tor-binary-linuxx64", versionName))
+//                        implementation(npm("kmp-tor-binary-linuxx86", versionName))
+//                        implementation(npm("kmp-tor-binary-macosarm64", versionName))
+//                        implementation(npm("kmp-tor-binary-macosx64", versionName))
+//                        implementation(npm("kmp-tor-binary-mingwx64", versionName))
+//                        implementation(npm("kmp-tor-binary-mingwx86", versionName))
                     }
                 }
             ),
@@ -64,19 +89,18 @@ kmpConfiguration {
             dependencies {
                 implementation(kotlin("test"))
                 implementation(deps.components.encoding.base16)
-                implementation(project(":library:kmp-tor-binary-geoip"))
             }
         },
 
         kotlin = {
-            sourceSetJvmJsTest {
+            sourceSetJvmAndroidTest {
                 dependencies {
-                    implementation(project(":library:kmp-tor-binary-linuxx64"))
-                    implementation(project(":library:kmp-tor-binary-linuxx86"))
-                    implementation(project(":library:kmp-tor-binary-macosx64"))
-                    implementation(project(":library:kmp-tor-binary-macosarm64"))
-                    implementation(project(":library:kmp-tor-binary-mingwx64"))
-                    implementation(project(":library:kmp-tor-binary-mingwx86"))
+                    implementation(project(":library:kmp-tor-binary-geoip"))
+                }
+            }
+            sourceSetNativeTest {
+                dependencies {
+                    implementation(project(":library:kmp-tor-binary-geoip"))
                 }
             }
         }

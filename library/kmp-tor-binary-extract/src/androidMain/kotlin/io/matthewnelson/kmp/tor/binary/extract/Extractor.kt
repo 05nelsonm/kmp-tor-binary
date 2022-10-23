@@ -16,21 +16,29 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import android.content.Context
-import java.io.File
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndroid
 
 /**
  * Extracts [TorResource]es to their desired
  * locations.
+ *
+ * @see [ExtractorDelegateJvmAndroid]
  * */
-actual class Extractor(context: Context): ExtractorJvm() {
+actual class Extractor(context: Context) {
 
     private val appContext = context.applicationContext
+    private val delegate = object : ExtractorDelegateJvmAndroid() {
+        override fun resourceNotFound(resource: String, t: Throwable): ExtractionException {
+            return ExtractionException("Asset not found: $resource", t)
+        }
+    }
 
     /**
      * Extracts geoip files.
      *
      * @param [destination] The file to write to
      * @param [cleanExtraction] Perform a clean extraction of the [resource]
+     *   by deleting the old file, and re-extracting the file.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
@@ -39,8 +47,12 @@ actual class Extractor(context: Context): ExtractorJvm() {
         destination: String,
         cleanExtraction: Boolean,
     ) {
-        extract(resource, destination, cleanExtraction) {
-            appContext.assets.open(resource.resourcePath)
+        delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
+            try {
+                appContext.assets.open(resourcePath)
+            } catch (t: Throwable) {
+                throw delegate.resourceNotFound(resourcePath, t)
+            }
         }
     }
 
@@ -51,6 +63,7 @@ actual class Extractor(context: Context): ExtractorJvm() {
      *
      * @param [destinationDir] The directory to write files to
      * @param [cleanExtraction] Performs a clean extraction of all files for the [resource]
+     *   by deleting the [destinationDir], and re-extracting all files.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
@@ -59,6 +72,12 @@ actual class Extractor(context: Context): ExtractorJvm() {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        throw ExtractionException("Android has no binary resources to extract")
+        return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
+            try {
+                appContext.assets.open(resourcePath)
+            } catch (t: Throwable) {
+                throw delegate.resourceNotFound(resourcePath, t)
+            }
+        }
     }
 }

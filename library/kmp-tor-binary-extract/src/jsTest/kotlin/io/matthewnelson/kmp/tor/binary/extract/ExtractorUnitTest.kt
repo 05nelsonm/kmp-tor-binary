@@ -15,20 +15,35 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.kmp.tor.binary.extract.internal.existsSync
+import io.matthewnelson.kmp.tor.binary.extract.internal.sep
+import okio.ByteString.Companion.toByteString
 import okio.NodeJsFileSystem
+import okio.Path
 import okio.Path.Companion.toPath
+import kotlin.test.Test
 
-actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
-
-    override val extractor: Extractor = Extractor()
-    override val fsSeparator: Char get() = ((path?.sep) as? String ?: "/").first()
-    override val tmpDir: String by lazy { (os?.tmpdir() as? String ?: "/tmp") + fsSeparator + "tmp.kmp_tor_binary.js" }
-
-    override fun fileExists(path: String): Boolean = NodeJsFileSystem.exists(path.toPath())
-    override fun fileSize(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).size!!
-    override fun fileLastModified(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).lastModifiedAtMillis!!
-
-    override fun deleteTestDir() {
-        fs?.rm(tmpDir, recursive = true, force = true)
-    }
-}
+//actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
+//
+//    override val extractor: Extractor = Extractor()
+//    override val fsSeparator: Char get() = sep.first()
+//    private val _tmpDir: Path by lazy {
+//        val temp = js("require('os')")?.tmpdir() as? String ?: "/tmp"
+//        val path = (js("require('fs')").mkdtempSync(temp + fsSeparator + "tmp.kmp_tor_binary.js") as String).toPath()
+//        path
+//    }
+//    override val tmpDir: String get() = _tmpDir.toString()
+//
+//    override fun fileExists(path: String): Boolean = existsSync(path)
+//    override fun fileSize(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).size!!
+//    override fun fileLastModified(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).lastModifiedAtMillis!!
+//    override fun fileSha256Sum(path: String): String = NodeJsFileSystem.read(path.toPath()) { sha256Sum(readByteArray()) }
+//    override fun sha256Sum(bytes: ByteArray): String = bytes.toByteString().sha256().hex()
+//
+//    override fun deleteTestDir() {
+//        NodeJsFileSystem.deleteRecursively(_tmpDir)
+//    }
+//
+//    @Test
+//    fun stub() {}
+//}

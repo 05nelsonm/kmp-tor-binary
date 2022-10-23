@@ -17,9 +17,6 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 typealias TorFilePath = String
 
-internal const val FILE_NAME_SHA256_SUFFIX = "_sha256.txt"
-internal const val FILE_NAME_SHA256_TOR = "tor$FILE_NAME_SHA256_SUFFIX"
-
 /**
  * Extracts [TorResource]es to their desired
  * locations.
@@ -47,6 +44,7 @@ expect class Extractor {
      *
      * @param [destinationDir] The directory to write files to
      * @param [cleanExtraction] Performs a clean extraction of all files for the [resource]
+     *   by deleting the [destinationDir], and re-extracting.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)

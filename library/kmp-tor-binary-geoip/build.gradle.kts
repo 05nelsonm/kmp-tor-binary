@@ -15,12 +15,13 @@
  **/
 import io.matthewnelson.kotlin.components.dependencies.versions
 import io.matthewnelson.kotlin.components.kmp.KmpTarget
+import io.matthewnelson.kotlin.components.kmp.util.npmPublish
 import io.matthewnelson.kotlin.components.kmp.KmpTarget.Jvm.Android.Companion.SOURCE_SET_MAIN_NAME as KmpAndroidMain
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 
 plugins {
     id(pluginId.kmp.configuration)
     id(pluginId.kmp.publish)
+    id(pluginId.npmPublish)
 }
 
 kmpConfiguration {
@@ -43,12 +44,6 @@ kmpConfiguration {
                 },
             ),
 
-            KmpTarget.NonJvm.JS(
-                compilerType = KotlinJsCompilerType.BOTH,
-                browser = null,
-                node = KmpTarget.NonJvm.JS.Node(),
-            ),
-
             KmpTarget.NonJvm.Native.Unix.Linux.X64.DEFAULT,
 
             KmpTarget.NonJvm.Native.Mingw.X64.DEFAULT,
@@ -64,4 +59,19 @@ kmpPublish {
     setupModule(
         pomDescription = "Kotlin Components' Tor geoip file resource distribution",
     )
+}
+
+npmPublish {
+    description = "npm distribution of Tor geoip file resources for the kmp-tor project"
+    files {
+        from(projectDir) {
+            include("index.js")
+        }
+        from("$projectDir/src/jvmMain/resources") {
+            include("kmptor/**")
+        }
+    }
+    packageJson {
+        keywords = jsonArray("tor", "kmp-tor")
+    }
 }

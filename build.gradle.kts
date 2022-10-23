@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+import io.matthewnelson.kotlin.components.kmp.util.configureYarn
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
@@ -32,6 +33,7 @@ buildscript {
         classpath(io.matthewnelson.kotlin.components.dependencies.plugins.android.gradle)
         classpath(io.matthewnelson.kotlin.components.dependencies.plugins.kotlin.gradle)
         classpath(io.matthewnelson.kotlin.components.dependencies.plugins.mavenPublish)
+        classpath(io.matthewnelson.kotlin.components.dependencies.plugins.npmPublish)
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle.kts files
@@ -56,17 +58,23 @@ allprojects {
 
 }
 
+configureYarn { rootYarn, _ ->
+    rootYarn.apply {
+        lockFileDirectory = project.rootDir.resolve(".kotlin-js-store")
+    }
+}
+
 plugins {
     id(pluginId.kmp.publish)
 }
 
 kmpPublish {
     setupRootProject(
-        versionName = "0.4.7.11",
-        //    0.4.6.9  == 00_04_06_09_00
-        //    0.4.6.9a == 00_04_06_09_01
-        //    0.4.6.9b == 00_04_06_09_02
-        versionCode = /*00_0*/4_07_11_00,
+        versionName = "4.7.10-1",
+        //     4.6.9-0 == 00_04_06_09_00
+        //     4.6.9-1 == 00_04_06_09_01
+        //     4.6.9-2 == 00_04_06_09_02
+        versionCode = /*00_0*/4_07_10_01,
         pomInceptionYear = 2021,
     )
 }

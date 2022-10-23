@@ -13,31 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.kmp.tor.binary.extract
+@file:JsModule("path")
+@file:JsNonModule
+package io.matthewnelson.kmp.tor.binary.extract.internal
 
-internal val os: dynamic
-    get() {
-        return try {
-            js("require('os')")
-        } catch (t: Throwable) {
-            null
-        }
-    }
+internal external val sep: String
 
-internal val fs: dynamic
-    get() {
-        return try {
-            js("require('fs')")
-        } catch (_: Throwable) {
-            null
-        }
-    }
-
-internal val path: dynamic
-    get() {
-        return try {
-            js("require('path')")
-        } catch (_: Throwable) {
-            null
-        }
-    }
+internal external fun normalize(path: String): String

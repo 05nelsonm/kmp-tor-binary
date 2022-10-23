@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.kmp.tor.binary.extract
+@file:JsModule("zlib")
+@file:JsNonModule
+package io.matthewnelson.kmp.tor.binary.extract.internal
 
-// TODO: Uncomment and implement in jvmMain/jsMain upon first
-//  release. Cannot commit to master with these tests for js
-//  because the npm packages are not published to npmjs yet.
-//expect class ExtractorUnitTest: BaseExtractorJvmJsUnitTest
+// Takes a Buffer and returns a Buffer
+internal external fun gunzipSync(data: Any): Any

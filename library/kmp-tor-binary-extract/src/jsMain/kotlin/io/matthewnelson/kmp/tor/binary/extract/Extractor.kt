@@ -15,17 +15,24 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJs
+import io.matthewnelson.kmp.tor.binary.extract.internal.readFileSync
+
+
 /**
  * Extracts [TorResource]es to their desired
  * locations.
  * */
 actual class Extractor {
 
+    private val delegate = ExtractorDelegateJs()
+
     /**
      * Extracts geoip files.
      *
      * @param [destination] The file to write to
      * @param [cleanExtraction] Perform a clean extraction of the [resource]
+     *   by deleting the old file, and re-extracting the file.
      * @throws [ExtractionException]
      * */
     actual fun extract(
@@ -33,8 +40,17 @@ actual class Extractor {
         destination: String,
         cleanExtraction: Boolean
     ) {
-        // TODO
-        throw ExtractionException("Not yet implemented")
+        delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
+            val modulePath = "kmp-tor-binary-geoip/$resourcePath"
+
+            val resolvedPath = try {
+                resolveResource(modulePath)
+            } catch (t: Throwable) {
+                throw delegate.resourceNotFound(modulePath, t)
+            }
+
+            readFileSync(resolvedPath)
+        }
     }
 
     /**
@@ -44,6 +60,7 @@ actual class Extractor {
      *
      * @param [destinationDir] The directory to write files to
      * @param [cleanExtraction] Performs a clean extraction of all files for the [resource]
+     *   by deleting the [destinationDir], and re-extracting all files.
      * @throws [ExtractionException]
      * */
     actual fun extract(
@@ -51,7 +68,26 @@ actual class Extractor {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        // TODO
-        throw ExtractionException("Not yet implemented")
+        return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
+            val modulePath = when (resource) {
+                is TorResourceLinuxX64 -> "kmp-tor-binary-linuxx64"
+                is TorResourceLinuxX86 -> "kmp-tor-binary-linuxx86"
+                is TorResourceMacosArm64 -> "kmp-tor-binary-macosarm64"
+                is TorResourceMacosX64 -> "kmp-tor-binary-macosx64"
+                is TorResourceMingwX64 -> "kmp-tor-binary-mingwx64"
+                is TorResourceMingwX86 -> "kmp-tor-binary-mingwx86"
+            } + "/$resourcePath"
+
+            val resolvedPath = try {
+                resolveResource(modulePath)
+            } catch (t: Throwable) {
+                throw delegate.resourceNotFound(modulePath, t)
+            }
+
+            readFileSync(resolvedPath)
+        }
     }
+
+    @Suppress("UNUSED_PARAMETER")
+    private fun resolveResource(path: String): String = js("require.resolve(path)") as String
 }

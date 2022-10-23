@@ -15,21 +15,22 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-import io.matthewnelson.kmp.tor.binary.extract.internal.mapManifestToDestination
-import java.io.File
-import java.util.zip.GZIPInputStream
+import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndroid
 
 /**
  * Extracts [TorResource]es to their desired
  * locations.
  * */
-actual class Extractor: ExtractorJvm() {
+actual class Extractor {
+
+    private val delegate = ExtractorDelegateJvmAndroid()
 
     /**
      * Extracts geoip files.
      *
      * @param [destination] The file to write to
      * @param [cleanExtraction] Perform a clean extraction of the [resource]
+     *   by deleting the old file, and re-extracting the file.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
@@ -38,8 +39,12 @@ actual class Extractor: ExtractorJvm() {
         destination: String,
         cleanExtraction: Boolean
     ) {
-        extract(resource, destination, cleanExtraction) {
-            javaClass.getResourceAsStream("/" + resource.resourcePath)!!
+        delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
+            try {
+                javaClass.getResourceAsStream("/$resourcePath")!!
+            } catch (t: Throwable) {
+                throw delegate.resourceNotFound(resourcePath, t)
+            }
         }
     }
 
@@ -50,6 +55,7 @@ actual class Extractor: ExtractorJvm() {
      *
      * @param [destinationDir] The directory to write files to
      * @param [cleanExtraction] Performs a clean extraction of all files for the [resource]
+     *   by deleting the [destinationDir], and re-extracting all files.
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
@@ -58,79 +64,12 @@ actual class Extractor: ExtractorJvm() {
         destinationDir: String,
         cleanExtraction: Boolean,
     ): TorFilePath {
-        val manifest = resource.resourceManifest
-        val sha256SumFile = File(destinationDir, FILE_NAME_SHA256_TOR)
-        val filesWritten = ArrayList<File>(manifest.size + 1).apply { add(sha256SumFile) }
-        val extractionDir = File(destinationDir)
-
-        try {
-            if (extractionDir.exists()) {
-                if (!extractionDir.isDirectory && !extractionDir.delete()) {
-                    throw ExtractionException(
-                        "Directory specified ($destinationDir) exists, " +
-                                "is not a directory, and failed to delete prior to " +
-                                "extracting resources."
-                    )
-                }
-            } else {
-                if (!extractionDir.mkdirs()) {
-                    throw ExtractionException(
-                        "Failed to create destinationDir ($destinationDir) to extract $resource to."
-                    )
-                }
+        return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
+            try {
+                javaClass.getResourceAsStream("/$resourcePath")!!
+            } catch (t: Throwable) {
+                throw delegate.resourceNotFound(resourcePath, t)
             }
-
-            val sha256Sum = resource.sha256sum
-            val isSha256SumValid = validateSha256SumFile(sha256SumFile, sha256Sum)
-
-            val resourceDir = resource.resourceDirPath
-            val extractResourceTo = ArrayList<Pair<String, File>>(manifest.size)
-            var shouldExtract = !isSha256SumValid || cleanExtraction
-
-            var torFile: File? = null
-
-            manifest.mapManifestToDestination(destinationDir) { manifestItem, destination ->
-                val writeTo = File(destination)
-                extractResourceTo.add(Pair("/$resourceDir/$manifestItem", writeTo))
-
-                if (writeTo.nameWithoutExtension.lowercase() == "tor") {
-                    torFile = writeTo
-                }
-
-                if (!writeTo.exists()) {
-                    shouldExtract = true
-                }
-            }
-
-            if (shouldExtract) {
-                extractResourceTo.forEach { item ->
-                    filesWritten.add(item.second)
-                    val stream = GZIPInputStream(javaClass.getResourceAsStream(item.first))
-                    item.second.write(stream)
-                }
-            }
-
-            if (!isSha256SumValid) {
-                sha256SumFile.writeText(sha256Sum)
-            }
-
-            return torFile?.canonicalPath ?: throw NullPointerException("Tor binary file was not found after extraction.")
-        } catch (e: ExtractionException) {
-            for (file in filesWritten) {
-                try {
-                    file.delete()
-                } catch (_: Exception) {}
-            }
-
-            throw e
-        } catch (e: Exception) {
-            for (file in filesWritten) {
-                try {
-                    file.delete()
-                } catch (_: Exception) {}
-            }
-
-            throw ExtractionException("Failed to extract $resource to $destinationDir", e)
         }
     }
 }
