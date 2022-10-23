@@ -15,7 +15,4 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-// TODO: Uncomment and implement in jvmMain/jsMain upon first
-//  release. Cannot commit to master with these tests for js
-//  because the npm packages are not published to npmjs yet.
-//expect class ExtractorUnitTest: BaseExtractorJvmJsUnitTest
+expect class ExtractorUnitTest: BaseExtractorJvmJsUnitTest

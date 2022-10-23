@@ -1,5 +1,22 @@
 # CHANGELOG
 
+## Version 4.7.10-1 (2022-10-22)
+ - Changes the version naming scheme
+     - Ex: `4.7.10-1`
+         - `Tor` version `0.4.7.10`
+         - `kmp-tor-binary-*` sub-release `1`
+     - See [Issue 36](https://github.com/05nelsonm/kmp-tor-binary/issues/36#issuecomment-1284654389)
+ - Refactors binary build script to handle upstream changes to `tor-browser-build` 
+   packaging
+ - Packages all binary/geoip files individually instead of using an archive
+     - All files are gzipped
+     - Mitigates need for external dependencies to extract from `.zip` or `.tar` archives
+ - Refactors `kmp-tor-binary-extract` to handle extracting gzipped files
+     - Removes the `ZipArchiveExtractor` class entirely, in favor of `TorResource` and 
+       `Extractor` classes to handle gzipped files.
+ - Adds support for `Node.js`
+     - Assets are distributed via `npmjs`
+
 ## Version 0.4.7.10 (2022-09-24)
  - Updates `tor-browser-build` submodule source
      - FROM: `https://gitweb.torproject.org/builders/tor-browser-build.git/`
