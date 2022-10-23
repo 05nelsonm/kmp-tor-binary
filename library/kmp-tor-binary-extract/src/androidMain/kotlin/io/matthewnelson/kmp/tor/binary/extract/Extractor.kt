@@ -17,6 +17,7 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 import android.content.Context
 import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndroid
+import java.io.InputStream
 
 /**
  * Extracts [TorResource]es to their desired
@@ -48,11 +49,7 @@ actual class Extractor(context: Context) {
         cleanExtraction: Boolean,
     ) {
         delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
-            try {
-                appContext.assets.open(resourcePath)
-            } catch (t: Throwable) {
-                throw delegate.resourceNotFound(resourcePath, t)
-            }
+            openAssetFileStream(resourcePath)
         }
     }
 
@@ -73,6 +70,19 @@ actual class Extractor(context: Context) {
         cleanExtraction: Boolean,
     ): TorFilePath {
         return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
+            openAssetFileStream(resourcePath)
+        }
+    }
+
+    @Throws(ExtractionException::class)
+    private fun openAssetFileStream(resourcePath: String): InputStream {
+        // Packaging gzipped files in the assets directory results in the
+        // stripping of the .gz file extension when the apk is built. So
+        // we check first for path w/o the .gz extension, then with it.
+
+        return try {
+            appContext.assets.open(resourcePath.dropLast(3))
+        } catch (_: Throwable) {
             try {
                 appContext.assets.open(resourcePath)
             } catch (t: Throwable) {
