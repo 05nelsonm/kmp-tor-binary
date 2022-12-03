@@ -81,7 +81,7 @@ app's `nativeLibraryDir` upon application installation.
                // Enables building multiple APKs per ABI.
                isEnable = true
 
-               // By default all ABIs are included, so use reset() and include to specify
+               // By default, all ABIs are included, so use reset() and include to specify
                // that we only want APKs for x86 and x86_64, armeabi-v7a, and arm64-v8a.
 
                // Resets the list of ABIs that Gradle should create APKs for to none.
@@ -90,7 +90,7 @@ app's `nativeLibraryDir` upon application installation.
                // Specifies a list of ABIs that Gradle should create APKs for.
                include("x86", "armeabi-v7a", "arm64-v8a", "x86_64")
 
-               // Specify whether or not you wish to also generate a universal APK that
+               // Specify whether you wish to also generate a universal APK that
                // includes _all_ ABIs.
                isUniversalApk = true
            }
