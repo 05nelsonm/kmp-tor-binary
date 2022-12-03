@@ -217,7 +217,7 @@ Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-br
  - Install dependencies:
      - See `tor-browser-build`'s `README` for needed dependencies and install them:
        ```
-       cd library/binary-build/binary-build-executables/tor-browser-build
+       cd library/binary-build/tor-browser-build
        nano README
        ```
 

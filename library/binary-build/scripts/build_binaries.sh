@@ -122,11 +122,11 @@ function buildAndroid() {
     return 1
   fi
 
-  cp -r "$TEMP_DIR/jniLibs" "$DIR/../../../kmp-tor-binary-android/src/androidMain"
+  cp -r "$TEMP_DIR/jniLibs" "$DIR/../../kmp-tor-binary-android/src/androidMain"
   rm -rf "$TEMP_DIR"
 
   local FILE=
-  for FILE in $(find "$DIR/../../../kmp-tor-binary-android/src/androidMain/jniLibs" -name "libTor.so" | grep "libTor.so"); do
+  for FILE in $(find "$DIR/../../kmp-tor-binary-android/src/androidMain/jniLibs" -name "libTor.so" | grep "libTor.so"); do
     mv $FILE $(echo $FILE | sed -e 's|libTor.so|libKmpTor.so|g')
   done
 
@@ -154,7 +154,7 @@ function buildDesktop() {
     PLATFORM="linux"
     CONST_KT_NAME="LINUX_X64"
     EXTRACT_GEOIP=true
-    TOR_RESOURCE_NATIVE_KT="$DIR/../../../kmp-tor-binary-extract/src/linuxX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+    TOR_RESOURCE_NATIVE_KT="$DIR/../../kmp-tor-binary-extract/src/linuxX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
     ./rbm/rbm build tor --target release --target torbrowser-linux-x86_64
   elif [ "$1" == "windows-i686" ]; then
     ARCH="x86"
@@ -165,7 +165,7 @@ function buildDesktop() {
     ARCH="x64"
     PLATFORM="mingw"
     CONST_KT_NAME="MINGW_X64"
-    TOR_RESOURCE_NATIVE_KT="$DIR/../../../kmp-tor-binary-extract/src/mingwX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+    TOR_RESOURCE_NATIVE_KT="$DIR/../../kmp-tor-binary-extract/src/mingwX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
     ./rbm/rbm build tor --target release --target torbrowser-windows-x86_64
   elif [ "$1" == "osx-x86_64" ]; then
     ARCH="x64"
@@ -187,8 +187,8 @@ function buildDesktop() {
 
   local TOR_RESOURCE_JVMJS_KT=
   local TOR_RESOURCE_COMMON_KT=
-  TOR_RESOURCE_JVMJS_KT="$DIR/../../../kmp-tor-binary-extract/src/jvmJsMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
-  TOR_RESOURCE_COMMON_KT="$DIR/../../../kmp-tor-binary-extract/src/commonMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+  TOR_RESOURCE_JVMJS_KT="$DIR/../../kmp-tor-binary-extract/src/jvmJsMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+  TOR_RESOURCE_COMMON_KT="$DIR/../../kmp-tor-binary-extract/src/commonMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
 
   if ! checkFileExists "$TOR_RESOURCE_JVMJS_KT"; then
     echo "ERROR: Something went wrong... TorResource.kt file for jvmJsMain does not exist"
@@ -239,7 +239,7 @@ function buildDesktop() {
 
   # Copy files
   local BINARY_DIR=
-  BINARY_DIR="$DIR/../../../kmp-tor-binary-$PLATFORM$ARCH/src/$BINARY_DIR_SRC_SET/resources/kmptor/$PLATFORM/$ARCH"
+  BINARY_DIR="$DIR/../../kmp-tor-binary-$PLATFORM$ARCH/src/$BINARY_DIR_SRC_SET/resources/kmptor/$PLATFORM/$ARCH"
 
   mkdir -p "$BINARY_DIR"
   cp -r . "$BINARY_DIR"
@@ -299,7 +299,7 @@ function buildDesktop() {
 
     # Copy files
     local GEOIP_MODULE_SRC_DIR=
-    GEOIP_MODULE_SRC_DIR="$DIR/../../../kmp-tor-binary-geoip/src"
+    GEOIP_MODULE_SRC_DIR="$DIR/../../kmp-tor-binary-geoip/src"
 
     mkdir -p "$GEOIP_MODULE_SRC_DIR/androidMain/res/raw/"
     mkdir -p "$GEOIP_MODULE_SRC_DIR/jvmMain/resources/kmptor/"
