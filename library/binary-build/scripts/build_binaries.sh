@@ -18,6 +18,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
 SCRIPT_START_TIME=$(date +%s)
 TOR_BUILD_DIR="$DIR/../tor-browser-build"
 TOR_OUT_DIR="$TOR_BUILD_DIR/out/tor"
+EXIT_CODE=0
 
 function changeDir() {
   if ! cd "$1"; then
@@ -48,10 +49,13 @@ function deleteTorOutIfPresent() {
   fi
 }
 
-if ! checkDirExists "$TOR_BUILD_DIR"; then
-  echo "ERROR: Directory $TOR_BUILD_DIR"
+if ! checkDirExists "$TOR_BUILD_DIR/rbm"; then
+  echo "ERROR: Directory $TOR_BUILD_DIR/rbm"
   echo "ERROR: does not exists. Did you forget to initialize"
-  echo "ERROR: the repo's submodules?"
+  echo "ERROR: kmp-tor-binary repository submodules?"
+  echo "ERROR:"
+  echo "ERROR: Try running from the root project:"
+  echo "ERROR:     git submodule update --init"
   exit 1
 fi
 
@@ -59,10 +63,14 @@ changeDir "$TOR_BUILD_DIR"
 # Apply patches here
 #git apply "$DIR/../patches/0001-set-tor-version-0.4.6.10.patch"
 
-EXIT_CODE=0
 function buildAndroid() {
   changeDir "$TOR_BUILD_DIR"
   deleteTorOutIfPresent
+
+  echo ""
+  echo "Building $1..."
+  echo ""
+  make submodule-update
 
   if [ "$1" == "android-all" ]; then
     ./rbm/rbm build tor --target release --target torbrowser-android-armv7
@@ -84,8 +92,8 @@ function buildAndroid() {
   fi
 
   changeDir "$TOR_OUT_DIR"
-  local TEMP_DIR=
-  TEMP_DIR=$(mktemp -d -p "$DIR")
+  local ANDROID_MAIN_DIR=
+  ANDROID_MAIN_DIR="$DIR/../../kmp-tor-binary-android/src/androidMain"
 
   local FILE_TOR_TAR_GZ=
   local ARCH=
@@ -108,34 +116,26 @@ function buildAndroid() {
     tar -xzf "$FILE_TOR_TAR_GZ"
     sleep 1
 
-    mkdir -p "$TEMP_DIR/jniLibs/$ARCH"
-    cp -r "$TOR_OUT_DIR/tor/libTor.so" "$TEMP_DIR/jniLibs/$ARCH/"
+    mkdir -p "$ANDROID_MAIN_DIR/jniLibs/$ARCH"
+    cp -r "$TOR_OUT_DIR/tor/libTor.so" "$ANDROID_MAIN_DIR/jniLibs/$ARCH/libKmpTor.so"
 
     rm -rf "$TOR_OUT_DIR/tor"
     rm -rf "$TOR_OUT_DIR/data"
     sleep 1
   done
 
-  if ! checkDirExists "$TEMP_DIR/jniLibs"; then
-    echo "ERROR: Something went wrong... $TEMP_DIR/jniLibs does not exist"
-    EXIT_CODE=1
-    return 1
-  fi
-
-  cp -r "$TEMP_DIR/jniLibs" "$DIR/../../../kmp-tor-binary-android/src/androidMain"
-  rm -rf "$TEMP_DIR"
-
-  local FILE=
-  for FILE in $(find "$DIR/../../../kmp-tor-binary-android/src/androidMain/jniLibs" -name "libTor.so" | grep "libTor.so"); do
-    mv $FILE $(echo $FILE | sed -e 's|libTor.so|libKmpTor.so|g')
-  done
-
-  echo "Binaries have been extracted and moved to kmp-tor-binary-android/src/androidMain/jniLibs"
+  echo ""
+  echo "Tor binaries have been copied to kmp-tor-binary-android/src/androidMain/jniLibs"
 }
 
 function buildDesktop() {
   changeDir "$TOR_BUILD_DIR"
   deleteTorOutIfPresent
+
+  echo ""
+  echo "Building $1..."
+  echo ""
+  make submodule-update
 
   local ARCH=
   local PLATFORM=
@@ -154,7 +154,7 @@ function buildDesktop() {
     PLATFORM="linux"
     CONST_KT_NAME="LINUX_X64"
     EXTRACT_GEOIP=true
-    TOR_RESOURCE_NATIVE_KT="$DIR/../../../kmp-tor-binary-extract/src/linuxX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+    TOR_RESOURCE_NATIVE_KT="$DIR/../../kmp-tor-binary-extract/src/linuxX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
     ./rbm/rbm build tor --target release --target torbrowser-linux-x86_64
   elif [ "$1" == "windows-i686" ]; then
     ARCH="x86"
@@ -165,7 +165,7 @@ function buildDesktop() {
     ARCH="x64"
     PLATFORM="mingw"
     CONST_KT_NAME="MINGW_X64"
-    TOR_RESOURCE_NATIVE_KT="$DIR/../../../kmp-tor-binary-extract/src/mingwX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+    TOR_RESOURCE_NATIVE_KT="$DIR/../../kmp-tor-binary-extract/src/mingwX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
     ./rbm/rbm build tor --target release --target torbrowser-windows-x86_64
   elif [ "$1" == "osx-x86_64" ]; then
     ARCH="x64"
@@ -187,8 +187,8 @@ function buildDesktop() {
 
   local TOR_RESOURCE_JVMJS_KT=
   local TOR_RESOURCE_COMMON_KT=
-  TOR_RESOURCE_JVMJS_KT="$DIR/../../../kmp-tor-binary-extract/src/jvmJsMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
-  TOR_RESOURCE_COMMON_KT="$DIR/../../../kmp-tor-binary-extract/src/commonMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+  TOR_RESOURCE_JVMJS_KT="$DIR/../../kmp-tor-binary-extract/src/jvmJsMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+  TOR_RESOURCE_COMMON_KT="$DIR/../../kmp-tor-binary-extract/src/commonMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
 
   if ! checkFileExists "$TOR_RESOURCE_JVMJS_KT"; then
     echo "ERROR: Something went wrong... TorResource.kt file for jvmJsMain does not exist"
@@ -239,7 +239,12 @@ function buildDesktop() {
 
   # Copy files
   local BINARY_DIR=
-  BINARY_DIR="$DIR/../../../kmp-tor-binary-$PLATFORM$ARCH/src/$BINARY_DIR_SRC_SET/resources/kmptor/$PLATFORM/$ARCH"
+  BINARY_DIR="$DIR/../../kmp-tor-binary-$PLATFORM$ARCH/src/$BINARY_DIR_SRC_SET/resources/kmptor/$PLATFORM/$ARCH"
+
+  if checkDirExists "$BINARY_DIR"; then
+    # Remove all old files
+    rm -rf "$BINARY_DIR"
+  fi
 
   mkdir -p "$BINARY_DIR"
   cp -r . "$BINARY_DIR"
@@ -269,8 +274,7 @@ function buildDesktop() {
   fi
 
   echo ""
-  echo "Tor files have been copied to module kmp-tor-binary-$PLATFORM$ARCH..."
-  echo ""
+  echo "Tor files have been copied to module kmp-tor-binary-$PLATFORM$ARCH"
 
   if [ $EXTRACT_GEOIP == true ]; then
 
@@ -299,7 +303,7 @@ function buildDesktop() {
 
     # Copy files
     local GEOIP_MODULE_SRC_DIR=
-    GEOIP_MODULE_SRC_DIR="$DIR/../../../kmp-tor-binary-geoip/src"
+    GEOIP_MODULE_SRC_DIR="$DIR/../../kmp-tor-binary-geoip/src"
 
     mkdir -p "$GEOIP_MODULE_SRC_DIR/androidMain/res/raw/"
     mkdir -p "$GEOIP_MODULE_SRC_DIR/jvmMain/resources/kmptor/"
@@ -312,17 +316,14 @@ function buildDesktop() {
     sed -i "s|/\* GEOIP \*/ override val sha256sum: String get() = .*|/\* GEOIP \*/ override val sha256sum: String get() = \"$SHA256SUM_GEOIP\"|g" "$TOR_RESOURCE_COMMON_KT"
     sed -i "s|/\* GEOIP6 \*/ override val sha256sum: String get() = .*|/\* GEOIP6 \*/ override val sha256sum: String get() = \"$SHA256SUM_GEOIP6\"|g" "$TOR_RESOURCE_COMMON_KT"
 
-    echo ""
-    echo "Geoip files have been copied to module kmp-tor-binary-geoip..."
-    echo ""
+    echo "Geoip files have been copied to module kmp-tor-binary-geoip"
   fi
 
   # Cleanup
   changeDir "$TOR_OUT_DIR"
-
-  rm -rf "$TOR_OUT_DIR/data"
-  rm -rf "$TOR_OUT_DIR/debug"
-  rm -rf "$TOR_OUT_DIR/tor"
+  rm -rf "data"
+  rm -rf "debug"
+  rm -rf "tor"
 }
 
 function help() {
@@ -369,8 +370,6 @@ function checkExit() {
 }
 
 function buildDesktopAll() {
-  echo "Building desktop-all..."
-
   buildDesktop "linux-i686"
   sleep 1
   checkExit
@@ -397,7 +396,6 @@ function buildDesktopAll() {
 
 case $1 in
   "all")
-    echo "Building android-all..."
     buildAndroid "android-all"
     sleep 1
     checkExit
