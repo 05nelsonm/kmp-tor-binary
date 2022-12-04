@@ -227,7 +227,7 @@ Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-br
    ```
 
  - Run the build script:
-     - Change directories back to the `binary-build-executables` directory:
+     - Change directories back to `binary-build`:
        ```
        cd ../
        ```
