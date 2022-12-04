@@ -167,18 +167,18 @@ function buildDesktop() {
     CONST_KT_NAME="MINGW_X64"
     TOR_RESOURCE_NATIVE_KT="$DIR/../../kmp-tor-binary-extract/src/mingwX64Main/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
     ./rbm/rbm build tor --target release --target torbrowser-windows-x86_64
-  elif [ "$1" == "osx-x86_64" ]; then
+  elif [ "$1" == "macos-x86_64" ]; then
     ARCH="x64"
     PLATFORM="macos"
     CONST_KT_NAME="MACOS_X64"
     BINARY_DIR_SRC_SET="jvmMain"
-    ./rbm/rbm build tor --target release --target torbrowser-osx-x86_64
-  elif [ "$1" == "osx-aarch64" ]; then
+    ./rbm/rbm build tor --target release --target torbrowser-macos-x86_64
+  elif [ "$1" == "macos-aarch64" ]; then
     ARCH="arm64"
     PLATFORM="macos"
     CONST_KT_NAME="MACOS_ARM64"
     BINARY_DIR_SRC_SET="jvmMain"
-    ./rbm/rbm build tor --target release --target torbrowser-osx-aarch64
+    ./rbm/rbm build tor --target release --target torbrowser-macos-aarch64
   else
     echo "$1 is not a recognized target. Run script again w/o args to see help."
     EXIT_CODE=1
@@ -344,8 +344,8 @@ function help() {
   echo "                desktop-all"
   echo "                linux-i686"
   echo "                linux-x86_64"
-  echo "                osx-x86_64"
-  echo "                osx-aarch64"
+  echo "                macos-x86_64"
+  echo "                macos-aarch64"
   echo "                windows-i686"
   echo "                windows-x86_64"
   echo ""
@@ -378,11 +378,11 @@ function buildDesktopAll() {
   sleep 1
   checkExit
 
-  buildDesktop "osx-x86_64"
+  buildDesktop "macos-x86_64"
   sleep 1
   checkExit
 
-  buildDesktop "osx-aarch64"
+  buildDesktop "macos-aarch64"
   sleep 1
   checkExit
 
@@ -426,10 +426,10 @@ case $1 in
   "linux-x86_64")
     buildDesktop "$1"
     ;;
-  "osx-x86_64")
+  "macos-x86_64")
     buildDesktop "$1"
     ;;
-  "osx-aarch64")
+  "macos-aarch64")
     buildDesktop "$1"
     ;;
   "windows-i686")
