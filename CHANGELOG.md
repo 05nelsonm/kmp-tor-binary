@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## Version 4.7.11-0 (2023-01-01)
+ - Update Tor to `0.4.7.12`
+
 ## Version 4.7.11-0 (2022-12-04)
  - Updates Tor to `0.4.7.11`
  - Removes the `binary-build-jni` project

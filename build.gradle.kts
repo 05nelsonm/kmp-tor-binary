@@ -72,11 +72,11 @@ kmpPublish {
 
     // Only update once npm packages have been published
     setupRootProject(
-        versionName = "4.7.11-0",
+        versionName = "4.7.12-0",
         //     4.6.9-0 == 00_04_06_09_00
         //     4.6.9-1 == 00_04_06_09_01
         //     4.6.9-2 == 00_04_06_09_02
-        versionCode = /*00_0*/4_07_11_00,
+        versionCode = /*00_0*/4_07_12_00,
         pomInceptionYear = 2021,
     )
 }
