@@ -15,4 +15,4 @@
  **/
 package io.matthewnelson.kmp.tor.binary.tools.check.publication
 
-fun stub() { /* no-op */ }
+internal fun stub() { /* no-op */ }

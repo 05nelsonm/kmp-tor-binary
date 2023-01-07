@@ -55,6 +55,7 @@ kmpConfiguration {
                 buildTools = versions.android.buildTools,
                 compileSdk = versions.android.sdkCompile,
                 minSdk = versions.android.sdkMin21,
+                namespace = "io.matthewnelson.kmp.tor.binary.tools.check.publication",
                 mainSourceSet = {
                     dependencies {
                         implementation("${pConfig.group}:kmp-tor-binary-android:${pConfig.versionName}")
