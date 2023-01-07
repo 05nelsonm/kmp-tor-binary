@@ -1,6 +1,11 @@
 # CHANGELOG
 
-## Version 4.7.11-0 (2023-01-01)
+## Version 4.7.12-1 (2023-01-07)
+ - Updates `kotlin-components` submodule
+     - Kotlin `1.6.21` -> `1.7.20`
+     - Android Gradle Plugin `7.0.4` -> `7.3.1`
+
+## Version 4.7.12-0 (2023-01-01)
  - Update Tor to `0.4.7.12`
 
 ## Version 4.7.11-0 (2022-12-04)
