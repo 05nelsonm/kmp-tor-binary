@@ -13,9 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import io.matthewnelson.kotlin.components.dependencies.versions
 import io.matthewnelson.kotlin.components.kmp.KmpTarget
-import io.matthewnelson.kotlin.components.kmp.KmpTarget.Jvm.Android.Companion.SOURCE_SET_MAIN_NAME as KmpAndroidMain
+import io.matthewnelson.kotlin.components.kmp.KmpTarget.SetNames.ANDROID_MAIN as KmpAndroidMain
 
 plugins {
     id(pluginId.kmp.configuration)
