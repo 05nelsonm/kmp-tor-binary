@@ -100,6 +100,8 @@ kmpConfiguration {
         },
 
         kotlin = {
+            explicitApi()
+
             sourceSetJvmAndroidTest {
                 dependencies {
                     implementation(project(":library:kmp-tor-binary-geoip"))

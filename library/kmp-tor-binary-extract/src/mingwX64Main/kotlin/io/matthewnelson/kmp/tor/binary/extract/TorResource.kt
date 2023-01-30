@@ -21,9 +21,9 @@ package io.matthewnelson.kmp.tor.binary.extract
  *
  * @see [Extractor]
  * */
-actual sealed class TorResource private actual constructor() {
+public actual sealed class TorResource private actual constructor() {
 
-    actual abstract val sha256sum: String
+    public actual abstract val sha256sum: String
 
     /**
      * Resource model for geoip and geoip6 files.
@@ -31,8 +31,8 @@ actual sealed class TorResource private actual constructor() {
      * @see [TorResourceGeoip]
      * @see [TorResourceGeoip6]
      * */
-    actual sealed class Geoips: TorResource() {
-        actual abstract val resourcePath: String
+    public actual sealed class Geoips: TorResource() {
+        public actual abstract val resourcePath: String
     }
 
     /**
@@ -40,13 +40,13 @@ actual sealed class TorResource private actual constructor() {
      *
      * @see [TorResourceMingwX64]
      * */
-    actual sealed class Binaries: TorResource() {
-        actual abstract val resourceDirPath: String
-        actual abstract val resourceManifest: List<String>
+    public actual sealed class Binaries: TorResource() {
+        public actual abstract val resourceDirPath: String
+        public actual abstract val resourceManifest: List<String>
     }
 }
 
-object TorResourceMingwX64: TorResource.Binaries() {
+public object TorResourceMingwX64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/mingw/x64"
     /* MINGW_X64 */ override val resourceManifest: List<String> get() = listOf("tor.exe.gz", "tor-gencert.exe.gz")
     /* MINGW_X64 */ override val sha256sum: String get() = "f228252a094f3fed8d9d08d6b98f1925644cfbbf59fbd08c566bf184027068e4"

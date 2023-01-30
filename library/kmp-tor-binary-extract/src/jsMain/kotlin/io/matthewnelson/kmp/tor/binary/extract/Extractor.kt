@@ -23,7 +23,7 @@ import io.matthewnelson.kmp.tor.binary.extract.internal.readFileSync
  * Extracts [TorResource]es to their desired
  * locations.
  * */
-actual class Extractor {
+public actual class Extractor {
 
     private val delegate = ExtractorDelegateJs()
 
@@ -35,7 +35,7 @@ actual class Extractor {
      *   by deleting the old file, and re-extracting the file.
      * @throws [ExtractionException]
      * */
-    actual fun extract(
+    public actual fun extract(
         resource: TorResource.Geoips,
         destination: String,
         cleanExtraction: Boolean
@@ -63,7 +63,7 @@ actual class Extractor {
      *   by deleting the [destinationDir], and re-extracting all files.
      * @throws [ExtractionException]
      * */
-    actual fun extract(
+    public actual fun extract(
         resource: TorResource.Binaries,
         destinationDir: String,
         cleanExtraction: Boolean,

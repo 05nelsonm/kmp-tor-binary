@@ -23,7 +23,7 @@ import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegate
  *
  * @see [ExtractorDelegate]
  * */
-actual class Extractor {
+public actual class Extractor {
 
     /**
      * Extracts geoip files.
@@ -34,7 +34,7 @@ actual class Extractor {
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
-    actual fun extract(
+    public actual fun extract(
         resource: TorResource.Geoips,
         destination: String,
         cleanExtraction: Boolean
@@ -54,7 +54,7 @@ actual class Extractor {
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
-    actual fun extract(
+    public actual fun extract(
         resource: TorResource.Binaries,
         destinationDir: String,
         cleanExtraction: Boolean,

@@ -21,9 +21,9 @@ package io.matthewnelson.kmp.tor.binary.extract
  *
  * @see [Extractor]
  * */
-actual sealed class TorResource private actual constructor() {
+public actual sealed class TorResource private actual constructor() {
 
-    actual abstract val sha256sum: String
+    public actual abstract val sha256sum: String
 
     /**
      * Resource model for geoip and geoip6 files.
@@ -31,8 +31,8 @@ actual sealed class TorResource private actual constructor() {
      * @see [TorResourceGeoip]
      * @see [TorResourceGeoip6]
      * */
-    actual sealed class Geoips: TorResource() {
-        actual abstract val resourcePath: String
+    public actual sealed class Geoips: TorResource() {
+        public actual abstract val resourcePath: String
     }
 
     /**
@@ -41,8 +41,8 @@ actual sealed class TorResource private actual constructor() {
      * Android does not have binaries to extract, as that
      * is performed on application installation automatically.
      * */
-    actual sealed class Binaries: TorResource() {
-        actual abstract val resourceDirPath: String
-        actual abstract val resourceManifest: List<String>
+    public actual sealed class Binaries: TorResource() {
+        public actual abstract val resourceDirPath: String
+        public actual abstract val resourceManifest: List<String>
     }
 }
