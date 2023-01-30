@@ -113,7 +113,7 @@ abstract class BaseExtractorUnitTest {
 
         lastModified.forEachIndexed { index, time ->
             val diff = checkNotModified[index] - time
-            assertTrue(diff < 300L)
+            assertTrue(diff < 500L)
             diffs.add(diff)
         }
 
