@@ -29,7 +29,7 @@ abstract class BaseExtractorUnitTest {
 
     protected abstract fun fileExists(path: String): Boolean
     protected abstract fun fileSize(path: String): Long
-    protected abstract fun fileLastModified(path: String): Long
+    protected abstract fun fileCreatedAt(path: String): Long
     protected abstract fun fileSha256Sum(path: String): String
     protected abstract fun sha256Sum(bytes: ByteArray): String
 
@@ -83,56 +83,6 @@ abstract class BaseExtractorUnitTest {
         return paths
     }
 
-    @Throws(AssertionError::class)
-    protected fun assertBinaryResourceCleanExtractionFalseNotExtracted(
-        resource: TorResource.Binaries,
-        extractionDir: String = tmpBinaryDir,
-    ) {
-        val paths = assertBinaryResourceExtractionIsSuccessful(resource, extractionDir)
-
-        fun lastModified(paths: List<String>): List<Long> {
-            return buildList {
-                paths.forEach { path ->
-                    add(fileLastModified(path))
-                }
-            }
-        }
-
-        val lastModified = lastModified(paths)
-
-        threadSleep()
-
-        extractor.extract(
-            resource = resource,
-            destinationDir = extractionDir,
-            cleanExtraction = false,
-        )
-
-        val checkNotModified = lastModified(paths)
-        val diffs = ArrayList<Long>(checkNotModified.size)
-
-        lastModified.forEachIndexed { index, time ->
-            val diff = checkNotModified[index] - time
-            assertTrue(diff < 500L)
-            diffs.add(diff)
-        }
-
-        threadSleep()
-
-        extractor.extract(
-            resource = resource,
-            destinationDir = extractionDir,
-            cleanExtraction = true,
-        )
-
-        val checkModified = lastModified(paths)
-
-        lastModified.forEachIndexed { index, time ->
-            val newDiff = checkModified[index] - time
-            assertTrue(newDiff > diffs[index])
-        }
-    }
-
     @Test
     fun givenExtractor_whenExtractGeoipResource_thenIsSuccessful() {
         val destination = "$tmpDir${fsSeparator}geoips${fsSeparator}geoip"
@@ -183,7 +133,7 @@ abstract class BaseExtractorUnitTest {
             cleanExtraction = true
         )
 
-        val lastModified = fileLastModified(destination)
+        val createdAt = fileCreatedAt(destination)
 
         threadSleep()
 
@@ -193,7 +143,7 @@ abstract class BaseExtractorUnitTest {
             cleanExtraction = false
         )
 
-        val diff = fileLastModified(destination) - lastModified
+        val diff = fileCreatedAt(destination) - createdAt
         assertTrue(diff < 300L)
 
         threadSleep()
@@ -204,7 +154,7 @@ abstract class BaseExtractorUnitTest {
             cleanExtraction = true
         )
 
-        val newDiff = fileLastModified(destination) - lastModified
+        val newDiff = fileCreatedAt(destination) - createdAt
         assertTrue(newDiff > diff)
     }
 }

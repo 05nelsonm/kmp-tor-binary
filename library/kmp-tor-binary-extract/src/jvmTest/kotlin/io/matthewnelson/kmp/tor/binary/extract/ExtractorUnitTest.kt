@@ -18,7 +18,10 @@ package io.matthewnelson.kmp.tor.binary.extract
 import io.matthewnelson.encoding.builders.Base16
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.attribute.BasicFileAttributes
 import java.security.MessageDigest
+import kotlin.io.path.Path
 
 actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
@@ -33,7 +36,10 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override fun fileExists(path: String): Boolean = File(path).exists()
     override fun fileSize(path: String): Long = File(path).length()
-    override fun fileLastModified(path: String): Long = File(path).lastModified()
+    override fun fileCreatedAt(path: String): Long {
+        val attributes = Files.readAttributes(Path(path), BasicFileAttributes::class.java)
+        return attributes.creationTime().toMillis()
+    }
     override fun fileSha256Sum(path: String): String = sha256Sum(File(path).readBytes())
 
     override fun sha256Sum(bytes: ByteArray): String {

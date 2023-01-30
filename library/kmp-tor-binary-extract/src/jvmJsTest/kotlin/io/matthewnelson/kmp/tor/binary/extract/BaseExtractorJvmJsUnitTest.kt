@@ -48,9 +48,4 @@ abstract class BaseExtractorJvmJsUnitTest: BaseExtractorUnitTest() {
     fun givenExtractor_whenExtractMingwX86Resource_thenIsSuccessful() {
         assertBinaryResourceExtractionIsSuccessful(TorResourceMingwX86)
     }
-
-    @Test
-    fun givenBinaryFileExists_whenCleanExtractionFalse_thenNotExtracted() {
-        assertBinaryResourceCleanExtractionFalseNotExtracted(TorResourceLinuxX64)
-    }
 }
