@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
+
 package io.matthewnelson.kmp.tor.binary.extract.internal
 
+@Suppress("NOTHING_TO_INLINE")
 internal inline fun List<String>.mapManifestToDestination(
     destinationDir: String,
     onMappedItem: (manifestItem: String, destination: String) -> Unit,

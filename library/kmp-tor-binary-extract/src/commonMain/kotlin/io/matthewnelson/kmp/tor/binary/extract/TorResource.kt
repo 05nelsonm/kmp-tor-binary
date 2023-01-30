@@ -23,9 +23,9 @@ package io.matthewnelson.kmp.tor.binary.extract
  *
  * @see [Extractor]
  * */
-expect sealed class TorResource private constructor() {
+public expect sealed class TorResource private constructor() {
 
-    abstract val sha256sum: String
+    public abstract val sha256sum: String
 
     /**
      * Resource model for geoip and geoip6 files.
@@ -33,25 +33,25 @@ expect sealed class TorResource private constructor() {
      * @see [TorResourceGeoip]
      * @see [TorResourceGeoip6]
      * */
-    sealed class Geoips(): TorResource {
-        abstract val resourcePath: String
+    public sealed class Geoips(): TorResource {
+        public abstract val resourcePath: String
     }
 
     /**
      * Resource model for Tor binaries.
      * */
-    sealed class Binaries: TorResource {
-        abstract val resourceDirPath: String
-        abstract val resourceManifest: List<String>
+    public sealed class Binaries: TorResource {
+        public abstract val resourceDirPath: String
+        public abstract val resourceManifest: List<String>
     }
 }
 
-object TorResourceGeoip: TorResource.Geoips() {
+public object TorResourceGeoip: TorResource.Geoips() {
     override val resourcePath: String get() = "kmptor/geoip.gz"
     /* GEOIP */ override val sha256sum: String get() = "8fa0d2bf75a29d346e856eff63b9ed0f7740df578bdcac3b33364f4a88a168e9"
 }
 
-object TorResourceGeoip6: TorResource.Geoips() {
+public object TorResourceGeoip6: TorResource.Geoips() {
     override val resourcePath: String get() = "kmptor/geoip6.gz"
     /* GEOIP6 */ override val sha256sum: String get() = "c9b87ed1a97adb5040a18ffe7117276cd5a112eb27c588eb989f4abe0ec58879"
 }

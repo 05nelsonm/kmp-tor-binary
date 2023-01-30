@@ -21,7 +21,7 @@ import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndr
  * Extracts [TorResource]es to their desired
  * locations.
  * */
-actual class Extractor {
+public actual class Extractor {
 
     private val delegate = ExtractorDelegateJvmAndroid()
 
@@ -34,7 +34,7 @@ actual class Extractor {
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
-    actual fun extract(
+    public actual fun extract(
         resource: TorResource.Geoips,
         destination: String,
         cleanExtraction: Boolean
@@ -59,7 +59,7 @@ actual class Extractor {
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
-    actual fun extract(
+    public actual fun extract(
         resource: TorResource.Binaries,
         destinationDir: String,
         cleanExtraction: Boolean,

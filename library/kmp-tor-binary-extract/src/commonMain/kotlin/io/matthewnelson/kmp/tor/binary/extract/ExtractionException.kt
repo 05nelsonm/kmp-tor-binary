@@ -15,12 +15,12 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-class ExtractionException: RuntimeException {
+public class ExtractionException: RuntimeException {
 
     override val message: String
 
-    constructor(message: String): this(message, null)
-    constructor(message: String, cause: Throwable?): super(message, cause) {
+    public constructor(message: String): this(message, null)
+    public constructor(message: String, cause: Throwable?): super(message, cause) {
         this.message = message
     }
 }

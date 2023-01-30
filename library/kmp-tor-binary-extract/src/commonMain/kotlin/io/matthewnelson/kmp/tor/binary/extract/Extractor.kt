@@ -15,13 +15,13 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-typealias TorFilePath = String
+public typealias TorFilePath = String
 
 /**
  * Extracts [TorResource]es to their desired
  * locations.
  * */
-expect class Extractor {
+public expect class Extractor {
 
     /**
      * Extracts geoip files.
@@ -31,7 +31,7 @@ expect class Extractor {
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
-    fun extract(
+    public fun extract(
         resource: TorResource.Geoips,
         destination: String,
         cleanExtraction: Boolean,
@@ -48,7 +48,7 @@ expect class Extractor {
      * @throws [ExtractionException]
      * */
     @Throws(ExtractionException::class)
-    fun extract(
+    public fun extract(
         resource: TorResource.Binaries,
         destinationDir: String,
         cleanExtraction: Boolean,
