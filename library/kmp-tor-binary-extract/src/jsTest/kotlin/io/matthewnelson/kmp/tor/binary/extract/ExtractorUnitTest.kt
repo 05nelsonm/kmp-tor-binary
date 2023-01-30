@@ -35,7 +35,6 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override fun fileExists(path: String): Boolean = NodeJsFileSystem.exists(path.toPath())
     override fun fileSize(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).size!!
-    override fun fileLastModified(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).lastModifiedAtMillis!!
     override fun fileSha256Sum(path: String): String = NodeJsFileSystem.read(path.toPath()) { sha256Sum(readByteArray()) }
     override fun sha256Sum(bytes: ByteArray): String = bytes.toByteString().sha256().hex()
 

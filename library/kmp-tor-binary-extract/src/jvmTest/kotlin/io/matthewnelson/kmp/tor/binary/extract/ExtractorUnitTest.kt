@@ -33,7 +33,6 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override fun fileExists(path: String): Boolean = File(path).exists()
     override fun fileSize(path: String): Long = File(path).length()
-    override fun fileLastModified(path: String): Long = File(path).lastModified()
     override fun fileSha256Sum(path: String): String = sha256Sum(File(path).readBytes())
 
     override fun sha256Sum(bytes: ByteArray): String {

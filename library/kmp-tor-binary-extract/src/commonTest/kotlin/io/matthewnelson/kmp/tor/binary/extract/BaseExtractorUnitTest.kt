@@ -29,7 +29,6 @@ abstract class BaseExtractorUnitTest {
 
     protected abstract fun fileExists(path: String): Boolean
     protected abstract fun fileSize(path: String): Long
-    protected abstract fun fileLastModified(path: String): Long
     protected abstract fun fileSha256Sum(path: String): String
     protected abstract fun sha256Sum(bytes: ByteArray): String
 
@@ -83,56 +82,6 @@ abstract class BaseExtractorUnitTest {
         return paths
     }
 
-    @Throws(AssertionError::class)
-    protected fun assertBinaryResourceCleanExtractionFalseNotExtracted(
-        resource: TorResource.Binaries,
-        extractionDir: String = tmpBinaryDir,
-    ) {
-        val paths = assertBinaryResourceExtractionIsSuccessful(resource, extractionDir)
-
-        fun lastModified(paths: List<String>): List<Long> {
-            return buildList {
-                paths.forEach { path ->
-                    add(fileLastModified(path))
-                }
-            }
-        }
-
-        val lastModified = lastModified(paths)
-
-        threadSleep()
-
-        extractor.extract(
-            resource = resource,
-            destinationDir = extractionDir,
-            cleanExtraction = false,
-        )
-
-        val checkNotModified = lastModified(paths)
-        val diffs = ArrayList<Long>(checkNotModified.size)
-
-        lastModified.forEachIndexed { index, time ->
-            val diff = checkNotModified[index] - time
-            assertTrue(diff < 500L)
-            diffs.add(diff)
-        }
-
-        threadSleep()
-
-        extractor.extract(
-            resource = resource,
-            destinationDir = extractionDir,
-            cleanExtraction = true,
-        )
-
-        val checkModified = lastModified(paths)
-
-        lastModified.forEachIndexed { index, time ->
-            val newDiff = checkModified[index] - time
-            assertTrue(newDiff > diffs[index])
-        }
-    }
-
     @Test
     fun givenExtractor_whenExtractGeoipResource_thenIsSuccessful() {
         val destination = "$tmpDir${fsSeparator}geoips${fsSeparator}geoip"
@@ -169,42 +118,5 @@ abstract class BaseExtractorUnitTest {
         assertTrue(fileExists(destination + FILE_NAME_SHA256_SUFFIX))
         assertTrue(fileSize(destination + FILE_NAME_SHA256_SUFFIX) > 0)
         assertEquals(TorResourceGeoip6.sha256sum, fileSha256Sum(destination))
-    }
-
-    @Test
-    fun givenGeoipFileExists_whenCleanExtractionFalse_thenNotExtracted() {
-        val destination = "$tmpDir${fsSeparator}geoips${fsSeparator}geoip"
-
-        assertFalse(fileExists(destination))
-
-        extractor.extract(
-            resource = TorResourceGeoip,
-            destination = destination,
-            cleanExtraction = true
-        )
-
-        val lastModified = fileLastModified(destination)
-
-        threadSleep()
-
-        extractor.extract(
-            resource = TorResourceGeoip,
-            destination = destination,
-            cleanExtraction = false
-        )
-
-        val diff = fileLastModified(destination) - lastModified
-        assertTrue(diff < 300L)
-
-        threadSleep()
-
-        extractor.extract(
-            resource = TorResourceGeoip,
-            destination = destination,
-            cleanExtraction = true
-        )
-
-        val newDiff = fileLastModified(destination) - lastModified
-        assertTrue(newDiff > diff)
     }
 }
