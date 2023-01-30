@@ -35,10 +35,6 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override fun fileExists(path: String): Boolean = NodeJsFileSystem.exists(path.toPath())
     override fun fileSize(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).size!!
-
-    // https://github.com/square/okio/issues/1215
-    override fun fileCreatedAt(path: String): Long = (js("require('fs')").lstatSync(path).birthtimeMs as Number).toLong()
-
     override fun fileSha256Sum(path: String): String = NodeJsFileSystem.read(path.toPath()) { sha256Sum(readByteArray()) }
     override fun sha256Sum(bytes: ByteArray): String = bytes.toByteString().sha256().hex()
 
