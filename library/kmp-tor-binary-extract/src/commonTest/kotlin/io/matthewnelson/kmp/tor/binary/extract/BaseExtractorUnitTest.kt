@@ -44,7 +44,7 @@ abstract class BaseExtractorUnitTest {
     }
 
     /* Helper for testing cleanExtraction by checking lastModified */
-    protected fun threadSleep(loopCount: Int = 1_000_000) {
+    protected fun threadSleep(loopCount: Int = 2_000_000) {
         var count = 0
         while (count < loopCount) { count++ }
     }
