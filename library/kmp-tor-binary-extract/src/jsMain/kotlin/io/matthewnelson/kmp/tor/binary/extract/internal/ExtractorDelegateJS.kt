@@ -16,6 +16,8 @@
 package io.matthewnelson.kmp.tor.binary.extract.internal
 
 import io.matthewnelson.kmp.tor.binary.extract.*
+import okio.NodeJsFileSystem
+import okio.Path.Companion.toPath
 
 /**
  * Base abstraction for NodeJS
@@ -25,12 +27,12 @@ import io.matthewnelson.kmp.tor.binary.extract.*
 internal class ExtractorDelegateJs: ExtractorDelegate<String, Any>() {
 
     override fun String.toFile(): String = this
-    override fun String.normalize(): String = normalize(this)
+    override fun String.normalize(): String = toPath(true).toString()
     override val fsSeparator: Char get() = try { sep.first() } catch (_: Throwable) { '/' }
 
     override fun isFile(file: String): Boolean = lstatSync(file).isFile()
     override fun isDirectory(file: String): Boolean = lstatSync(file).isDirectory()
-    override fun exists(file: String): Boolean = existsSync(file)
+    override fun exists(file: String): Boolean = NodeJsFileSystem.exists(file.toPath())
 
     override fun nameWithoutExtension(file: String): String = file.substringAfterLast(sep).substringBeforeLast('.')
     override fun canonicalPath(file: String?): String? = file?.let { realpathSync(it) }

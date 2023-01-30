@@ -65,11 +65,14 @@ kmpConfiguration {
                 compilerType = KotlinJsCompilerType.BOTH,
                 browser = null,
                 node = KmpTarget.NonJvm.JS.Node(),
-                testSourceSet = {
+                mainSourceSet = {
                     dependencies {
                         implementation(deps.square.okio.okio)
                         implementation(deps.square.okio.nodeFileSys)
-
+                    }
+                },
+                testSourceSet = {
+                    dependencies {
                         val versionName = kmpPublishRootProjectConfiguration?.versionName!!
 
                         implementation(npm("kmp-tor-binary-geoip", versionName))
