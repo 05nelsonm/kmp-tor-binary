@@ -48,10 +48,10 @@ public expect sealed class TorResource private constructor() {
 
 public object TorResourceGeoip: TorResource.Geoips() {
     override val resourcePath: String get() = "kmptor/geoip.gz"
-    /* GEOIP */ override val sha256sum: String get() = "8fa0d2bf75a29d346e856eff63b9ed0f7740df578bdcac3b33364f4a88a168e9"
+    /* GEOIP */ override val sha256sum: String get() = "bcbbbaedc49c99e369fa6b5a84b0a9768fc91ff4e4a4a1fc54f75809b559374e"
 }
 
 public object TorResourceGeoip6: TorResource.Geoips() {
     override val resourcePath: String get() = "kmptor/geoip6.gz"
-    /* GEOIP6 */ override val sha256sum: String get() = "c9b87ed1a97adb5040a18ffe7117276cd5a112eb27c588eb989f4abe0ec58879"
+    /* GEOIP6 */ override val sha256sum: String get() = "1aa1c23b15bac245fb812e32ef1c3fb2ee65d076f59ddab9f8c0accdf76e6584"
 }

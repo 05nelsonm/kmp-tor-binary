@@ -49,5 +49,5 @@ public actual sealed class TorResource private actual constructor() {
 public object TorResourceLinuxX64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/linux/x64"
     /* LINUX_X64 */ override val resourceManifest: List<String> get() = listOf("libcrypto.so.1.1.gz", "libevent-2.1.so.7.gz", "libssl.so.1.1.gz", "libstdc++.so.6.gz", "tor.gz")
-    /* LINUX_X64 */ override val sha256sum: String get() = "7ea1e0a19f63d2542b34e1cfe8f8135b278a0eea5a7fd8d25e78e12972834ae2"
+    /* LINUX_X64 */ override val sha256sum: String get() = "a766e07310b1ede3a06ef889cb46023fed5dc8044b326c20adf342242be92ec6"
 }
