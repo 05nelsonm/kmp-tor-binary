@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Version 4.7.13-0 (2023-01-31)
+ - Updates `kotlin-components` submodule
+     - Build & publishing improvements
+ - Enables Kotlin's `explicitApi` setting for `kmp-tor-binary-extract`
+ - Removes flaky tests
+
 ## Version 4.7.12-2 (2023-01-09)
  - Updates `kotlin-components` submodule
      - Kotlin `1.7.20` -> `1.8.0`
