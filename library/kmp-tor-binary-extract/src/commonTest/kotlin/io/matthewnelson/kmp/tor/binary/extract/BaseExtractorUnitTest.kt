@@ -15,9 +15,12 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import io.matthewnelson.encoding.builders.Base16
+import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.matthewnelson.kmp.tor.binary.extract.internal.FILE_NAME_SHA256_SUFFIX
 import io.matthewnelson.kmp.tor.binary.extract.internal.FILE_NAME_SHA256_TOR
 import io.matthewnelson.kmp.tor.binary.extract.internal.mapManifestToDestination
+import org.kotlincrypto.hash.sha2.SHA256
 import kotlin.test.*
 
 abstract class BaseExtractorUnitTest {
@@ -29,8 +32,7 @@ abstract class BaseExtractorUnitTest {
 
     protected abstract fun fileExists(path: String): Boolean
     protected abstract fun fileSize(path: String): Long
-    protected abstract fun fileSha256Sum(path: String): String
-    protected abstract fun sha256Sum(bytes: ByteArray): String
+    protected abstract fun readFile(path: String): ByteArray
 
     @AfterTest
     open fun deleteTestDir() {
@@ -64,16 +66,22 @@ abstract class BaseExtractorUnitTest {
         val paths = resource.resourceManifest.mapManifestToDestination(testDir) { _, _ -> }
 
         val sha256SumActual = StringBuilder()
+        val digest = SHA256()
 
         paths.forEach { path ->
             assertTrue(fileExists(path))
             assertTrue(fileSize(path) > 0)
 
-            sha256SumActual.append(fileSha256Sum(path))
+            digest.update(readFile(path))
+            sha256SumActual.append(digest.digest().encodeToString(base16))
             sha256SumActual.appendLine()
         }
 
-        assertEquals(resource.sha256sum, sha256Sum(sha256SumActual.toString().encodeToByteArray()))
+        val sha256sum = digest
+            .digest(sha256SumActual.toString().encodeToByteArray())
+            .encodeToString(base16)
+
+        assertEquals(resource.sha256sum, sha256sum)
 
         val sha256Path = testDir + fsSeparator + FILE_NAME_SHA256_TOR
         assertTrue(fileExists(sha256Path))
@@ -98,7 +106,9 @@ abstract class BaseExtractorUnitTest {
         assertTrue(fileSize(destination) > 0)
         assertTrue(fileExists(destination + FILE_NAME_SHA256_SUFFIX))
         assertTrue(fileSize(destination + FILE_NAME_SHA256_SUFFIX) > 0)
-        assertEquals(TorResourceGeoip.sha256sum, fileSha256Sum(destination))
+
+        val actual = SHA256().digest(readFile(destination)).encodeToString(base16)
+        assertEquals(TorResourceGeoip.sha256sum, actual)
     }
 
     @Test
@@ -117,6 +127,12 @@ abstract class BaseExtractorUnitTest {
         assertTrue(fileSize(destination) > 0)
         assertTrue(fileExists(destination + FILE_NAME_SHA256_SUFFIX))
         assertTrue(fileSize(destination + FILE_NAME_SHA256_SUFFIX) > 0)
-        assertEquals(TorResourceGeoip6.sha256sum, fileSha256Sum(destination))
+
+        val actual = SHA256().digest(readFile(destination)).encodeToString(base16)
+        assertEquals(TorResourceGeoip6.sha256sum, actual)
+    }
+
+    companion object {
+        val base16 = Base16 { encodeToLowercase = true }
     }
 }

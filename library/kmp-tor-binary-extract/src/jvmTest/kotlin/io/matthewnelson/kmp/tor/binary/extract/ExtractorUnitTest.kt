@@ -15,16 +15,9 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-import io.matthewnelson.encoding.builders.Base16
-import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import java.io.File
-import java.security.MessageDigest
 
 actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
-
-    companion object {
-        private val base16 = Base16 { encodeToLowercase = true }
-    }
 
     override val extractor: Extractor = Extractor()
     override val fsSeparator: Char = File.separatorChar
@@ -33,14 +26,7 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override fun fileExists(path: String): Boolean = File(path).exists()
     override fun fileSize(path: String): Long = File(path).length()
-    override fun fileSha256Sum(path: String): String = sha256Sum(File(path).readBytes())
-
-    override fun sha256Sum(bytes: ByteArray): String {
-        val digest = MessageDigest.getInstance("SHA-256")
-        digest.reset()
-        digest.update(bytes, 0, bytes.size)
-        return digest.digest().encodeToString(base16)
-    }
+    override fun readFile(path: String): ByteArray = File(path).readBytes()
 
     override fun deleteTestDir() {
         _tmpDir.walkBottomUp().iterator().forEach { file ->

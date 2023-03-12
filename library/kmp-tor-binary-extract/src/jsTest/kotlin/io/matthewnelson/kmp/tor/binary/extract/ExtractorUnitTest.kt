@@ -16,7 +16,6 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import io.matthewnelson.kmp.tor.binary.extract.internal.sep
-import okio.ByteString.Companion.toByteString
 import okio.NodeJsFileSystem
 import okio.Path
 import okio.Path.Companion.toPath
@@ -35,8 +34,7 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override fun fileExists(path: String): Boolean = NodeJsFileSystem.exists(path.toPath())
     override fun fileSize(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).size!!
-    override fun fileSha256Sum(path: String): String = NodeJsFileSystem.read(path.toPath()) { sha256Sum(readByteArray()) }
-    override fun sha256Sum(bytes: ByteArray): String = bytes.toByteString().sha256().hex()
+    override fun readFile(path: String): ByteArray = NodeJsFileSystem.read(path.toPath()) { readByteArray() }
 
     override fun deleteTestDir() {
         NodeJsFileSystem.deleteRecursively(_tmpDir)

@@ -1,0 +1,79 @@
+public final class io/matthewnelson/kmp/tor/binary/extract/ExtractionException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public fun getMessage ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/Extractor {
+	public fun <init> ()V
+	public final fun extract (Lio/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries;Ljava/lang/String;Z)Ljava/lang/String;
+	public final fun extract (Lio/matthewnelson/kmp/tor/binary/extract/TorResource$Geoips;Ljava/lang/String;Z)V
+}
+
+public abstract class io/matthewnelson/kmp/tor/binary/extract/TorResource {
+	public abstract fun getSha256sum ()Ljava/lang/String;
+}
+
+public abstract class io/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries : io/matthewnelson/kmp/tor/binary/extract/TorResource {
+	public abstract fun getResourceDirPath ()Ljava/lang/String;
+	public abstract fun getResourceManifest ()Ljava/util/List;
+}
+
+public abstract class io/matthewnelson/kmp/tor/binary/extract/TorResource$Geoips : io/matthewnelson/kmp/tor/binary/extract/TorResource {
+	public abstract fun getResourcePath ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorResourceGeoip : io/matthewnelson/kmp/tor/binary/extract/TorResource$Geoips {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/extract/TorResourceGeoip;
+	public fun getResourcePath ()Ljava/lang/String;
+	public fun getSha256sum ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorResourceGeoip6 : io/matthewnelson/kmp/tor/binary/extract/TorResource$Geoips {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/extract/TorResourceGeoip6;
+	public fun getResourcePath ()Ljava/lang/String;
+	public fun getSha256sum ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorResourceLinuxX64 : io/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/extract/TorResourceLinuxX64;
+	public fun getResourceDirPath ()Ljava/lang/String;
+	public fun getResourceManifest ()Ljava/util/List;
+	public fun getSha256sum ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorResourceLinuxX86 : io/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/extract/TorResourceLinuxX86;
+	public fun getResourceDirPath ()Ljava/lang/String;
+	public fun getResourceManifest ()Ljava/util/List;
+	public fun getSha256sum ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorResourceMacosArm64 : io/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/extract/TorResourceMacosArm64;
+	public fun getResourceDirPath ()Ljava/lang/String;
+	public fun getResourceManifest ()Ljava/util/List;
+	public fun getSha256sum ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorResourceMacosX64 : io/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/extract/TorResourceMacosX64;
+	public fun getResourceDirPath ()Ljava/lang/String;
+	public fun getResourceManifest ()Ljava/util/List;
+	public fun getSha256sum ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorResourceMingwX64 : io/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/extract/TorResourceMingwX64;
+	public fun getResourceDirPath ()Ljava/lang/String;
+	public fun getResourceManifest ()Ljava/util/List;
+	public fun getSha256sum ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorResourceMingwX86 : io/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/extract/TorResourceMingwX86;
+	public fun getResourceDirPath ()Ljava/lang/String;
+	public fun getResourceManifest ()Ljava/util/List;
+	public fun getSha256sum ()Ljava/lang/String;
+}
+

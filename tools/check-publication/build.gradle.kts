@@ -13,120 +13,126 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import io.matthewnelson.kotlin.components.kmp.KmpTarget
-import io.matthewnelson.kotlin.components.kmp.publish.isSnapshotVersion
-import io.matthewnelson.kotlin.components.kmp.publish.kmpPublishRootProjectConfiguration
-import io.matthewnelson.kotlin.components.kmp.util.includeSnapshotsRepoIfTrue
-import io.matthewnelson.kotlin.components.kmp.util.includeStagingRepoIfTrue
-import io.matthewnelson.kotlin.components.kmp.util.sourceSetJvmJsMain
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-
 plugins {
-    id(pluginId.kmp.configuration)
+    id("configuration")
 }
 
-val pConfig = kmpPublishRootProjectConfiguration!!
+repositories {
+    val host = "https://s01.oss.sonatype.org"
 
-includeSnapshotsRepoIfTrue(pConfig.isSnapshotVersion)
-includeStagingRepoIfTrue(!pConfig.isSnapshotVersion)
+    if (version.toString().endsWith("-SNAPSHOT")) {
+        maven("$host/content/repositories/snapshots/")
+    } else {
+        maven("$host/content/groups/staging") {
+            val p = rootProject.properties
+
+            credentials {
+                username = p["mavenCentralUsername"]?.toString()
+                password = p["mavenCentralPassword"]?.toString()
+            }
+        }
+    }
+}
 
 kmpConfiguration {
-    setupMultiplatform(
-        setOf(
+    configureShared(
+        androidNameSpace = "io.matthewnelson.kmp.tor.binary.tools.check.publication",
+        explicitApi = false,
+    ) {
+        jvm {
+            sourceSetMain {
+                dependencies {
+                    implementation("$group:kmp-tor-binary-extract:$version")
+                    implementation("$group:kmp-tor-binary-geoip:$version")
 
-            KmpTarget.Jvm.Jvm(
-                mainSourceSet = {
-                    dependencies {
-                        implementation("${pConfig.group}:kmp-tor-binary-extract:${pConfig.versionName}")
-                        implementation("${pConfig.group}:kmp-tor-binary-geoip:${pConfig.versionName}")
-
-                        implementation("${pConfig.group}:kmp-tor-binary-linuxx64:${pConfig.versionName}")
-                        implementation("${pConfig.group}:kmp-tor-binary-linuxx86:${pConfig.versionName}")
-                        implementation("${pConfig.group}:kmp-tor-binary-macosx64:${pConfig.versionName}")
-                        implementation("${pConfig.group}:kmp-tor-binary-macosarm64:${pConfig.versionName}")
-                        implementation("${pConfig.group}:kmp-tor-binary-mingwx64:${pConfig.versionName}")
-                        implementation("${pConfig.group}:kmp-tor-binary-mingwx86:${pConfig.versionName}")
-                    }
+                    implementation("$group:kmp-tor-binary-linuxx64:$version")
+                    implementation("$group:kmp-tor-binary-linuxx86:$version")
+                    implementation("$group:kmp-tor-binary-macosx64:$version")
+                    implementation("$group:kmp-tor-binary-macosarm64:$version")
+                    implementation("$group:kmp-tor-binary-mingwx64:$version")
+                    implementation("$group:kmp-tor-binary-mingwx86:$version")
                 }
-            ),
-
-            KmpTarget.Jvm.Android(
-                buildTools = versions.android.buildTools,
-                compileSdk = versions.android.sdkCompile,
-                minSdk = versions.android.sdkMin21,
-                namespace = "io.matthewnelson.kmp.tor.binary.tools.check.publication",
-                mainSourceSet = {
-                    dependencies {
-                        implementation("${pConfig.group}:kmp-tor-binary-android:${pConfig.versionName}")
-                        implementation("${pConfig.group}:kmp-tor-binary-extract:${pConfig.versionName}")
-                        implementation("${pConfig.group}:kmp-tor-binary-geoip:${pConfig.versionName}")
-                    }
-                },
-            ),
-
-            KmpTarget.NonJvm.JS(
-                compilerType = KotlinJsCompilerType.BOTH,
-                browser = null,
-                node = KmpTarget.NonJvm.JS.Node(),
-                mainSourceSet = {
-                    dependencies {
-                        implementation("${pConfig.group}:kmp-tor-binary-extract:${pConfig.versionName}")
-                        implementation(npm("kmp-tor-binary-geoip", pConfig.versionName))
-                        implementation(npm("kmp-tor-binary-linuxx64", pConfig.versionName))
-                        implementation(npm("kmp-tor-binary-linuxx86", pConfig.versionName))
-                        implementation(npm("kmp-tor-binary-macosx64", pConfig.versionName))
-                        implementation(npm("kmp-tor-binary-macosarm64", pConfig.versionName))
-                        implementation(npm("kmp-tor-binary-mingwx64", pConfig.versionName))
-                        implementation(npm("kmp-tor-binary-mingwx86", pConfig.versionName))
-                    }
-                }
-            ),
-
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.Arm32.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.Arm64.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.X64.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Ios.SimulatorArm64.DEFAULT,
-
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Macos.Arm64.DEFAULT,
-            KmpTarget.NonJvm.Native.Unix.Darwin.Macos.X64(
-                mainSourceSet = {
-                    dependencies {
-//                        implementation("${pConfig.group}:kmp-tor-binary-macosx64:${pConfig.versionName}")
-                    }
-                },
-            ),
-
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Tvos.Arm64.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Tvos.X64.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Tvos.SimulatorArm64.DEFAULT,
-//
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.Arm32.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.Arm64.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.X64.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.X86.DEFAULT,
-//            KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.SimulatorArm64.DEFAULT,
-
-            KmpTarget.NonJvm.Native.Unix.Linux.X64(
-                mainSourceSet = {
-                    dependencies {
-//                        implementation("${pConfig.group}:kmp-tor-binary-linuxx64:${pConfig.versionName}")
-                    }
-                },
-            ),
-            KmpTarget.NonJvm.Native.Mingw.X64(
-                mainSourceSet = {
-                    dependencies {
-//                        implementation("${pConfig.group}:kmp-tor-binary-mingwx64:${pConfig.versionName}")
-                    }
-                },
-            ),
-        ),
-        commonMainSourceSet = {
-            dependencies {
-                // TODO: Uncomment once all targets are published.
-//                implementation("${pConfig.group}:kmp-tor-binary-extract:${pConfig.versionName}")
-//                implementation("${pConfig.group}:kmp-tor-binary-geoip:${pConfig.versionName}")
             }
-        },
-    )
+        }
+
+        androidLibrary {
+            android {
+                defaultConfig {
+                    minSdk = 21
+                }
+            }
+            sourceSetMain {
+                dependencies {
+                    implementation("$group:kmp-tor-binary-android:$version")
+                    implementation("$group:kmp-tor-binary-extract:$version")
+                    implementation("$group:kmp-tor-binary-geoip:$version")
+                }
+            }
+        }
+
+        js {
+            target {
+                nodejs {
+                    testTask {
+                        useMocha { timeout = "30s" }
+                    }
+                }
+            }
+
+            sourceSetMain {
+                dependencies {
+                    implementation("$group:kmp-tor-binary-extract:$version")
+
+                    implementation(npm("kmp-tor-binary-geoip", "$version"))
+                    implementation(npm("kmp-tor-binary-linuxx64", "$version"))
+                    implementation(npm("kmp-tor-binary-linuxx86", "$version"))
+                    implementation(npm("kmp-tor-binary-macosx64", "$version"))
+                    implementation(npm("kmp-tor-binary-macosarm64", "$version"))
+                    implementation(npm("kmp-tor-binary-mingwx64", "$version"))
+                    implementation(npm("kmp-tor-binary-mingwx86", "$version"))
+                }
+            }
+        }
+
+        linuxX64 {
+            sourceSetMain {
+                dependencies {
+//                    implementation("$group:kmp-tor-binary-linuxx64:$version")
+                }
+            }
+        }
+
+        macosX64 {
+            sourceSetMain {
+                dependencies {
+//                    implementation("$group:kmp-tor-binary-macosx64:$version")
+                }
+            }
+        }
+
+        macosArm64 {
+            sourceSetMain {
+                dependencies {
+//                    implementation("$group:kmp-tor-binary-macosarm64:$version")
+                }
+            }
+        }
+
+        mingwX64 {
+            sourceSetMain {
+                dependencies {
+//                    implementation("$group:kmp-tor-binary-mingwx64:$version")
+                }
+            }
+        }
+
+        common {
+            sourceSetMain {
+                dependencies {
+//                    implementation("$group:kmp-tor-binary-extract:$version")
+//                    implementation("$group:kmp-tor-binary-geoip:$version")
+                }
+            }
+        }
+    }
 }
