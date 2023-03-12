@@ -81,6 +81,7 @@ kmpConfiguration {
             sourceSetTest {
                 dependencies {
                     implementation(kotlin("test"))
+                    implementation(libs.kotlincrypto.hash.sha2)
                     implementation(libs.encoding.base16)
                 }
             }
