@@ -13,39 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import io.matthewnelson.kotlin.components.kmp.KmpTarget
-import io.matthewnelson.kotlin.components.kmp.KmpTarget.SetNames.ANDROID_MAIN as KmpAndroidMain
-
 plugins {
-    id(pluginId.kmp.configuration)
-    id(pluginId.kmp.publish)
+    id("configuration")
 }
 
 kmpConfiguration {
-    setupMultiplatform(
-        setOf(
-
-            KmpTarget.Jvm.Android(
-                buildTools = versions.android.buildTools,
-                compileSdk = versions.android.sdkCompile,
-                minSdk = versions.android.sdkMin21,
-                namespace = "io.matthewnelson.kmp.tor.binary.android",
-                target = {
-                    publishLibraryVariants("release")
-                },
-                androidConfig = {
-                    sourceSets.getByName("main") {
-                        jniLibs.srcDir("$projectDir/src/$KmpAndroidMain/jniLibs")
-                    }
-                },
-            )
-
-        )
-    )
-}
-
-kmpPublish {
-    setupModule(
-        pomDescription = "Kotlin Components' TorBinary distribution for Android",
-    )
+    configureShared(
+        androidNameSpace = "io.matthewnelson.kmp.tor.binary.android",
+        enableJvm = false,
+        publish = true,
+    ) {
+        androidLibrary {
+            android {
+                defaultConfig {
+                    minSdk = 21
+                }
+                sourceSets.getByName("main") {
+                    jniLibs.srcDir("$projectDir/src/androidMain/jniLibs")
+                }
+            }
+        }
+    }
 }

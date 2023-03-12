@@ -13,42 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import io.matthewnelson.kotlin.components.kmp.KmpTarget
-import io.matthewnelson.kotlin.components.kmp.util.npmPublish
-
 plugins {
-    id(pluginId.kmp.configuration)
-    id(pluginId.kmp.publish)
-    id(pluginId.npmPublish)
+    id("configuration")
 }
 
 kmpConfiguration {
-    setupMultiplatform(
-        setOf(
-
-            KmpTarget.Jvm.Jvm.DEFAULT,
-
-        )
-    )
-}
-
-kmpPublish {
-    setupModule(
-        pomDescription = "Kotlin Components' TorBinary distribution for Mingw x86",
-    )
-}
-
-npmPublish {
-    description = "npm distribution of Mingw x86 Tor binary files for the kmp-tor project"
-    files {
-        from(projectDir) {
-            include("index.js")
-        }
-        from("$projectDir/src/commonMain/resources") {
-            include("kmptor/**")
-        }
-    }
-    packageJson {
-        keywords = jsonArray("tor", "kmp-tor")
-    }
+    configureShared(publish = true, npmPublish = true) {}
 }

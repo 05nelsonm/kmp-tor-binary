@@ -13,111 +13,113 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import io.matthewnelson.kotlin.components.kmp.KmpTarget
-import io.matthewnelson.kotlin.components.kmp.publish.kmpPublishRootProjectConfiguration
-import io.matthewnelson.kotlin.components.kmp.util.sourceSetJvmAndroidTest
-import io.matthewnelson.kotlin.components.kmp.util.sourceSetNativeTest
-import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
-
 plugins {
-    id(pluginId.kmp.configuration)
-    id(pluginId.kmp.publish)
+    id("configuration")
 }
 
 kmpConfiguration {
-    setupMultiplatform(
-        setOf(
+    configureShared(
+        androidNameSpace = "io.matthewnelson.kmp.tor.binary.extract",
+        publish = true,
+    ) {
+        androidLibrary {
+            sourceSetMain {
+                dependencies {
+                    compileOnly(project(":library:kmp-tor-binary-geoip"))
+                }
+            }
+        }
 
-            KmpTarget.Jvm.Jvm(
-                testSourceSet = {
-                    dependencies {
-                        implementation(project(":library:kmp-tor-binary-linuxx64"))
-                        implementation(project(":library:kmp-tor-binary-linuxx86"))
-                        implementation(project(":library:kmp-tor-binary-macosx64"))
-                        implementation(project(":library:kmp-tor-binary-macosarm64"))
-                        implementation(project(":library:kmp-tor-binary-mingwx64"))
-                        implementation(project(":library:kmp-tor-binary-mingwx86"))
+        jvm {
+            sourceSetTest {
+                dependencies {
+                    implementation(project(":library:kmp-tor-binary-linuxx64"))
+                    implementation(project(":library:kmp-tor-binary-linuxx86"))
+                    implementation(project(":library:kmp-tor-binary-macosx64"))
+                    implementation(project(":library:kmp-tor-binary-macosarm64"))
+                    implementation(project(":library:kmp-tor-binary-mingwx64"))
+                    implementation(project(":library:kmp-tor-binary-mingwx86"))
+                }
+            }
+        }
+
+        js {
+            target {
+                nodejs {
+                    testTask {
+                        useMocha { timeout = "30s" }
                     }
                 }
-            ),
+            }
 
-            KmpTarget.Jvm.Android(
-                buildTools = versions.android.buildTools,
-                compileSdk = versions.android.sdkCompile,
-                minSdk = versions.android.sdkMin16,
-                namespace = "io.matthewnelson.kmp.tor.binary.extract",
-                target = {
-                    publishLibraryVariants("release")
-                },
-                mainSourceSet = {
-                    dependencies {
-                        compileOnly(project(":library:kmp-tor-binary-geoip"))
-                    }
-                },
-                testSourceSet = {
+            sourceSetTest {
+                dependencies {
+
+                    implementation(libs.okio.okio)
+                    implementation(libs.okio.node)
+
+                    implementation(npm("kmp-tor-binary-geoip", "$version"))
+                    implementation(npm("kmp-tor-binary-linuxx64", "$version"))
+                    implementation(npm("kmp-tor-binary-linuxx86", "$version"))
+                    implementation(npm("kmp-tor-binary-macosarm64", "$version"))
+                    implementation(npm("kmp-tor-binary-macosx64", "$version"))
+                    implementation(npm("kmp-tor-binary-mingwx64", "$version"))
+                    implementation(npm("kmp-tor-binary-mingwx86", "$version"))
+                }
+            }
+        }
+
+        linuxX64()
+        mingwX64()
+
+        iosAll()
+        macosAll()
+        tvosAll()
+        watchosAll()
+
+        common {
+            sourceSetTest {
+                dependencies {
+                    implementation(kotlin("test"))
+                    implementation(libs.encoding.base16)
+                }
+            }
+        }
+
+        kotlin {
+            with(sourceSets) {
+                findByName("nativeTest")?.apply {
                     dependencies {
                         implementation(project(":library:kmp-tor-binary-geoip"))
                     }
                 }
-            ),
-
-            KmpTarget.NonJvm.JS(
-                compilerType = KotlinJsCompilerType.BOTH,
-                browser = null,
-                node = KmpTarget.NonJvm.JS.Node(),
-                testSourceSet = {
+                findByName("jvmAndroidTest")?.apply {
                     dependencies {
-                        implementation(deps.square.okio.okio)
-                        implementation(deps.square.okio.nodeFileSys)
-
-                        val versionName = kmpPublishRootProjectConfiguration?.versionName!!
-
-                        implementation(npm("kmp-tor-binary-geoip", versionName))
-                        implementation(npm("kmp-tor-binary-linuxx64", versionName))
-                        implementation(npm("kmp-tor-binary-linuxx86", versionName))
-                        implementation(npm("kmp-tor-binary-macosarm64", versionName))
-                        implementation(npm("kmp-tor-binary-macosx64", versionName))
-                        implementation(npm("kmp-tor-binary-mingwx64", versionName))
-                        implementation(npm("kmp-tor-binary-mingwx86", versionName))
+                        implementation(project(":library:kmp-tor-binary-geoip"))
                     }
                 }
-            ),
 
-            KmpTarget.NonJvm.Native.Unix.Linux.X64.DEFAULT,
+                val jvmMain = findByName("jvmMain")
+                val jsMain = findByName("jsMain")
 
-            KmpTarget.NonJvm.Native.Mingw.X64.DEFAULT,
-        ) +
-        KmpTarget.NonJvm.Native.Unix.Darwin.Ios.ALL_DEFAULT     +
-        KmpTarget.NonJvm.Native.Unix.Darwin.Macos.ALL_DEFAULT   +
-        KmpTarget.NonJvm.Native.Unix.Darwin.Tvos.ALL_DEFAULT    +
-        KmpTarget.NonJvm.Native.Unix.Darwin.Watchos.ALL_DEFAULT,
+                if (jvmMain != null || jsMain != null) {
+                    val commonMain by getting
+                    val commonTest by getting
 
-        commonTestSourceSet = {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(deps.components.encoding.base16)
-            }
-        },
+                    val jvmJsMain = maybeCreate("jvmJsMain").apply {
+                        dependsOn(commonMain)
+                    }
+                    val jvmJsTest = maybeCreate("jvmJsTest").apply {
+                        dependsOn(commonTest)
+                    }
 
-        kotlin = {
-            explicitApi()
+                    jvmMain?.apply { dependsOn(jvmJsMain) }
+                    findByName("jvmTest")?.apply { dependsOn(jvmJsTest) }
 
-            sourceSetJvmAndroidTest {
-                dependencies {
-                    implementation(project(":library:kmp-tor-binary-geoip"))
-                }
-            }
-            sourceSetNativeTest {
-                dependencies {
-                    implementation(project(":library:kmp-tor-binary-geoip"))
+                    jsMain?.apply { dependsOn(jvmJsMain) }
+                    findByName("jsTest")?.apply { dependsOn(jvmJsTest) }
                 }
             }
         }
-    )
-}
-
-kmpPublish {
-    setupModule(
-        pomDescription = "Kotlin Components' TorBinary resource extraction distribution",
-    )
+    }
 }

@@ -13,70 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import io.matthewnelson.kotlin.components.kmp.util.configureYarn
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
-import org.gradle.api.tasks.testing.logging.TestLogEvent.STARTED
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-
-    repositories {
-        mavenCentral()
-        google()
-        gradlePluginPortal()
-    }
-
-    dependencies {
-        classpath(pluginDeps.android.gradle)
-        classpath(pluginDeps.kotlin.gradle)
-        classpath(pluginDeps.mavenPublish)
-        classpath(pluginDeps.npmPublish)
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle.kts files
-    }
+@Suppress("DSL_SCOPE_VIOLATION")
+plugins {
+    alias(libs.plugins.multiplatform) apply(false)
+    alias(libs.plugins.android.library) apply(false)
 }
 
 allprojects {
 
+    findProperty("GROUP")?.let { group = it }
+    findProperty("VERSION_NAME")?.let { version = it }
+    findProperty("POM_DESCRIPTION")?.let { description = it.toString() }
+
     repositories {
         mavenCentral()
         google()
         gradlePluginPortal()
     }
 
-    tasks.withType<Test> {
-        testLogging {
-            exceptionFormat = TestExceptionFormat.FULL
-            events(STARTED, PASSED, SKIPPED, FAILED)
-            showStandardStreams = true
-        }
-    }
-
 }
 
-configureYarn { rootYarn, _ ->
-    rootYarn.apply {
-        lockFileDirectory = project.rootDir.resolve(".kotlin-js-store")
-    }
-}
-
-plugins {
-    id(pluginId.kmp.publish)
-}
-
-kmpPublish {
-
-    // Only update once npm packages have been published
-    setupRootProject(
-        versionName = "4.7.13-0",
-        //     4.6.9-0 == 00_04_06_09_00
-        //     4.6.9-1 == 00_04_06_09_01
-        //     4.6.9-2 == 00_04_06_09_02
-        versionCode = /*00_0*/4_07_13_00,
-        pomInceptionYear = 2021,
-    )
+plugins.withType<YarnPlugin> {
+    the<YarnRootExtension>().lockFileDirectory = rootDir.resolve(".kotlin-js-store")
 }
