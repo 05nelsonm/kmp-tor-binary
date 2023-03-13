@@ -16,6 +16,7 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJs
+import io.matthewnelson.kmp.tor.binary.extract.internal.jsModuleName
 import io.matthewnelson.kmp.tor.binary.extract.internal.readFileSync
 
 
@@ -76,6 +77,7 @@ public actual class Extractor {
                 is TorResourceMacosX64 -> "kmp-tor-binary-macosx64"
                 is TorResourceMingwX64 -> "kmp-tor-binary-mingwx64"
                 is TorResourceMingwX86 -> "kmp-tor-binary-mingwx86"
+                is TorBinaryResource -> resource.jsModuleName
             } + "/$resourcePath"
 
             val resolvedPath = try {
