@@ -145,6 +145,17 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
    }
    ```
 
+If a specific platform or architecture is not currently supported by `kmp-tor-binary`, you can package
+your own and provide them to [kmp-tor][url-kmp-tor] at runtime for extraction and execution.
+
+```kotlin
+// Add the additional 'extract' dependency
+dependencies {
+    implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-extract:$vTor")
+}
+```
+
+See [TorBinaryResource][url-tor-binary-resource] documentation for packaging requirements and details.
 
 ### That's it, you should be good to go for your `Java` project!
 
@@ -276,3 +287,4 @@ As binaries are reproducibly built, running `git diff` should show no changes.
 [url-kotlin]: https://kotlinlang.org
 [url-kmp-tor]: https://github.com/05nelsonm/kmp-tor
 [url-tor-browser-build]: https://gitlab.torproject.org/tpo/applications/tor-browser-build/
+[url-tor-binary-resource]: https://github.com/05nelsonm/kmp-tor-binary/blob/master/library/kmp-tor-binary-extract/src/jvmJsMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorBinaryResource.kt
