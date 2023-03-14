@@ -10,6 +10,29 @@ public final class io/matthewnelson/kmp/tor/binary/extract/Extractor {
 	public final fun extract (Lio/matthewnelson/kmp/tor/binary/extract/TorResource$Geoips;Ljava/lang/String;Z)V
 }
 
+public final class io/matthewnelson/kmp/tor/binary/extract/TorBinaryResource : io/matthewnelson/kmp/tor/binary/extract/TorResource$Binaries {
+	public static final field Companion Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$Companion;
+	public final field arch Ljava/lang/String;
+	public synthetic fun <init> (Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final fun from (Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource;
+	public fun getResourceDirPath ()Ljava/lang/String;
+	public fun getResourceManifest ()Ljava/util/List;
+	public fun getSha256sum ()Ljava/lang/String;
+	public final fun osName ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$Companion {
+	public final fun from (Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;)Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS : java/lang/Enum {
+	public static final field Linux Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
+	public static final field Macos Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
+	public static final field Mingw Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
+	public static fun valueOf (Ljava/lang/String;)Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
+	public static fun values ()[Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
+}
+
 public abstract class io/matthewnelson/kmp/tor/binary/extract/TorResource {
 	public abstract fun getSha256sum ()Ljava/lang/String;
 }

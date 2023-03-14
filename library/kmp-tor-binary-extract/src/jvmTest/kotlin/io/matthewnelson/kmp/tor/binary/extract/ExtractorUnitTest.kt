@@ -15,6 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
+import org.junit.Test
 import java.io.File
 
 actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
@@ -35,5 +36,23 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
             }
         }
         _tmpDir.deleteRecursively()
+    }
+
+    @Test
+    fun givenTestResources_whenExtracted_thenIsSuccessful() {
+        val resource = TorBinaryResource.from(
+            os = TorBinaryResource.OS.Linux,
+            arch = "test",
+            sha256sum = "a766e07310b1ede3a06ef889cb46023fed5dc8044b326c20adf342242be92ec6",
+            resourceManifest = listOf(
+                "subdir/libcrypto.so.1.1.gz",
+                "subdir/subdir/libevent-2.1.so.7.gz",
+                "libssl.so.1.1.gz",
+                "libstdc++.so.6.gz",
+                "tor.gz"
+            )
+        )
+
+        assertBinaryResourceExtractionIsSuccessful(resource)
     }
 }
