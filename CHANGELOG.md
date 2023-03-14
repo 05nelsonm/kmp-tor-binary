@@ -1,5 +1,13 @@
 # CHANGELOG
 
+## Version 4.7.13-1 (2023-03-14)
+ - Adds ability for Jvm/JS consumers to package and provide their
+   own binary resources via `TorBinaryResource` if a platform/architecture
+   is not currently supported by `kmp-tor-binary`
+ - Removes submodule `kotlin-components`
+ - Refactors gradle build system to use composite builds
+ - Updates Kotlin `1.8.0` -> `1.8.10`
+
 ## Version 4.7.13-0 (2023-01-31)
  - Updates `kotlin-components` submodule
      - Build & publishing improvements

@@ -34,10 +34,9 @@ PUBLISH_TASKS=$(./gradlew tasks -DKMP_TARGETS_ALL |
 ./gradlew $PUBLISH_TASKS --no-daemon --no-parallel -DKMP_TARGETS_ALL
 ```
 
-- Perform a clean build (to update `.kotlin-js-store/yarn.lock`)
+- Update `.kotlin-js-store/yarn.lock`
 ```bash
-./gradlew clean -DKMP_TARGETS_ALL
-./gradlew build -DKMP_TARGETS_ALL
+./gradlew kotlinUpgradeYarnLock -DKMP_TARGETS_ALL
 ```
 
 - Commit Changes
