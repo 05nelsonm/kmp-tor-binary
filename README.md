@@ -126,7 +126,7 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
    // build.gradle.kts
 
    dependencies {
-       val vTor = "4.7.13-1"
+       val vTor = "4.7.13-2"
        val vKmpTor = "1.4.0" // <-- see kmp-tor repo for latest version
        implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
@@ -191,7 +191,7 @@ TAG_VERSION
   // build.gradle.kts
 
   dependencies {
-      val vTor = "4.7.13-1"
+      val vTor = "4.7.13-2"
       val vKmpTor = "1.4.0" // <-- see kmp-tor repo for latest version
       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
@@ -270,7 +270,7 @@ to the appropriate `kmp-tor-binary-*` module and update sha256sum/manifest const
 As binaries are reproducibly built, running `git diff` should show no changes.
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-4.7.13--1-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
+[badge-latest-release]: https://img.shields.io/badge/latest--release-4.7.13--2-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->

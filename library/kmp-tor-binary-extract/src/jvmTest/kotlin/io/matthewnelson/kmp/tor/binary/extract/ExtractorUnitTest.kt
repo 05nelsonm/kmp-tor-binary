@@ -18,7 +18,7 @@ package io.matthewnelson.kmp.tor.binary.extract
 import org.junit.Test
 import java.io.File
 
-/*actual */class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
+actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     override val extractor: Extractor = Extractor()
     override val fsSeparator: Char = File.separatorChar

@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 4.7.13-2 (2023-03-16)
+ - Fixes macosarm64 binaries being unable to run on M1/2 because binary files
+   were not developer signed. This is an intermediate "quick fix" solution. 
+   More information can be found in [[#66]][issue-66].
+
 ## Version 4.7.13-1 (2023-03-14)
  - Adds ability for Jvm/JS consumers to package and provide their
    own binary resources via `TorBinaryResource` if a platform/architecture
@@ -78,3 +83,5 @@
 
 ## Version 0.4.6.9 (2022-02-06)
  - Initial release
+
+[issue-66]: https://github.com/05nelsonm/kmp-tor-binary/issues/66

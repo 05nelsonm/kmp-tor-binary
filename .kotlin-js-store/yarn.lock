@@ -150,6 +150,14 @@ diff@5.0.0:
   resolved "https://registry.yarnpkg.com/diff/-/diff-5.0.0.tgz#7ed6ad76d859d030787ec35855f5b1daf31d852b"
   integrity sha512-/VTCrvm5Z0JGty/BWHljh+BAiw3IK+2j87NGMu8Nwc/f48WoDAC395uomO9ZD117ZOBaHmkX1oyLvkVM/aIT3w==
 
+dukat@0.5.8-rc.4:
+  version "0.5.8-rc.4"
+  resolved "https://registry.yarnpkg.com/dukat/-/dukat-0.5.8-rc.4.tgz#90384dcb50b14c26f0e99dae92b2dea44f5fce21"
+  integrity sha512-ZnMt6DGBjlVgK2uQamXfd7uP/AxH7RqI0BL9GLrrJb2gKdDxvJChWy+M9AQEaL+7/6TmxzJxFOsRiInY9oGWTA==
+  dependencies:
+    google-protobuf "3.12.2"
+    typescript "3.9.5"
+
 emoji-regex@^8.0.0:
   version "8.0.0"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-8.0.0.tgz#e818fd69ce5ccfcb404594f842963bf53164cc37"
@@ -224,6 +232,11 @@ glob@7.2.0:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
+google-protobuf@3.12.2:
+  version "3.12.2"
+  resolved "https://registry.yarnpkg.com/google-protobuf/-/google-protobuf-3.12.2.tgz#50ce9f9b6281235724eb243d6a83e969a2176e53"
+  integrity sha512-4CZhpuRr1d6HjlyrxoXoocoGFnRYgKULgMtikMddA9ztRyYR59Aondv2FioyxWVamRo0rF2XpYawkTCBEQOSkA==
+
 has-flag@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/has-flag/-/has-flag-4.0.0.tgz#944771fd9c81c81265c4d6941860da06bb59479b"
@@ -292,6 +305,41 @@ js-yaml@4.1.0:
   integrity sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==
   dependencies:
     argparse "^2.0.1"
+
+kmp-tor-binary-geoip@4.7.13-2:
+  version "4.7.13-2"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-geoip/-/kmp-tor-binary-geoip-4.7.13-2.tgz#82c8476bf12e4e39a36dc26993e7708d3c76addc"
+  integrity sha512-kh0pGf9p+HefGLuMZvQS64bZegQhat5TFtmwAgsIhrCMLLvsyFa+Xf25Nc+PIrGjAHXpromjjdphHA+yyLgaIA==
+
+kmp-tor-binary-linuxx64@4.7.13-2:
+  version "4.7.13-2"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-linuxx64/-/kmp-tor-binary-linuxx64-4.7.13-2.tgz#1e4e7f8a629b20114770b24bcbb51a2cf3e5d898"
+  integrity sha512-sCG1OUcxcq8xCMcZuLy9l7UBvDF8v5J+S1Mw4baCV7/5oax3S4a3yFKixZPrcSdKcGGPqgtzPGCBDvxBNDgYDQ==
+
+kmp-tor-binary-linuxx86@4.7.13-2:
+  version "4.7.13-2"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-linuxx86/-/kmp-tor-binary-linuxx86-4.7.13-2.tgz#d03e170b6f4233947b078322e6630b1f13a717b0"
+  integrity sha512-4YvXqR3htAvNoc9EwQOwJYssbzveXzejFkWOhrto+gF0aOBTC0eVcQ4VRuswlKvKpLHEe0zDeJ1jm4LmlKpHSQ==
+
+kmp-tor-binary-macosarm64@4.7.13-2:
+  version "4.7.13-2"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-macosarm64/-/kmp-tor-binary-macosarm64-4.7.13-2.tgz#baa777387a94536912c643b0c1acf4a21892dd35"
+  integrity sha512-poZiZVLdoe6NJUv+u2MCwsA9cUimgmsadewAQjY6pxxflZgtQIPS8Pbrtr3aONRwpIqAhWodkjlDw/T21iynUw==
+
+kmp-tor-binary-macosx64@4.7.13-2:
+  version "4.7.13-2"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-macosx64/-/kmp-tor-binary-macosx64-4.7.13-2.tgz#96d078ce2031571eff4199be0a900bcd9c0d9adb"
+  integrity sha512-U9HzsWfRWGT2F5vqX3bIqwzvh0CwIXnwwVRDhVlGLT1ol+Ei7iVrlIGRiIWW4LRnpJq5laMV4E/IcE8qMLAmoQ==
+
+kmp-tor-binary-mingwx64@4.7.13-2:
+  version "4.7.13-2"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-mingwx64/-/kmp-tor-binary-mingwx64-4.7.13-2.tgz#228b04b52726f346322bff219203e423b45f9a42"
+  integrity sha512-OiRE8Z8QFqSihXr6ZEUZ5uGSV/F/fyV0sHPF67f0jkPQyviEiDsypc+v1r4bJjNrXHer9+eWGbRXYxJe2VO0UQ==
+
+kmp-tor-binary-mingwx86@4.7.13-2:
+  version "4.7.13-2"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-mingwx86/-/kmp-tor-binary-mingwx86-4.7.13-2.tgz#b59789fd69763df8b597b6f74c66919c56381550"
+  integrity sha512-QyuZvjwy1YMfR6O32jOQBjTMGT9kzMR3mXIGen5lgu3sUp8wlBwsBHzWnYZ0do1Y75fGCrIAad4Y0QobV6rF+A==
 
 locate-path@^6.0.0:
   version "6.0.0"
@@ -491,6 +539,11 @@ to-regex-range@^5.0.1:
   integrity sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==
   dependencies:
     is-number "^7.0.0"
+
+typescript@3.9.5:
+  version "3.9.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.5.tgz#586f0dba300cde8be52dd1ac4f7e1009c1b13f36"
+  integrity sha512-hSAifV3k+i6lEoCJ2k6R2Z/rp/H3+8sdmcn5NrS3/3kE7+RyZXm9aqvxWqjEXHAd8b0pShatpcdMTvEdvAJltQ==
 
 workerpool@6.2.1:
   version "6.2.1"

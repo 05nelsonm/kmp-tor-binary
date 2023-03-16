@@ -15,4 +15,4 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-//expect class ExtractorUnitTest: BaseExtractorJvmJsUnitTest
+expect class ExtractorUnitTest: BaseExtractorJvmJsUnitTest

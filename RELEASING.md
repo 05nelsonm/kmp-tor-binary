@@ -25,7 +25,12 @@ git checkout -b release_"$VERSION_NAME"
 
 - Update `CHANGELOG.md`
 
-- Publish assets to Npmjs
+- Ensure that credentials for `Npmjs` are set in `~/.gradle/gradle.properties`
+  ```
+  NPMJS_AUTH_TOKEN=<auth token>
+  ```
+
+- Publish assets to `Npmjs`
 ```bash
 PUBLISH_TASKS=$(./gradlew tasks -DKMP_TARGETS_ALL |
   grep "NpmPublicationToNpmjs" |
