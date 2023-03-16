@@ -13,19 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+export LC_ALL=C
+set -e
+
 readonly TIME_START=$(date +%s)
 
-# Absolute path to the directory which this script resides
+# Absolute path to the directory which this script resides in
 readonly DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
+readonly DIR_BUILT="$DIR/../built"
 readonly DIR_TOR_BUILD="$DIR/../tor-browser-build"
 readonly DIR_TOR_BUILD_OUT="$DIR_TOR_BUILD/out/tor"
 
 # commands
 readonly CMD_ALL="all"
+
+readonly CMD_A_ALL="all-android"
 readonly CMD_A_ARMV7="android-armv7"
 readonly CMD_A_AARCH64="android-aarch64"
 readonly CMD_A_X86="android-x86"
 readonly CMD_A_X86_64="android-x86_64"
+
+readonly CMD_D_ALL="all-desktop"
 readonly CMD_L_I686="linux-i686"
 readonly CMD_L_X86_64="linux-x86_64"
 readonly CMD_M_AARCH64="macos-aarch64"
@@ -34,31 +42,32 @@ readonly CMD_W_I686="windows-i686"
 readonly CMD_W_X86_64="windows-x86_64"
 
 # Programs
-readonly FIND=$(which find)
 readonly GIT=$(which git)
 readonly MAKE=$(which make)
 readonly TAR=$(which tar)
 
 help() {
   echo "
-    build_tor.sh
+    $0
     Copyright (C) 2023 Matthew Nelson
     License Apache 2.0
 
     Builds tor via tor-browser-build submodule for specified target(s)
-    Binaries are output to directory /binary-build/out/
+    Binaries are output to directory /binary-build/built/
 
-    Location: $DIR/build_tor.sh
-    Syntax: ./build_tor.sh [target]
+    Location: $DIR
+    Syntax: $0 [command]
 
-    Targets:
-                $CMD_ALL               Builds all targets listed below
+    Commands:
+                $CMD_ALL                     Builds all targets listed below
 
+                $CMD_A_ALL             Builds all android targets
                 $CMD_A_AARCH64
                 $CMD_A_ARMV7
                 $CMD_A_X86
                 $CMD_A_X86_64
 
+                $CMD_D_ALL             Builds all desktop targets
                 $CMD_L_I686
                 $CMD_L_X86_64
                 $CMD_M_AARCH64
@@ -68,11 +77,11 @@ help() {
   "
 }
 
-apply_git_patches() {
+git_patches_apply() {
   return 0
 }
 
-remove_git_patches() {
+git_patches_remove() {
   return 0
 }
 
@@ -88,13 +97,6 @@ change_dir_or_exit() {
 }
 
 initialize() {
-    if [ "$FIND" == "" ]; then
-      echo "
-      ERROR: find is required to be installed to run this script
-      "
-      exit 1
-    fi
-
     if [ "$GIT" == "" ]; then
       echo "
       ERROR: git is required to be installed to run this script
@@ -125,8 +127,8 @@ initialize() {
       exit 1
     fi
 
-    apply_git_patches
-    trap remove_git_patches EXIT
+    git_patches_apply
+    trap git_patches_remove EXIT
 }
 
 pre_build_setup() {
@@ -188,6 +190,7 @@ build_android() {
     echo "
     ERROR: Failed to determine architecture for $1
     "
+    exit 1
   fi
 
   pre_build_setup "$1"
@@ -204,6 +207,8 @@ build_android() {
     Tor binaries for $1 have been
     copied to kmp-tor-binary-android/src/androidMain/jniLibs
   "
+
+  sleep 1
 }
 
 build_desktop() {
@@ -231,28 +236,59 @@ build_desktop() {
     echo "
     ERROR: Failed to determine os and architecture for $1
     "
+    exit 1
   fi
 
   pre_build_setup "$1"
   build_and_unpack_tor "$1"
 
-  # TODO
+  mkdir -p "$DIR_BUILT/$OS"
+
+  local NAME_GEOIPS
+  local NAME_TOR=
+  NAME_GEOIPS="geoips.tar.gz"
+  NAME_TOR="tor-$OS-$ARCH-unsigned.tar.gz"
+
+  change_dir_or_exit "$DIR_TOR_BUILD_OUT/tor"
+  # shellcheck disable=SC2035
+  ${TAR} -cz * -f "$DIR_BUILT/$OS/$NAME_TOR"
+
+  echo "
+    $NAME_TOR has been created in directory
+    $DIR_BUILT/$OS
+  "
+
+  change_dir_or_exit "$DIR_TOR_BUILD_OUT/data"
+  # shellcheck disable=SC2035
+  ${TAR} -cz * -f "$DIR_BUILT/$NAME_GEOIPS"
+
+  echo "
+    $NAME_GEOIPS has been created in directory
+    $DIR_BUILT
+  "
+
+  sleep 1
 }
 
 case $1 in
-  "$CMD_ALL")
+  "$CMD_ALL"|"$CMD_A_ALL"|"$CMD_D_ALL")
     initialize
-    build_android "$CMD_A_AARCH64"; sleep 1
-    build_android "$CMD_A_ARMV7"; sleep 1
-    build_android "$CMD_A_X86"; sleep 1
-    build_android "$CMD_A_X86_64"; sleep 1
 
-    build_desktop "$CMD_L_I686"; sleep 1
-    build_desktop "$CMD_L_X86_64"; sleep 1
-    build_desktop "$CMD_M_AARCH64"; sleep 1
-    build_desktop "$CMD_M_X86_64"; sleep 1
-    build_desktop "$CMD_W_I686"; sleep 1
-    build_desktop "$CMD_W_X86_64"; sleep 1
+    if [[ "$1" == "$CMD_ALL" || "$1" == "$CMD_A_ALL" ]]; then
+      build_android "$CMD_A_AARCH64"
+      build_android "$CMD_A_ARMV7"
+      build_android "$CMD_A_X86"
+      build_android "$CMD_A_X86_64"
+    fi
+
+    if [[ "$1" == "$CMD_ALL" || "$1" == "$CMD_D_ALL" ]]; then
+      build_desktop "$CMD_L_I686"
+      build_desktop "$CMD_L_X86_64"
+      build_desktop "$CMD_M_AARCH64"
+      build_desktop "$CMD_M_X86_64"
+      build_desktop "$CMD_W_I686"
+      build_desktop "$CMD_W_X86_64"
+    fi
     ;;
   "$CMD_A_ARMV7"|"$CMD_A_AARCH64"|"$CMD_A_X86"|"$CMD_A_X86_64")
     initialize
@@ -268,7 +304,7 @@ case $1 in
     ;;
 esac
 
-TIME_RUN=$(($(date +%s)-TIME_START))
+TIME_RUN=$(( $(date +%s) - TIME_START ))
 echo "
     Script runtime: ${TIME_RUN}s
 "
