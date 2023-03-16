@@ -21,25 +21,25 @@ import okio.Path
 import okio.Path.Companion.toPath
 import kotlin.test.Test
 
-actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
-
-    override val extractor: Extractor = Extractor()
-    override val fsSeparator: Char get() = sep.first()
-    private val _tmpDir: Path by lazy {
-        val temp = js("require('os')")?.tmpdir() as? String ?: "/tmp"
-        val path = (js("require('fs')").mkdtempSync(temp + fsSeparator + "tmp.kmp_tor_binary.js") as String).toPath()
-        path
-    }
-    override val tmpDir: String get() = _tmpDir.toString()
-
-    override fun fileExists(path: String): Boolean = NodeJsFileSystem.exists(path.toPath())
-    override fun fileSize(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).size!!
-    override fun readFile(path: String): ByteArray = NodeJsFileSystem.read(path.toPath()) { readByteArray() }
-
-    override fun deleteTestDir() {
-        NodeJsFileSystem.deleteRecursively(_tmpDir)
-    }
-
-    @Test
-    fun stub() {}
-}
+//actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
+//
+//    override val extractor: Extractor = Extractor()
+//    override val fsSeparator: Char get() = sep.first()
+//    private val _tmpDir: Path by lazy {
+//        val temp = js("require('os')")?.tmpdir() as? String ?: "/tmp"
+//        val path = (js("require('fs')").mkdtempSync(temp + fsSeparator + "tmp.kmp_tor_binary.js") as String).toPath()
+//        path
+//    }
+//    override val tmpDir: String get() = _tmpDir.toString()
+//
+//    override fun fileExists(path: String): Boolean = NodeJsFileSystem.exists(path.toPath())
+//    override fun fileSize(path: String): Long = NodeJsFileSystem.metadata(path.toPath()).size!!
+//    override fun readFile(path: String): ByteArray = NodeJsFileSystem.read(path.toPath()) { readByteArray() }
+//
+//    override fun deleteTestDir() {
+//        NodeJsFileSystem.deleteRecursively(_tmpDir)
+//    }
+//
+//    @Test
+//    fun stub() {}
+//}

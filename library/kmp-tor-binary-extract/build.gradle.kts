@@ -58,13 +58,13 @@ kmpConfiguration {
                     implementation(libs.okio.okio)
                     implementation(libs.okio.node)
 
-                    implementation(npm("kmp-tor-binary-geoip", "$version"))
-                    implementation(npm("kmp-tor-binary-linuxx64", "$version"))
-                    implementation(npm("kmp-tor-binary-linuxx86", "$version"))
-                    implementation(npm("kmp-tor-binary-macosarm64", "$version"))
-                    implementation(npm("kmp-tor-binary-macosx64", "$version"))
-                    implementation(npm("kmp-tor-binary-mingwx64", "$version"))
-                    implementation(npm("kmp-tor-binary-mingwx86", "$version"))
+//                    implementation(npm("kmp-tor-binary-geoip", "$version"))
+//                    implementation(npm("kmp-tor-binary-linuxx64", "$version"))
+//                    implementation(npm("kmp-tor-binary-linuxx86", "$version"))
+//                    implementation(npm("kmp-tor-binary-macosarm64", "$version"))
+//                    implementation(npm("kmp-tor-binary-macosx64", "$version"))
+//                    implementation(npm("kmp-tor-binary-mingwx64", "$version"))
+//                    implementation(npm("kmp-tor-binary-mingwx86", "$version"))
                 }
             }
         }
