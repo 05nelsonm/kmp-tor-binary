@@ -97,38 +97,38 @@ change_dir_or_exit() {
 }
 
 initialize() {
-    if [ "$GIT" == "" ]; then
-      echo "
-      ERROR: git is required to be installed to run this script
-      "
-      exit 1
-    fi
+  if [ "$GIT" == "" ]; then
+    echo "
+    ERROR: git is required to be installed to run this script
+    "
+    exit 1
+  fi
 
-    if [ "$MAKE" == "" ]; then
-      echo "
-      ERROR: make is required to be installed to run this script
-      "
-      exit 1
-    fi
+  if [ "$MAKE" == "" ]; then
+    echo "
+    ERROR: make is required to be installed to run this script
+    "
+    exit 1
+  fi
 
-    if [ "$TAR" == "" ]; then
-      echo "
-      ERROR: tar is a required to be installed to run this script
-      "
-      exit 1
-    fi
+  if [ "$TAR" == "" ]; then
+    echo "
+    ERROR: tar is a required to be installed to run this script
+    "
+    exit 1
+  fi
 
-    change_dir_or_exit "$DIR"
+  change_dir_or_exit "$DIR"
 
-    if ! ${GIT} submodule update --init; then
-      echo "
-      ERROR: Failed to checkout tor-browser-build submodule
-      "
-      exit 1
-    fi
+  if ! ${GIT} submodule update --init; then
+    echo "
+    ERROR: Failed to checkout tor-browser-build submodule
+    "
+    exit 1
+  fi
 
-    git_patches_apply
-    trap git_patches_remove EXIT
+  git_patches_apply
+  trap git_patches_remove EXIT
 }
 
 pre_build_setup() {
