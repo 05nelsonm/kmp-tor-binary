@@ -222,6 +222,14 @@ Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-br
 
 ## Building Binaries Yourself
 
+ - NOTE: Current binaries for `macOS` are not reproducibly built because to execute on them require that
+   they be codesigned (which changes the sha256sum output). Current binaries for `kmp-tor-binary-macosx64` 
+   and `kmp-tor-binary-macosarm64` come from TorBrowser, signed with the TorProject's developer ID. See 
+   [this issue](https://github.com/05nelsonm/kmp-tor/issues/285) for more details.
+
+ - Work is underway to resolve the above note in a manner whereby binaries published from this project 
+   can be easily verified by consumers.
+
  - Clone the repo and initialize submodules:
    ```
    git clone https://github.com/05nelsonm/kmp-tor-binary.git
