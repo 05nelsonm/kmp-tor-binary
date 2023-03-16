@@ -65,13 +65,13 @@ public object TorResourceLinuxX86: TorResource.Binaries() {
 public object TorResourceMacosX64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/macos/x64"
     /* MACOS_X64 */ override val resourceManifest: List<String> get() = listOf("libevent-2.1.7.dylib.gz", "tor.gz")
-    /* MACOS_X64 */ override val sha256sum: String get() = "f7cda13f5add304dcdbe6965ebc3953b4678004c0373c5b8cecf0decf88566e7"
+    /* MACOS_X64 */ override val sha256sum: String get() = "aba9a0adaf11044c384a5d88270f4c9f9788af6b9b40f87480aaa04695b1b354"
 }
 
 public object TorResourceMacosArm64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/macos/arm64"
     /* MACOS_ARM64 */ override val resourceManifest: List<String> get() = listOf("libevent-2.1.7.dylib.gz", "tor.gz")
-    /* MACOS_ARM64 */ override val sha256sum: String get() = "3538d8316acde0f08d9746f04b91f47eeb5df24b662391596570e4716ab06797"
+    /* MACOS_ARM64 */ override val sha256sum: String get() = "c6a253293b12b402c900e70384258e1400bc0cf25bb8018f153bf872706ff979"
 }
 
 public object TorResourceMingwX64: TorResource.Binaries() {
