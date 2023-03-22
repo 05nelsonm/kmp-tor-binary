@@ -16,8 +16,5 @@
 package io.matthewnelson.diff.internal
 
 import com.github.ajalt.clikt.core.CliktCommand
-import okio.FileSystem
 
-internal sealed class DiffCommand(help: String): CliktCommand(help = help, printHelpOnEmptyArgs = true) {
-    protected val fs by lazy { FileSystem.get() }
-}
+internal sealed class DiffCommand(help: String): CliktCommand(help = help, printHelpOnEmptyArgs = true)
