@@ -36,6 +36,7 @@ internal abstract class DirApply(
 ),  DiffDirArg,
     DiffFileExtNameOpt
 {
+
     protected abstract val dirArg: Path
     abstract override val diffDirArg: Path
     abstract override val diffFileExtNameOpt: String

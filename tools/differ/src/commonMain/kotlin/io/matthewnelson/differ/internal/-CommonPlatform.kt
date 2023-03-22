@@ -32,14 +32,14 @@ internal inline fun Path.requireFileExistAndNotEmpty(fs: FileSystem, argName: St
     require(fs.exists(this)) { "$argName does not exist" }
 
     val md = fs.metadata(this)
-    require(md.isRegularFile) { "$argName exists, but is not a file" }
+    require(md.isRegularFile) { "Argument $argName exists, but is not a file" }
     require(md.size != 0L) { "$argName is empty" }
 }
 
 @Suppress("NOTHING_TO_INLINE")
 @Throws(IllegalArgumentException::class)
 internal inline fun Path.requireFileDoesNotExist(fs: FileSystem, argName: String) {
-    require(!fs.exists(this)) { "$argName exists" }
+    require(!fs.exists(this)) { "$argName exists and cannot be overwritten" }
 }
 
 /**

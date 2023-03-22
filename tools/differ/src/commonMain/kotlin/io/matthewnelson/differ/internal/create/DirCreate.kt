@@ -38,6 +38,7 @@ internal abstract class DirCreate(
     DiffFileExtNameOpt,
     CreateReadableOpt
 {
+
     protected abstract val dir1Arg: Path
     protected abstract val dir2Arg: Path
     abstract override val createReadableOpt: Boolean

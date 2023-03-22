@@ -85,4 +85,13 @@ class ApplyUnitTest: DifferUnitTest() {
         assertThrew<IllegalArgumentException> { apply.execute() }
     }
 
+    @Test
+    fun givenApply_whenFilePathIsADir_thenThrowsException() {
+        fs.createDirectories(file)
+        diff.writeText("diff")
+
+        val apply = Apply.from(fs, EmptyRunner(), file, diff)
+
+        assertThrew<IllegalArgumentException> { apply.execute() }
+    }
 }
