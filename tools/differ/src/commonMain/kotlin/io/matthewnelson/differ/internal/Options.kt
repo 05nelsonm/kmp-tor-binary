@@ -21,7 +21,7 @@ internal interface DiffFileExtNameOpt {
     val diffFileExtNameOpt: String
 
     companion object {
-        internal const val NAME_OPT = "diff-extension-name"
+        internal const val NAME_OPT = "diff-ext-name"
         internal const val DEFAULT_EXT = ".diff"
 
         internal fun ArgParser.diffFileExtNameOption(
