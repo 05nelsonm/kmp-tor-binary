@@ -16,19 +16,17 @@
 package io.matthewnelson.differ.cli.internal.create
 
 import io.matthewnelson.differ.cli.internal.*
-import io.matthewnelson.differ.cli.internal.OptDiffFileExtName.Companion.requireDiffFileExtensionNameValid
+import io.matthewnelson.differ.cli.internal.ArgDiffDir.Companion.diffDirArgument
+import io.matthewnelson.differ.cli.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
+import io.matthewnelson.differ.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.differ.cli.internal.Subcommand
-import io.matthewnelson.differ.cli.internal.requireDirOrNull
-import io.matthewnelson.differ.cli.internal.requireFileDoesNotExist
-import io.matthewnelson.differ.cli.internal.requireFileExist
+import io.matthewnelson.differ.core.Differ
+import io.matthewnelson.differ.core.internal.InternalDifferApi
 import okio.FileSystem
-import okio.IOException
 import okio.Path
-import okio.Path.Companion.toPath
 
-internal abstract class Create(
-    protected val fs: FileSystem,
-    protected val runner: Runner,
+internal class Create(
+    private val fs: FileSystem,
 ): Subcommand(
     name = NAME_CMD,
     description = """
@@ -36,85 +34,48 @@ internal abstract class Create(
         compared to the second file whereby any differences
         that the second file has will be recorded.
     """,
-    additionalIndent = 4,
+//    additionalIndent = 4,
 ),  ArgDiffDir,
-    OptCreateReadable,
     OptDiffFileExtName
 {
 
-    protected abstract val file1Arg: Path
-    protected abstract val file2Arg: Path
+    private val file1Arg: Path by argument(
+        type = ArgTypePath,
+        fullName = NAME_FILE_1,
+        description = "The first file (e.g. /path/to/unsigned/file)"
+    )
 
-    final override fun execute() {
-        file1Arg.requireFileExist(fs, NAME_FILE_1)
-        file2Arg.requireFileExist(fs, NAME_FILE_2)
-        require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
-        val mustCreate = diffDirArg.requireDirOrNull(fs, ArgDiffDir.NAME_ARG)
-        diffFileExtNameOpt.requireDiffFileExtensionNameValid()
+    private val file2Arg: Path by argument(
+        type = ArgTypePath,
+        fullName = NAME_FILE_2,
+        description = "The second file to diff against the first file (e.g. /path/to/signed/file)"
+    )
 
-        fs.createDirectories(diffDirArg, mustCreate = mustCreate)
-        val canonicalDiffDir = fs.canonicalize(diffDirArg)
+    override val diffDirArg: Path by diffDirArgument(
+        description = "The directory to output the generated diff file to (e.g. /path/to/diffs)"
+    )
 
-        val diffFile = canonicalDiffDir.resolve(file1Arg.name + diffFileExtNameOpt)
-        diffFile.requireFileDoesNotExist(fs, ArgDiffDir.NAME_ARG)
-        val humanReadablefile = if (createReadableOpt) "$diffFile.txt".toPath() else null
-        humanReadablefile?.let { hrf ->
-            hrf.requireFileDoesNotExist(fs, "Human readable file ${hrf.name}")
-        }
+    override val diffFileExtNameOpt: String by diffFileExtNameOption(
+        description = "The file extension name to use for the diff file"
+    )
 
+    override val quietOpt: Boolean by quietOption()
+
+    override fun execute() {
         try {
-            runner.run(
-                settings = settings(),
+            @OptIn(InternalDifferApi::class)
+            Differ.create(
                 fs = fs,
-                file1 = fs.canonicalize(file1Arg),
-                file2 = fs.canonicalize(file2Arg),
-                diffFile = diffFile,
-                hrFile = humanReadablefile,
+                file1 = file1Arg,
+                file2 = file2Arg,
+                diffDir = diffDirArg,
+                options = Differ.Options(
+                    diffFileExtensionName = diffFileExtNameOpt
+                ),
             )
         } catch (t: Throwable) {
-            try {
-                if (mustCreate) {
-                    fs.deleteRecursively(canonicalDiffDir, mustExist = false)
-                } else {
-                    fs.delete(diffFile, mustExist = false)
-                    if (humanReadablefile != null) {
-                        fs.delete(humanReadablefile, mustExist = false)
-                    }
-                }
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
+            // TODO
             throw t
-        }
-    }
-
-    internal interface Runner {
-
-        @Throws(Throwable::class)
-        fun run(settings: Settings, fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?)
-
-        companion object: Runner {
-
-            @Throws(Throwable::class)
-            override fun run(
-                settings: Settings,
-                fs: FileSystem,
-                file1: Path,
-                file2: Path,
-                diffFile: Path,
-                hrFile: Path?
-            ) {
-                // TODO
-                with(settings) {
-                    println("""
-                        $NAME_FILE_1: $file1
-                        $NAME_FILE_2: $file2
-                        diffFile: $diffFile
-                        humanReadableFile: $hrFile
-                    """.trimIndent())
-                }
-            }
         }
     }
 
@@ -123,25 +84,5 @@ internal abstract class Create(
 
         internal const val NAME_FILE_1 = "file1"
         internal const val NAME_FILE_2 = "file2"
-
-        internal fun from(
-            fs: FileSystem,
-            runner: Runner,
-            file1: Path,
-            file2: Path,
-            createReadable: Boolean,
-            diffFileExtName: String,
-            diffDir: Path,
-            settings: Settings,
-        ): Create {
-            return object : Create(fs = fs, runner = runner) {
-                override val file1Arg: Path = file1
-                override val file2Arg: Path = file2
-                override val diffDirArg: Path = diffDir
-                override val createReadableOpt: Boolean = createReadable
-                override val diffFileExtNameOpt: String = diffFileExtName
-                override val quietOpt: Boolean = settings.quiet
-            }
-        }
     }
 }

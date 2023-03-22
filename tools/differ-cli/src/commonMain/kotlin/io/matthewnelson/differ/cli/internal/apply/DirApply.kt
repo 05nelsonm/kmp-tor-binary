@@ -16,15 +16,18 @@
 package io.matthewnelson.differ.cli.internal.apply
 
 import io.matthewnelson.differ.cli.internal.ArgDiffDir
+import io.matthewnelson.differ.cli.internal.ArgDiffDir.Companion.diffDirArgument
+import io.matthewnelson.differ.cli.internal.ArgTypePath
 import io.matthewnelson.differ.cli.internal.OptDiffFileExtName
+import io.matthewnelson.differ.cli.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
+import io.matthewnelson.differ.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.differ.cli.internal.Subcommand
 import io.matthewnelson.differ.cli.internal.create.DirCreate
 import okio.FileSystem
 import okio.Path
 
-internal abstract class DirApply(
+internal class DirApply(
     private val fs: FileSystem,
-    private val runner: Runner,
 ): Subcommand(
     name = NAME_CMD,
     description = """
@@ -37,57 +40,29 @@ internal abstract class DirApply(
     OptDiffFileExtName
 {
 
-    protected abstract val dirArg: Path
-    abstract override val diffDirArg: Path
-    abstract override val diffFileExtNameOpt: String
+    private val dirArg: Path by argument(
+        type = ArgTypePath,
+        fullName = NAME_DIR,
+        description = "The directory to apply the file diffs to (e.g. /path/to/unsigned/program)",
+    )
 
-    final override fun execute() {
-        // TODO: Validate
+    override val diffDirArg: Path by diffDirArgument(
+        description = "The directory of diff files to be applied to $NAME_DIR (e.g. /path/to/diffs/program)",
+    )
 
-        try {
-            runner.run(
-                settings = settings(),
-                fs = fs,
-            )
-        } catch (t: Throwable) {
-            // TODO: Cleanup
-            throw t
-        }
-    }
+    override val diffFileExtNameOpt: String by diffFileExtNameOption(
+        description = "The file extension name used when diff files were created with ${DirCreate.NAME_CMD}"
+    )
 
-    internal interface Runner {
+    override val quietOpt: Boolean by quietOption()
 
-        @Throws(Throwable::class)
-        fun run(settings: Settings, fs: FileSystem, )
-
-        companion object: Runner {
-
-            @Throws(Throwable::class)
-            override fun run(settings: Settings, fs: FileSystem, ) {
-                // TODO
-            }
-        }
+    override fun execute() {
+        // TODO
     }
 
     internal companion object {
         internal const val NAME_CMD = "dir-apply"
 
         internal const val NAME_DIR = "dir"
-
-        internal fun from(
-            fs: FileSystem,
-            runner: Runner,
-            dir: Path,
-            diffDir: Path,
-            diffFileExtName: String,
-            settings: Settings,
-        ): DirApply {
-            return object : DirApply(fs = fs, runner = runner) {
-                override val dirArg: Path = dir
-                override val diffDirArg: Path = diffDir
-                override val diffFileExtNameOpt: String = diffFileExtName
-                override val quietOpt: Boolean = settings.quiet
-            }
-        }
     }
 }

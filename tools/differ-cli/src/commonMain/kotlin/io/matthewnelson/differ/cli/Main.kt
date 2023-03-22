@@ -15,24 +15,32 @@
  **/
 package io.matthewnelson.differ.cli
 
-import io.matthewnelson.differ.cli.internal.PROGRAM_NAME
-import io.matthewnelson.differ.cli.internal.apply.ApplyCmd
-import io.matthewnelson.differ.cli.internal.apply.DirApplyCmd
-import io.matthewnelson.differ.cli.internal.create.CreateCmd
-import io.matthewnelson.differ.cli.internal.create.DirCreateCmd
+import io.matthewnelson.differ.cli.internal.apply.Apply
+import io.matthewnelson.differ.cli.internal.apply.DirApply
+import io.matthewnelson.differ.cli.internal.create.Create
+import io.matthewnelson.differ.cli.internal.create.DirCreate
+import io.matthewnelson.differ.core.internal.InternalDifferApi
+import io.matthewnelson.differ.core.internal.system
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
+import okio.FileSystem
+
+private const val PROGRAM_NAME = "Differ CLI"
 
 public fun main(args: Array<String>) {
     val parser = ArgParser(programName = PROGRAM_NAME.lowercase().replace(' ', '-'))
 
-    val create = CreateCmd()
-    val dirCreate = DirCreateCmd()
-    val apply = ApplyCmd()
-    val dirApply = DirApplyCmd()
+    @OptIn(InternalDifferApi::class)
+    val fs = FileSystem.system()
+
+    // TODO: Change Create/Apply indents when enabling DirCreate and DirApply
+    val create = Create(fs)
+//    val dirCreate = DirCreate(fs)
+    val apply = Apply(fs)
+//    val dirApply = DirApply(fs)
 
     @OptIn(ExperimentalCli::class)
-    parser.subcommands(create, dirCreate, apply, dirApply)
+    parser.subcommands(create, /*dirCreate,*/ apply, /*dirApply*/)
 
     val helpOrArgs = when {
         args.isEmpty() -> {

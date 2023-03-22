@@ -6,6 +6,7 @@ cryptoHash = "0.2.0"
 encoding = "1.2.1"
 gradleVersions = "0.46.0"
 kotlin = "1.8.10"
+kotlinTime = "0.4.0"
 kotlinCli = "0.3.5"
 npmPublish = "2.1.2"
 okio = "3.3.0"
@@ -26,6 +27,7 @@ encoding-base16 = { module = "io.matthewnelson.kotlin-components:encoding-base16
 encoding-base64 = { module = "io.matthewnelson.kotlin-components:encoding-base64", version.ref = "encoding" }
 kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "cryptoHash" }
 kotlin-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinCli" }
+kotlin-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinTime" }
 okio-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 okio-node = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }

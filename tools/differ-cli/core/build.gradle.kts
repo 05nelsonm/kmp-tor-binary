@@ -27,25 +27,48 @@ kmpConfiguration {
             compileTargetCompatibility = JavaVersion.VERSION_1_8
         }
 
-        iosAll()
-        tvosAll()
-        watchosAll()
+        js {
+            target { nodejs { testTask { useMocha { timeout = "30s" } } } }
+
+            sourceSetMain {
+                dependencies {
+                    implementation(libs.okio.node)
+                }
+            }
+        }
+
+        iosArm64()
+        iosSimulatorArm64()
+        iosX64()
+        tvosArm64()
+        tvosX64()
+        tvosSimulatorArm64()
+        watchosArm32()
+        watchosArm64()
+        watchosX86()
+        watchosX64()
+        watchosSimulatorArm64()
 
         linuxX64()
-        macosAll()
+        macosArm64()
+        macosX64()
         mingwX64()
 
         common {
             sourceSetMain {
                 dependencies {
+                    implementation(libs.encoding.base16)
                     implementation(libs.encoding.base64)
-                    api(libs.okio.okio)
+                    implementation(libs.kotlincrypto.hash.sha2)
+                    implementation(libs.kotlin.time)
+                    implementation(libs.okio.okio)
                     api(libs.valueClazz)
                 }
             }
 
             sourceSetTest {
                 dependencies {
+                    implementation(kotlin("test"))
                     implementation(libs.okio.fakeFileSystem)
                 }
             }

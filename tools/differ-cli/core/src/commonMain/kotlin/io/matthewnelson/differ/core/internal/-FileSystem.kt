@@ -13,19 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    id("configuration")
-}
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
 
-kmpConfiguration {
-    configureTool(project, mainKtPath = "io.matthewnelson.differ.cli") {
-        common {
-            sourceSetMain {
-                dependencies {
-                    implementation(libs.okio.okio)
-                    implementation(project(":tools:differ-cli:core"))
-                }
+package io.matthewnelson.differ.core.internal
+
+import okio.*
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun FileSystem.hashLengthOf(file: Path): Pair<String, Long> {
+    return HashingSource.sha256(source(file)).use { hs ->
+        var length = 0L
+
+        hs.buffer().use { bs ->
+            val buf = ByteArray(4096)
+            while (true) {
+                val read = bs.read(buf)
+                if (read == -1) break
+                length += read
             }
         }
+
+        Pair(hs.hash.hex(), length)
     }
 }

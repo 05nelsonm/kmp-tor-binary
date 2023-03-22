@@ -15,32 +15,14 @@
  **/
 package io.matthewnelson.differ.cli.internal
 
+import io.matthewnelson.differ.core.Differ
 import kotlinx.cli.*
-
-internal interface OptCreateReadable {
-    val createReadableOpt: Boolean
-
-    companion object {
-        internal const val NAME_OPT = "create-readable"
-
-        internal fun ArgParser.createReadableOption(
-            description: String
-        ): SingleOption<Boolean, DefaultRequiredType.Default> {
-            return option(
-                type = ArgType.Boolean,
-                fullName = NAME_OPT,
-                description = description
-            ).default(false)
-        }
-    }
-}
 
 internal interface OptDiffFileExtName {
     val diffFileExtNameOpt: String
 
     companion object {
         internal const val NAME_OPT = "diff-ext-name"
-        internal const val DEFAULT_EXT = ".diff"
 
         internal fun ArgParser.diffFileExtNameOption(
             description: String
@@ -49,15 +31,7 @@ internal interface OptDiffFileExtName {
                 type = ArgType.String,
                 fullName = NAME_OPT,
                 description = description
-            ).default(DEFAULT_EXT)
-        }
-
-        @Throws(IllegalArgumentException::class)
-        internal fun String.requireDiffFileExtensionNameValid() {
-            require(!contains(' ')) { "$NAME_OPT cannot contain white space" }
-            require(lines().size == 1) { "$NAME_OPT cannot contain line breaks" }
-            require(startsWith('.')) { "$NAME_OPT must start with a '.'" }
-            require(length > 1) { "$NAME_OPT length must be greater than 1" }
+            ).default(Differ.Options.DEFAULT_EXT_NAME)
         }
     }
 }

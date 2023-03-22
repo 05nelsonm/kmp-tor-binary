@@ -15,62 +15,42 @@
  **/
 package io.matthewnelson.differ.cli.internal.apply
 
+import io.matthewnelson.differ.cli.internal.ArgTypePath
+import io.matthewnelson.differ.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.differ.cli.internal.Subcommand
-import io.matthewnelson.differ.cli.internal.requireFileExist
+import io.matthewnelson.differ.core.Differ
+import io.matthewnelson.differ.core.internal.InternalDifferApi
 import okio.FileSystem
 import okio.Path
 
-internal abstract class Apply(
-    protected val fs: FileSystem,
-    private val runner: Runner,
+internal class Apply(
+    private val fs: FileSystem,
 ): Subcommand(
     name = NAME_CMD,
     description = """
         Applies a diff to it's associated file.
         $NAME_FILE is modified in place.
     """,
-    additionalIndent = 5,
+    additionalIndent = 1,
 ) {
 
-    protected abstract val fileArg: Path
-    protected abstract val diffFileArg: Path
+    private val diffFileArg: Path by argument(
+        type = ArgTypePath,
+        fullName = NAME_DIFF_FILE,
+        description = "The previously created diff file to be applied (e.g. /path/to/diff/file.diff)",
+    )
 
-    final override fun execute() {
-        fileArg.requireFileExist(fs, NAME_FILE)
-        diffFileArg.requireFileExist(fs, NAME_DIFF_FILE)
-        require(fileArg != diffFileArg) { "$NAME_FILE cannot equal $NAME_DIFF_FILE" }
+    private val fileArg: Path by argument(
+        type = ArgTypePath,
+        fullName = NAME_FILE,
+        description = "The file to apply the diff to (e.g. /path/to/unsigned/file)",
+    )
 
-        try {
-            runner.run(
-                settings = settings(),
-                fs = fs,
-                file = fs.canonicalize(fileArg),
-                diffFile = fs.canonicalize(diffFileArg),
-            )
-        } catch (t: Throwable) {
-            // TODO: Clean up
-            throw t
-        }
-    }
+    override val quietOpt: Boolean by quietOption()
 
-    internal interface Runner {
-
-        @Throws(Throwable::class)
-        fun run(settings: Settings, fs: FileSystem, file: Path, diffFile: Path)
-
-        companion object: Runner {
-
-            @Throws(Throwable::class)
-            override fun run(settings: Settings, fs: FileSystem, file: Path, diffFile: Path) {
-                // TODO
-                with(settings) {
-                    println("""
-                        $NAME_FILE: $file
-                        $NAME_DIFF_FILE: $diffFile
-                    """.trimIndent())
-                }
-            }
-        }
+    override fun execute() {
+        @OptIn(InternalDifferApi::class)
+        Differ.apply(fs, diffFileArg, fileArg)
     }
 
     internal companion object {
@@ -78,19 +58,5 @@ internal abstract class Apply(
 
         internal const val NAME_FILE = "file"
         internal const val NAME_DIFF_FILE = "diff-file"
-
-        internal fun from(
-            fs: FileSystem,
-            runner: Runner,
-            file: Path,
-            diff: Path,
-            settings: Settings,
-        ): Apply {
-            return object : Apply(fs = fs, runner = runner) {
-                override val fileArg: Path = file
-                override val diffFileArg: Path = diff
-                override val quietOpt: Boolean = settings.quiet
-            }
-        }
     }
 }

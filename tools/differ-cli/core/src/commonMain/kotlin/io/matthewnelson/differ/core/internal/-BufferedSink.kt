@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    id("configuration")
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
+
+package io.matthewnelson.differ.core.internal
+
+import okio.BufferedSink
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun BufferedSink.writeNewLine() {
+    writeUtf8("\n")
 }
 
-kmpConfiguration {
-    configureTool(project, mainKtPath = "io.matthewnelson.differ.cli") {
-        common {
-            sourceSetMain {
-                dependencies {
-                    implementation(libs.okio.okio)
-                    implementation(project(":tools:differ-cli:core"))
-                }
-            }
-        }
-    }
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun BufferedSink.writeLineBreak() {
+    writeNewLine()
+    writeUtf8(LINE_BREAK)
+    writeNewLine()
 }

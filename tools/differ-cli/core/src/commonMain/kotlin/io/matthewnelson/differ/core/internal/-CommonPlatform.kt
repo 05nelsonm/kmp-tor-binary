@@ -13,19 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    id("configuration")
-}
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
 
-kmpConfiguration {
-    configureTool(project, mainKtPath = "io.matthewnelson.differ.cli") {
-        common {
-            sourceSetMain {
-                dependencies {
-                    implementation(libs.okio.okio)
-                    implementation(project(":tools:differ-cli:core"))
-                }
-            }
-        }
-    }
-}
+package io.matthewnelson.differ.core.internal
+
+import io.matthewnelson.encoding.base16.Base16
+import io.matthewnelson.encoding.base64.Base64
+import io.matthewnelson.encoding.builders.*
+import okio.FileSystem
+
+@InternalDifferApi
+@Suppress("NOTHING_TO_INLINE")
+public expect inline fun FileSystem.Companion.system(): FileSystem
+
+internal val BASE16: Base16 = Base16 { encodeToLowercase = true }
+internal val BASE64: Base64 = Base64 { lineBreakInterval = 64 }
+
+internal const val LINE_BREAK: String = "#"

@@ -13,19 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    id("configuration")
-}
+package io.matthewnelson.differ.core
 
-kmpConfiguration {
-    configureTool(project, mainKtPath = "io.matthewnelson.differ.cli") {
-        common {
-            sourceSetMain {
-                dependencies {
-                    implementation(libs.okio.okio)
-                    implementation(project(":tools:differ-cli:core"))
-                }
-            }
-        }
-    }
+/**
+ * Thrown when creating a diff to indicate that there were
+ * no differences between the 2 files and that no diff was
+ * created.
+ * */
+public open class NoDiffException: RuntimeException {
+    final override val message: String
+
+    public constructor(message: String): this(message, null)
+    public constructor(message: String, cause: Throwable?): super(message, cause) { this.message = message }
 }

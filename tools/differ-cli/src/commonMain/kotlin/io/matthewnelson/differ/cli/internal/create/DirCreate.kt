@@ -15,17 +15,18 @@
  **/
 package io.matthewnelson.differ.cli.internal.create
 
-import io.matthewnelson.differ.cli.internal.*
 import io.matthewnelson.differ.cli.internal.ArgDiffDir
-import io.matthewnelson.differ.cli.internal.OptCreateReadable
+import io.matthewnelson.differ.cli.internal.ArgDiffDir.Companion.diffDirArgument
+import io.matthewnelson.differ.cli.internal.ArgTypePath
 import io.matthewnelson.differ.cli.internal.OptDiffFileExtName
+import io.matthewnelson.differ.cli.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
+import io.matthewnelson.differ.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.differ.cli.internal.Subcommand
 import okio.FileSystem
 import okio.Path
 
-internal abstract class DirCreate(
-    protected val fs: FileSystem,
-    protected val runner: Runner,
+internal class DirCreate(
+    private val fs: FileSystem,
 ): Subcommand(
     name = NAME_CMD,
     description = """
@@ -36,43 +37,33 @@ internal abstract class DirCreate(
         Both directories MUST have an identical file structure.
     """,
 ),  ArgDiffDir,
-    OptCreateReadable,
     OptDiffFileExtName
 {
 
-    protected abstract val dir1Arg: Path
-    protected abstract val dir2Arg: Path
-    abstract override val diffDirArg: Path
-    abstract override val createReadableOpt: Boolean
-    abstract override val diffFileExtNameOpt: String
-    abstract override val quietOpt: Boolean
+    private val dir1Arg: Path by argument(
+        type = ArgTypePath,
+        fullName = NAME_DIR_1,
+        description = "The first directory (e.g. /path/to/unsigned/program)",
+    )
 
-    final override fun execute() {
-        // TODO: Validate
+    private val dir2Arg: Path by argument(
+        type = ArgTypePath,
+        fullName = NAME_DIR_2,
+        description = "The second directory (identical structure to $NAME_DIR_1) to diff against the first (e.g. /path/to/signed/program)",
+    )
 
-        try {
-            runner.run(
-                settings = settings(),
-                fs = fs,
-            )
-        } catch (t: Throwable) {
-            // TODO: Cleanup
-            throw t
-        }
-    }
+    override val diffDirArg: Path by diffDirArgument(
+        description = "The directory to output the generated diff files (e.g. /path/to/diffs/program)",
+    )
 
-    internal interface Runner {
+    override val diffFileExtNameOpt: String by diffFileExtNameOption(
+        description = "The file extension name to use when diff files are created"
+    )
 
-        @Throws(Throwable::class)
-        fun run(settings: Settings, fs: FileSystem, )
+    override val quietOpt: Boolean by quietOption()
 
-        companion object: Runner {
-
-            @Throws(Throwable::class)
-            override fun run(settings: Settings, fs: FileSystem, ) {
-                // TODO
-            }
-        }
+    override fun execute() {
+        // TODO
     }
 
     internal companion object {
@@ -80,25 +71,5 @@ internal abstract class DirCreate(
 
         internal const val NAME_DIR_1 = "dir1"
         internal const val NAME_DIR_2 = "dir2"
-
-        internal fun from(
-            fs: FileSystem,
-            runner: Runner,
-            dir1: Path,
-            dir2: Path,
-            createReadable: Boolean,
-            diffFileExtName: String,
-            diffDir: Path,
-            settings: Settings,
-        ): DirCreate {
-            return object : DirCreate(fs = fs, runner = runner) {
-                override val dir1Arg: Path = dir1
-                override val dir2Arg: Path = dir2
-                override val diffDirArg: Path = diffDir
-                override val createReadableOpt: Boolean = createReadable
-                override val diffFileExtNameOpt: String = diffFileExtName
-                override val quietOpt: Boolean = settings.quiet
-            }
-        }
     }
 }

@@ -13,19 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    id("configuration")
-}
+package io.matthewnelson.differ.core.internal
 
-kmpConfiguration {
-    configureTool(project, mainKtPath = "io.matthewnelson.differ.cli") {
-        common {
-            sourceSetMain {
-                dependencies {
-                    implementation(libs.okio.okio)
-                    implementation(project(":tools:differ-cli:core"))
-                }
-            }
-        }
-    }
-}
+

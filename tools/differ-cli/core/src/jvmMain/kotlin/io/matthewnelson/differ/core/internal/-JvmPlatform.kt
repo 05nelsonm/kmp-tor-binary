@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    id("configuration")
-}
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
 
-kmpConfiguration {
-    configureTool(project, mainKtPath = "io.matthewnelson.differ.cli") {
-        common {
-            sourceSetMain {
-                dependencies {
-                    implementation(libs.okio.okio)
-                    implementation(project(":tools:differ-cli:core"))
-                }
-            }
-        }
-    }
-}
+package io.matthewnelson.differ.core.internal
+
+import okio.FileSystem
+
+@InternalDifferApi
+@Suppress("NOTHING_TO_INLINE")
+public actual inline fun FileSystem.Companion.system(): FileSystem = SYSTEM
