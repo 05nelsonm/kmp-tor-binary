@@ -28,7 +28,7 @@ public class Header
 @Throws(IllegalStateException::class)
 internal constructor(
     @JvmField public val schema: Diff.Schema,
-    private val createdAtInstant: Instant,
+    internal val createdAtInstant: Instant,
     @JvmField public val createdForFile: String,
     @JvmField public val createdForHash: String,
     @JvmField public val createdFromHash: String,

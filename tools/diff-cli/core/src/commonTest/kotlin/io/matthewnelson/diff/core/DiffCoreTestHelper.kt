@@ -16,11 +16,16 @@
 package io.matthewnelson.diff.core
 
 import okio.Path
+import okio.Path.Companion.toPath
 import okio.fakefilesystem.FakeFileSystem
 import kotlin.test.AfterTest
 import kotlin.test.fail
 
 abstract class DiffCoreTestHelper {
+
+    protected val file1 = "/home/user/unsigned/file1".toPath()
+    protected val file2 = "/home/user/signed/file2".toPath()
+    protected val diffDir = "/home/user/diffs/".toPath()
     protected val fs = FakeFileSystem()
 
     @AfterTest

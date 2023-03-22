@@ -25,10 +25,6 @@ import kotlin.test.assertNotEquals
 @OptIn(InternalDiffApi::class)
 class DiffIntegrationTest: DiffCoreTestHelper() {
 
-    private val file1 = "/home/user/unsigned/file1".toPath()
-    private val file2 = "/home/user/signed/file2".toPath()
-    private val diffDir = "/home/user/diffs/".toPath()
-
     @Test
     fun givenDiff_whenDiffingFromLargerFile_thenApplicationSucceeds() {
         val f1Text = """
