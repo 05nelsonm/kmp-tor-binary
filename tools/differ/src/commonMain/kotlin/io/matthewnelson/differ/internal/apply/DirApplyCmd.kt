@@ -15,30 +15,16 @@
  **/
 package io.matthewnelson.differ.internal.apply
 
+import io.matthewnelson.differ.internal.*
 import io.matthewnelson.differ.internal.ArgTypePath
-import io.matthewnelson.differ.internal.DiffDirArg
 import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
-import io.matthewnelson.differ.internal.DiffFileExtNameOpt
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
-import io.matthewnelson.differ.internal.Subcommand
-import io.matthewnelson.differ.internal.create.DirCreateCmd
+import io.matthewnelson.differ.internal.create.DirCreate
 import okio.FileSystem
 import okio.Path
 
-internal class DirApplyCmd(
-    private val fs: FileSystem
-): Subcommand(
-    name = NAME_CMD,
-    description = """
-        Applies diff files from previously created
-        ${DirCreateCmd.NAME_CMD} to the specified $NAME_DIR.
-        Files from $NAME_DIR are modified in place.
-    """,
-    additionalIndent = 1,
-),  DiffDirArg,
-    DiffFileExtNameOpt
-{
-    private val dirArg: Path by argument(
+internal class DirApplyCmd: DirApply(fs = FileSystem.get()) {
+    override val dirArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIR,
         description = "The directory to apply the file diffs to (e.g. /path/to/unsigned/program)",
@@ -49,28 +35,6 @@ internal class DirApplyCmd(
     )
 
     override val diffFileExtNameOpt: String by diffFileExtNameOption(
-        description = "The file extension name used when diff files were created with ${DirCreateCmd.NAME_CMD}"
+        description = "The file extension name used when diff files were created with ${DirCreate.NAME_CMD}"
     )
-
-    override fun execute() {
-        // TODO: Validate
-
-        try {
-            run()
-        } catch (t: Throwable) {
-            // TODO: Cleanup
-            throw t
-        }
-    }
-
-    @Throws(Throwable::class)
-    private fun run() {
-        // TODO
-    }
-
-    internal companion object {
-        internal const val NAME_CMD = "dir-apply"
-
-        internal const val NAME_DIR = "dir"
-    }
 }

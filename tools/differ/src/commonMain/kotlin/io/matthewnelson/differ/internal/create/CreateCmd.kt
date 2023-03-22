@@ -39,7 +39,7 @@ internal class CreateCmd: Create(fs = FileSystem.get()) {
     )
 
     override val createReadableOpt: Boolean by createReadableOption(
-        description = "Also creates a human readable text file of the diff to the specified ${DiffDirArg.NAME_ARG}"
+        description = "Also creates a human readable text file of the diff in the specified ${DiffDirArg.NAME_ARG}"
     )
 
     override val diffFileExtNameOpt: String by diffFileExtNameOption(
