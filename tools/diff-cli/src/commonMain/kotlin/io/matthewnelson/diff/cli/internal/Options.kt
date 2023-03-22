@@ -36,6 +36,22 @@ internal interface OptDiffFileExtName {
     }
 }
 
+internal interface OptStaticTime {
+    val staticTimeOpt: Boolean
+
+    companion object {
+        internal const val NAME_OPT = "static-time"
+
+        internal fun ArgParser.staticTimeOption(): SingleOption<Boolean, DefaultRequiredType.Default> {
+            return option(
+                type = ArgType.Boolean,
+                fullName = NAME_OPT,
+                description = "Uses a static time value of ${Diff.Options.STATIC_TIME} instead of the current time value"
+            ).default(false)
+        }
+    }
+}
+
 internal interface OptQuiet {
     val quietOpt: Boolean
 

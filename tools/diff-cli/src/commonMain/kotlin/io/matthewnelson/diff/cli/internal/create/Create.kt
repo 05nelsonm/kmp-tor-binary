@@ -19,6 +19,7 @@ import io.matthewnelson.diff.cli.internal.*
 import io.matthewnelson.diff.cli.internal.ArgDiffDir.Companion.diffDirArgument
 import io.matthewnelson.diff.cli.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
 import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
+import io.matthewnelson.diff.cli.internal.OptStaticTime.Companion.staticTimeOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
 import okio.Path
@@ -32,7 +33,8 @@ internal class Create: Subcommand(
     """,
 //    additionalIndent = 4,
 ),  ArgDiffDir,
-    OptDiffFileExtName
+    OptDiffFileExtName,
+    OptStaticTime
 {
 
     private val file1Arg: Path by argument(
@@ -57,6 +59,8 @@ internal class Create: Subcommand(
 
     override val quietOpt: Boolean by quietOption()
 
+    override val staticTimeOpt: Boolean by staticTimeOption()
+
     override fun execute() {
         try {
             Diff.create(
@@ -64,7 +68,8 @@ internal class Create: Subcommand(
                 file2 = file2Arg,
                 diffDir = diffDirArg,
                 options = Diff.Options(
-                    diffFileExtensionName = diffFileExtNameOpt
+                    diffFileExtensionName = diffFileExtNameOpt,
+                    useStaticTime = staticTimeOpt,
                 ),
             )
         } catch (t: Throwable) {

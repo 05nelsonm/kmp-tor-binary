@@ -20,6 +20,9 @@ import io.matthewnelson.diff.core.internal.apply.Apply
 import io.matthewnelson.diff.core.internal.create.Create
 import io.matthewnelson.diff.core.internal.InternalDiffApi
 import io.matthewnelson.diff.core.internal.system
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.toInstant
 import okio.*
 import okio.Path.Companion.toPath
 import kotlin.jvm.JvmField
@@ -28,14 +31,19 @@ import kotlin.jvm.JvmStatic
 
 public class Diff private constructor() {
 
-    public data class Options(
-        val diffFileExtensionName: String,
-        val schema: Schema
+    public data class Options @JvmOverloads constructor(
+        @JvmField val diffFileExtensionName: String = DEFAULT_EXT_NAME,
+        @JvmField val useStaticTime: Boolean = false,
+        @JvmField val schema: Schema = Schema.latest(),
     ) {
 
-        public constructor(): this(DEFAULT_EXT_NAME)
-        public constructor(diffFileExtensionName: String): this(diffFileExtensionName, Schema.latest())
-        public constructor(schema: Schema): this(DEFAULT_EXT_NAME, schema)
+        internal fun time(): Instant {
+            return if (useStaticTime) {
+                STATIC_TIME.toInstant()
+            } else {
+                Clock.System.now()
+            }
+        }
 
         @Throws(IllegalArgumentException::class)
         public fun validateExtensionName() {
@@ -50,6 +58,7 @@ public class Diff private constructor() {
 
         public companion object {
             public const val DEFAULT_EXT_NAME: String = ".diff"
+            public const val STATIC_TIME: String = "1971-08-21T00:01:00Z"
         }
     }
 

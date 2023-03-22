@@ -67,8 +67,7 @@ internal sealed class Create private constructor() {
             val diffFile = canonicalDiffDir.resolve(file1.name + options.diffFileExtensionName)
 
             try {
-                // TODO: Maybe have an option to use static time instead of now?
-                val header = Header(options.schema, Clock.System.now(), file1.name, f1Hash, f2Hash)
+                val header = Header(options.schema, options.time(), file1.name, f1Hash, f2Hash)
 
                 HashingSink.sha256(fs.sink(diffFile, mustCreate = true)).use { hsDiff ->
                     hsDiff.buffer().use { bsDiff ->
