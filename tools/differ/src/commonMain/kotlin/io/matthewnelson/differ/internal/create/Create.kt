@@ -30,6 +30,7 @@ internal abstract class Create: Subcommand(
         compared to the second file whereby any differences
         that the second file has will be recorded.
     """,
+    additionalIndent = 4,
 ) {
 
     protected abstract val file1Arg: Path

@@ -26,7 +26,7 @@ internal abstract class Apply: Subcommand(
         Applies a diff to it's associated file and outputs
         the new file to specified path.
     """,
-    additionalIndent = 1,
+    additionalIndent = 5,
 ) {
 
     protected abstract val fileArg: Path

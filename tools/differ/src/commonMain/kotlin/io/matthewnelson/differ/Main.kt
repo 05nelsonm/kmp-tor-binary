@@ -16,7 +16,9 @@
 package io.matthewnelson.differ
 
 import io.matthewnelson.differ.internal.apply.ApplyCmd
+import io.matthewnelson.differ.internal.apply.DirApplyCmd
 import io.matthewnelson.differ.internal.create.CreateCmd
+import io.matthewnelson.differ.internal.create.DirCreateCmd
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 
@@ -26,10 +28,12 @@ public fun main(args: Array<String>) {
     val parser = ArgParser(programName = PROGRAM_NAME)
 
     val create = CreateCmd()
+    val dirCreate = DirCreateCmd()
     val apply = ApplyCmd()
+    val dirApply = DirApplyCmd()
 
     @OptIn(ExperimentalCli::class)
-    parser.subcommands(create, apply)
+    parser.subcommands(create, dirCreate, apply, dirApply)
 
     val helpOrArgs = when {
         args.isEmpty() -> {
@@ -63,9 +67,12 @@ private fun printHeader() {
     println("""
         $programName v$version
         Copyright (C) 2023 Matthew Nelson
-        Apache 2.0 License
+        Apache License, Version 2.0
         
-        Creates and applies diffs to files.
+        Compares files byte for byte and creates diffs
+        which can be applied at a later date and time.
+        Was created primarily for applying code signatures
+        to reproducibly built software.
         
         Project: $url
 
