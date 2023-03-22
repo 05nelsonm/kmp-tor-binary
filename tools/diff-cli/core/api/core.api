@@ -1,34 +1,25 @@
 public final class io/matthewnelson/diff/core/Diff {
 	public static final field Companion Lio/matthewnelson/diff/core/Diff$Companion;
 	public static final fun apply (Ljava/lang/String;Ljava/lang/String;)V
-	public static final fun apply (Lokio/FileSystem;Lokio/Path;Lokio/Path;)V
 	public static final fun apply (Lokio/Path;Lokio/Path;)V
 	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Options;)Ljava/lang/String;
-	public static final fun create (Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
-	public static final fun create (Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;)Lokio/Path;
 	public static final fun create (Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
 	public static final fun create (Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;)Lokio/Path;
 	public static final fun readHeader (Ljava/lang/String;)Lio/matthewnelson/diff/core/Header;
-	public static final fun readHeader (Lokio/FileSystem;Lokio/Path;)Lio/matthewnelson/diff/core/Header;
 	public static final fun readHeader (Lokio/Path;)Lio/matthewnelson/diff/core/Header;
 }
 
 public final class io/matthewnelson/diff/core/Diff$Companion {
 	public final fun apply (Ljava/lang/String;Ljava/lang/String;)V
-	public final fun apply (Lokio/FileSystem;Lokio/Path;Lokio/Path;)V
 	public final fun apply (Lokio/Path;Lokio/Path;)V
 	public final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Options;)Ljava/lang/String;
-	public final fun create (Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
-	public final fun create (Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;)Lokio/Path;
 	public final fun create (Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
 	public final fun create (Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;)Lokio/Path;
 	public static synthetic fun create$default (Lio/matthewnelson/diff/core/Diff$Companion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Options;ILjava/lang/Object;)Ljava/lang/String;
-	public static synthetic fun create$default (Lio/matthewnelson/diff/core/Diff$Companion;Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;ILjava/lang/Object;)Lokio/Path;
 	public static synthetic fun create$default (Lio/matthewnelson/diff/core/Diff$Companion;Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;ILjava/lang/Object;)Lokio/Path;
 	public final fun readHeader (Ljava/lang/String;)Lio/matthewnelson/diff/core/Header;
-	public final fun readHeader (Lokio/FileSystem;Lokio/Path;)Lio/matthewnelson/diff/core/Header;
 	public final fun readHeader (Lokio/Path;)Lio/matthewnelson/diff/core/Header;
 }
 
@@ -94,6 +85,5 @@ public abstract interface annotation class io/matthewnelson/diff/core/internal/I
 }
 
 public final class io/matthewnelson/diff/core/internal/_JvmPlatformKt {
-	public static final fun system (Lokio/FileSystem$Companion;)Lokio/FileSystem;
 }
 
