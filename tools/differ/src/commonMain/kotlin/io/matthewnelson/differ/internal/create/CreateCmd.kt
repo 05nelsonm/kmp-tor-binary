@@ -18,9 +18,11 @@
 package io.matthewnelson.differ.internal.create
 
 import io.matthewnelson.differ.internal.ArgTypePath
-import kotlinx.cli.ArgType
+import io.matthewnelson.differ.internal.CreateReadableOpt.Companion.createReadableOption
+import io.matthewnelson.differ.internal.DiffDirArg
+import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
+import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
 import kotlinx.cli.ExperimentalCli
-import kotlinx.cli.default
 import okio.Path
 
 internal class CreateCmd: Create() {
@@ -36,21 +38,15 @@ internal class CreateCmd: Create() {
         description = "The second file to diff against the first file (e.g. /path/to/file-signed)"
     )
 
-    override val createReadableOpt: Boolean by option(
-        type = ArgType.Boolean,
-        fullName = NAME_CREATE_READABLE,
-        description = "Also creates a human readable text file of the diff to the specified out-dir"
-    ).default(true)
+    override val createReadableOpt: Boolean by createReadableOption(
+        description = "Also creates a human readable text file of the diff to the specified ${DiffDirArg.NAME_ARG}"
+    )
 
-    override val diffFileExtNameOpt: String by option(
-        type = ArgType.String,
-        fullName = NAME_DIFF_FILE_EXT,
+    override val diffFileExtNameOpt: String by diffFileExtNameOption(
         description = "The file extension name to use for the diff file"
-    ).default(DEFAULT_EXT)
+    )
 
-    override val diffDirArg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_DIFF_DIR,
+    override val diffDirArg: Path by diffDirArgument(
         description = "The directory to output the generated diff file to (e.g. /path/to/directory)"
     )
 }

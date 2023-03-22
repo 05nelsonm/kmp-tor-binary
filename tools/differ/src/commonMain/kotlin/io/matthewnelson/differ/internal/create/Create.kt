@@ -31,24 +31,27 @@ internal abstract class Create: Subcommand(
         that the second file has will be recorded.
     """,
     additionalIndent = 4,
-) {
+),  DiffDirArg,
+    DiffFileExtNameOpt,
+    CreateReadableOpt
+{
 
     protected abstract val file1Arg: Path
     protected abstract val file2Arg: Path
-    // TODO: Maybe?
-    protected abstract val createReadableOpt: Boolean
-    protected abstract val diffFileExtNameOpt: String
-    protected abstract val diffDirArg: Path
+
+    abstract override val createReadableOpt: Boolean
+    abstract override val diffFileExtNameOpt: String
+    abstract override val diffDirArg: Path
 
     final override fun execute() {
         file1Arg.requireFileExistAndNotEmpty(NAME_FILE_1)
         file2Arg.requireFileExistAndNotEmpty(NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
-        diffDirArg.requireDirOrNull(NAME_DIFF_DIR)
-        diffFileExtNameOpt.requireDiffFileExtensionNameValid(NAME_DIFF_FILE_EXT)
+        diffDirArg.requireDirOrNull(DiffDirArg.NAME_ARG)
+        diffFileExtNameOpt.requireDiffFileExtensionNameValid(DiffFileExtNameOpt.NAME_OPT)
 
         val diffFile = diffDirArg.resolve(file1Arg.name + diffFileExtNameOpt)
-        diffFile.requireFileDoesNotExist(NAME_DIFF_DIR)
+        diffFile.requireFileDoesNotExist(DiffDirArg.NAME_ARG)
         val humanReadablefile = if (createReadableOpt) "$diffFile.txt".toPath() else null
 
         try {
@@ -75,11 +78,6 @@ internal abstract class Create: Subcommand(
 
         internal const val NAME_FILE_1 = "file1"
         internal const val NAME_FILE_2 = "file2"
-        internal const val NAME_CREATE_READABLE = "create-readable"
-        internal const val NAME_DIFF_FILE_EXT = "diff-extension-name"
-        internal const val NAME_DIFF_DIR = "diff-dir"
-
-        internal const val DEFAULT_EXT = ".diff"
 
         @Throws(IllegalArgumentException::class)
         internal fun from(

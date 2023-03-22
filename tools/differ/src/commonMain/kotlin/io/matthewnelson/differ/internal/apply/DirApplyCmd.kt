@@ -16,6 +16,10 @@
 package io.matthewnelson.differ.internal.apply
 
 import io.matthewnelson.differ.internal.ArgTypePath
+import io.matthewnelson.differ.internal.DiffDirArg
+import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
+import io.matthewnelson.differ.internal.DiffFileExtNameOpt
+import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
 import io.matthewnelson.differ.internal.Subcommand
 import io.matthewnelson.differ.internal.create.Create
 import io.matthewnelson.differ.internal.create.DirCreateCmd
@@ -30,30 +34,28 @@ internal class DirApplyCmd: Subcommand(
         ${DirCreateCmd.NAME_CMD} to the specified $NAME_DIR.
     """,
     additionalIndent = 1,
-) {
+),  DiffDirArg,
+    DiffFileExtNameOpt
+{
     private val dirArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIR,
         description = "The directory to apply the file diffs to (e.g. /path/to/program-unsigned)",
     )
 
-    private val diffDirArg: Path by argument(
-        type = ArgTypePath,
-        fullName = Create.NAME_DIFF_DIR,
+    override val diffDirArg: Path by diffDirArgument(
         description = "The directory of diff files to be applied to $NAME_DIR (e.g. /path/to/program-unsigned-diffs)",
     )
 
     private val outDirArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_OUT_DIR,
-        description = "The new directory for all files of $NAME_DIR with diffs from ${Create.NAME_DIFF_DIR} applied (e.g. /path/to/program-signed)",
+        description = "The new directory for all files of $NAME_DIR with diffs from ${DiffDirArg.NAME_ARG} applied (e.g. /path/to/program-signed)",
     )
 
-    private val diffFileExtNameOpt: String by option(
-        type = ArgType.String,
-        fullName = Create.NAME_DIFF_FILE_EXT,
+    override val diffFileExtNameOpt: String by diffFileExtNameOption(
         description = "The file extension name used when diff files were created with ${DirCreateCmd.NAME_CMD}"
-    ).default(Create.DEFAULT_EXT)
+    )
 
     override fun execute() {
         // TODO: Validate

@@ -15,9 +15,14 @@
  **/
 package io.matthewnelson.differ.internal.create
 
+import io.matthewnelson.differ.internal.*
 import io.matthewnelson.differ.internal.ArgTypePath
+import io.matthewnelson.differ.internal.CreateReadableOpt.Companion.createReadableOption
+import io.matthewnelson.differ.internal.DiffDirArg
+import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
+import io.matthewnelson.differ.internal.DiffFileExtNameOpt
+import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
 import io.matthewnelson.differ.internal.Subcommand
-import io.matthewnelson.differ.internal.apply.DirApplyCmd
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
 import okio.Path
@@ -28,10 +33,13 @@ internal class DirCreateCmd: Subcommand(
         Creates diff files from 2 identically structured
         directories. Walks the entire file tree of both
         directories and outputs diff files to the specified
-        ${Create.NAME_DIFF_DIR} when encoutering differences.
+        ${DiffDirArg.NAME_ARG} when encoutering differences.
         Both directories MUST have an identical file structure.
     """,
-) {
+),  DiffDirArg,
+    DiffFileExtNameOpt,
+    CreateReadableOpt
+{
     private val dir1Arg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIR_1,
@@ -44,21 +52,15 @@ internal class DirCreateCmd: Subcommand(
         description = "The second directory (identical structure to $NAME_DIR_1) to diff against the first (e.g. /path/to/program-signed)",
     )
 
-    private val createReadableOpt: Boolean by option(
-        type = ArgType.Boolean,
-        fullName = Create.NAME_CREATE_READABLE,
+    override val createReadableOpt: Boolean by createReadableOption(
         description = "Also create human readable text files for each diff"
-    ).default(true)
+    )
 
-    private val diffFileExtNameOpt: String by option(
-        type = ArgType.String,
-        fullName = Create.NAME_DIFF_FILE_EXT,
+    override val diffFileExtNameOpt: String by diffFileExtNameOption(
         description = "The file extension name to use when diff files are created"
-    ).default(Create.DEFAULT_EXT)
+    )
 
-    private val diffDirArg: Path by argument(
-        type = ArgTypePath,
-        fullName = Create.NAME_DIFF_DIR,
+    override val diffDirArg: Path by diffDirArgument(
         description = "The directory to output the generated diff files (e.g. /path/to/program-unsigned-diffs)",
     )
 
