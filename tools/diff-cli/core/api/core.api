@@ -1,0 +1,93 @@
+public final class io/matthewnelson/diff/core/Diff {
+	public static final field Companion Lio/matthewnelson/diff/core/Diff$Companion;
+	public static final fun apply (Ljava/lang/String;Ljava/lang/String;)V
+	public static final fun apply (Lokio/FileSystem;Lokio/Path;Lokio/Path;)V
+	public static final fun apply (Lokio/Path;Lokio/Path;)V
+	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Options;)Ljava/lang/String;
+	public static final fun create (Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
+	public static final fun create (Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;)Lokio/Path;
+	public static final fun create (Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
+	public static final fun create (Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;)Lokio/Path;
+	public static final fun readHeader (Ljava/lang/String;)Lio/matthewnelson/diff/core/Header;
+	public static final fun readHeader (Lokio/FileSystem;Lokio/Path;)Lio/matthewnelson/diff/core/Header;
+	public static final fun readHeader (Lokio/Path;)Lio/matthewnelson/diff/core/Header;
+}
+
+public final class io/matthewnelson/diff/core/Diff$Companion {
+	public final fun apply (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun apply (Lokio/FileSystem;Lokio/Path;Lokio/Path;)V
+	public final fun apply (Lokio/Path;Lokio/Path;)V
+	public final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+	public final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Options;)Ljava/lang/String;
+	public final fun create (Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
+	public final fun create (Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;)Lokio/Path;
+	public final fun create (Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
+	public final fun create (Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;)Lokio/Path;
+	public static synthetic fun create$default (Lio/matthewnelson/diff/core/Diff$Companion;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Options;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun create$default (Lio/matthewnelson/diff/core/Diff$Companion;Lokio/FileSystem;Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;ILjava/lang/Object;)Lokio/Path;
+	public static synthetic fun create$default (Lio/matthewnelson/diff/core/Diff$Companion;Lokio/Path;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Diff$Options;ILjava/lang/Object;)Lokio/Path;
+	public final fun readHeader (Ljava/lang/String;)Lio/matthewnelson/diff/core/Header;
+	public final fun readHeader (Lokio/FileSystem;Lokio/Path;)Lio/matthewnelson/diff/core/Header;
+	public final fun readHeader (Lokio/Path;)Lio/matthewnelson/diff/core/Header;
+}
+
+public final class io/matthewnelson/diff/core/Diff$Options {
+	public static final field Companion Lio/matthewnelson/diff/core/Diff$Options$Companion;
+	public static final field DEFAULT_EXT_NAME Ljava/lang/String;
+	public fun <init> ()V
+	public fun <init> (Lio/matthewnelson/diff/core/Diff$Schema;)V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Schema;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lio/matthewnelson/diff/core/Diff$Schema;
+	public final fun copy (Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Schema;)Lio/matthewnelson/diff/core/Diff$Options;
+	public static synthetic fun copy$default (Lio/matthewnelson/diff/core/Diff$Options;Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Schema;ILjava/lang/Object;)Lio/matthewnelson/diff/core/Diff$Options;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getDiffFileExtensionName ()Ljava/lang/String;
+	public final fun getSchema ()Lio/matthewnelson/diff/core/Diff$Schema;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+	public final fun validateExtensionName ()V
+}
+
+public final class io/matthewnelson/diff/core/Diff$Options$Companion {
+}
+
+public abstract class io/matthewnelson/diff/core/Diff$Schema : io/matthewnelson/component/value/clazz/ValueClazz {
+	public static final field Companion Lio/matthewnelson/diff/core/Diff$Schema$Companion;
+	public static final fun from (Ljava/lang/String;)Lio/matthewnelson/diff/core/Diff$Schema;
+	public static final fun latest ()Lio/matthewnelson/diff/core/Diff$Schema;
+}
+
+public final class io/matthewnelson/diff/core/Diff$Schema$Companion {
+	public final fun from (Ljava/lang/String;)Lio/matthewnelson/diff/core/Diff$Schema;
+	public final fun latest ()Lio/matthewnelson/diff/core/Diff$Schema;
+}
+
+public final class io/matthewnelson/diff/core/Diff$Schema$v1 : io/matthewnelson/diff/core/Diff$Schema {
+	public static final field INSTANCE Lio/matthewnelson/diff/core/Diff$Schema$v1;
+}
+
+public final class io/matthewnelson/diff/core/Header : io/matthewnelson/component/value/clazz/ValueClazz {
+	public final field forFileHash Ljava/lang/String;
+	public final field forFileNamed Ljava/lang/String;
+	public final field postApplyHash Ljava/lang/String;
+	public final field schema Lio/matthewnelson/diff/core/Diff$Schema;
+	public final fun createdAt ()J
+	public fun toString ()Ljava/lang/String;
+}
+
+public class io/matthewnelson/diff/core/NoDiffException : java/lang/RuntimeException {
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public final fun getMessage ()Ljava/lang/String;
+}
+
+public abstract interface annotation class io/matthewnelson/diff/core/internal/InternalDiffApi : java/lang/annotation/Annotation {
+}
+
+public final class io/matthewnelson/diff/core/internal/_JvmPlatformKt {
+	public static final fun system (Lokio/FileSystem$Companion;)Lokio/FileSystem;
+}
+

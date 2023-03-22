@@ -1,4 +1,0 @@
-public final class io/matthewnelson/differ/cli/MainKt {
-	public static final fun main ([Ljava/lang/String;)V
-}
-

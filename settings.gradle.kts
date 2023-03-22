@@ -30,6 +30,6 @@ if (CHECK_PUBLICATION != null) {
         include(":library:$name")
     }
 
-    include(":tools:differ-cli")
-    include(":tools:differ-cli:core")
+    include(":tools:diff-cli")
+    include(":tools:diff-cli:core")
 }
