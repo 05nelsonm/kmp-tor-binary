@@ -15,8 +15,8 @@
  **/
 package io.matthewnelson.differ
 
-import io.matthewnelson.differ.internal.CmdApply
-import io.matthewnelson.differ.internal.CmdCreate
+import io.matthewnelson.differ.internal.apply.ApplyCmd
+import io.matthewnelson.differ.internal.create.CreateCmd
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 
@@ -25,8 +25,8 @@ private const val PROGRAM_NAME = "differ"
 public fun main(args: Array<String>) {
     val parser = ArgParser(programName = PROGRAM_NAME)
 
-    val create = CmdCreate()
-    val apply = CmdApply()
+    val create = CreateCmd()
+    val apply = ApplyCmd()
 
     @OptIn(ExperimentalCli::class)
     parser.subcommands(create, apply)

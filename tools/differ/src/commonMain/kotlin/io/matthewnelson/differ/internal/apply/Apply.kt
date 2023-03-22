@@ -13,11 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.differ.internal
+package io.matthewnelson.differ.internal.apply
 
+import io.matthewnelson.differ.internal.Subcommand
+import io.matthewnelson.differ.internal.requireFileDoesNotExist
+import io.matthewnelson.differ.internal.requireFileExistAndNotEmpty
 import okio.Path
 
-internal class CmdApply: Subcommand(
+internal abstract class Apply: Subcommand(
     name = "apply",
     description = """
         Applies a diff to it's associated file and outputs
@@ -25,25 +28,12 @@ internal class CmdApply: Subcommand(
     """,
     additionalIndent = 1,
 ) {
-    private val fileArg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_FILE,
-        description = "The file to apply the diff to (e.g. /path/to/file-unsigned)",
-    )
 
-    private val diffArg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_DIFF,
-        description = "The previously created diff file to be applied (e.g. /path/to/file-unsigned.diff)",
-    )
+    protected abstract val fileArg: Path
+    protected abstract val diffArg: Path
+    protected abstract val outFileArg: Path
 
-    private val outFileArg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_OUT_FILE,
-        description = "The new file after the diff has been applied (e.g. /path/to/file-signed)",
-    )
-
-    override fun execute() {
+    final override fun execute() {
         fileArg.requireFileExistAndNotEmpty(NAME_FILE)
         diffArg.requireFileExistAndNotEmpty(NAME_DIFF)
         require(fileArg != diffArg) { "$NAME_FILE cannot equal $NAME_DIFF" }
@@ -57,8 +47,7 @@ internal class CmdApply: Subcommand(
         }
     }
 
-    @Throws(Throwable::class)
-    internal fun run(file: Path, diff: Path, outFile: Path) {
+    private fun run(file: Path, diff: Path, outFile: Path) {
         // TODO
         println("""
             $NAME_FILE: $file
@@ -67,9 +56,22 @@ internal class CmdApply: Subcommand(
         """.trimIndent())
     }
 
-    private companion object {
-        private const val NAME_FILE = "file"
-        private const val NAME_DIFF = "diff"
-        private const val NAME_OUT_FILE = "out-file"
+    internal companion object {
+        internal const val NAME_FILE = "file"
+        internal const val NAME_DIFF = "diff"
+        internal const val NAME_OUT_FILE = "out-file"
+
+        @Throws(IllegalArgumentException::class)
+        internal fun from(
+            file: Path,
+            diff: Path,
+            outFile: Path,
+        ): Apply {
+            return object : Apply() {
+                override val fileArg: Path = file
+                override val diffArg: Path = diff
+                override val outFileArg: Path = outFile
+            }
+        }
     }
 }

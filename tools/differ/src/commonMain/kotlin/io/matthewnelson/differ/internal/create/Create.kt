@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:OptIn(ExperimentalCli::class)
+package io.matthewnelson.differ.internal.create
 
-package io.matthewnelson.differ.internal
-
-import kotlinx.cli.ArgType
-import kotlinx.cli.ExperimentalCli
-import kotlinx.cli.default
+import io.matthewnelson.differ.internal.Subcommand
+import io.matthewnelson.differ.internal.requireDirOrNull
+import io.matthewnelson.differ.internal.requireFileDoesNotExist
+import io.matthewnelson.differ.internal.requireFileExistAndNotEmpty
 import okio.Path
 import okio.Path.Companion.toPath
 
-internal class CmdCreate: Subcommand(
+internal abstract class Create: Subcommand(
     name = "create",
     description = """
         Creates a diff from 2 file inputs. The first file is
@@ -31,38 +30,15 @@ internal class CmdCreate: Subcommand(
         that the second file has will be recorded.
     """
 ) {
-    private val file1Arg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_FILE_1,
-        description = "The first file (e.g. /path/to/file-unsigned)"
-    )
 
-    private val file2Arg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_FILE_2,
-        description = "The second file to diff against the first file (e.g. /path/to/file-signed)"
-    )
-
+    protected abstract val file1Arg: Path
+    protected abstract val file2Arg: Path
     // TODO: Maybe?
-    private val createReadableOpt: Boolean by option(
-        type = ArgType.Boolean,
-        fullName = NAME_CREATE_READABLE,
-        description = "Also creates a human readable text file of the diff to the specified out-dir"
-    ).default(true)
+    protected abstract val createReadableOpt: Boolean
+    protected abstract val diffFileNameOpt: String
+    protected abstract val outDirArg: Path
 
-    private val diffFileNameOpt: String by option(
-        type = ArgType.String,
-        fullName = NAME_DIFF_FILE_NAME,
-        description = "The name of the generated diff file. Default: <file1 name>.diff (e.g. file-unsigned.diff)"
-    ).default("")
-
-    private val outDirArg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_OUT_DIR,
-        description = "The directory to output the generated diff file to (e.g. /path/to/directory)"
-    )
-
-    override fun execute() {
+    final override fun execute() {
         file1Arg.requireFileExistAndNotEmpty(NAME_FILE_1)
         file2Arg.requireFileExistAndNotEmpty(NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
@@ -80,7 +56,7 @@ internal class CmdCreate: Subcommand(
     }
 
     @Throws(Throwable::class)
-    internal fun run(file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
+    private fun run(file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
         // TODO
         println("""
             $NAME_FILE_1: $file1
@@ -90,11 +66,28 @@ internal class CmdCreate: Subcommand(
         """.trimIndent())
     }
 
-    private companion object {
-        private const val NAME_FILE_1 = "file1"
-        private const val NAME_FILE_2 = "file2"
-        private const val NAME_CREATE_READABLE = "create-readable"
-        private const val NAME_DIFF_FILE_NAME = "diff-name"
-        private const val NAME_OUT_DIR = "out-dir"
+    internal companion object {
+        internal const val NAME_FILE_1 = "file1"
+        internal const val NAME_FILE_2 = "file2"
+        internal const val NAME_CREATE_READABLE = "create-readable"
+        internal const val NAME_DIFF_FILE_NAME = "diff-name"
+        internal const val NAME_OUT_DIR = "out-dir"
+
+        @Throws(IllegalArgumentException::class)
+        internal fun from(
+            file1: Path,
+            file2: Path,
+            createReadable: Boolean,
+            diffFileName: String,
+            outDir: Path
+        ): Create {
+            return object : Create() {
+                override val file1Arg: Path = file1
+                override val file2Arg: Path = file2
+                override val createReadableOpt: Boolean = createReadable
+                override val diffFileNameOpt: String = diffFileName
+                override val outDirArg: Path = outDir
+            }
+        }
     }
 }
