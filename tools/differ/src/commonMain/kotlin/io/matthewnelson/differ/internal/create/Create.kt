@@ -49,20 +49,20 @@ internal abstract class Create(
     abstract override val diffDirArg: Path
 
     final override fun execute() {
-        file1Arg.requireFileExistAndNotEmpty(NAME_FILE_1)
-        file2Arg.requireFileExistAndNotEmpty(NAME_FILE_2)
+        file1Arg.requireFileExistAndNotEmpty(fs, NAME_FILE_1)
+        file2Arg.requireFileExistAndNotEmpty(fs, NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
-        val mustCreate = diffDirArg.requireDirOrNull(DiffDirArg.NAME_ARG)
+        val mustCreate = diffDirArg.requireDirOrNull(fs, DiffDirArg.NAME_ARG)
         diffFileExtNameOpt.requireDiffFileExtensionNameValid(DiffFileExtNameOpt.NAME_OPT)
 
         fs.createDirectories(diffDirArg, mustCreate = mustCreate)
         val canonicalDiffDir = fs.canonicalize(diffDirArg)
 
         val diffFile = canonicalDiffDir.resolve(file1Arg.name + diffFileExtNameOpt)
-        diffFile.requireFileDoesNotExist(DiffDirArg.NAME_ARG)
+        diffFile.requireFileDoesNotExist(fs, DiffDirArg.NAME_ARG)
         val humanReadablefile = if (createReadableOpt) "$diffFile.txt".toPath() else null
         humanReadablefile?.let { hrf ->
-            hrf.requireFileDoesNotExist("Human readable file ${hrf.name}")
+            hrf.requireFileDoesNotExist(fs, "Human readable file ${hrf.name}")
         }
 
         try {

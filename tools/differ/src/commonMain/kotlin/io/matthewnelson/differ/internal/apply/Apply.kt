@@ -36,8 +36,8 @@ internal abstract class Apply(
     protected abstract val diffFileArg: Path
 
     final override fun execute() {
-        fileArg.requireFileExistAndNotEmpty(NAME_FILE)
-        diffFileArg.requireFileExistAndNotEmpty(NAME_DIFF_FILE)
+        fileArg.requireFileExistAndNotEmpty(fs, NAME_FILE)
+        diffFileArg.requireFileExistAndNotEmpty(fs, NAME_DIFF_FILE)
         require(fileArg != diffFileArg) { "$NAME_FILE cannot equal $NAME_DIFF_FILE" }
 
         try {

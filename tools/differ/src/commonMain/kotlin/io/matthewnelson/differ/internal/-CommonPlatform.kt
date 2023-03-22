@@ -28,8 +28,7 @@ internal expect inline fun FileSystem.Companion.get(): FileSystem
 
 @Suppress("NOTHING_TO_INLINE")
 @Throws(IllegalArgumentException::class)
-internal inline fun Path.requireFileExistAndNotEmpty(argName: String) {
-    val fs = FileSystem.get()
+internal inline fun Path.requireFileExistAndNotEmpty(fs: FileSystem, argName: String) {
     require(fs.exists(this)) { "$argName does not exist" }
 
     val md = fs.metadata(this)
@@ -39,8 +38,7 @@ internal inline fun Path.requireFileExistAndNotEmpty(argName: String) {
 
 @Suppress("NOTHING_TO_INLINE")
 @Throws(IllegalArgumentException::class)
-internal inline fun Path.requireFileDoesNotExist(argName: String) {
-    val fs = FileSystem.get()
+internal inline fun Path.requireFileDoesNotExist(fs: FileSystem, argName: String) {
     require(!fs.exists(this)) { "$argName exists" }
 }
 
@@ -51,8 +49,7 @@ internal inline fun Path.requireFileDoesNotExist(argName: String) {
  * */
 @Suppress("NOTHING_TO_INLINE")
 @Throws(IllegalArgumentException::class)
-internal inline fun Path.requireDirOrNull(argName: String): Boolean {
-    val fs = FileSystem.get()
+internal inline fun Path.requireDirOrNull(fs: FileSystem, argName: String): Boolean {
     val isDir = fs.metadataOrNull(this)?.isDirectory
     require(isDir != false) { "$argName is not a directory" }
     return isDir == null
