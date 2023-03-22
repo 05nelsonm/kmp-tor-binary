@@ -51,7 +51,6 @@ internal sealed class Create private constructor() {
             file2.checkExistsAndIsFile(fs)
 
             val mustCreate = diffDir.checkIsDirOrNull(fs)
-            options.validateExtensionName()
 
             val (f1Hash, f1Length) = fs.hashLengthOf(file1)
             val (f2Hash, f2Length) = fs.hashLengthOf(file2)

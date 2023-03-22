@@ -40,19 +40,21 @@ public final class io/matthewnelson/diff/core/Diff$Options {
 	public final field schema Lio/matthewnelson/diff/core/Diff$Schema;
 	public final field useStaticTime Z
 	public fun <init> ()V
-	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Z)V
-	public fun <init> (Ljava/lang/String;ZLio/matthewnelson/diff/core/Diff$Schema;)V
-	public synthetic fun <init> (Ljava/lang/String;ZLio/matthewnelson/diff/core/Diff$Schema;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Z
-	public final fun component3 ()Lio/matthewnelson/diff/core/Diff$Schema;
-	public final fun copy (Ljava/lang/String;ZLio/matthewnelson/diff/core/Diff$Schema;)Lio/matthewnelson/diff/core/Diff$Options;
-	public static synthetic fun copy$default (Lio/matthewnelson/diff/core/Diff$Options;Ljava/lang/String;ZLio/matthewnelson/diff/core/Diff$Schema;ILjava/lang/Object;)Lio/matthewnelson/diff/core/Diff$Options;
+	public fun <init> (Lio/matthewnelson/diff/core/Diff$Options$Builder;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
-	public final fun validateExtensionName ()V
+}
+
+public final class io/matthewnelson/diff/core/Diff$Options$Builder {
+	public field schema Lio/matthewnelson/diff/core/Diff$Schema;
+	public field useStaticTime Z
+	public fun <init> ()V
+	public final fun diffFileExtensionName ()Ljava/lang/String;
+	public final fun diffFileExtensionName (Ljava/lang/String;)Lio/matthewnelson/diff/core/Diff$Options$Builder;
+	public final fun schema (Lio/matthewnelson/diff/core/Diff$Schema;)Lio/matthewnelson/diff/core/Diff$Options$Builder;
+	public final fun useStaticTime (Z)Lio/matthewnelson/diff/core/Diff$Options$Builder;
 }
 
 public final class io/matthewnelson/diff/core/Diff$Options$Companion {

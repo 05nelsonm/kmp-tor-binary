@@ -86,7 +86,7 @@ internal constructor(
 
     override fun toString(): String {
         return """
-            DiffHeader [
+            Header [
                 schema: $schema
                 createdAt: $createdAtInstant
                 createdForFile: $createdForFile

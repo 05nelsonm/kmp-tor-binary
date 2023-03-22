@@ -67,10 +67,10 @@ internal class Create: Subcommand(
                 file1Path = file1Arg,
                 file2Path = file2Arg,
                 diffDirPath = diffDirArg,
-                options = Diff.Options(
-                    diffFileExtensionName = diffFileExtNameOpt,
-                    useStaticTime = staticTimeOpt,
-                ),
+                options = Diff.Options {
+                    diffFileExtensionName(value = diffFileExtNameOpt)
+                    useStaticTime = staticTimeOpt
+                },
             )
         } catch (t: Throwable) {
             // TODO
