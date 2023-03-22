@@ -13,17 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    `kotlin-dsl`
-}
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
 
-dependencies {
-    implementation(libs.gradle.android)
-    implementation(libs.gradle.kmp.configuration)
-    implementation(libs.gradle.kotlin)
-    implementation(libs.gradle.maven.publish)
-    implementation(libs.gradle.npm.publish)
+package io.matthewnelson.diff.core.internal
 
-    // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+import okio.*
+
+@Suppress("NOTHING_TO_INLINE")
+internal inline fun FileSystem.hashLengthOf(file: Path): Pair<String, Long> {
+    return HashingSource.sha256(source(file)).use { hs ->
+        var length = 0L
+
+        hs.buffer().use { bs ->
+            val buf = ByteArray(4096)
+            while (true) {
+                val read = bs.read(buf)
+                if (read == -1) break
+                length += read
+            }
+        }
+
+        Pair(hs.hash.hex(), length)
+    }
 }

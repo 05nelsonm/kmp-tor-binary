@@ -15,8 +15,13 @@
  **/
 import io.matthewnelson.kmp.configuration.extension.KmpConfigurationExtension
 import io.matthewnelson.kmp.configuration.extension.container.target.KmpConfigurationContainerDsl
+import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
+import org.gradle.api.Project
+import org.gradle.api.plugins.JavaApplication
+import org.gradle.kotlin.dsl.the
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 fun KmpConfigurationExtension.configureShared(
     androidNameSpace: String? = null,
@@ -66,6 +71,81 @@ fun KmpConfigurationExtension.configureShared(
         }
 
         if (explicitApi) { kotlin { explicitApi() } }
+
+        action.execute(this)
+    }
+}
+
+fun KmpConfigurationExtension.configureTool(
+    project: Project,
+    mainKtPath: String,
+    enableNative: Boolean = true,
+    action: Action<KmpConfigurationContainerDsl>
+) {
+    val (entryJvm, entryNative) = if (mainKtPath.isEmpty()) {
+        Pair("MainKt", "main")
+    } else {
+        Pair("$mainKtPath.MainKt", "$mainKtPath.main")
+    }
+
+    configure {
+        jvm {
+            pluginIds("application")
+
+            target { withJava() }
+
+            kotlinJvmTarget = JavaVersion.VERSION_1_8
+            compileSourceCompatibility = JavaVersion.VERSION_1_8
+            compileTargetCompatibility = JavaVersion.VERSION_1_8
+        }
+
+        if (enableNative) {
+            fun KotlinNativeTarget.setup() { binaries { executable { entryPoint = entryNative } } }
+
+            val osName = System.getProperty("os.name")
+            when {
+                osName.startsWith("Windows", true) -> {
+                    mingwX64(project.name) { target { setup() } }
+                }
+                osName == "Mac OS X" -> {
+                    macosX64(project.name) { target { setup() } }
+                }
+                osName.contains("Mac", true) -> {
+                    macosArm64(project.name) { target { setup() } }
+                }
+                osName.startsWith("Linux", true) -> {
+                    linuxX64(project.name) { target { setup() } }
+                }
+            }
+        }
+
+        common {
+            sourceSetMain {
+                val libs = project.the<LibrariesForLibs>()
+
+                dependencies {
+                    implementation(libs.kotlin.cli)
+                }
+            }
+
+            sourceSetTest {
+                dependencies {
+                    implementation(kotlin("test"))
+                }
+            }
+        }
+
+        kotlin {
+            explicitApi()
+
+            with(sourceSets) {
+                findByName("jvmMain")?.run {
+                    project.extensions.configure<JavaApplication>("application") {
+                        mainClass.set(entryJvm)
+                    }
+                }
+            }
+        }
 
         action.execute(this)
     }

@@ -13,17 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    `kotlin-dsl`
-}
+package io.matthewnelson.diff.core
 
-dependencies {
-    implementation(libs.gradle.android)
-    implementation(libs.gradle.kmp.configuration)
-    implementation(libs.gradle.kotlin)
-    implementation(libs.gradle.maven.publish)
-    implementation(libs.gradle.npm.publish)
+/**
+ * Thrown when creating a diff to indicate that there were
+ * no differences between the 2 files and that no diff was
+ * created.
+ * */
+public open class NoDiffException: RuntimeException {
+    final override val message: String
 
-    // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
+    public constructor(message: String): this(message, null)
+    public constructor(message: String, cause: Throwable?): super(message, cause) { this.message = message }
 }

@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    `kotlin-dsl`
-}
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
 
-dependencies {
-    implementation(libs.gradle.android)
-    implementation(libs.gradle.kmp.configuration)
-    implementation(libs.gradle.kotlin)
-    implementation(libs.gradle.maven.publish)
-    implementation(libs.gradle.npm.publish)
+package io.matthewnelson.diff.core.internal
 
-    // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
-}
+import okio.FileSystem
+
+import okio.NodeJsFileSystem
+
+@InternalDiffApi
+@Suppress("NOTHING_TO_INLINE")
+public actual inline fun FileSystem.Companion.system(): FileSystem = NodeJsFileSystem

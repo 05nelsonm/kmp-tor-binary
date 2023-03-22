@@ -53,6 +53,8 @@ apiValidation {
     if (CHECK_PUBLICATION != null) {
         ignoredProjects.add("check-publication")
     } else {
+        nonPublicMarkers.add("io.matthewnelson.diff.core.internal.InternalDiffApi")
+
         val JVM = TARGETS?.contains("JVM") != false
         val ANDROID = TARGETS?.contains("ANDROID") != false
 

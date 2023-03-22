@@ -13,17 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    `kotlin-dsl`
-}
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
 
-dependencies {
-    implementation(libs.gradle.android)
-    implementation(libs.gradle.kmp.configuration)
-    implementation(libs.gradle.kotlin)
-    implementation(libs.gradle.maven.publish)
-    implementation(libs.gradle.npm.publish)
+package io.matthewnelson.diff.core.internal
 
-    // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
-}
+import io.matthewnelson.encoding.base16.Base16
+import io.matthewnelson.encoding.base64.Base64
+import io.matthewnelson.encoding.builders.*
+import okio.FileSystem
+
+@Suppress("NOTHING_TO_INLINE")
+internal expect inline fun FileSystem.Companion.system(): FileSystem
+
+internal val BASE_16: Base16 = Base16 { encodeToLowercase = true }
+internal val BASE_64: Base64 = Base64 { lineBreakInterval = 64 }
+
+internal const val LINE_BREAK: String = "#"
