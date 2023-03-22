@@ -22,12 +22,11 @@ import okio.Path
 
 @Suppress("NOTHING_TO_INLINE")
 @Throws(IllegalArgumentException::class)
-internal inline fun Path.requireFileExistAndNotEmpty(fs: FileSystem, argName: String) {
+internal inline fun Path.requireFileExist(fs: FileSystem, argName: String) {
     require(fs.exists(this)) { "$argName does not exist" }
 
     val md = fs.metadata(this)
     require(md.isRegularFile) { "Argument $argName exists, but is not a file" }
-    require(md.size != 0L) { "$argName is empty" }
 }
 
 @Suppress("NOTHING_TO_INLINE")

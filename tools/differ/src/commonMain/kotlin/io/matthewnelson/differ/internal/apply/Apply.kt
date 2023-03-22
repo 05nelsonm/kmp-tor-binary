@@ -16,7 +16,7 @@
 package io.matthewnelson.differ.internal.apply
 
 import io.matthewnelson.differ.internal.Subcommand
-import io.matthewnelson.differ.internal.requireFileExistAndNotEmpty
+import io.matthewnelson.differ.internal.requireFileExist
 import okio.FileSystem
 import okio.Path
 
@@ -36,8 +36,8 @@ internal abstract class Apply(
     protected abstract val diffFileArg: Path
 
     final override fun execute() {
-        fileArg.requireFileExistAndNotEmpty(fs, NAME_FILE)
-        diffFileArg.requireFileExistAndNotEmpty(fs, NAME_DIFF_FILE)
+        fileArg.requireFileExist(fs, NAME_FILE)
+        diffFileArg.requireFileExist(fs, NAME_DIFF_FILE)
         require(fileArg != diffFileArg) { "$NAME_FILE cannot equal $NAME_DIFF_FILE" }
 
         try {

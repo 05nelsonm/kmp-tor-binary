@@ -41,26 +41,6 @@ class CreateUnitTest: DifferUnitTest() {
     }
 
     @Test
-    fun givenCreate_whenFile1Empty_thenThrowsException() {
-        file1.writeText("")
-        file2.writeText("file2")
-
-        val create = createFrom()
-
-        assertThrew<IllegalArgumentException> { create.execute() }
-    }
-
-    @Test
-    fun givenCreate_whenFile2Empty_thenThrowsException() {
-        file1.writeText("file1")
-        file2.writeText("")
-
-        val create = createFrom()
-
-        assertThrew<IllegalArgumentException> { create.execute() }
-    }
-
-    @Test
     fun givenCreate_whenFilesAreTheSame_thenThrowsException() {
         writeTestFiles(file2 = false)
 

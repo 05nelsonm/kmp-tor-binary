@@ -57,26 +57,6 @@ class ApplyUnitTest: DifferUnitTest() {
     }
 
     @Test
-    fun givenApply_whenDiffFileEmpty_thenThrowsException() {
-        file.writeText("file")
-        diff.writeText("")
-
-        val apply = Apply.from(fs, EmptyRunner(), file, diff)
-
-        assertThrew<IllegalArgumentException> { apply.execute() }
-    }
-
-    @Test
-    fun givenApply_whenFileEmpty_thenThrowsException() {
-        file.writeText("")
-        diff.writeText("diff")
-
-        val apply = Apply.from(fs, EmptyRunner(), file, diff)
-
-        assertThrew<IllegalArgumentException> { apply.execute() }
-    }
-
-    @Test
     fun givenApply_whenFilesAreTheSame_thenThrowsException() {
         file.writeText("file")
 

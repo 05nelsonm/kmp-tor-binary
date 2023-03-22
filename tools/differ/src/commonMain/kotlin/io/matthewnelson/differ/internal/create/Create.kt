@@ -20,7 +20,7 @@ import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.requireDiff
 import io.matthewnelson.differ.internal.Subcommand
 import io.matthewnelson.differ.internal.requireDirOrNull
 import io.matthewnelson.differ.internal.requireFileDoesNotExist
-import io.matthewnelson.differ.internal.requireFileExistAndNotEmpty
+import io.matthewnelson.differ.internal.requireFileExist
 import okio.FileSystem
 import okio.IOException
 import okio.Path
@@ -50,8 +50,8 @@ internal abstract class Create(
     abstract override val diffDirArg: Path
 
     final override fun execute() {
-        file1Arg.requireFileExistAndNotEmpty(fs, NAME_FILE_1)
-        file2Arg.requireFileExistAndNotEmpty(fs, NAME_FILE_2)
+        file1Arg.requireFileExist(fs, NAME_FILE_1)
+        file2Arg.requireFileExist(fs, NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
         val mustCreate = diffDirArg.requireDirOrNull(fs, DiffDirArg.NAME_ARG)
         diffFileExtNameOpt.requireDiffFileExtensionNameValid()
