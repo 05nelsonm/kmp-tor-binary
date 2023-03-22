@@ -25,7 +25,7 @@ import okio.FileSystem
 @Suppress("NOTHING_TO_INLINE")
 internal expect inline fun FileSystem.Companion.system(): FileSystem
 
-internal val BASE16: Base16 = Base16 { encodeToLowercase = true }
-internal val BASE64: Base64 = Base64 { lineBreakInterval = 64 }
+internal val BASE_16: Base16 = Base16 { encodeToLowercase = true }
+internal val BASE_64: Base64 = Base64 { lineBreakInterval = 64 }
 
 internal const val LINE_BREAK: String = "#"

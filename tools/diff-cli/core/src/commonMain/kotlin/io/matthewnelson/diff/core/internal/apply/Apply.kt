@@ -18,7 +18,7 @@ package io.matthewnelson.diff.core.internal.apply
 import io.matthewnelson.diff.core.Diff
 import io.matthewnelson.diff.core.Header
 import io.matthewnelson.diff.core.Header.Companion.readDiffHeader
-import io.matthewnelson.diff.core.internal.BASE16
+import io.matthewnelson.diff.core.internal.BASE_16
 import io.matthewnelson.diff.core.internal.checkExistsAndIsFile
 import io.matthewnelson.diff.core.internal.create.Create.Companion.EOF_HASH
 import io.matthewnelson.diff.core.internal.hashLengthOf
@@ -67,7 +67,7 @@ internal sealed class Apply private constructor() {
                     }
                 }
 
-                val hashContent = digest.digest().encodeToString(BASE16)
+                val hashContent = digest.digest().encodeToString(BASE_16)
                 Pair(hashContent, hashEOF)
             }
 
@@ -81,10 +81,10 @@ internal sealed class Apply private constructor() {
             fs.read(diffFile) {
                 val header = readDiffHeader()
                 val (hash, _) = fs.hashLengthOf(applyTo)
-                if (header.forFileHash != hash) {
+                if (header.createdForHash != hash) {
                     throw IllegalStateException(
                         "Cannot apply the diff. File's sha256[$hash] value does not " +
-                        "match what the diff file has for it of sha256[${header.forFileHash}]."
+                        "match what the diff file has for it of sha256[${header.createdForHash}]."
                     )
                 }
 
