@@ -16,38 +16,38 @@
 package io.matthewnelson.diff.core.internal.apply
 
 import io.matthewnelson.diff.core.Diff
-import io.matthewnelson.diff.core.Header
 import io.matthewnelson.diff.core.Header.Companion.readDiffHeader
+import io.matthewnelson.diff.core.internal.*
 import io.matthewnelson.diff.core.internal.BASE_16
+import io.matthewnelson.diff.core.internal.BASE_64
 import io.matthewnelson.diff.core.internal.checkExistsAndIsFile
 import io.matthewnelson.diff.core.internal.create.Create.Companion.EOF_HASH
+import io.matthewnelson.diff.core.internal.create.Create.Companion.INDEX
 import io.matthewnelson.diff.core.internal.hashLengthOf
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
-import okio.BufferedSource
-import okio.FileSystem
-import okio.IOException
-import okio.Path
+import io.matthewnelson.encoding.core.ExperimentalEncodingApi
+import okio.*
+import okio.Path.Companion.toPath
 import org.kotlincrypto.hash.sha2.SHA256
 
 internal sealed class Apply private constructor() {
 
-    @Throws(IllegalStateException::class, IOException::class)
-    internal abstract operator fun invoke(fs: FileSystem, header: Header, diffFile: BufferedSource, applyTo: Path)
-
     internal companion object {
 
         internal fun diff(fs: FileSystem, diffFile: Path, applyTo: Path) {
-            check(diffFile != applyTo) { "Cannot apply a diff to itself" }
+            check(diffFile != applyTo) { "files cannot be the same" }
             applyTo.checkExistsAndIsFile(fs)
             diffFile.checkExistsAndIsFile(fs)
 
-            // The very last line is the sha256 hash of all that was written
-            // to the file after taking a diff. This is a validation check
-            // of the diff file contents such that if the file was modified
-            // the contents will not match the recorded sha256 value. Of course
-            // there are ways around this, but it will work 99% of the time if
-            // someone modifies the diff file.
-            val (hashContent, hashEOF) = fs.read(diffFile) {
+            // The very last line of the diff is the sha256 hash of all that
+            // was written to it, prior to writing said sha256 hash (i.e. the
+            // "contents hash"). This is a validation check of the diff file
+            // contents such that if the diff file was modified, the hash of its
+            // contents will not match the recorded hash value.
+            //
+            // Of course there are ways around this, but it will work 99% of the
+            // time if someone modifies the diff file.
+            val (hashContents, hashEOF) = fs.read(diffFile) {
                 val digest = SHA256()
                 var hashEOF = ""
                 val newLineByte = '\n'.code.toByte()
@@ -56,7 +56,7 @@ internal sealed class Apply private constructor() {
                     val line = readUtf8Line()
                     when {
                         line == null -> break
-                        line.length == 71 && line.startsWith(EOF_HASH) -> {
+                        line.startsWith(EOF_HASH) -> {
                             hashEOF = line.substringAfter(EOF_HASH)
                             break
                         }
@@ -71,40 +71,107 @@ internal sealed class Apply private constructor() {
                 Pair(hashContent, hashEOF)
             }
 
-            if (hashContent != hashEOF) {
-                throw IllegalStateException(
-                    "Validation check failed. Diff file contentHash[$hashContent] didn't " +
-                    "match recordedHash[$hashEOF]. Was the Diff file modified?"
-                )
+            if (hashContents != hashEOF) {
+                throw IllegalStateException("""
+                    Validation check failed. Was the diff file modified?
+                    Expected: sha256[$hashEOF]
+                    Actual:   sha256[$hashContents]
+                """.trimIndent())
             }
 
-            fs.read(diffFile) {
+            fs.read(diffFile) bsDiff@ {
                 val header = readDiffHeader()
-                val (hash, _) = fs.hashLengthOf(applyTo)
+                val (hash, applyToLength) = fs.hashLengthOf(applyTo)
+
                 if (header.createdForHash != hash) {
-                    throw IllegalStateException(
-                        "Cannot apply the diff. File's sha256[$hash] value does not " +
-                        "match what the diff file has for it of sha256[${header.createdForHash}]."
-                    )
+                    throw IllegalStateException("""
+                        Validation check failed. The diff was not created for this file.
+                        Expected: sha256[${header.createdForHash}]
+                        Actual:   sha256[$hash]
+                    """.trimIndent())
                 }
 
-                when (header.schema) {
-                    is Diff.Schema.v1 -> V1(fs, header, this, applyTo)
+                val applyToCanonical = fs.canonicalize(applyTo)
+                val bak = "$applyToCanonical.bak".toPath()
+                fs.delete(bak, mustExist = false)
+
+                try {
+                    HashingSink.sha256(fs.sink(bak, mustCreate = true)).use { hsBak ->
+                        hsBak.buffer().use { bsBak ->
+                            fs.read(applyTo) bsApplyTo@ {
+
+                                when (header.schema) {
+                                    is Diff.Schema.v1 -> V1(this@bsDiff, this@bsApplyTo, applyToLength, bsBak)
+                                }
+
+                            }
+                        }
+
+                        val bakHash = hsBak.hash.hex()
+                        if (bakHash != header.createdFromHash) {
+                            throw IllegalStateException("""
+                                Failed to apply diff to $applyTo.
+                                Expected: sha256[${header.createdFromHash}]
+                                Actual:   sha256[$bakHash]
+                            """.trimIndent())
+                        }
+                    }
+                } catch (t: Throwable) {
+                    try {
+                        fs.delete(bak)
+                    } catch (_: Throwable) {}
+
+                    throw IOException("Failed to apply diff to ${applyTo.name}", t)
                 }
+
+                fs.atomicMove(bak, applyToCanonical)
             }
         }
     }
 
-    private object V1: Apply() {
+    internal object V1: Apply() {
 
+        @OptIn(ExperimentalEncodingApi::class)
         @Throws(IllegalStateException::class, IOException::class)
-        override operator fun invoke(fs: FileSystem, header: Header, diffFile: BufferedSource, applyTo: Path) {
-            // TODO
-            //  HashingSource
-            //  apply diff to file.bak
-            //  Check hash against header.file2Hash
-            //  If good, atomic move
-            println(header)
+        internal operator fun invoke(diffFile: BufferedSource, applyTo: BufferedSource, applyToLength: Long, bak: BufferedSink) {
+            var i = 0L
+            var iBak = 0L
+
+            fun newFeed() = BASE_64.newDecoderFeed { decodedByte ->
+                bak.writeByte(decodedByte.toInt())
+                iBak++
+                if (iBak < applyToLength) applyTo.skip( byteCount = 1L)
+            }
+
+            var feed = newFeed()
+
+            while (true) {
+                val line = diffFile.readUtf8Line()
+
+                when {
+                    line == null ||
+                    line.startsWith(EOF_HASH) -> break
+                    line.startsWith(INDEX) -> {
+                        if (i != 0L) {
+                            feed.doFinal()
+                            feed = newFeed()
+                        }
+                        i = line.substringAfter(INDEX).toLong()
+                    }
+                    else -> {
+                        if (iBak < i && iBak < applyToLength) {
+                            bak.write(applyTo, byteCount = i - iBak)
+                            iBak = i
+                        }
+
+                        line.forEach { c ->
+                            feed.consume(c)
+                        }
+                    }
+                }
+            }
+
+            if (!feed.isClosed()) feed.doFinal()
         }
     }
 }

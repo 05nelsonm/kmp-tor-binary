@@ -27,9 +27,7 @@ internal inline fun Path.checkExistsAndIsFile(fs: FileSystem) {
     check(fs.metadata(this).isRegularFile) { "$name exists, but is not a regular file" }
 }
 
-/**
- * Return true for mustCreate
- * */
+/* Returns t/f for mustCreate */
 @Suppress("NOTHING_TO_INLINE")
 @Throws(IllegalArgumentException::class)
 internal inline fun Path.checkIsDirOrNull(fs: FileSystem): Boolean {

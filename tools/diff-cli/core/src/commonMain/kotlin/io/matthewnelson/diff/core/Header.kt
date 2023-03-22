@@ -108,7 +108,7 @@ internal constructor(
 
             val forFileName = readUtf8Line()
                 ?.substringAfter(PREFIX_CREATED_FOR_FILE)
-                ?: throw IllegalStateException("Failed to read Diff createdForName")
+                ?: throw IllegalStateException("Failed to read Diff createdForFile")
 
             val forFileHash = readUtf8Line()
                 ?.substringAfter(PREFIX_CREATED_FOR_HASH)

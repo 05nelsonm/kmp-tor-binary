@@ -20,13 +20,4 @@ package io.matthewnelson.diff.core.internal
 import okio.BufferedSink
 
 @Suppress("NOTHING_TO_INLINE")
-internal inline fun BufferedSink.writeNewLine() {
-    writeUtf8("\n")
-}
-
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun BufferedSink.writeLineBreak() {
-    writeNewLine()
-    writeUtf8(LINE_BREAK)
-    writeNewLine()
-}
+internal inline fun BufferedSink.writeNewLine() { writeUtf8("\n") }

@@ -22,24 +22,15 @@ import io.matthewnelson.diff.core.internal.*
 import io.matthewnelson.diff.core.internal.hashLengthOf
 import io.matthewnelson.diff.core.internal.checkIsDirOrNull
 import io.matthewnelson.diff.core.internal.checkExistsAndIsFile
+import io.matthewnelson.encoding.core.ExperimentalEncodingApi
 import kotlinx.datetime.Clock
 import okio.*
 
 internal sealed class Create private constructor() {
 
-    @Throws(IllegalStateException::class, IOException::class)
-    internal abstract operator fun invoke(
-        fs: FileSystem,
-        file1: BufferedSource,
-        file1Length: Long,
-        file2: BufferedSource,
-        file2Length: Long,
-        diffFile: BufferedSink,
-    )
-
     internal companion object {
-
         internal const val EOF_HASH: String = "$LINE_BREAK END: " /* +sha256 */
+        internal const val INDEX: String = "$LINE_BREAK i:"
 
         @Throws(IllegalArgumentException::class, IllegalStateException::class, IOException::class)
         internal fun diff(
@@ -67,63 +58,144 @@ internal sealed class Create private constructor() {
                 throw NoDiffException("No differences found between [$file1] and [$file2]")
             }
 
+            // TODO: Maybe check length and throw exception if either is empty?
+
             fs.createDirectories(diffDir, mustCreate = mustCreate)
             val canonicalDiffDir = fs.canonicalize(diffDir)
             val diffFile = canonicalDiffDir.resolve(file1.name + options.diffFileExtensionName)
 
             try {
-                HashingSink.sha256(fs.sink(diffFile, mustCreate = true)).use { hs ->
-                    hs.buffer().use { bs ->
+                // TODO: Maybe have an option to use static time instead of now?
+                val header = Header(options.schema, Clock.System.now(), file1.name, f1Hash, f2Hash)
 
-                        val header = Header(options.schema, Clock.System.now(), file1.name, f1Hash, f2Hash)
-                        header.writeTo(bs)
+                HashingSink.sha256(fs.sink(diffFile, mustCreate = true)).use { hsDiff ->
+                    hsDiff.buffer().use { bsDiff ->
+                        header.writeTo(bsDiff)
 
-                        fs.read(file1) file1@{
-                            fs.read(file2) file2@{
+                        fs.read(file1) bsFile1@ {
+                            fs.read(file2) bsFile2@ {
 
                                 when (options.schema) {
                                     is Diff.Schema.v1 -> {
-                                        V1(fs, this@file1, f1Length, this@file2, f2Length, bs)
+                                        V1(this@bsFile1, f1Length,this@bsFile2, f2Length, bsDiff)
                                     }
                                 }
 
                             }
                         }
 
-                        bs.writeNewLine()
+                        bsDiff.writeNewLine()
 
                         // Write the diff file content's hash to the very last line
                         // of the file. This is used as a validation check when going
                         // to apply it to file1 later such that any modifications to
-                        // the diff will throw an exception.
-                        bs.flush()
-                        val hash = hs.hash.hex()
+                        // the diff will fail its validation check.
+                        bsDiff.flush()
+                        val hash = hsDiff.hash.hex()
 
-                        bs.writeUtf8(EOF_HASH)
-                        bs.writeUtf8(hash)
-                        bs.writeNewLine()
+                        bsDiff.writeUtf8(EOF_HASH)
+                        bsDiff.writeUtf8(hash)
+                        bsDiff.writeNewLine()
                     }
                 }
             } catch (t: Throwable) {
-                // TODO: Clean up
+                if (mustCreate) {
+                    fs.deleteRecursively(canonicalDiffDir)
+                } else {
+                    fs.delete(diffFile)
+                }
 
-                throw t
+                throw IOException("Failed to create diff for ${file1.name}", t)
             }
 
             return diffFile
         }
     }
 
-    private object V1: Create() {
-        override operator fun invoke(
-            fs: FileSystem,
+    internal object V1: Create() {
+
+        @OptIn(ExperimentalEncodingApi::class)
+        internal operator fun invoke(
             file1: BufferedSource,
-            file1Length: Long,
+            f1Length: Long,
             file2: BufferedSource,
-            file2Length: Long,
-            diffFile: BufferedSink,
+            f2Length: Long,
+            diff: BufferedSink,
         ) {
-            // TODO
+            val f1Buf = ByteArray(4096)
+            val f2Buf = f1Buf.copyOf()
+
+            fun newFeed() = BASE_64.newEncoderFeed { encodedChar ->
+                diff.writeByte(encodedChar.code)
+            }
+
+            var feed = newFeed()
+            var diffing = false
+            var index = 0L
+            while (true) {
+                val f1Read = file1.read(f1Buf)
+                val f2Read = file2.read(f2Buf)
+                if (f1Read == -1 && f2Read == -1) break
+
+                val f1Until = if (f1Read == -1) 0 else f1Read
+                val f2Until = if (f2Read == -1) 0 else f2Read
+
+                val (append, commonLength) = when {
+                    f1Until == f2Until -> Pair(null, f1Until)
+                    f1Until < f2Until -> Pair(true, f1Until)
+                    else -> Pair(false, f2Until)
+                }
+
+                for (i in 0 until commonLength) {
+                    val f1b = f1Buf[i]
+                    val f2b = f2Buf[i]
+
+                    if (f1b == f2b) {
+                        if (diffing) {
+                            feed.doFinal()
+                            feed = newFeed()
+                            diff.writeNewLine()
+                            diffing = false
+                        }
+                    } else {
+                        if (!diffing) {
+                            diff.writeIndex(index)
+                            diffing = true
+                        }
+
+                        feed.consume(f2b)
+                    }
+
+                    index++
+                }
+
+                when (append) {
+                    null -> continue
+                    true -> {
+                        if (!diffing) {
+                            diff.writeIndex(index)
+                            diffing = true
+                        }
+
+                        for (i in commonLength until f2Until) {
+                            feed.consume(f2Buf[i])
+                        }
+                    }
+                    false -> {}
+                }
+            }
+
+            if (!feed.isClosed()) feed.doFinal()
+
+            // If same length, need to write en empty diff so that when
+            // applying, it will read the remaining bytes from f1.
+            if (f1Length == f2Length) diff.writeIndex(f1Length)
+        }
+
+        private inline fun BufferedSink.writeIndex(i: Long) {
+            writeUtf8(INDEX)
+            writeUtf8(i.toString())
+            writeNewLine()
         }
     }
 }
