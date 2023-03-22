@@ -16,7 +16,7 @@
 package io.matthewnelson.differ.internal.create
 
 import io.matthewnelson.differ.internal.*
-import io.matthewnelson.differ.internal.DiffFileExtNameOpt
+import io.matthewnelson.differ.internal.OptDiffFileExtName
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
@@ -52,7 +52,7 @@ class CreateUnitTest: DifferUnitTest() {
     @Test
     fun givenCreate_whenDiffFileExists_thenThrowsException() {
         writeTestFiles()
-        diffDir.resolve(file1.name + DiffFileExtNameOpt.DEFAULT_EXT).writeText("")
+        diffDir.resolve(file1.name + OptDiffFileExtName.DEFAULT_EXT).writeText("")
 
         val create = createFrom()
 
@@ -62,7 +62,7 @@ class CreateUnitTest: DifferUnitTest() {
     @Test
     fun givenCreate_whenHumanReadableDiffFileExists_thenThrowsException() {
         writeTestFiles()
-        diffDir.resolve(file1.name + DiffFileExtNameOpt.DEFAULT_EXT + ".txt").writeText("")
+        diffDir.resolve(file1.name + OptDiffFileExtName.DEFAULT_EXT + ".txt").writeText("")
 
         val create = createFrom(createReadable = true)
 
@@ -74,7 +74,14 @@ class CreateUnitTest: DifferUnitTest() {
         writeTestFiles()
 
         val create = createFrom(runner = object : Create.Runner {
-            override fun run(fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
+            override fun run(
+                settings: Subcommand.Settings,
+                fs: FileSystem,
+                file1: Path,
+                file2: Path,
+                diffFile: Path,
+                hrFile: Path?
+            ) {
                 assertNull(hrFile)
             }
         })
@@ -132,9 +139,10 @@ class CreateUnitTest: DifferUnitTest() {
         file1: Path = this.file1,
         file2: Path = this.file2,
         createReadable: Boolean = false,
-        diffFileExtName: String = DiffFileExtNameOpt.DEFAULT_EXT,
+        diffFileExtName: String = OptDiffFileExtName.DEFAULT_EXT,
         diffDir: Path = this.diffDir,
+        settings: Subcommand.Settings = Subcommand.Settings(quiet = true),
     ): Create {
-        return Create.from(fs, runner, file1, file2, createReadable, diffFileExtName, diffDir)
+        return Create.from(fs, runner, file1, file2, createReadable, diffFileExtName, diffDir, settings)
     }
 }

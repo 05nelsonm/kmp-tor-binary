@@ -20,7 +20,7 @@ import kotlinx.cli.DefaultRequiredType
 import kotlinx.cli.SingleArgument
 import okio.Path
 
-internal interface DiffDirArg {
+internal interface ArgDiffDir {
     val diffDirArg: Path
 
     companion object {

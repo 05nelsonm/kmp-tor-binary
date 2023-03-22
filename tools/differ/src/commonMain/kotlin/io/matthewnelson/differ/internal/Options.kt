@@ -17,7 +17,25 @@ package io.matthewnelson.differ.internal
 
 import kotlinx.cli.*
 
-internal interface DiffFileExtNameOpt {
+internal interface OptCreateReadable {
+    val createReadableOpt: Boolean
+
+    companion object {
+        internal const val NAME_OPT = "create-readable"
+
+        internal fun ArgParser.createReadableOption(
+            description: String
+        ): SingleOption<Boolean, DefaultRequiredType.Default> {
+            return option(
+                type = ArgType.Boolean,
+                fullName = NAME_OPT,
+                description = description
+            ).default(false)
+        }
+    }
+}
+
+internal interface OptDiffFileExtName {
     val diffFileExtNameOpt: String
 
     companion object {
@@ -44,19 +62,17 @@ internal interface DiffFileExtNameOpt {
     }
 }
 
-internal interface CreateReadableOpt {
-    val createReadableOpt: Boolean
+internal interface OptQuiet {
+    val quietOpt: Boolean
 
     companion object {
-        internal const val NAME_OPT = "create-readable"
+        internal const val NAME_OPT = "quiet"
 
-        internal fun ArgParser.createReadableOption(
-            description: String
-        ): SingleOption<Boolean, DefaultRequiredType.Default> {
+        internal fun ArgParser.quietOption(): SingleOption<Boolean, DefaultRequiredType.Default> {
             return option(
                 type = ArgType.Boolean,
                 fullName = NAME_OPT,
-                description = description
+                description = "Silences the terminal output"
             ).default(false)
         }
     }

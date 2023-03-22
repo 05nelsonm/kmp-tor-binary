@@ -16,7 +16,7 @@
 package io.matthewnelson.differ.internal.create
 
 import io.matthewnelson.differ.internal.*
-import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.requireDiffFileExtensionNameValid
+import io.matthewnelson.differ.internal.OptDiffFileExtName.Companion.requireDiffFileExtensionNameValid
 import io.matthewnelson.differ.internal.Subcommand
 import io.matthewnelson.differ.internal.requireDirOrNull
 import io.matthewnelson.differ.internal.requireFileDoesNotExist
@@ -37,30 +37,26 @@ internal abstract class Create(
         that the second file has will be recorded.
     """,
     additionalIndent = 4,
-),  DiffDirArg,
-    DiffFileExtNameOpt,
-    CreateReadableOpt
+),  ArgDiffDir,
+    OptCreateReadable,
+    OptDiffFileExtName
 {
 
     protected abstract val file1Arg: Path
     protected abstract val file2Arg: Path
 
-    abstract override val createReadableOpt: Boolean
-    abstract override val diffFileExtNameOpt: String
-    abstract override val diffDirArg: Path
-
     final override fun execute() {
         file1Arg.requireFileExist(fs, NAME_FILE_1)
         file2Arg.requireFileExist(fs, NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
-        val mustCreate = diffDirArg.requireDirOrNull(fs, DiffDirArg.NAME_ARG)
+        val mustCreate = diffDirArg.requireDirOrNull(fs, ArgDiffDir.NAME_ARG)
         diffFileExtNameOpt.requireDiffFileExtensionNameValid()
 
         fs.createDirectories(diffDirArg, mustCreate = mustCreate)
         val canonicalDiffDir = fs.canonicalize(diffDirArg)
 
         val diffFile = canonicalDiffDir.resolve(file1Arg.name + diffFileExtNameOpt)
-        diffFile.requireFileDoesNotExist(fs, DiffDirArg.NAME_ARG)
+        diffFile.requireFileDoesNotExist(fs, ArgDiffDir.NAME_ARG)
         val humanReadablefile = if (createReadableOpt) "$diffFile.txt".toPath() else null
         humanReadablefile?.let { hrf ->
             hrf.requireFileDoesNotExist(fs, "Human readable file ${hrf.name}")
@@ -68,6 +64,7 @@ internal abstract class Create(
 
         try {
             runner.run(
+                settings = settings(),
                 fs = fs,
                 file1 = fs.canonicalize(file1Arg),
                 file2 = fs.canonicalize(file2Arg),
@@ -95,19 +92,28 @@ internal abstract class Create(
     internal interface Runner {
 
         @Throws(Throwable::class)
-        fun run(fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?)
+        fun run(settings: Settings, fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?)
 
         companion object: Runner {
 
             @Throws(Throwable::class)
-            override fun run(fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
+            override fun run(
+                settings: Settings,
+                fs: FileSystem,
+                file1: Path,
+                file2: Path,
+                diffFile: Path,
+                hrFile: Path?
+            ) {
                 // TODO
-                println("""
-                    $NAME_FILE_1: $file1
-                    $NAME_FILE_2: $file2
-                    diffFile: $diffFile
-                    humanReadableFile: $hrFile
-                """.trimIndent())
+                with(settings) {
+                    println("""
+                        $NAME_FILE_1: $file1
+                        $NAME_FILE_2: $file2
+                        diffFile: $diffFile
+                        humanReadableFile: $hrFile
+                    """.trimIndent())
+                }
             }
         }
     }
@@ -126,13 +132,15 @@ internal abstract class Create(
             createReadable: Boolean,
             diffFileExtName: String,
             diffDir: Path,
+            settings: Settings,
         ): Create {
             return object : Create(fs = fs, runner = runner) {
                 override val file1Arg: Path = file1
                 override val file2Arg: Path = file2
+                override val diffDirArg: Path = diffDir
                 override val createReadableOpt: Boolean = createReadable
                 override val diffFileExtNameOpt: String = diffFileExtName
-                override val diffDirArg: Path = diffDir
+                override val quietOpt: Boolean = settings.quiet
             }
         }
     }

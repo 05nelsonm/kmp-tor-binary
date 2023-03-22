@@ -16,6 +16,7 @@
 package io.matthewnelson.differ.internal.apply
 
 import io.matthewnelson.differ.internal.ArgTypePath
+import io.matthewnelson.differ.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.differ.internal.get
 import okio.FileSystem
 import okio.Path
@@ -32,4 +33,6 @@ internal class ApplyCmd: Apply(fs = FileSystem.get(), runner = Runner) {
         fullName = NAME_DIFF_FILE,
         description = "The previously created diff file to be applied (e.g. /path/to/diff/file.diff)",
     )
+
+    override val quietOpt: Boolean by quietOption()
 }

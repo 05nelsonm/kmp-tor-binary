@@ -42,6 +42,7 @@ internal abstract class Apply(
 
         try {
             runner.run(
+                settings = settings(),
                 fs = fs,
                 file = fs.canonicalize(fileArg),
                 diffFile = fs.canonicalize(diffFileArg),
@@ -55,17 +56,19 @@ internal abstract class Apply(
     internal interface Runner {
 
         @Throws(Throwable::class)
-        fun run(fs: FileSystem, file: Path, diffFile: Path)
+        fun run(settings: Settings, fs: FileSystem, file: Path, diffFile: Path)
 
         companion object: Runner {
 
             @Throws(Throwable::class)
-            override fun run(fs: FileSystem, file: Path, diffFile: Path) {
+            override fun run(settings: Settings, fs: FileSystem, file: Path, diffFile: Path) {
                 // TODO
-                println("""
-                    $NAME_FILE: $file
-                    $NAME_DIFF_FILE: $diffFile
-                """.trimIndent())
+                with(settings) {
+                    println("""
+                        $NAME_FILE: $file
+                        $NAME_DIFF_FILE: $diffFile
+                    """.trimIndent())
+                }
             }
         }
     }
@@ -81,10 +84,12 @@ internal abstract class Apply(
             runner: Runner,
             file: Path,
             diff: Path,
+            settings: Settings,
         ): Apply {
             return object : Apply(fs = fs, runner = runner) {
                 override val fileArg: Path = file
                 override val diffFileArg: Path = diff
+                override val quietOpt: Boolean = settings.quiet
             }
         }
     }

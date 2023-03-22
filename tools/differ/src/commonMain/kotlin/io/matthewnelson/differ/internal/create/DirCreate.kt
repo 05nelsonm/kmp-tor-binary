@@ -15,9 +15,10 @@
  **/
 package io.matthewnelson.differ.internal.create
 
-import io.matthewnelson.differ.internal.CreateReadableOpt
-import io.matthewnelson.differ.internal.DiffDirArg
-import io.matthewnelson.differ.internal.DiffFileExtNameOpt
+import io.matthewnelson.differ.internal.*
+import io.matthewnelson.differ.internal.ArgDiffDir
+import io.matthewnelson.differ.internal.OptCreateReadable
+import io.matthewnelson.differ.internal.OptDiffFileExtName
 import io.matthewnelson.differ.internal.Subcommand
 import okio.FileSystem
 import okio.Path
@@ -31,25 +32,27 @@ internal abstract class DirCreate(
         Creates diff files from 2 identically structured
         directories. Walks the entire file tree of both
         directories and outputs diff files to the specified
-        ${DiffDirArg.NAME_ARG} when encoutering differences.
+        ${ArgDiffDir.NAME_ARG} when encoutering differences.
         Both directories MUST have an identical file structure.
     """,
-),  DiffDirArg,
-    DiffFileExtNameOpt,
-    CreateReadableOpt
+),  ArgDiffDir,
+    OptCreateReadable,
+    OptDiffFileExtName
 {
 
     protected abstract val dir1Arg: Path
     protected abstract val dir2Arg: Path
+    abstract override val diffDirArg: Path
     abstract override val createReadableOpt: Boolean
     abstract override val diffFileExtNameOpt: String
-    abstract override val diffDirArg: Path
+    abstract override val quietOpt: Boolean
 
     final override fun execute() {
         // TODO: Validate
 
         try {
             runner.run(
+                settings = settings(),
                 fs = fs,
             )
         } catch (t: Throwable) {
@@ -61,12 +64,12 @@ internal abstract class DirCreate(
     internal interface Runner {
 
         @Throws(Throwable::class)
-        fun run(fs: FileSystem, )
+        fun run(settings: Settings, fs: FileSystem, )
 
         companion object: Runner {
 
             @Throws(Throwable::class)
-            override fun run(fs: FileSystem, ) {
+            override fun run(settings: Settings, fs: FileSystem, ) {
                 // TODO
             }
         }
@@ -86,13 +89,15 @@ internal abstract class DirCreate(
             createReadable: Boolean,
             diffFileExtName: String,
             diffDir: Path,
+            settings: Settings,
         ): DirCreate {
             return object : DirCreate(fs = fs, runner = runner) {
                 override val dir1Arg: Path = dir1
                 override val dir2Arg: Path = dir2
+                override val diffDirArg: Path = diffDir
                 override val createReadableOpt: Boolean = createReadable
                 override val diffFileExtNameOpt: String = diffFileExtName
-                override val diffDirArg: Path = diffDir
+                override val quietOpt: Boolean = settings.quiet
             }
         }
     }

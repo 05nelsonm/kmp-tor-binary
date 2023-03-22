@@ -22,14 +22,14 @@ import io.matthewnelson.differ.internal.create.DirCreate
 import okio.FileSystem
 import okio.Path
 
-class EmptyRunner(
+internal class EmptyRunner(
     val t: Throwable? = null
 ) : Apply.Runner,
     DirApply.Runner,
     Create.Runner,
     DirCreate.Runner
 {
-    override fun run(fs: FileSystem, file: Path, diffFile: Path) {
+    override fun run(settings: Subcommand.Settings, fs: FileSystem, file: Path, diffFile: Path) {
         t?.let { throw it }
     }
 
@@ -37,11 +37,11 @@ class EmptyRunner(
 //        t?.let { throw it }
 //    }
 
-    override fun run(fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
+    override fun run(settings: Subcommand.Settings, fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
         t?.let { throw it }
     }
 
-    override fun run(fs: FileSystem) {
+    override fun run(settings: Subcommand.Settings, fs: FileSystem) {
         t?.let { throw it }
     }
 }

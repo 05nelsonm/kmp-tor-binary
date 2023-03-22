@@ -15,9 +15,10 @@
  **/
 package io.matthewnelson.differ.internal.apply
 
-import io.matthewnelson.differ.internal.DifferUnitTest
-import io.matthewnelson.differ.internal.EmptyRunner
-import io.matthewnelson.differ.internal.TestException
+import io.matthewnelson.differ.internal.*
+import io.matthewnelson.differ.internal.Subcommand
+import okio.FileSystem
+import okio.Path
 import okio.Path.Companion.toPath
 import kotlin.test.Test
 
@@ -31,7 +32,7 @@ class ApplyUnitTest: DifferUnitTest() {
         file.writeText("files")
         diff.writeText("diffs")
 
-        val apply = Apply.from(fs, EmptyRunner(TestException()), file, diff)
+        val apply = applyFrom(runner = EmptyRunner(TestException()))
 
         // We throw a test exception here from EmptyRunner to signal
         // that execute() passed all the requirements
@@ -42,7 +43,7 @@ class ApplyUnitTest: DifferUnitTest() {
     fun givenApply_whenDiffFileDoesNotExist_thenThrowsException() {
         file.writeText("file")
 
-        val apply = Apply.from(fs, EmptyRunner(), file, diff)
+        val apply = applyFrom()
 
         assertThrew<IllegalArgumentException> { apply.execute() }
     }
@@ -51,7 +52,7 @@ class ApplyUnitTest: DifferUnitTest() {
     fun givenApply_whenFileDoesNotExist_thenThrowsException() {
         diff.writeText("diff")
 
-        val apply = Apply.from(fs, EmptyRunner(), file, diff)
+        val apply = applyFrom()
 
         assertThrew<IllegalArgumentException> { apply.execute() }
     }
@@ -60,7 +61,7 @@ class ApplyUnitTest: DifferUnitTest() {
     fun givenApply_whenFilesAreTheSame_thenThrowsException() {
         file.writeText("file")
 
-        val apply = Apply.from(fs, EmptyRunner(), file, file)
+        val apply = applyFrom()
 
         assertThrew<IllegalArgumentException> { apply.execute() }
     }
@@ -70,8 +71,18 @@ class ApplyUnitTest: DifferUnitTest() {
         fs.createDirectories(file)
         diff.writeText("diff")
 
-        val apply = Apply.from(fs, EmptyRunner(), file, diff)
+        val apply = applyFrom()
 
         assertThrew<IllegalArgumentException> { apply.execute() }
+    }
+
+    private fun applyFrom(
+        fs: FileSystem = this.fs,
+        runner: Apply.Runner = EmptyRunner(),
+        file: Path = this.file,
+        diff: Path = this.diff,
+        settings: Subcommand.Settings = Subcommand.Settings(quiet = false)
+    ): Apply {
+        return Apply.from(fs, runner, file, diff, settings)
     }
 }

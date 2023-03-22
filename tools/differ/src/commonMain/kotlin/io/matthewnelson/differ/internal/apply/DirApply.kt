@@ -15,8 +15,8 @@
  **/
 package io.matthewnelson.differ.internal.apply
 
-import io.matthewnelson.differ.internal.DiffDirArg
-import io.matthewnelson.differ.internal.DiffFileExtNameOpt
+import io.matthewnelson.differ.internal.ArgDiffDir
+import io.matthewnelson.differ.internal.OptDiffFileExtName
 import io.matthewnelson.differ.internal.Subcommand
 import io.matthewnelson.differ.internal.create.DirCreate
 import okio.FileSystem
@@ -33,8 +33,8 @@ internal abstract class DirApply(
         Files from $NAME_DIR are modified in place.
     """,
     additionalIndent = 1,
-),  DiffDirArg,
-    DiffFileExtNameOpt
+),  ArgDiffDir,
+    OptDiffFileExtName
 {
 
     protected abstract val dirArg: Path
@@ -46,6 +46,7 @@ internal abstract class DirApply(
 
         try {
             runner.run(
+                settings = settings(),
                 fs = fs,
             )
         } catch (t: Throwable) {
@@ -57,12 +58,12 @@ internal abstract class DirApply(
     internal interface Runner {
 
         @Throws(Throwable::class)
-        fun run(fs: FileSystem, )
+        fun run(settings: Settings, fs: FileSystem, )
 
         companion object: Runner {
 
             @Throws(Throwable::class)
-            override fun run(fs: FileSystem, ) {
+            override fun run(settings: Settings, fs: FileSystem, ) {
                 // TODO
             }
         }
@@ -78,12 +79,14 @@ internal abstract class DirApply(
             runner: Runner,
             dir: Path,
             diffDir: Path,
-            diffFileExtName: String
+            diffFileExtName: String,
+            settings: Settings,
         ): DirApply {
             return object : DirApply(fs = fs, runner = runner) {
                 override val dirArg: Path = dir
                 override val diffDirArg: Path = diffDir
                 override val diffFileExtNameOpt: String = diffFileExtName
+                override val quietOpt: Boolean = settings.quiet
             }
         }
     }

@@ -25,7 +25,16 @@ internal abstract class Subcommand(
 ): kotlinx.cli.Subcommand(
     name = name,
     actionDescription = description.indentDescription(name, additionalIndent)
-) {
+), OptQuiet {
+
+    protected fun settings(): Settings = Settings(quiet = quietOpt)
+
+    internal data class Settings(val quiet: Boolean) {
+        fun println(output: String) {
+            if (quiet) return
+            kotlin.io.println(output)
+        }
+    }
 
     private companion object {
 

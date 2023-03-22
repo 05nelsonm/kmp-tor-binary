@@ -17,10 +17,11 @@
 package io.matthewnelson.differ.internal.create
 
 import io.matthewnelson.differ.internal.ArgTypePath
-import io.matthewnelson.differ.internal.CreateReadableOpt.Companion.createReadableOption
-import io.matthewnelson.differ.internal.DiffDirArg
-import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
-import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
+import io.matthewnelson.differ.internal.OptCreateReadable.Companion.createReadableOption
+import io.matthewnelson.differ.internal.ArgDiffDir
+import io.matthewnelson.differ.internal.ArgDiffDir.Companion.diffDirArgument
+import io.matthewnelson.differ.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
+import io.matthewnelson.differ.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.differ.internal.get
 import okio.FileSystem
 import okio.Path
@@ -38,15 +39,17 @@ internal class CreateCmd: Create(fs = FileSystem.get(), runner = Runner) {
         description = "The second file to diff against the first file (e.g. /path/to/signed/file)"
     )
 
+    override val diffDirArg: Path by diffDirArgument(
+        description = "The directory to output the generated diff file to (e.g. /path/to/diffs)"
+    )
+
     override val createReadableOpt: Boolean by createReadableOption(
-        description = "Also creates a human readable text file of the diff in the specified ${DiffDirArg.NAME_ARG}"
+        description = "Also creates a human readable text file of the diff in the specified ${ArgDiffDir.NAME_ARG}"
     )
 
     override val diffFileExtNameOpt: String by diffFileExtNameOption(
         description = "The file extension name to use for the diff file"
     )
 
-    override val diffDirArg: Path by diffDirArgument(
-        description = "The directory to output the generated diff file to (e.g. /path/to/diffs)"
-    )
+    override val quietOpt: Boolean by quietOption()
 }

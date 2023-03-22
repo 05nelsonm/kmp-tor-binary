@@ -17,8 +17,9 @@ package io.matthewnelson.differ.internal.apply
 
 import io.matthewnelson.differ.internal.*
 import io.matthewnelson.differ.internal.ArgTypePath
-import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
-import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
+import io.matthewnelson.differ.internal.ArgDiffDir.Companion.diffDirArgument
+import io.matthewnelson.differ.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
+import io.matthewnelson.differ.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.differ.internal.create.DirCreate
 import okio.FileSystem
 import okio.Path
@@ -37,4 +38,6 @@ internal class DirApplyCmd: DirApply(fs = FileSystem.get(), runner = Runner) {
     override val diffFileExtNameOpt: String by diffFileExtNameOption(
         description = "The file extension name used when diff files were created with ${DirCreate.NAME_CMD}"
     )
+
+    override val quietOpt: Boolean by quietOption()
 }
