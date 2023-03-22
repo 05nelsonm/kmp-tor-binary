@@ -1,6 +1,7 @@
 [versions]
 android = "7.3.1"
 binaryCompat = "0.13.0"
+cliKt = "3.5.2"
 configuration = "0.1.0-beta02"
 cryptoHash = "0.2.0"
 encoding = "1.2.1"
@@ -9,6 +10,7 @@ kotlin = "1.8.10"
 npmPublish = "2.1.2"
 okio = "3.3.0"
 publish = "0.24.0"
+serializationJson = "1.5.0"
 
 [libraries]
 gradle-android = { module = "com.android.tools.build:gradle", version.ref = "android" }
@@ -19,14 +21,19 @@ gradle-maven-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", 
 # 3.0.0+ change to >>>           dev.petuska:npm-publish-gradle-plugin
 gradle-npm-publish = { module = "dev.petuska:npm-publish", version.ref = "npmPublish" }
 
-# Tests
-kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "cryptoHash" }
+# Tests/tooling
 encoding-base16 = { module = "io.matthewnelson.kotlin-components:encoding-base16", version.ref = "encoding" }
+encoding-base64 = { module = "io.matthewnelson.kotlin-components:encoding-base16", version.ref = "encoding" }
+kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "cryptoHash" }
+cliKt = { module = "com.github.ajalt.clikt:clikt", version.ref = "cliKt" }
 okio-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 okio-node = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }
+serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serializationJson" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android" }
 binaryCompat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompat" }
 gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions" }
 multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
