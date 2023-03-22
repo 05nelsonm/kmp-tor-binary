@@ -30,7 +30,7 @@ internal abstract class Subcommand(
     protected fun settings(): Settings = Settings(quiet = quietOpt)
 
     internal data class Settings(val quiet: Boolean) {
-        fun println(output: String) {
+        fun println(output: Any?) {
             if (quiet) return
             kotlin.io.println(output)
         }

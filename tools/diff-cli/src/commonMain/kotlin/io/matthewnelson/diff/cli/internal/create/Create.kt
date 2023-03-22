@@ -22,6 +22,7 @@ import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.OptStaticTime.Companion.staticTimeOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
+import io.matthewnelson.diff.core.NoDiffException
 import kotlinx.cli.ArgType
 
 internal class Create: Subcommand(
@@ -62,19 +63,27 @@ internal class Create: Subcommand(
     override val staticTimeOpt: Boolean by staticTimeOption()
 
     override fun execute() {
-        try {
-            Diff.create(
-                file1Path = file1Arg,
-                file2Path = file2Arg,
-                diffDirPath = diffDirArg,
-                options = Diff.Options {
-                    diffFileExtensionName(value = diffFileExtNameOpt)
-                    useStaticTime = staticTimeOpt
-                },
-            )
-        } catch (t: Throwable) {
-            // TODO
-            throw t
+        with(settings()) {
+            val path = try {
+                Diff.create(
+                    file1Path = file1Arg,
+                    file2Path = file2Arg,
+                    diffDirPath = diffDirArg,
+                    options = Diff.Options {
+                        diffFileExtensionName(value = diffFileExtNameOpt)
+                        useStaticTime = staticTimeOpt
+                    },
+                )
+            } catch (t: Throwable) {
+                if (t is NoDiffException) {
+                    println(t.message)
+                    return
+                } else {
+                    throw t
+                }
+            }
+
+            println("Diff created for [$file1Arg] located at [$path]")
         }
     }
 

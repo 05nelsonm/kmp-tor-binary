@@ -45,13 +45,15 @@ internal class Apply: Subcommand(
     override val quietOpt: Boolean by quietOption()
 
     override fun execute() {
-        Diff.apply(diffFileArg, fileArg)
+        with(settings()) {
+            Diff.apply(diffFileArg, fileArg)
+            println("Diff applied to [$fileArg]")
+        }
     }
 
     internal companion object {
         internal const val NAME_CMD = "apply"
 
         internal const val NAME_FILE = "file"
-        internal const val NAME_DIFF_FILE = "diff-file"
     }
 }
