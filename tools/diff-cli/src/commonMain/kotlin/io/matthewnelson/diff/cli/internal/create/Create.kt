@@ -21,13 +21,9 @@ import io.matthewnelson.diff.cli.internal.OptDiffFileExtName.Companion.diffFileE
 import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
-import io.matthewnelson.diff.core.internal.InternalDiffApi
-import okio.FileSystem
 import okio.Path
 
-internal class Create(
-    private val fs: FileSystem,
-): Subcommand(
+internal class Create: Subcommand(
     name = NAME_CMD,
     description = """
         Creates a diff from 2 file inputs. The first file is
@@ -63,9 +59,7 @@ internal class Create(
 
     override fun execute() {
         try {
-            @OptIn(InternalDiffApi::class)
             Diff.create(
-                fs = fs,
                 file1 = file1Arg,
                 file2 = file2Arg,
                 diffDir = diffDirArg,

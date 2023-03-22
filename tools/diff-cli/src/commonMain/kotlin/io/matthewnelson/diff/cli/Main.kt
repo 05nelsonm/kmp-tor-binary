@@ -17,25 +17,19 @@ package io.matthewnelson.diff.cli
 
 import io.matthewnelson.diff.cli.internal.apply.Apply
 import io.matthewnelson.diff.cli.internal.create.Create
-import io.matthewnelson.diff.core.internal.InternalDiffApi
-import io.matthewnelson.diff.core.internal.system
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
-import okio.FileSystem
 
 private const val PROGRAM_NAME = "Differ CLI"
 
 public fun main(args: Array<String>) {
     val parser = ArgParser(programName = PROGRAM_NAME.lowercase().replace(' ', '-'))
 
-    @OptIn(InternalDiffApi::class)
-    val fs = FileSystem.system()
-
     // TODO: Change Create/Apply indents when enabling DirCreate and DirApply
-    val create = Create(fs)
-//    val dirCreate = DirCreate(fs)
-    val apply = Apply(fs)
-//    val dirApply = DirApply(fs)
+    val create = Create()
+//    val dirCreate = DirCreate()
+    val apply = Apply()
+//    val dirApply = DirApply()
 
     @OptIn(ExperimentalCli::class)
     parser.subcommands(create, /*dirCreate,*/ apply, /*dirApply*/)

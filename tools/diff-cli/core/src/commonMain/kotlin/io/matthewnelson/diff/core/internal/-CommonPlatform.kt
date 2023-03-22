@@ -22,9 +22,8 @@ import io.matthewnelson.encoding.base64.Base64
 import io.matthewnelson.encoding.builders.*
 import okio.FileSystem
 
-@InternalDiffApi
 @Suppress("NOTHING_TO_INLINE")
-public expect inline fun FileSystem.Companion.system(): FileSystem
+internal expect inline fun FileSystem.Companion.system(): FileSystem
 
 internal val BASE16: Base16 = Base16 { encodeToLowercase = true }
 internal val BASE64: Base64 = Base64 { lineBreakInterval = 64 }

@@ -23,12 +23,9 @@ import io.matthewnelson.diff.cli.internal.OptDiffFileExtName.Companion.diffFileE
 import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.cli.internal.create.DirCreate
-import okio.FileSystem
 import okio.Path
 
-internal class DirApply(
-    private val fs: FileSystem,
-): Subcommand(
+internal class DirApply: Subcommand(
     name = NAME_CMD,
     description = """
         Applies diff files from previously created

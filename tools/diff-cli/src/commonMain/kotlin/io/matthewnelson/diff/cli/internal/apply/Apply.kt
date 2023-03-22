@@ -19,13 +19,9 @@ import io.matthewnelson.diff.cli.internal.ArgTypePath
 import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
-import io.matthewnelson.diff.core.internal.InternalDiffApi
-import okio.FileSystem
 import okio.Path
 
-internal class Apply(
-    private val fs: FileSystem,
-): Subcommand(
+internal class Apply: Subcommand(
     name = NAME_CMD,
     description = """
         Applies a diff to it's associated file.
@@ -49,8 +45,7 @@ internal class Apply(
     override val quietOpt: Boolean by quietOption()
 
     override fun execute() {
-        @OptIn(InternalDiffApi::class)
-        Diff.apply(fs, diffFileArg, fileArg)
+        Diff.apply(diffFileArg, fileArg)
     }
 
     internal companion object {
