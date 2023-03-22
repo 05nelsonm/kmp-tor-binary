@@ -16,20 +16,16 @@
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     id("configuration")
-    alias(libs.plugins.serialization) apply(false)
 }
 
 kmpConfiguration {
     configureTool(project, mainKtPath = "io.matthewnelson.diff") {
         common {
-            pluginIds("kotlinx-serialization")
-
             sourceSetMain {
                 dependencies {
                     implementation(libs.encoding.base16)
                     implementation(libs.encoding.base64)
                     implementation(libs.okio.okio)
-                    implementation(libs.serialization.json)
                 }
             }
 
