@@ -20,8 +20,10 @@ import io.matthewnelson.differ.internal.CmdCreate
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 
+private const val PROGRAM_NAME = "differ"
+
 public fun main(args: Array<String>) {
-    val parser = ArgParser(programName = "differ")
+    val parser = ArgParser(programName = PROGRAM_NAME)
 
     val create = CmdCreate()
     val apply = CmdApply()
@@ -31,17 +33,17 @@ public fun main(args: Array<String>) {
 
     val helpOrArgs = when {
         args.isEmpty() -> {
-            // TODO: Print header
+            printHeader()
             arrayOf("-h")
         }
-        args.size == 1 -> {
-            val arg = args.first()
-            if (arg == "-h" || arg == "--help") {
-                // TODO: Pring header
+        else -> {
+            when (args.first()) {
+                "-h", "--help" -> {
+                    printHeader()
+                }
             }
             args
         }
-        else -> args
     }
 
     try {
@@ -49,4 +51,23 @@ public fun main(args: Array<String>) {
     } catch (t: Throwable) {
         t.printStackTrace()
     }
+}
+
+private fun printHeader() {
+    // TODO: BuildConfig https://github.com/gmazzo/gradle-buildconfig-plugin
+    val version = "0.1.0"
+    val url = "https://github.com/05nelsonm/kmp-tor-binary/tools/differ"
+
+    val programName = PROGRAM_NAME.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+
+    println("""
+        $programName v$version
+        Copyright (C) 2023 Matthew Nelson
+        Apache 2.0 License
+        
+        Creates and applies diffs to files.
+        
+        Project: $url
+
+    """.trimIndent())
 }
