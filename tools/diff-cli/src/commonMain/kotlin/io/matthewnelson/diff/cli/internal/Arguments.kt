@@ -37,3 +37,21 @@ internal interface ArgDiffDir {
         }
     }
 }
+
+internal interface ArgDiffFile {
+    val diffFileArg: String
+
+    companion object {
+        internal const val NAME_ARG = "diff-file"
+
+        internal fun ArgParser.diffFileArgument(
+            description: String
+        ): SingleArgument<String, DefaultRequiredType.Required> {
+            return argument(
+                type = ArgType.String,
+                fullName = NAME_ARG,
+                description = description
+            )
+        }
+    }
+}

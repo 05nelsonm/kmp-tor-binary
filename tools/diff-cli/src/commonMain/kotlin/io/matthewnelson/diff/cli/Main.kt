@@ -17,6 +17,7 @@ package io.matthewnelson.diff.cli
 
 import io.matthewnelson.diff.cli.internal.apply.Apply
 import io.matthewnelson.diff.cli.internal.create.Create
+import io.matthewnelson.diff.cli.internal.header.PrintHeader
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 
@@ -30,9 +31,10 @@ public fun main(args: Array<String>) {
 //    val dirCreate = DirCreate()
     val apply = Apply()
 //    val dirApply = DirApply()
+    val printHeader = PrintHeader()
 
     @OptIn(ExperimentalCli::class)
-    parser.subcommands(create, /*dirCreate,*/ apply, /*dirApply*/)
+    parser.subcommands(create, /*dirCreate,*/ apply, /*dirApply,*/ printHeader)
 
     val helpOrArgs = when {
         args.isEmpty() -> {

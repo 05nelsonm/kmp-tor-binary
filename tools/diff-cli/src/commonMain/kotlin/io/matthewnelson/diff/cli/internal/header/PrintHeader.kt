@@ -13,45 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.diff.cli.internal.apply
+package io.matthewnelson.diff.cli.internal.header
 
 import io.matthewnelson.diff.cli.internal.ArgDiffFile
 import io.matthewnelson.diff.cli.internal.ArgDiffFile.Companion.diffFileArgument
-import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
-import kotlinx.cli.ArgType
 
-internal class Apply: Subcommand(
+internal class PrintHeader: Subcommand(
     name = NAME_CMD,
-    description = """
-        Applies a diff to it's associated file.
-        $NAME_FILE is modified in place.
-    """,
-    additionalIndent = 7,
+    description = "Prints a prettily formatted diff file's header",
 ),  ArgDiffFile
 {
 
     override val diffFileArg: String by diffFileArgument(
-        description = "The previously created diff file to be applied (e.g. /path/to/diffs/file.diff)",
+        description = "A diff file (e.g. /path/to/diffs/file.diff)"
     )
 
-    private val fileArg: String by argument(
-        type = ArgType.String,
-        fullName = NAME_FILE,
-        description = "The file to apply the diff to (e.g. /path/to/unsigned/file)",
-    )
-
-    override val quietOpt: Boolean by quietOption()
+    override val quietOpt: Boolean = false
 
     override fun execute() {
-        Diff.apply(diffFileArg, fileArg)
+        println(Diff.readHeader(diffFileArg))
     }
 
     internal companion object {
-        internal const val NAME_CMD = "apply"
-
-        internal const val NAME_FILE = "file"
-        internal const val NAME_DIFF_FILE = "diff-file"
+        internal const val NAME_CMD: String = "print-header"
     }
 }

@@ -31,7 +31,7 @@ internal class Create: Subcommand(
         compared to the second file whereby any differences
         that the second file has will be recorded.
     """,
-//    additionalIndent = 4,
+    additionalIndent = 6,
 ),  ArgDiffDir,
     OptDiffFileExtName,
     OptStaticTime
