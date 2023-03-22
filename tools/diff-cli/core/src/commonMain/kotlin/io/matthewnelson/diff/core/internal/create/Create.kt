@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
+
 package io.matthewnelson.diff.core.internal.create
 
 import io.matthewnelson.diff.core.Diff
@@ -76,7 +78,7 @@ internal sealed class Create private constructor() {
                             fs.read(file2) bsFile2@ {
 
                                 when (options.schema) {
-                                    is Diff.Schema.v1 -> {
+                                    Diff.Schema.v1 -> {
                                         V1(this@bsFile1, f1Length,this@bsFile2, f2Length, bsDiff)
                                     }
                                 }
@@ -112,10 +114,10 @@ internal sealed class Create private constructor() {
         }
     }
 
-    internal object V1: Create() {
+    private object V1: Create() {
 
         @OptIn(ExperimentalEncodingApi::class)
-        internal operator fun invoke(
+        operator fun invoke(
             file1: BufferedSource,
             f1Length: Long,
             file2: BufferedSource,
@@ -192,6 +194,7 @@ internal sealed class Create private constructor() {
             if (f1Length == f2Length) diff.writeIndex(f1Length)
         }
 
+        @Suppress("NOTHING_TO_INLINE")
         private inline fun BufferedSink.writeIndex(i: Long) {
             writeUtf8(INDEX)
             writeUtf8(i.toString())

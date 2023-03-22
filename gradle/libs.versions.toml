@@ -11,7 +11,6 @@ kotlinCli = "0.3.5"
 npmPublish = "2.1.2"
 okio = "3.3.0"
 publish = "0.24.0"
-valueClazz = "0.1.0"
 
 [libraries]
 gradle-android = { module = "com.android.tools.build:gradle", version.ref = "android" }
@@ -31,7 +30,6 @@ kotlin-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref =
 okio-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 okio-node = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }
-valueClazz = { module = "io.matthewnelson.kotlin-components:value-clazz", version.ref = "valueClazz" }
 
 [plugins]
 android-library = { id = "com.android.library", version.ref = "android" }

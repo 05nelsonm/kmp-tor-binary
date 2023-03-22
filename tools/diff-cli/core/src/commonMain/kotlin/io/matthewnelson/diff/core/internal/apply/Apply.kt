@@ -101,7 +101,7 @@ internal sealed class Apply private constructor() {
                             fs.read(applyTo) bsApplyTo@ {
 
                                 when (header.schema) {
-                                    is Diff.Schema.v1 -> V1(this@bsDiff, this@bsApplyTo, applyToLength, bsBak)
+                                    Diff.Schema.v1 -> V1(this@bsDiff, this@bsApplyTo, applyToLength, bsBak)
                                 }
 
                             }
@@ -129,11 +129,16 @@ internal sealed class Apply private constructor() {
         }
     }
 
-    internal object V1: Apply() {
+    private object V1: Apply() {
 
         @OptIn(ExperimentalEncodingApi::class)
         @Throws(IllegalStateException::class, IOException::class)
-        internal operator fun invoke(diffFile: BufferedSource, applyTo: BufferedSource, applyToLength: Long, bak: BufferedSink) {
+        operator fun invoke(
+            diffFile: BufferedSource,
+            applyTo: BufferedSource,
+            applyToLength: Long,
+            bak: BufferedSink
+        ) {
             var i = 0L
             var iBak = 0L
 

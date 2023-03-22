@@ -62,7 +62,6 @@ kmpConfiguration {
                     implementation(libs.kotlincrypto.hash.sha2)
                     implementation(libs.kotlin.time)
                     implementation(libs.okio.okio)
-                    api(libs.valueClazz)
                 }
             }
 

@@ -54,27 +54,27 @@ public final class io/matthewnelson/diff/core/Diff$Options {
 public final class io/matthewnelson/diff/core/Diff$Options$Companion {
 }
 
-public abstract class io/matthewnelson/diff/core/Diff$Schema : io/matthewnelson/component/value/clazz/ValueClazz {
+public final class io/matthewnelson/diff/core/Diff$Schema : java/lang/Enum {
 	public static final field Companion Lio/matthewnelson/diff/core/Diff$Schema$Companion;
-	public static final fun from (Ljava/lang/String;)Lio/matthewnelson/diff/core/Diff$Schema;
+	public final field code I
+	public static final field v1 Lio/matthewnelson/diff/core/Diff$Schema;
 	public static final fun latest ()Lio/matthewnelson/diff/core/Diff$Schema;
+	public static fun valueOf (Ljava/lang/String;)Lio/matthewnelson/diff/core/Diff$Schema;
+	public static fun values ()[Lio/matthewnelson/diff/core/Diff$Schema;
 }
 
 public final class io/matthewnelson/diff/core/Diff$Schema$Companion {
-	public final fun from (Ljava/lang/String;)Lio/matthewnelson/diff/core/Diff$Schema;
 	public final fun latest ()Lio/matthewnelson/diff/core/Diff$Schema;
 }
 
-public final class io/matthewnelson/diff/core/Diff$Schema$v1 : io/matthewnelson/diff/core/Diff$Schema {
-	public static final field INSTANCE Lio/matthewnelson/diff/core/Diff$Schema$v1;
-}
-
-public final class io/matthewnelson/diff/core/Header : io/matthewnelson/component/value/clazz/ValueClazz {
-	public final field forFileHash Ljava/lang/String;
-	public final field forFileNamed Ljava/lang/String;
-	public final field postApplyHash Ljava/lang/String;
+public final class io/matthewnelson/diff/core/Header {
+	public final field createdForFile Ljava/lang/String;
+	public final field createdForHash Ljava/lang/String;
+	public final field createdFromHash Ljava/lang/String;
 	public final field schema Lio/matthewnelson/diff/core/Diff$Schema;
 	public final fun createdAt ()J
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 

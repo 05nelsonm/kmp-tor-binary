@@ -15,7 +15,6 @@
  **/
 package io.matthewnelson.diff.core
 
-import io.matthewnelson.component.value.clazz.ValueClazz
 import io.matthewnelson.diff.core.internal.LINE_BREAK
 import io.matthewnelson.diff.core.internal.writeNewLine
 import kotlinx.datetime.Instant
@@ -33,7 +32,7 @@ internal constructor(
     @JvmField public val createdForFile: String,
     @JvmField public val createdForHash: String,
     @JvmField public val createdFromHash: String,
-): ValueClazz(schema.toString() + createdAtInstant + createdForFile + createdForHash + createdFromHash) {
+) {
 
     init {
         check(createdForHash.matches(REGEX)) { "createdForHash invalid sha256[$createdForHash]" }
@@ -45,7 +44,7 @@ internal constructor(
     internal fun writeTo(sink: BufferedSink) {
         with(sink) {
             writeUtf8(PREFIX_SCHEMA_VERSION)
-            writeUtf8(schema.toString())
+            writeUtf8(schema.name)
             writeNewLine()
 
             writeUtf8(PREFIX_CREATED_AT)
@@ -64,6 +63,25 @@ internal constructor(
             writeUtf8(createdFromHash)
             writeNewLine()
         }
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return  other is Header
+                && other.schema == schema
+                && other.createdAtInstant == createdAtInstant
+                && other.createdForFile == createdForFile
+                && other.createdForHash == createdForHash
+                && other.createdFromHash == createdFromHash
+    }
+
+    override fun hashCode(): Int {
+        var result = 17
+        result = result * 31 + schema.hashCode()
+        result = result * 31 + createdAtInstant.hashCode()
+        result = result * 31 + createdForFile.hashCode()
+        result = result * 31 + createdForHash.hashCode()
+        result = result * 31 + createdFromHash.hashCode()
+        return result
     }
 
     override fun toString(): String {
@@ -94,7 +112,11 @@ internal constructor(
                 ?.substringAfter(PREFIX_SCHEMA_VERSION)
                 ?: throw IllegalStateException("Failed to read Diff schema version")
 
-            val schema = Diff.Schema.from(versionString)
+            val schema = try {
+                Diff.Schema.valueOf(versionString)
+            } catch (e: IllegalArgumentException) {
+                throw IllegalStateException("Failed to read Diff schema version")
+            }
 
             val createdAtString = readUtf8Line()
                 ?.substringAfter(PREFIX_CREATED_AT)

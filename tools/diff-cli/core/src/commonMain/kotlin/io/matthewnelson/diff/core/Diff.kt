@@ -15,8 +15,6 @@
  **/
 package io.matthewnelson.diff.core
 
-import io.matthewnelson.component.value.clazz.NoValue
-import io.matthewnelson.component.value.clazz.ValueClazz
 import io.matthewnelson.diff.core.Header.Companion.readDiffHeader
 import io.matthewnelson.diff.core.internal.apply.Apply
 import io.matthewnelson.diff.core.internal.create.Create
@@ -24,6 +22,7 @@ import io.matthewnelson.diff.core.internal.InternalDiffApi
 import io.matthewnelson.diff.core.internal.system
 import okio.*
 import okio.Path.Companion.toPath
+import kotlin.jvm.JvmField
 import kotlin.jvm.JvmOverloads
 import kotlin.jvm.JvmStatic
 
@@ -54,22 +53,11 @@ public class Diff private constructor() {
         }
     }
 
-    @Suppress("ClassName")
-    public sealed class Schema private constructor(): ValueClazz(NoValue()) {
-
-        public object v1: Schema()
+    @Suppress("EnumEntryName")
+    public enum class Schema(@JvmField public val code: Int) {
+        v1(code = 1);
 
         public companion object {
-
-            @JvmStatic
-            @Throws(IllegalStateException::class)
-            public fun from(string: String): Schema {
-                return when (string.trim()) {
-                    v1.toString() -> v1
-                    else -> throw IllegalStateException("Unknown DiffFile.Schema[$string]")
-                }
-            }
-
             @JvmStatic
             public fun latest(): Schema = v1
         }
