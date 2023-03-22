@@ -21,7 +21,8 @@ import okio.FileSystem
 import okio.Path
 
 internal abstract class Apply(
-    protected val fs: FileSystem
+    protected val fs: FileSystem,
+    private val runner: Runner,
 ): Subcommand(
     name = NAME_CMD,
     description = """
@@ -40,9 +41,10 @@ internal abstract class Apply(
         require(fileArg != diffFileArg) { "$NAME_FILE cannot equal $NAME_DIFF_FILE" }
 
         try {
-            run(
+            runner.run(
+                fs = fs,
                 file = fs.canonicalize(fileArg),
-                diffFile = fs.canonicalize(diffFileArg)
+                diffFile = fs.canonicalize(diffFileArg),
             )
         } catch (t: Throwable) {
             // TODO: Clean up
@@ -50,12 +52,22 @@ internal abstract class Apply(
         }
     }
 
-    private fun run(file: Path, diffFile: Path) {
-        // TODO
-        println("""
-            $NAME_FILE: $file
-            $NAME_DIFF_FILE: $diffFile
-        """.trimIndent())
+    internal interface Runner {
+
+        @Throws(Throwable::class)
+        fun run(fs: FileSystem, file: Path, diffFile: Path)
+
+        companion object: Runner {
+
+            @Throws(Throwable::class)
+            override fun run(fs: FileSystem, file: Path, diffFile: Path) {
+                // TODO
+                println("""
+                    $NAME_FILE: $file
+                    $NAME_DIFF_FILE: $diffFile
+                """.trimIndent())
+            }
+        }
     }
 
     internal companion object {
@@ -66,10 +78,11 @@ internal abstract class Apply(
 
         internal fun from(
             fs: FileSystem,
+            runner: Runner,
             file: Path,
             diff: Path,
         ): Apply {
-            return object : Apply(fs = fs) {
+            return object : Apply(fs = fs, runner = runner) {
                 override val fileArg: Path = file
                 override val diffFileArg: Path = diff
             }

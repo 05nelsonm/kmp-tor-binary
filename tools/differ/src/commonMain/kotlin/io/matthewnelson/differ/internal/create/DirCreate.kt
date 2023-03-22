@@ -23,7 +23,8 @@ import okio.FileSystem
 import okio.Path
 
 internal abstract class DirCreate(
-    protected val fs: FileSystem
+    protected val fs: FileSystem,
+    protected val runner: Runner,
 ): Subcommand(
     name = NAME_CMD,
     description = """
@@ -33,7 +34,7 @@ internal abstract class DirCreate(
         ${DiffDirArg.NAME_ARG} when encoutering differences.
         Both directories MUST have an identical file structure.
     """,
-), DiffDirArg,
+),  DiffDirArg,
     DiffFileExtNameOpt,
     CreateReadableOpt
 {
@@ -47,16 +48,27 @@ internal abstract class DirCreate(
         // TODO: Validate
 
         try {
-            run()
+            runner.run(
+                fs = fs,
+            )
         } catch (t: Throwable) {
             // TODO: Cleanup
             throw t
         }
     }
 
-    @Throws(Throwable::class)
-    private fun run() {
-        // TODO
+    internal interface Runner {
+
+        @Throws(Throwable::class)
+        fun run(fs: FileSystem, )
+
+        companion object: Runner {
+
+            @Throws(Throwable::class)
+            override fun run(fs: FileSystem, ) {
+                // TODO
+            }
+        }
     }
 
     internal companion object {
@@ -67,13 +79,14 @@ internal abstract class DirCreate(
 
         internal fun from(
             fs: FileSystem,
+            runner: Runner,
             dir1: Path,
             dir2: Path,
             createReadable: Boolean,
             diffFileExtName: String,
             diffDir: Path,
         ): DirCreate {
-            return object : DirCreate(fs = fs) {
+            return object : DirCreate(fs = fs, runner = runner) {
                 override val dir1Arg: Path = dir1
                 override val dir2Arg: Path = dir2
                 override val createReadableOpt: Boolean = createReadable

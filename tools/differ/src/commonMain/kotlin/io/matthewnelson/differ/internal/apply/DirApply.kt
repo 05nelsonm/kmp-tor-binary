@@ -23,7 +23,8 @@ import okio.FileSystem
 import okio.Path
 
 internal abstract class DirApply(
-    private val fs: FileSystem
+    private val fs: FileSystem,
+    private val runner: Runner,
 ): Subcommand(
     name = NAME_CMD,
     description = """
@@ -43,16 +44,27 @@ internal abstract class DirApply(
         // TODO: Validate
 
         try {
-            run()
+            runner.run(
+                fs = fs,
+            )
         } catch (t: Throwable) {
             // TODO: Cleanup
             throw t
         }
     }
 
-    @Throws(Throwable::class)
-    private fun run() {
-        // TODO
+    internal interface Runner {
+
+        @Throws(Throwable::class)
+        fun run(fs: FileSystem, )
+
+        companion object: Runner {
+
+            @Throws(Throwable::class)
+            override fun run(fs: FileSystem, ) {
+                // TODO
+            }
+        }
     }
 
     internal companion object {
@@ -62,11 +74,12 @@ internal abstract class DirApply(
 
         internal fun from(
             fs: FileSystem,
+            runner: Runner,
             dir: Path,
             diffDir: Path,
             diffFileExtName: String
         ): DirApply {
-            return object : DirApply(fs = fs) {
+            return object : DirApply(fs = fs, runner = runner) {
                 override val dirArg: Path = dir
                 override val diffDirArg: Path = diffDir
                 override val diffFileExtNameOpt: String = diffFileExtName

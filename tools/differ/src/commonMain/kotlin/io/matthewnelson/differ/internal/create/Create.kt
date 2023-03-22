@@ -26,7 +26,8 @@ import okio.Path
 import okio.Path.Companion.toPath
 
 internal abstract class Create(
-    protected val fs: FileSystem
+    protected val fs: FileSystem,
+    protected val runner: Runner,
 ): Subcommand(
     name = NAME_CMD,
     description = """
@@ -65,7 +66,8 @@ internal abstract class Create(
         }
 
         try {
-            run(
+            runner.run(
+                fs = fs,
                 file1 = fs.canonicalize(file1Arg),
                 file2 = fs.canonicalize(file2Arg),
                 diffFile = diffFile,
@@ -89,15 +91,24 @@ internal abstract class Create(
         }
     }
 
-    @Throws(Throwable::class)
-    private fun run(file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
-        // TODO
-        println("""
-            $NAME_FILE_1: $file1
-            $NAME_FILE_2: $file2
-            diffFile: $diffFile
-            humanReadableFile: $hrFile
-        """.trimIndent())
+    internal interface Runner {
+
+        @Throws(Throwable::class)
+        fun run(fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?)
+
+        companion object: Runner {
+
+            @Throws(Throwable::class)
+            override fun run(fs: FileSystem, file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
+                // TODO
+                println("""
+                    $NAME_FILE_1: $file1
+                    $NAME_FILE_2: $file2
+                    diffFile: $diffFile
+                    humanReadableFile: $hrFile
+                """.trimIndent())
+            }
+        }
     }
 
     internal companion object {
@@ -108,13 +119,14 @@ internal abstract class Create(
 
         internal fun from(
             fs: FileSystem,
+            runner: Runner,
             file1: Path,
             file2: Path,
             createReadable: Boolean,
             diffFileExtName: String,
             diffDir: Path,
         ): Create {
-            return object : Create(fs = fs) {
+            return object : Create(fs = fs, runner = runner) {
                 override val file1Arg: Path = file1
                 override val file2Arg: Path = file2
                 override val createReadableOpt: Boolean = createReadable

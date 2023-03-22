@@ -25,7 +25,7 @@ import io.matthewnelson.differ.internal.get
 import okio.FileSystem
 import okio.Path
 
-internal class CreateCmd: Create(fs = FileSystem.get()) {
+internal class CreateCmd: Create(fs = FileSystem.get(), runner = Runner) {
     override val file1Arg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_FILE_1,

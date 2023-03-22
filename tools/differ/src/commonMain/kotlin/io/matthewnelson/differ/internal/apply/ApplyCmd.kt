@@ -20,7 +20,7 @@ import io.matthewnelson.differ.internal.get
 import okio.FileSystem
 import okio.Path
 
-internal class ApplyCmd: Apply(fs = FileSystem.get()) {
+internal class ApplyCmd: Apply(fs = FileSystem.get(), runner = Runner) {
     override val fileArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_FILE,

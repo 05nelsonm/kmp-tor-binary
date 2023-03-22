@@ -23,7 +23,7 @@ import io.matthewnelson.differ.internal.create.DirCreate
 import okio.FileSystem
 import okio.Path
 
-internal class DirApplyCmd: DirApply(fs = FileSystem.get()) {
+internal class DirApplyCmd: DirApply(fs = FileSystem.get(), runner = Runner) {
     override val dirArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIR,

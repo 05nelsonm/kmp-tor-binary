@@ -23,7 +23,7 @@ import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExt
 import okio.FileSystem
 import okio.Path
 
-internal class DirCreateCmd: DirCreate(fs = FileSystem.get()) {
+internal class DirCreateCmd: DirCreate(fs = FileSystem.get(), runner = Runner) {
     override val dir1Arg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIR_1,
