@@ -51,6 +51,15 @@ internal inline fun Path.requireDirOrNull(argName: String) {
     require(fs.metadataOrNull(this)?.isDirectory != false) { "$argName is not a directory" }
 }
 
+@Suppress("NOTHING_TO_INLINE")
+@Throws(IllegalArgumentException::class)
+internal inline fun String.requireDiffFileExtensionNameValid(argName: String) {
+    require(!contains(' ')) { "$argName cannot contain white space" }
+    require(lines().size == 1) { "$argName cannot contain line breaks" }
+    require(startsWith('.')) { "$argName must start with a '.'" }
+    require(length > 1) { "$argName length must be greater than 1" }
+}
+
 internal val base16: Base16 = Base16 { encodeToLowercase = true }
 
 internal val base64: Base64 = Base64 { lineBreakInterval = 64 }

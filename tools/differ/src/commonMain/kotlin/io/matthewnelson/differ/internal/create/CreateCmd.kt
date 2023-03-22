@@ -42,11 +42,11 @@ internal class CreateCmd: Create() {
         description = "Also creates a human readable text file of the diff to the specified out-dir"
     ).default(true)
 
-    override val diffFileNameOpt: String by option(
+    override val diffFileExtNameOpt: String by option(
         type = ArgType.String,
-        fullName = NAME_DIFF_FILE_NAME,
-        description = "The name of the generated diff file. Default: <file1 name>.diff (e.g. file-unsigned.diff)"
-    ).default("")
+        fullName = NAME_DIFF_FILE_EXT,
+        description = "The file extension name to use for the diff file"
+    ).default(DEFAULT_EXT)
 
     override val outDirArg: Path by argument(
         type = ArgTypePath,

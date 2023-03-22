@@ -21,7 +21,7 @@ import io.matthewnelson.differ.internal.requireFileExistAndNotEmpty
 import okio.Path
 
 internal abstract class Apply: Subcommand(
-    name = "apply",
+    name = NAME_CMD,
     description = """
         Applies a diff to it's associated file and outputs
         the new file to specified path.
@@ -30,17 +30,17 @@ internal abstract class Apply: Subcommand(
 ) {
 
     protected abstract val fileArg: Path
-    protected abstract val diffArg: Path
+    protected abstract val diffFileArg: Path
     protected abstract val outFileArg: Path
 
     final override fun execute() {
         fileArg.requireFileExistAndNotEmpty(NAME_FILE)
-        diffArg.requireFileExistAndNotEmpty(NAME_DIFF)
-        require(fileArg != diffArg) { "$NAME_FILE cannot equal $NAME_DIFF" }
+        diffFileArg.requireFileExistAndNotEmpty(NAME_DIFF_FILE)
+        require(fileArg != diffFileArg) { "$NAME_FILE cannot equal $NAME_DIFF_FILE" }
         outFileArg.requireFileDoesNotExist(NAME_OUT_FILE)
 
         try {
-            run(fileArg, diffArg, outFileArg)
+            run(fileArg, diffFileArg, outFileArg)
         } catch (t: Throwable) {
             // TODO: Clean up
             throw t
@@ -51,14 +51,16 @@ internal abstract class Apply: Subcommand(
         // TODO
         println("""
             $NAME_FILE: $file
-            $NAME_DIFF: $diff
+            $NAME_DIFF_FILE: $diff
             $NAME_OUT_FILE: $outFile
         """.trimIndent())
     }
 
     internal companion object {
+        internal const val NAME_CMD = "apply"
+
         internal const val NAME_FILE = "file"
-        internal const val NAME_DIFF = "diff"
+        internal const val NAME_DIFF_FILE = "diff-file"
         internal const val NAME_OUT_FILE = "out-file"
 
         @Throws(IllegalArgumentException::class)
@@ -69,7 +71,7 @@ internal abstract class Apply: Subcommand(
         ): Apply {
             return object : Apply() {
                 override val fileArg: Path = file
-                override val diffArg: Path = diff
+                override val diffFileArg: Path = diff
                 override val outFileArg: Path = outFile
             }
         }

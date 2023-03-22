@@ -15,6 +15,7 @@
  **/
 package io.matthewnelson.differ.internal.create
 
+import io.matthewnelson.differ.internal.*
 import io.matthewnelson.differ.internal.Subcommand
 import io.matthewnelson.differ.internal.requireDirOrNull
 import io.matthewnelson.differ.internal.requireFileDoesNotExist
@@ -23,19 +24,19 @@ import okio.Path
 import okio.Path.Companion.toPath
 
 internal abstract class Create: Subcommand(
-    name = "create",
+    name = NAME_CMD,
     description = """
         Creates a diff from 2 file inputs. The first file is
         compared to the second file whereby any differences
         that the second file has will be recorded.
-    """
+    """,
 ) {
 
     protected abstract val file1Arg: Path
     protected abstract val file2Arg: Path
     // TODO: Maybe?
     protected abstract val createReadableOpt: Boolean
-    protected abstract val diffFileNameOpt: String
+    protected abstract val diffFileExtNameOpt: String
     protected abstract val outDirArg: Path
 
     final override fun execute() {
@@ -43,7 +44,9 @@ internal abstract class Create: Subcommand(
         file2Arg.requireFileExistAndNotEmpty(NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
         outDirArg.requireDirOrNull(NAME_OUT_DIR)
-        val diffFile = outDirArg.resolve(diffFileNameOpt.ifBlank { file1Arg.name + ".diff" })
+        diffFileExtNameOpt.requireDiffFileExtensionNameValid(NAME_DIFF_FILE_EXT)
+
+        val diffFile = outDirArg.resolve(file1Arg.name + diffFileExtNameOpt)
         diffFile.requireFileDoesNotExist(NAME_OUT_DIR)
         val humanReadablefile = if (createReadableOpt) "$diffFile.txt".toPath() else null
 
@@ -67,11 +70,15 @@ internal abstract class Create: Subcommand(
     }
 
     internal companion object {
+        internal const val NAME_CMD = "create"
+
         internal const val NAME_FILE_1 = "file1"
         internal const val NAME_FILE_2 = "file2"
         internal const val NAME_CREATE_READABLE = "create-readable"
-        internal const val NAME_DIFF_FILE_NAME = "diff-name"
+        internal const val NAME_DIFF_FILE_EXT = "diff-extension-name"
         internal const val NAME_OUT_DIR = "out-dir"
+
+        internal const val DEFAULT_EXT = ".diff"
 
         @Throws(IllegalArgumentException::class)
         internal fun from(
@@ -85,7 +92,7 @@ internal abstract class Create: Subcommand(
                 override val file1Arg: Path = file1
                 override val file2Arg: Path = file2
                 override val createReadableOpt: Boolean = createReadable
-                override val diffFileNameOpt: String = diffFileName
+                override val diffFileExtNameOpt: String = diffFileName
                 override val outDirArg: Path = outDir
             }
         }
