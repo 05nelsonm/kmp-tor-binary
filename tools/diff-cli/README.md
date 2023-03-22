@@ -44,7 +44,7 @@ The `i:46` with an empty difference below it simply states that between index
 `(4 + number of modified bytes)` and index `46`, there were no changes and to
 use `FileA`'s current data.
 
-Appling the diff will change it's sha256 has from `225c10aa2f68ee67e36e456589134ad5fefd55757d57bd5102317278f53838cf`,
+Appling the diff will change it's sha256 hash from `225c10aa2f68ee67e36e456589134ad5fefd55757d57bd5102317278f53838cf`,
 to `45691d3c5c79895d03cda232bea12d524ea5cd2a914845ed75c48272a1eb1867`
 
 Will work on any file, for any signatures, anything... you can diff the `README.md` with

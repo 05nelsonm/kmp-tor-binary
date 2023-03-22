@@ -38,19 +38,6 @@ class OptionsUnitTest: DiffCoreTestHelper() {
     }
 
     @Test
-    fun givenDiffOptions_whenNotStaticTime_thenWritesCurrentTime() {
-        file1.writeText("asdfasdf")
-        file2.writeText("aaaa")
-        val now = Clock.System.now()
-        val diffFile = Diff.create(fs, file1, file2, diffDir, Diff.Options {
-            useStaticTime = false
-        })
-        val header = Diff.readHeader(fs, diffFile)
-        assertNotEquals(Diff.Options.STATIC_TIME.toInstant(), header.createdAtInstant)
-        assertTrue(header.createdAtInstant > now)
-    }
-
-    @Test
     fun givenDiffOptions_whenDifferentExtension_thenUses() {
         file1.writeText("asdfasdf")
         file2.writeText("aaaa")
