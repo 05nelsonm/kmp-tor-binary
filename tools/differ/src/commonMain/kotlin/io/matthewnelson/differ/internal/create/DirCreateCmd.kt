@@ -28,7 +28,7 @@ internal class DirCreateCmd: Subcommand(
         Creates diff files from 2 identically structured
         directories. Walks the entire file tree of both
         directories and outputs diff files to the specified
-        ${DirApplyCmd.NAME_DIFF_DIR} when encoutering differences.
+        ${Create.NAME_DIFF_DIR} when encoutering differences.
         Both directories MUST have an identical file structure.
     """,
 ) {
@@ -58,7 +58,7 @@ internal class DirCreateCmd: Subcommand(
 
     private val diffDirArg: Path by argument(
         type = ArgTypePath,
-        fullName = DirApplyCmd.NAME_DIFF_DIR,
+        fullName = Create.NAME_DIFF_DIR,
         description = "The directory to output the generated diff files (e.g. /path/to/program-unsigned-diffs)",
     )
 

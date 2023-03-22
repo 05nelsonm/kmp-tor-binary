@@ -38,17 +38,17 @@ internal abstract class Create: Subcommand(
     // TODO: Maybe?
     protected abstract val createReadableOpt: Boolean
     protected abstract val diffFileExtNameOpt: String
-    protected abstract val outDirArg: Path
+    protected abstract val diffDirArg: Path
 
     final override fun execute() {
         file1Arg.requireFileExistAndNotEmpty(NAME_FILE_1)
         file2Arg.requireFileExistAndNotEmpty(NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
-        outDirArg.requireDirOrNull(NAME_OUT_DIR)
+        diffDirArg.requireDirOrNull(NAME_DIFF_DIR)
         diffFileExtNameOpt.requireDiffFileExtensionNameValid(NAME_DIFF_FILE_EXT)
 
-        val diffFile = outDirArg.resolve(file1Arg.name + diffFileExtNameOpt)
-        diffFile.requireFileDoesNotExist(NAME_OUT_DIR)
+        val diffFile = diffDirArg.resolve(file1Arg.name + diffFileExtNameOpt)
+        diffFile.requireFileDoesNotExist(NAME_DIFF_DIR)
         val humanReadablefile = if (createReadableOpt) "$diffFile.txt".toPath() else null
 
         try {
@@ -77,7 +77,7 @@ internal abstract class Create: Subcommand(
         internal const val NAME_FILE_2 = "file2"
         internal const val NAME_CREATE_READABLE = "create-readable"
         internal const val NAME_DIFF_FILE_EXT = "diff-extension-name"
-        internal const val NAME_OUT_DIR = "out-dir"
+        internal const val NAME_DIFF_DIR = "diff-dir"
 
         internal const val DEFAULT_EXT = ".diff"
 
@@ -86,15 +86,15 @@ internal abstract class Create: Subcommand(
             file1: Path,
             file2: Path,
             createReadable: Boolean,
-            diffFileName: String,
-            outDir: Path
+            diffFileExtName: String,
+            diffDir: Path,
         ): Create {
             return object : Create() {
                 override val file1Arg: Path = file1
                 override val file2Arg: Path = file2
                 override val createReadableOpt: Boolean = createReadable
-                override val diffFileExtNameOpt: String = diffFileName
-                override val outDirArg: Path = outDir
+                override val diffFileExtNameOpt: String = diffFileExtName
+                override val diffDirArg: Path = diffDir
             }
         }
     }

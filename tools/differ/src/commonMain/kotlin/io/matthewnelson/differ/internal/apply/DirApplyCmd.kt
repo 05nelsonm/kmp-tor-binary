@@ -39,14 +39,14 @@ internal class DirApplyCmd: Subcommand(
 
     private val diffDirArg: Path by argument(
         type = ArgTypePath,
-        fullName = NAME_DIFF_DIR,
+        fullName = Create.NAME_DIFF_DIR,
         description = "The directory of diff files to be applied to $NAME_DIR (e.g. /path/to/program-unsigned-diffs)",
     )
 
     private val outDirArg: Path by argument(
         type = ArgTypePath,
-        fullName = Create.NAME_OUT_DIR,
-        description = "The new directory for all files of $NAME_DIR with diffs from $NAME_DIFF_DIR applied (e.g. /path/to/program-signed)",
+        fullName = NAME_OUT_DIR,
+        description = "The new directory for all files of $NAME_DIR with diffs from ${Create.NAME_DIFF_DIR} applied (e.g. /path/to/program-signed)",
     )
 
     private val diffFileExtNameOpt: String by option(
@@ -75,6 +75,6 @@ internal class DirApplyCmd: Subcommand(
         internal const val NAME_CMD = "dir-apply"
 
         internal const val NAME_DIR = "dir"
-        internal const val NAME_DIFF_DIR = "diff-dir"
+        internal const val NAME_OUT_DIR = "out-dir"
     }
 }

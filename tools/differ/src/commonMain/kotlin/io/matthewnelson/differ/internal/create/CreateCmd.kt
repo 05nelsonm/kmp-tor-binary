@@ -48,9 +48,9 @@ internal class CreateCmd: Create() {
         description = "The file extension name to use for the diff file"
     ).default(DEFAULT_EXT)
 
-    override val outDirArg: Path by argument(
+    override val diffDirArg: Path by argument(
         type = ArgTypePath,
-        fullName = NAME_OUT_DIR,
+        fullName = NAME_DIFF_DIR,
         description = "The directory to output the generated diff file to (e.g. /path/to/directory)"
     )
 }
