@@ -30,10 +30,10 @@ public class Header
 internal constructor(
     @JvmField public val schema: Diff.Schema,
     private val createdAtInstant: Instant,
-    @JvmField public val createdForName: String,
+    @JvmField public val createdForFile: String,
     @JvmField public val createdForHash: String,
     @JvmField public val createdFromHash: String,
-): ValueClazz(schema.toString() + createdAtInstant + createdForName + createdForHash + createdFromHash) {
+): ValueClazz(schema.toString() + createdAtInstant + createdForFile + createdForHash + createdFromHash) {
 
     init {
         check(createdForHash.matches(REGEX)) { "createdForHash invalid sha256[$createdForHash]" }
@@ -52,8 +52,8 @@ internal constructor(
             writeUtf8(createdAtInstant.toString())
             writeNewLine()
 
-            writeUtf8(PREFIX_CREATED_FOR_NAME)
-            writeUtf8(createdForName)
+            writeUtf8(PREFIX_CREATED_FOR_FILE)
+            writeUtf8(createdForFile)
             writeNewLine()
 
             writeUtf8(PREFIX_CREATED_FOR_HASH)
@@ -71,7 +71,7 @@ internal constructor(
             DiffHeader [
                 schema: $schema
                 createdAt: $createdAtInstant
-                createdForName: $createdForName
+                createdForFile: $createdForFile
                 createdForHash: $createdForHash
                 createdFromHash: $createdFromHash
             ]
@@ -81,7 +81,7 @@ internal constructor(
     internal companion object {
         private const val PREFIX_SCHEMA_VERSION: String = "$LINE_BREAK Diff Schema: " /* +Version */
         private const val PREFIX_CREATED_AT: String = "$LINE_BREAK Created At: "
-        private const val PREFIX_CREATED_FOR_NAME: String = "$LINE_BREAK Created For Name: "
+        private const val PREFIX_CREATED_FOR_FILE: String = "$LINE_BREAK Created For File: "
         private const val PREFIX_CREATED_FOR_HASH: String = "$LINE_BREAK Created For Hash: "
         private const val PREFIX_CREATED_FROM_HASH: String = "$LINE_BREAK Created From Hash: "
 
@@ -107,7 +107,7 @@ internal constructor(
             }
 
             val forFileName = readUtf8Line()
-                ?.substringAfter(PREFIX_CREATED_FOR_NAME)
+                ?.substringAfter(PREFIX_CREATED_FOR_FILE)
                 ?: throw IllegalStateException("Failed to read Diff createdForName")
 
             val forFileHash = readUtf8Line()
