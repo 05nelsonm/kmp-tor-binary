@@ -15,7 +15,6 @@
  **/
 package io.matthewnelson.differ.internal
 
-import okio.IOException
 import okio.Path
 
 internal class CmdApply: Subcommand(
@@ -26,41 +25,51 @@ internal class CmdApply: Subcommand(
     """,
     additionalIndent = 1,
 ) {
-    private val file: Path by argument(
+    private val fileArg: Path by argument(
         type = ArgTypePath,
+        fullName = NAME_FILE,
         description = "The file to apply the diff to (e.g. /path/to/file-unsigned)",
     )
 
-    private val diff: Path by argument(
+    private val diffArg: Path by argument(
         type = ArgTypePath,
-        description = "The generated diff to be applied to file (e.g. /path/to/file-unsigned.diff)",
+        fullName = NAME_DIFF,
+        description = "The previously created diff file to be applied (e.g. /path/to/file-unsigned.diff)",
     )
 
-    private val outFile: Path by argument(
+    private val outFileArg: Path by argument(
         type = ArgTypePath,
+        fullName = NAME_OUT_FILE,
         description = "The new file after the diff has been applied (e.g. /path/to/file-signed)",
     )
 
     override fun execute() {
-        file.requireFileExistAndNotEmpty("file")
-        diff.requireFileExistAndNotEmpty("diff")
-        require(file != diff) { "file cannot equal diff" }
-        outFile.requireFileDoesNotExist("outFile")
+        fileArg.requireFileExistAndNotEmpty(NAME_FILE)
+        diffArg.requireFileExistAndNotEmpty(NAME_DIFF)
+        require(fileArg != diffArg) { "$NAME_FILE cannot equal $NAME_DIFF" }
+        outFileArg.requireFileDoesNotExist(NAME_OUT_FILE)
 
         try {
-            run()
-        } catch (e: IOException) {
+            run(fileArg, diffArg, outFileArg)
+        } catch (t: Throwable) {
             // TODO: Clean up
-            throw e
+            throw t
         }
     }
 
-    @Throws(IOException::class)
-    private fun run() {
+    @Throws(Throwable::class)
+    internal fun run(file: Path, diff: Path, outFile: Path) {
+        // TODO
         println("""
-            file: $file
-            diff: $diff
-            out: $outFile
+            $NAME_FILE: $file
+            $NAME_DIFF: $diff
+            $NAME_OUT_FILE: $outFile
         """.trimIndent())
+    }
+
+    private companion object {
+        private const val NAME_FILE = "file"
+        private const val NAME_DIFF = "diff"
+        private const val NAME_OUT_FILE = "out-file"
     }
 }

@@ -20,8 +20,8 @@ package io.matthewnelson.differ.internal
 import kotlinx.cli.ArgType
 import kotlinx.cli.ExperimentalCli
 import kotlinx.cli.default
-import okio.IOException
 import okio.Path
+import okio.Path.Companion.toPath
 
 internal class CmdCreate: Subcommand(
     name = "create",
@@ -31,62 +31,70 @@ internal class CmdCreate: Subcommand(
         that the second file has will be recorded.
     """
 ) {
-    private val file1: Path by argument(
+    private val file1Arg: Path by argument(
         type = ArgTypePath,
+        fullName = NAME_FILE_1,
         description = "The first file (e.g. /path/to/file-unsigned)"
     )
 
-    private val file2: Path by argument(
+    private val file2Arg: Path by argument(
         type = ArgTypePath,
+        fullName = NAME_FILE_2,
         description = "The second file to diff against the first file (e.g. /path/to/file-signed)"
     )
 
     // TODO: Maybe?
-    private val createReadable: Boolean by option(
+    private val createReadableOpt: Boolean by option(
         type = ArgType.Boolean,
-        fullName = "create-readable",
-        shortName = "r",
+        fullName = NAME_CREATE_READABLE,
         description = "Also creates a human readable text file of the diff to the specified out-dir"
     ).default(true)
 
-    private val diffFileName: String by option(
+    private val diffFileNameOpt: String by option(
         type = ArgType.String,
-        fullName = "name",
-        shortName = "n",
+        fullName = NAME_DIFF_FILE_NAME,
         description = "The name of the generated diff file. Default: <file1 name>.diff (e.g. file-unsigned.diff)"
     ).default("")
 
-    private val outDir: Path by argument(
+    private val outDirArg: Path by argument(
         type = ArgTypePath,
-        fullName = "out-dir",
+        fullName = NAME_OUT_DIR,
         description = "The directory to output the generated diff file to (e.g. /path/to/directory)"
     )
 
-    private val diffFile: Path by lazy { outDir.resolve(diffFileName.ifBlank { file1.name + ".diff" }) }
-
     override fun execute() {
-        file1.requireFileExistAndNotEmpty("file1")
-        file2.requireFileExistAndNotEmpty("file2")
-        require(file1 != file2) { "file1 cannot equal file2" }
-        outDir.requireDirOrNull("out-dir")
-        diffFile.requireFileDoesNotExist("out-dir")
+        file1Arg.requireFileExistAndNotEmpty(NAME_FILE_1)
+        file2Arg.requireFileExistAndNotEmpty(NAME_FILE_2)
+        require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
+        outDirArg.requireDirOrNull(NAME_OUT_DIR)
+        val diffFile = outDirArg.resolve(diffFileNameOpt.ifBlank { file1Arg.name + ".diff" })
+        diffFile.requireFileDoesNotExist(NAME_OUT_DIR)
+        val humanReadablefile = if (createReadableOpt) "$diffFile.txt".toPath() else null
 
         try {
-            run()
-        } catch (e: IOException) {
+            run(file1Arg, file2Arg, diffFile, humanReadablefile)
+        } catch (t: Throwable) {
             // TODO: Clean up
-            throw e
+            throw t
         }
     }
 
-    @Throws(IOException::class)
-    private fun run() {
+    @Throws(Throwable::class)
+    internal fun run(file1: Path, file2: Path, diffFile: Path, hrFile: Path?) {
+        // TODO
         println("""
-            file1: $file1
-            file2: $file2
-            createReadable: $createReadable
-            diffFileName: ${diffFile.name}
-            outDir: $outDir
+            $NAME_FILE_1: $file1
+            $NAME_FILE_2: $file2
+            diffFile: $diffFile
+            humanReadableFile: $hrFile
         """.trimIndent())
+    }
+
+    private companion object {
+        private const val NAME_FILE_1 = "file1"
+        private const val NAME_FILE_2 = "file2"
+        private const val NAME_CREATE_READABLE = "create-readable"
+        private const val NAME_DIFF_FILE_NAME = "diff-name"
+        private const val NAME_OUT_DIR = "out-dir"
     }
 }
