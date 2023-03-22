@@ -16,7 +16,9 @@
 package io.matthewnelson.differ.internal.apply
 
 import io.matthewnelson.differ.internal.Subcommand
+import io.matthewnelson.differ.internal.get
 import io.matthewnelson.differ.internal.requireFileExistAndNotEmpty
+import okio.FileSystem
 import okio.Path
 
 internal abstract class Apply: Subcommand(
@@ -36,19 +38,24 @@ internal abstract class Apply: Subcommand(
         diffFileArg.requireFileExistAndNotEmpty(NAME_DIFF_FILE)
         require(fileArg != diffFileArg) { "$NAME_FILE cannot equal $NAME_DIFF_FILE" }
 
+        val fs = FileSystem.get()
+
         try {
-            run(fileArg, diffFileArg)
+            run(
+                file = fs.canonicalize(fileArg),
+                diffFile = fs.canonicalize(diffFileArg)
+            )
         } catch (t: Throwable) {
             // TODO: Clean up
             throw t
         }
     }
 
-    private fun run(file: Path, diff: Path) {
+    private fun run(file: Path, diffFile: Path) {
         // TODO
         println("""
             $NAME_FILE: $file
-            $NAME_DIFF_FILE: $diff
+            $NAME_DIFF_FILE: $diffFile
         """.trimIndent())
     }
 

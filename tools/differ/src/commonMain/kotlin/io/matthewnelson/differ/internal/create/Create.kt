@@ -20,6 +20,8 @@ import io.matthewnelson.differ.internal.Subcommand
 import io.matthewnelson.differ.internal.requireDirOrNull
 import io.matthewnelson.differ.internal.requireFileDoesNotExist
 import io.matthewnelson.differ.internal.requireFileExistAndNotEmpty
+import okio.FileSystem
+import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
 
@@ -47,17 +49,41 @@ internal abstract class Create: Subcommand(
         file1Arg.requireFileExistAndNotEmpty(NAME_FILE_1)
         file2Arg.requireFileExistAndNotEmpty(NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
-        diffDirArg.requireDirOrNull(DiffDirArg.NAME_ARG)
+        val mustCreate = diffDirArg.requireDirOrNull(DiffDirArg.NAME_ARG)
         diffFileExtNameOpt.requireDiffFileExtensionNameValid(DiffFileExtNameOpt.NAME_OPT)
 
-        val diffFile = diffDirArg.resolve(file1Arg.name + diffFileExtNameOpt)
+        val fs = FileSystem.get()
+        fs.createDirectories(diffDirArg, mustCreate = mustCreate)
+        val canonicalDiffDir = fs.canonicalize(diffDirArg)
+
+        val diffFile = canonicalDiffDir.resolve(file1Arg.name + diffFileExtNameOpt)
         diffFile.requireFileDoesNotExist(DiffDirArg.NAME_ARG)
         val humanReadablefile = if (createReadableOpt) "$diffFile.txt".toPath() else null
+        humanReadablefile?.let { hrf ->
+            hrf.requireFileDoesNotExist("Human readable file ${hrf.name}")
+        }
 
         try {
-            run(file1Arg, file2Arg, diffFile, humanReadablefile)
+            run(
+                file1 = fs.canonicalize(file1Arg),
+                file2 = fs.canonicalize(file2Arg),
+                diffFile = diffFile,
+                hrFile = humanReadablefile,
+            )
         } catch (t: Throwable) {
-            // TODO: Clean up
+            try {
+                if (mustCreate) {
+                    fs.deleteRecursively(canonicalDiffDir, mustExist = false)
+                } else {
+                    fs.delete(diffFile, mustExist = false)
+                    if (humanReadablefile != null) {
+                        fs.delete(humanReadablefile, mustExist = false)
+                    }
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+
             throw t
         }
     }

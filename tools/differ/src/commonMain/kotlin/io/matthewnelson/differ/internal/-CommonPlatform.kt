@@ -44,11 +44,18 @@ internal inline fun Path.requireFileDoesNotExist(argName: String) {
     require(!fs.exists(this)) { "$argName exists" }
 }
 
+/**
+ * Checks if the path is a directory.
+ *
+ * @return true when the directory needs to be created
+ * */
 @Suppress("NOTHING_TO_INLINE")
 @Throws(IllegalArgumentException::class)
-internal inline fun Path.requireDirOrNull(argName: String) {
+internal inline fun Path.requireDirOrNull(argName: String): Boolean {
     val fs = FileSystem.get()
-    require(fs.metadataOrNull(this)?.isDirectory != false) { "$argName is not a directory" }
+    val isDir = fs.metadataOrNull(this)?.isDirectory
+    require(isDir != false) { "$argName is not a directory" }
+    return isDir == null
 }
 
 @Suppress("NOTHING_TO_INLINE")
