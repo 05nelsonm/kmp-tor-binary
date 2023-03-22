@@ -29,6 +29,6 @@ set ARGS=%*
 set ARGS=!ARGS:*%1=!
 if "!ARGS:~0,1!"==" " set ARGS=!ARGS:~1!
 
-call gradlew --quiet ":tools:%TOOL%:build" && call "tools\%TOOL%\build\bin\%TOOL%\releaseExecutable\%TOOL%.kexe" %ARGS%
+call gradlew --quiet ":tools:%TOOL%:installDist" && call "tools\%TOOL%\build\install\%TOOL%\bin\%TOOL%" %ARGS%
 
 if "%OS%"=="Windows_NT" endlocal

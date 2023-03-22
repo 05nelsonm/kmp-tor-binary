@@ -19,4 +19,4 @@ if [ -z "${TOOL}" ] || [ ! -d "tools/${TOOL}" ]; then
   exit 1
 fi
 
-./gradlew --quiet ":tools:${TOOL}:build" && "./tools/${TOOL}/build/bin/${TOOL}/releaseExecutable/${TOOL}.kexe" "$@"
+./gradlew --quiet ":tools:${TOOL}:installDist" && "./tools/${TOOL}/build/install/${TOOL}/bin/${TOOL}" "$@"

@@ -30,5 +30,5 @@ if (CHECK_PUBLICATION != null) {
         include(":library:$name")
     }
 
-    include(":tools:diff")
+    include(":tools:differ")
 }

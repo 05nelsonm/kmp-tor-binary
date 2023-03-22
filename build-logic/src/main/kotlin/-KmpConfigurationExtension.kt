@@ -107,16 +107,13 @@ fun KmpConfigurationExtension.configureTool(
                 osName.startsWith("Windows", true) -> {
                     mingwX64(project.name) { target { setup() } }
                 }
-
                 osName == "Mac OS X" -> {
                     macosX64(project.name) { target { setup() } }
                 }
-
                 osName.contains("Mac", true) -> {
                     macosArm64(project.name) { target { setup() } }
                 }
-
-                osName == "Linux" -> {
+                osName.startsWith("Linux", true) -> {
                     linuxX64(project.name) { target { setup() } }
                 }
             }
@@ -127,7 +124,7 @@ fun KmpConfigurationExtension.configureTool(
                 val libs = project.the<LibrariesForLibs>()
 
                 dependencies {
-                    implementation(libs.cliKt)
+                    implementation(libs.kotlin.cli)
                 }
             }
 
