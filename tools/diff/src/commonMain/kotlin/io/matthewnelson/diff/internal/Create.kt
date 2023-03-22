@@ -23,7 +23,12 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import okio.Path
 
-internal class Create: DiffCommand(help = "Creates a diff from 2 file inputs. The first file is compared to the second file whereby any differences that the second file has will be recorded.") {
+internal class Create: DiffCommand(
+    help = "Creates a diff from 2 file inputs. " +
+            "The first file is compared to the " +
+            "second file whereby any differences " +
+            "that the second file has will be recorded."
+) {
     private val file1: Path by argument(
         name = "<file1>",
         help = "The first file (e.g. /path/to/file-unsigned)"

@@ -23,7 +23,9 @@ import com.github.ajalt.clikt.parameters.options.flag
 import com.github.ajalt.clikt.parameters.options.option
 import okio.Path
 
-internal class Apply : DiffCommand(help = "Applys a diff to it's associated file and outputs a new file") {
+internal class Apply : DiffCommand(
+    help = "Applys a diff to it's associated file and outputs a new file"
+) {
     private val file: Path by argument(
         name = "<file>",
         help = "The file to apply the diff to (e.g. /path/to/file-unsigned)"
