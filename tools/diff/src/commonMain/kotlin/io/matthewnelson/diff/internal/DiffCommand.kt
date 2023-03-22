@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.diff
+package io.matthewnelson.diff.internal
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.subcommands
-import io.matthewnelson.diff.internal.Apply
-import io.matthewnelson.diff.internal.Create
+import okio.FileSystem
 
-private class Diff: CliktCommand(help = "Create and apply file diffs") { override fun run() {} }
-
-public fun main(args: Array<String>): Unit = Diff().subcommands(Create(), Apply()).main(args)
+internal sealed class DiffCommand(help: String): CliktCommand(help = help, printHelpOnEmptyArgs = true) {
+    protected val fs by lazy { FileSystem.get() }
+}

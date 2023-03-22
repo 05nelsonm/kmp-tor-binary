@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.diff
+package io.matthewnelson.diff.internal
 
-import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.core.subcommands
-import io.matthewnelson.diff.internal.Apply
-import io.matthewnelson.diff.internal.Create
+import com.github.ajalt.clikt.parameters.arguments.ArgumentTransformContext
+import okio.Path
+import okio.Path.Companion.toPath
 
-private class Diff: CliktCommand(help = "Create and apply file diffs") { override fun run() {} }
-
-public fun main(args: Array<String>): Unit = Diff().subcommands(Create(), Apply()).main(args)
+internal object PathConverter: (ArgumentTransformContext, String) -> Path {
+    override fun invoke(p1: ArgumentTransformContext, p2: String): Path {
+        return p2.toPath(normalize = true)
+    }
+}
