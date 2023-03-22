@@ -16,21 +16,21 @@
 package io.matthewnelson.diff.cli.internal
 
 import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgType
 import kotlinx.cli.DefaultRequiredType
 import kotlinx.cli.SingleArgument
-import okio.Path
 
 internal interface ArgDiffDir {
-    val diffDirArg: Path
+    val diffDirArg: String
 
     companion object {
         internal const val NAME_ARG = "diff-dir"
 
         internal fun ArgParser.diffDirArgument(
             description: String
-        ): SingleArgument<Path, DefaultRequiredType.Required> {
+        ): SingleArgument<String, DefaultRequiredType.Required> {
             return argument(
-                type = ArgTypePath,
+                type = ArgType.String,
                 fullName = NAME_ARG,
                 description = description
             )

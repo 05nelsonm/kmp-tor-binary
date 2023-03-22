@@ -35,17 +35,21 @@ public final class io/matthewnelson/diff/core/Diff$Companion {
 public final class io/matthewnelson/diff/core/Diff$Options {
 	public static final field Companion Lio/matthewnelson/diff/core/Diff$Options$Companion;
 	public static final field DEFAULT_EXT_NAME Ljava/lang/String;
+	public static final field STATIC_TIME Ljava/lang/String;
+	public final field diffFileExtensionName Ljava/lang/String;
+	public final field schema Lio/matthewnelson/diff/core/Diff$Schema;
+	public final field useStaticTime Z
 	public fun <init> ()V
-	public fun <init> (Lio/matthewnelson/diff/core/Diff$Schema;)V
 	public fun <init> (Ljava/lang/String;)V
-	public fun <init> (Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Schema;)V
+	public fun <init> (Ljava/lang/String;Z)V
+	public fun <init> (Ljava/lang/String;ZLio/matthewnelson/diff/core/Diff$Schema;)V
+	public synthetic fun <init> (Ljava/lang/String;ZLio/matthewnelson/diff/core/Diff$Schema;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lio/matthewnelson/diff/core/Diff$Schema;
-	public final fun copy (Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Schema;)Lio/matthewnelson/diff/core/Diff$Options;
-	public static synthetic fun copy$default (Lio/matthewnelson/diff/core/Diff$Options;Ljava/lang/String;Lio/matthewnelson/diff/core/Diff$Schema;ILjava/lang/Object;)Lio/matthewnelson/diff/core/Diff$Options;
+	public final fun component2 ()Z
+	public final fun component3 ()Lio/matthewnelson/diff/core/Diff$Schema;
+	public final fun copy (Ljava/lang/String;ZLio/matthewnelson/diff/core/Diff$Schema;)Lio/matthewnelson/diff/core/Diff$Options;
+	public static synthetic fun copy$default (Lio/matthewnelson/diff/core/Diff$Options;Ljava/lang/String;ZLio/matthewnelson/diff/core/Diff$Schema;ILjava/lang/Object;)Lio/matthewnelson/diff/core/Diff$Options;
 	public fun equals (Ljava/lang/Object;)Z
-	public final fun getDiffFileExtensionName ()Ljava/lang/String;
-	public final fun getSchema ()Lio/matthewnelson/diff/core/Diff$Schema;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 	public final fun validateExtensionName ()V

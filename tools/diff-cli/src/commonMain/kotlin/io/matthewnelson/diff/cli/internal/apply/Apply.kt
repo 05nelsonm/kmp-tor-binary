@@ -15,11 +15,10 @@
  **/
 package io.matthewnelson.diff.cli.internal.apply
 
-import io.matthewnelson.diff.cli.internal.ArgTypePath
 import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
-import okio.Path
+import kotlinx.cli.ArgType
 
 internal class Apply: Subcommand(
     name = NAME_CMD,
@@ -30,14 +29,14 @@ internal class Apply: Subcommand(
     additionalIndent = 1,
 ) {
 
-    private val diffFileArg: Path by argument(
-        type = ArgTypePath,
+    private val diffFileArg: String by argument(
+        type = ArgType.String,
         fullName = NAME_DIFF_FILE,
         description = "The previously created diff file to be applied (e.g. /path/to/diff/file.diff)",
     )
 
-    private val fileArg: Path by argument(
-        type = ArgTypePath,
+    private val fileArg: String by argument(
+        type = ArgType.String,
         fullName = NAME_FILE,
         description = "The file to apply the diff to (e.g. /path/to/unsigned/file)",
     )

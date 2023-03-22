@@ -18,13 +18,12 @@ package io.matthewnelson.diff.cli.internal.create
 import io.matthewnelson.diff.cli.internal.*
 import io.matthewnelson.diff.cli.internal.ArgDiffDir
 import io.matthewnelson.diff.cli.internal.ArgDiffDir.Companion.diffDirArgument
-import io.matthewnelson.diff.cli.internal.ArgTypePath
 import io.matthewnelson.diff.cli.internal.OptDiffFileExtName
 import io.matthewnelson.diff.cli.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
 import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.OptStaticTime.Companion.staticTimeOption
 import io.matthewnelson.diff.cli.internal.Subcommand
-import okio.Path
+import kotlinx.cli.ArgType
 
 internal class DirCreate: Subcommand(
     name = NAME_CMD,
@@ -40,19 +39,19 @@ internal class DirCreate: Subcommand(
     OptStaticTime
 {
 
-    private val dir1Arg: Path by argument(
-        type = ArgTypePath,
+    private val dir1Arg: String by argument(
+        type = ArgType.String,
         fullName = NAME_DIR_1,
         description = "The first directory (e.g. /path/to/unsigned/program)",
     )
 
-    private val dir2Arg: Path by argument(
-        type = ArgTypePath,
+    private val dir2Arg: String by argument(
+        type = ArgType.String,
         fullName = NAME_DIR_2,
         description = "The second directory (identical structure to $NAME_DIR_1) to diff against the first (e.g. /path/to/signed/program)",
     )
 
-    override val diffDirArg: Path by diffDirArgument(
+    override val diffDirArg: String by diffDirArgument(
         description = "The directory to output the generated diff files (e.g. /path/to/diffs/program)",
     )
 

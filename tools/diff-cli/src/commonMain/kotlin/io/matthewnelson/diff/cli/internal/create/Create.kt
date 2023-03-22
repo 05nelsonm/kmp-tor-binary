@@ -22,7 +22,7 @@ import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.OptStaticTime.Companion.staticTimeOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
-import okio.Path
+import kotlinx.cli.ArgType
 
 internal class Create: Subcommand(
     name = NAME_CMD,
@@ -37,19 +37,19 @@ internal class Create: Subcommand(
     OptStaticTime
 {
 
-    private val file1Arg: Path by argument(
-        type = ArgTypePath,
+    private val file1Arg: String by argument(
+        type = ArgType.String,
         fullName = NAME_FILE_1,
         description = "The first file (e.g. /path/to/unsigned/file)"
     )
 
-    private val file2Arg: Path by argument(
-        type = ArgTypePath,
+    private val file2Arg: String by argument(
+        type = ArgType.String,
         fullName = NAME_FILE_2,
         description = "The second file to diff against the first file (e.g. /path/to/signed/file)"
     )
 
-    override val diffDirArg: Path by diffDirArgument(
+    override val diffDirArg: String by diffDirArgument(
         description = "The directory to output the generated diff file to (e.g. /path/to/diffs)"
     )
 
@@ -64,9 +64,9 @@ internal class Create: Subcommand(
     override fun execute() {
         try {
             Diff.create(
-                file1 = file1Arg,
-                file2 = file2Arg,
-                diffDir = diffDirArg,
+                file1Path = file1Arg,
+                file2Path = file2Arg,
+                diffDirPath = diffDirArg,
                 options = Diff.Options(
                     diffFileExtensionName = diffFileExtNameOpt,
                     useStaticTime = staticTimeOpt,

@@ -17,13 +17,12 @@ package io.matthewnelson.diff.cli.internal.apply
 
 import io.matthewnelson.diff.cli.internal.ArgDiffDir
 import io.matthewnelson.diff.cli.internal.ArgDiffDir.Companion.diffDirArgument
-import io.matthewnelson.diff.cli.internal.ArgTypePath
 import io.matthewnelson.diff.cli.internal.OptDiffFileExtName
 import io.matthewnelson.diff.cli.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
 import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.cli.internal.create.DirCreate
-import okio.Path
+import kotlinx.cli.ArgType
 
 internal class DirApply: Subcommand(
     name = NAME_CMD,
@@ -37,13 +36,13 @@ internal class DirApply: Subcommand(
     OptDiffFileExtName
 {
 
-    private val dirArg: Path by argument(
-        type = ArgTypePath,
+    private val dirArg: String by argument(
+        type = ArgType.String,
         fullName = NAME_DIR,
         description = "The directory to apply the file diffs to (e.g. /path/to/unsigned/program)",
     )
 
-    override val diffDirArg: Path by diffDirArgument(
+    override val diffDirArg: String by diffDirArgument(
         description = "The directory of diff files to be applied to $NAME_DIR (e.g. /path/to/diffs/program)",
     )
 

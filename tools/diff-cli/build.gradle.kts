@@ -22,7 +22,6 @@ kmpConfiguration {
         common {
             sourceSetMain {
                 dependencies {
-                    implementation(libs.okio.okio)
                     implementation(project(":tools:diff-cli:core"))
                 }
             }
