@@ -21,10 +21,7 @@ import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
 import io.matthewnelson.differ.internal.Subcommand
-import io.matthewnelson.differ.internal.create.Create
 import io.matthewnelson.differ.internal.create.DirCreateCmd
-import kotlinx.cli.ArgType
-import kotlinx.cli.default
 import okio.Path
 
 internal class DirApplyCmd: Subcommand(
@@ -32,6 +29,7 @@ internal class DirApplyCmd: Subcommand(
     description = """
         Applies diff files from previously created
         ${DirCreateCmd.NAME_CMD} to the specified $NAME_DIR.
+        Files from $NAME_DIR are modified in place.
     """,
     additionalIndent = 1,
 ),  DiffDirArg,
@@ -40,17 +38,11 @@ internal class DirApplyCmd: Subcommand(
     private val dirArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIR,
-        description = "The directory to apply the file diffs to (e.g. /path/to/program-unsigned)",
+        description = "The directory to apply the file diffs to (e.g. /path/to/unsigned/program)",
     )
 
     override val diffDirArg: Path by diffDirArgument(
-        description = "The directory of diff files to be applied to $NAME_DIR (e.g. /path/to/program-unsigned-diffs)",
-    )
-
-    private val outDirArg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_OUT_DIR,
-        description = "The new directory for all files of $NAME_DIR with diffs from ${DiffDirArg.NAME_ARG} applied (e.g. /path/to/program-signed)",
+        description = "The directory of diff files to be applied to $NAME_DIR (e.g. /path/to/diffs/program)",
     )
 
     override val diffFileExtNameOpt: String by diffFileExtNameOption(
@@ -77,6 +69,5 @@ internal class DirApplyCmd: Subcommand(
         internal const val NAME_CMD = "dir-apply"
 
         internal const val NAME_DIR = "dir"
-        internal const val NAME_OUT_DIR = "out-dir"
     }
 }

@@ -23,8 +23,6 @@ import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
 import io.matthewnelson.differ.internal.Subcommand
-import kotlinx.cli.ArgType
-import kotlinx.cli.default
 import okio.Path
 
 internal class DirCreateCmd: Subcommand(
@@ -43,13 +41,13 @@ internal class DirCreateCmd: Subcommand(
     private val dir1Arg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIR_1,
-        description = "The first directory (e.g. /path/to/program-unsigned)",
+        description = "The first directory (e.g. /path/to/unsigned/program)",
     )
 
     private val dir2Arg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIR_2,
-        description = "The second directory (identical structure to $NAME_DIR_1) to diff against the first (e.g. /path/to/program-signed)",
+        description = "The second directory (identical structure to $NAME_DIR_1) to diff against the first (e.g. /path/to/signed/program)",
     )
 
     override val createReadableOpt: Boolean by createReadableOption(
@@ -61,7 +59,7 @@ internal class DirCreateCmd: Subcommand(
     )
 
     override val diffDirArg: Path by diffDirArgument(
-        description = "The directory to output the generated diff files (e.g. /path/to/program-unsigned-diffs)",
+        description = "The directory to output the generated diff files (e.g. /path/to/diffs/program)",
     )
 
     override fun execute() {

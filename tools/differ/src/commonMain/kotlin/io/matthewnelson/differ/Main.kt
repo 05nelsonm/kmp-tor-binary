@@ -42,9 +42,7 @@ public fun main(args: Array<String>) {
         }
         else -> {
             when (args.first()) {
-                "-h", "--help" -> {
-                    printHeader()
-                }
+                "-h", "--help" -> printHeader()
             }
             args
         }
@@ -59,13 +57,13 @@ public fun main(args: Array<String>) {
 
 private fun printHeader() {
     // TODO: BuildConfig https://github.com/gmazzo/gradle-buildconfig-plugin
-    val version = "0.1.0"
+    val versionName = "0.1.0"
     val url = "https://github.com/05nelsonm/kmp-tor-binary/tools/differ"
 
     val programName = PROGRAM_NAME.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
 
     println("""
-        $programName v$version
+        $programName v$versionName
         Copyright (C) 2023 Matthew Nelson
         Apache License, Version 2.0
         

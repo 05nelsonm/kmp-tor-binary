@@ -47,9 +47,7 @@ internal abstract class Subcommand(
 
                 for (i in 1..lines.lastIndex) {
                     appendLine()
-                    repeat(name.length + 4 + 3 + plusIndent) {
-                        append(' ')
-                    }
+                    repeat(name.length + 4 + 3 + plusIndent) { append(' ') }
                     append(lines[i])
                 }
             }.toString()

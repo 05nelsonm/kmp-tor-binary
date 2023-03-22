@@ -22,18 +22,12 @@ internal class ApplyCmd: Apply() {
     override val fileArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_FILE,
-        description = "The file to apply the diff to (e.g. /path/to/file-unsigned)",
+        description = "The file to apply the diff to (e.g. /path/to/unsigned/file)",
     )
 
     override val diffFileArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_DIFF_FILE,
-        description = "The previously created diff file to be applied (e.g. /path/to/file-unsigned.diff)",
-    )
-
-    override val outFileArg: Path by argument(
-        type = ArgTypePath,
-        fullName = NAME_OUT_FILE,
-        description = "The new file after the diff has been applied (e.g. /path/to/file-signed)",
+        description = "The previously created diff file to be applied (e.g. /path/to/diff/file.diff)",
     )
 }

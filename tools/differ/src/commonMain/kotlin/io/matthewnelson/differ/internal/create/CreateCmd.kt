@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:OptIn(ExperimentalCli::class)
 
 package io.matthewnelson.differ.internal.create
 
@@ -22,20 +21,19 @@ import io.matthewnelson.differ.internal.CreateReadableOpt.Companion.createReadab
 import io.matthewnelson.differ.internal.DiffDirArg
 import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
-import kotlinx.cli.ExperimentalCli
 import okio.Path
 
 internal class CreateCmd: Create() {
     override val file1Arg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_FILE_1,
-        description = "The first file (e.g. /path/to/file-unsigned)"
+        description = "The first file (e.g. /path/to/unsigned/file)"
     )
 
     override val file2Arg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_FILE_2,
-        description = "The second file to diff against the first file (e.g. /path/to/file-signed)"
+        description = "The second file to diff against the first file (e.g. /path/to/signed/file)"
     )
 
     override val createReadableOpt: Boolean by createReadableOption(
@@ -47,6 +45,6 @@ internal class CreateCmd: Create() {
     )
 
     override val diffDirArg: Path by diffDirArgument(
-        description = "The directory to output the generated diff file to (e.g. /path/to/directory)"
+        description = "The directory to output the generated diff file to (e.g. /path/to/diffs)"
     )
 }
