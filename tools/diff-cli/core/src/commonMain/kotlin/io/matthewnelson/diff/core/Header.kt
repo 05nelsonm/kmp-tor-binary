@@ -89,7 +89,7 @@ internal constructor(
 
         @JvmSynthetic
         @Throws(IllegalStateException::class)
-        internal fun BufferedSource.readDiffFileHeader(): Header {
+        internal fun BufferedSource.readDiffHeader(): Header {
             val versionString = readUtf8Line()
                 ?.substringAfter(PREFIX_SCHEMA_VERSION)
                 ?: throw IllegalStateException("Failed to read Diff schema version")

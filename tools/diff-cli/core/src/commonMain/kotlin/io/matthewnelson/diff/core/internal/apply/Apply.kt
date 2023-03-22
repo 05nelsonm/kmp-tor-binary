@@ -17,7 +17,7 @@ package io.matthewnelson.diff.core.internal.apply
 
 import io.matthewnelson.diff.core.Diff
 import io.matthewnelson.diff.core.Header
-import io.matthewnelson.diff.core.Header.Companion.readDiffFileHeader
+import io.matthewnelson.diff.core.Header.Companion.readDiffHeader
 import io.matthewnelson.diff.core.internal.BASE16
 import io.matthewnelson.diff.core.internal.checkExistsAndIsFile
 import io.matthewnelson.diff.core.internal.create.Create.Companion.EOF_HASH
@@ -73,13 +73,13 @@ internal sealed class Apply private constructor() {
 
             if (hashContent != hashEOF) {
                 throw IllegalStateException(
-                    "Validation check failed. DiffFile contentHash[$hashContent] didn't " +
-                    "match recordedHash[$hashEOF]. Was the DiffFile modified?"
+                    "Validation check failed. Diff file contentHash[$hashContent] didn't " +
+                    "match recordedHash[$hashEOF]. Was the Diff file modified?"
                 )
             }
 
             fs.read(diffFile) {
-                val header = readDiffFileHeader()
+                val header = readDiffHeader()
                 val (hash, _) = fs.hashLengthOf(applyTo)
                 if (header.forFileHash != hash) {
                     throw IllegalStateException(

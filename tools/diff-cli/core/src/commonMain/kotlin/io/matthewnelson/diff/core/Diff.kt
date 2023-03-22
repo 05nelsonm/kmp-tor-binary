@@ -17,7 +17,7 @@ package io.matthewnelson.diff.core
 
 import io.matthewnelson.component.value.clazz.NoValue
 import io.matthewnelson.component.value.clazz.ValueClazz
-import io.matthewnelson.diff.core.Header.Companion.readDiffFileHeader
+import io.matthewnelson.diff.core.Header.Companion.readDiffHeader
 import io.matthewnelson.diff.core.internal.apply.Apply
 import io.matthewnelson.diff.core.internal.create.Create
 import io.matthewnelson.diff.core.internal.InternalDiffApi
@@ -190,6 +190,6 @@ public class Diff private constructor() {
         @JvmStatic
         @InternalDiffApi
         @Throws(IllegalStateException::class, IOException::class)
-        public fun readHeader(fs: FileSystem, diffFile: Path): Header = fs.read(diffFile) { readDiffFileHeader() }
+        public fun readHeader(fs: FileSystem, diffFile: Path): Header = fs.read(diffFile) { readDiffHeader() }
     }
 }
