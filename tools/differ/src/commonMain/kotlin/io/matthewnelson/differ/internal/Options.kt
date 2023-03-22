@@ -49,7 +49,7 @@ internal interface CreateReadableOpt {
                 type = ArgType.Boolean,
                 fullName = NAME_OPT,
                 description = description
-            ).default(true)
+            ).default(false)
         }
     }
 }
