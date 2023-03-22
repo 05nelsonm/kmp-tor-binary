@@ -20,7 +20,7 @@ import okio.fakefilesystem.FakeFileSystem
 import kotlin.test.AfterTest
 import kotlin.test.fail
 
-abstract class DiffCoreUnitTest {
+abstract class DiffCoreTestHelper {
     protected val fs = FakeFileSystem()
 
     @AfterTest
