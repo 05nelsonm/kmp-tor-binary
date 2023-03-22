@@ -30,14 +30,14 @@ public class Header
 internal constructor(
     @JvmField public val schema: Diff.Schema,
     private val createdAtInstant: Instant,
-    @JvmField public val forFileNamed: String,
-    @JvmField public val forFileHash: String,
-    @JvmField public val postApplyHash: String,
-): ValueClazz(schema.toString() + createdAtInstant + forFileNamed + forFileHash + postApplyHash) {
+    @JvmField public val createdForName: String,
+    @JvmField public val createdForHash: String,
+    @JvmField public val createdFromHash: String,
+): ValueClazz(schema.toString() + createdAtInstant + createdForName + createdForHash + createdFromHash) {
 
     init {
-        check(forFileHash.matches(REGEX)) { "forFileHash invalid sha256[$forFileHash]" }
-        check(postApplyHash.matches(REGEX)) { "postApplyHash invalid sha256[$postApplyHash]" }
+        check(createdForHash.matches(REGEX)) { "createdForHash invalid sha256[$createdForHash]" }
+        check(createdFromHash.matches(REGEX)) { "createdFromHash invalid sha256[$createdFromHash]" }
     }
 
     public fun createdAt(): Long = createdAtInstant.toEpochMilliseconds()
@@ -52,28 +52,28 @@ internal constructor(
             writeUtf8(createdAtInstant.toString())
             writeNewLine()
 
-            writeUtf8(PREFIX_FOR_FILE_NAME)
-            writeUtf8(forFileNamed)
+            writeUtf8(PREFIX_CREATED_FOR_NAME)
+            writeUtf8(createdForName)
             writeNewLine()
 
-            writeUtf8(PREFIX_FOR_FILE_HASH)
-            writeUtf8(forFileHash)
+            writeUtf8(PREFIX_CREATED_FOR_HASH)
+            writeUtf8(createdForHash)
             writeNewLine()
 
-            writeUtf8(PREFIX_POST_APPLY_HASH)
-            writeUtf8(postApplyHash)
+            writeUtf8(PREFIX_CREATED_FROM_HASH)
+            writeUtf8(createdFromHash)
             writeNewLine()
         }
     }
 
     override fun toString(): String {
         return """
-            Header [
+            DiffHeader [
                 schema: $schema
                 createdAt: $createdAtInstant
-                forFileNamed: $forFileNamed
-                forFileHash: $forFileHash
-                postApplyHash: $postApplyHash
+                createdForName: $createdForName
+                createdForHash: $createdForHash
+                createdFromHash: $createdFromHash
             ]
         """.trimIndent()
     }
@@ -81,9 +81,9 @@ internal constructor(
     internal companion object {
         private const val PREFIX_SCHEMA_VERSION: String = "$LINE_BREAK Diff Schema: " /* +Version */
         private const val PREFIX_CREATED_AT: String = "$LINE_BREAK Created At: "
-        private const val PREFIX_FOR_FILE_NAME: String = "$LINE_BREAK For File Named: "
-        private const val PREFIX_FOR_FILE_HASH: String = "$LINE_BREAK For File SHA256: "
-        private const val PREFIX_POST_APPLY_HASH: String = "$LINE_BREAK Post Apply SHA256: "
+        private const val PREFIX_CREATED_FOR_NAME: String = "$LINE_BREAK Created For Name: "
+        private const val PREFIX_CREATED_FOR_HASH: String = "$LINE_BREAK Created For Hash: "
+        private const val PREFIX_CREATED_FROM_HASH: String = "$LINE_BREAK Created From Hash: "
 
         private val REGEX = "[a-f0-9]{64}".toRegex()
 
@@ -107,16 +107,16 @@ internal constructor(
             }
 
             val forFileName = readUtf8Line()
-                ?.substringAfter(PREFIX_FOR_FILE_NAME)
-                ?: throw IllegalStateException("Failed to read Diff forFileNamed")
+                ?.substringAfter(PREFIX_CREATED_FOR_NAME)
+                ?: throw IllegalStateException("Failed to read Diff createdForName")
 
             val forFileHash = readUtf8Line()
-                ?.substringAfter(PREFIX_FOR_FILE_HASH)
-                ?: throw IllegalStateException("Failed to read Diff fileHash")
+                ?.substringAfter(PREFIX_CREATED_FOR_HASH)
+                ?: throw IllegalStateException("Failed to read Diff createdForHash")
 
             val postApplyHash = readUtf8Line()
-                ?.substringAfter(PREFIX_POST_APPLY_HASH)
-                ?: throw IllegalStateException("Failed to read Diff postApplyHash")
+                ?.substringAfter(PREFIX_CREATED_FROM_HASH)
+                ?: throw IllegalStateException("Failed to read Diff createdFromHash")
 
             return Header(schema, createdAt, forFileName, forFileHash, postApplyHash)
         }
