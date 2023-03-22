@@ -72,7 +72,7 @@ internal sealed class Create private constructor() {
             val diffFile = canonicalDiffDir.resolve(file1.name + options.diffFileExtensionName)
 
             try {
-                val hash = HashingSink.sha256(fs.sink(diffFile, mustCreate = true)).use { hs ->
+                HashingSink.sha256(fs.sink(diffFile, mustCreate = true)).use { hs ->
                     hs.buffer().use { bs ->
 
                         val header = Header(options.schema, Clock.System.now(), file1.name, f1Hash, f2Hash)
@@ -91,19 +91,18 @@ internal sealed class Create private constructor() {
                         }
 
                         bs.writeNewLine()
+
+                        // Write the diff file content's hash to the very last line
+                        // of the file. This is used as a validation check when going
+                        // to apply it to file1 later such that any modifications to
+                        // the diff will throw an exception.
+                        bs.flush()
+                        val hash = hs.hash.hex()
+
+                        bs.writeUtf8(EOF_HASH)
+                        bs.writeUtf8(hash)
+                        bs.writeNewLine()
                     }
-
-                    hs.hash.hex()
-                }
-
-                // Write the diff file content's hash to the very last line
-                // of the file. This is used as a validation check when going
-                // to apply it to file1 later such that any modifications to
-                // the diff will throw an exception.
-                fs.appendingSink(diffFile, mustExist = true).buffer().use {
-                    it.writeUtf8(EOF_HASH)
-                    it.writeUtf8(hash)
-                    it.writeNewLine()
                 }
             } catch (t: Throwable) {
                 // TODO: Clean up
