@@ -29,4 +29,6 @@ if (CHECK_PUBLICATION != null) {
     ).forEach { name ->
         include(":library:$name")
     }
+
+    include(":tools:diff")
 }
