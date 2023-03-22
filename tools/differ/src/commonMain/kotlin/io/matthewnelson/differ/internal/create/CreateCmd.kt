@@ -21,9 +21,11 @@ import io.matthewnelson.differ.internal.CreateReadableOpt.Companion.createReadab
 import io.matthewnelson.differ.internal.DiffDirArg
 import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
+import io.matthewnelson.differ.internal.get
+import okio.FileSystem
 import okio.Path
 
-internal class CreateCmd: Create() {
+internal class CreateCmd: Create(fs = FileSystem.get()) {
     override val file1Arg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_FILE_1,

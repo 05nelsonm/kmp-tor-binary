@@ -23,9 +23,12 @@ import io.matthewnelson.differ.internal.DiffDirArg.Companion.diffDirArgument
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
 import io.matthewnelson.differ.internal.Subcommand
+import okio.FileSystem
 import okio.Path
 
-internal class DirCreateCmd: Subcommand(
+internal class DirCreateCmd(
+    private val fs: FileSystem
+): Subcommand(
     name = NAME_CMD,
     description = """
         Creates diff files from 2 identically structured

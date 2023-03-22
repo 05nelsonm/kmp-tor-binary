@@ -22,9 +22,12 @@ import io.matthewnelson.differ.internal.DiffFileExtNameOpt
 import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.diffFileExtNameOption
 import io.matthewnelson.differ.internal.Subcommand
 import io.matthewnelson.differ.internal.create.DirCreateCmd
+import okio.FileSystem
 import okio.Path
 
-internal class DirApplyCmd: Subcommand(
+internal class DirApplyCmd(
+    private val fs: FileSystem
+): Subcommand(
     name = NAME_CMD,
     description = """
         Applies diff files from previously created

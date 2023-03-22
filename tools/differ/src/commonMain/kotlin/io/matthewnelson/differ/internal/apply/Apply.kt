@@ -16,12 +16,13 @@
 package io.matthewnelson.differ.internal.apply
 
 import io.matthewnelson.differ.internal.Subcommand
-import io.matthewnelson.differ.internal.get
 import io.matthewnelson.differ.internal.requireFileExistAndNotEmpty
 import okio.FileSystem
 import okio.Path
 
-internal abstract class Apply: Subcommand(
+internal abstract class Apply(
+    protected val fs: FileSystem
+): Subcommand(
     name = NAME_CMD,
     description = """
         Applies a diff to it's associated file.
@@ -37,8 +38,6 @@ internal abstract class Apply: Subcommand(
         fileArg.requireFileExistAndNotEmpty(NAME_FILE)
         diffFileArg.requireFileExistAndNotEmpty(NAME_DIFF_FILE)
         require(fileArg != diffFileArg) { "$NAME_FILE cannot equal $NAME_DIFF_FILE" }
-
-        val fs = FileSystem.get()
 
         try {
             run(
@@ -65,12 +64,12 @@ internal abstract class Apply: Subcommand(
         internal const val NAME_FILE = "file"
         internal const val NAME_DIFF_FILE = "diff-file"
 
-        @Throws(IllegalArgumentException::class)
         internal fun from(
+            fs: FileSystem,
             file: Path,
             diff: Path,
         ): Apply {
-            return object : Apply() {
+            return object : Apply(fs = fs) {
                 override val fileArg: Path = file
                 override val diffFileArg: Path = diff
             }

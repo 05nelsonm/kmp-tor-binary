@@ -16,9 +16,11 @@
 package io.matthewnelson.differ.internal.apply
 
 import io.matthewnelson.differ.internal.ArgTypePath
+import io.matthewnelson.differ.internal.get
+import okio.FileSystem
 import okio.Path
 
-internal class ApplyCmd: Apply() {
+internal class ApplyCmd: Apply(fs = FileSystem.get()) {
     override val fileArg: Path by argument(
         type = ArgTypePath,
         fullName = NAME_FILE,

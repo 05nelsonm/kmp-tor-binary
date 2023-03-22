@@ -19,8 +19,10 @@ import io.matthewnelson.differ.internal.apply.ApplyCmd
 import io.matthewnelson.differ.internal.apply.DirApplyCmd
 import io.matthewnelson.differ.internal.create.CreateCmd
 import io.matthewnelson.differ.internal.create.DirCreateCmd
+import io.matthewnelson.differ.internal.get
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
+import okio.FileSystem
 
 private const val PROGRAM_NAME = "differ"
 
@@ -28,9 +30,9 @@ public fun main(args: Array<String>) {
     val parser = ArgParser(programName = PROGRAM_NAME)
 
     val create = CreateCmd()
-    val dirCreate = DirCreateCmd()
+    val dirCreate = DirCreateCmd(FileSystem.get())
     val apply = ApplyCmd()
-    val dirApply = DirApplyCmd()
+    val dirApply = DirApplyCmd(FileSystem.get())
 
     @OptIn(ExperimentalCli::class)
     parser.subcommands(create, dirCreate, apply, dirApply)

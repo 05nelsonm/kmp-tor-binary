@@ -25,7 +25,9 @@ import okio.IOException
 import okio.Path
 import okio.Path.Companion.toPath
 
-internal abstract class Create: Subcommand(
+internal abstract class Create(
+    protected val fs: FileSystem
+): Subcommand(
     name = NAME_CMD,
     description = """
         Creates a diff from 2 file inputs. The first file is
@@ -52,7 +54,6 @@ internal abstract class Create: Subcommand(
         val mustCreate = diffDirArg.requireDirOrNull(DiffDirArg.NAME_ARG)
         diffFileExtNameOpt.requireDiffFileExtensionNameValid(DiffFileExtNameOpt.NAME_OPT)
 
-        val fs = FileSystem.get()
         fs.createDirectories(diffDirArg, mustCreate = mustCreate)
         val canonicalDiffDir = fs.canonicalize(diffDirArg)
 
@@ -105,15 +106,15 @@ internal abstract class Create: Subcommand(
         internal const val NAME_FILE_1 = "file1"
         internal const val NAME_FILE_2 = "file2"
 
-        @Throws(IllegalArgumentException::class)
         internal fun from(
+            fs: FileSystem,
             file1: Path,
             file2: Path,
             createReadable: Boolean,
             diffFileExtName: String,
             diffDir: Path,
         ): Create {
-            return object : Create() {
+            return object : Create(fs = fs) {
                 override val file1Arg: Path = file1
                 override val file2Arg: Path = file2
                 override val createReadableOpt: Boolean = createReadable
