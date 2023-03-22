@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
+
 package io.matthewnelson.differ.internal
 
-import io.matthewnelson.encoding.base16.Base16
-import io.matthewnelson.encoding.base64.Base64
-import io.matthewnelson.encoding.builders.*
+import okio.FileSystem
 
-internal val HEX: Base16 = Base16 { encodeToLowercase = true }
-internal val BASE64: Base64 = Base64 { lineBreakInterval = 64 }
+@Suppress("NOTHING_TO_INLINE")
+internal expect inline fun FileSystem.Companion.get(): FileSystem

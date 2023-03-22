@@ -33,6 +33,14 @@ internal interface DiffFileExtNameOpt {
                 description = description
             ).default(DEFAULT_EXT)
         }
+
+        @Throws(IllegalArgumentException::class)
+        internal fun String.requireDiffFileExtensionNameValid() {
+            require(!contains(' ')) { "$NAME_OPT cannot contain white space" }
+            require(lines().size == 1) { "$NAME_OPT cannot contain line breaks" }
+            require(startsWith('.')) { "$NAME_OPT must start with a '.'" }
+            require(length > 1) { "$NAME_OPT length must be greater than 1" }
+        }
     }
 }
 

@@ -16,6 +16,7 @@
 package io.matthewnelson.differ.internal.create
 
 import io.matthewnelson.differ.internal.*
+import io.matthewnelson.differ.internal.DiffFileExtNameOpt.Companion.requireDiffFileExtensionNameValid
 import io.matthewnelson.differ.internal.Subcommand
 import io.matthewnelson.differ.internal.requireDirOrNull
 import io.matthewnelson.differ.internal.requireFileDoesNotExist
@@ -53,7 +54,7 @@ internal abstract class Create(
         file2Arg.requireFileExistAndNotEmpty(fs, NAME_FILE_2)
         require(file1Arg != file2Arg) { "$NAME_FILE_1 cannot equal $NAME_FILE_2" }
         val mustCreate = diffDirArg.requireDirOrNull(fs, DiffDirArg.NAME_ARG)
-        diffFileExtNameOpt.requireDiffFileExtensionNameValid(DiffFileExtNameOpt.NAME_OPT)
+        diffFileExtNameOpt.requireDiffFileExtensionNameValid()
 
         fs.createDirectories(diffDirArg, mustCreate = mustCreate)
         val canonicalDiffDir = fs.canonicalize(diffDirArg)
