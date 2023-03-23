@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 4.7.13-3 (2023-03-23)
+ - Fixes an issue with Java 9 modularization not being able to find resources
+   attributed to `kmp-tor-binary-<os><arch>` modules not containing a class
+   that can be exported. [[#75]][pr-75]
+
 ## Version 4.7.13-2 (2023-03-16)
  - Fixes macosarm64 binaries being unable to run on M1/2 because binary files
    were not developer signed. This is an intermediate "quick fix" solution. 
@@ -85,3 +90,4 @@
  - Initial release
 
 [issue-66]: https://github.com/05nelsonm/kmp-tor-binary/issues/66
+[pr-75]: https://github.com/05nelsonm/kmp-tor-binary/pull/75
