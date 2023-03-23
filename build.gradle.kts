@@ -14,6 +14,7 @@
  * limitations under the License.
  **/
 import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
+import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
@@ -39,14 +40,19 @@ allprojects {
 
 }
 
+@Suppress("PropertyName")
+val CHECK_PUBLICATION = findProperty("CHECK_PUBLICATION") as? String
+
 plugins.withType<YarnPlugin> {
     the<YarnRootExtension>().lockFileDirectory = rootDir.resolve(".kotlin-js-store")
+    if (CHECK_PUBLICATION != null) {
+        the<YarnRootExtension>().yarnLockMismatchReport = YarnLockMismatchReport.NONE
+    }
 }
 
 @Suppress("LocalVariableName")
 apiValidation {
     val KMP_TARGETS = findProperty("KMP_TARGETS") as? String
-    val CHECK_PUBLICATION = findProperty("CHECK_PUBLICATION") as? String
     val KMP_TARGETS_ALL = System.getProperty("KMP_TARGETS_ALL") != null
     val TARGETS = KMP_TARGETS?.split(',')
 
