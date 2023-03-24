@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## Version 4.7.13-4 (2023-03-24)
+ - *Actually* fixes an issue with Java 9 modularization not being able to find
+   resources from different modules/jars during extraction. [[#76]][pr-76]
+     - Adds a new parameter to `TorBinaryResource.from`; `loadPathPrefix`. This
+       is in order for the `Extractor` to find the `Loader` class located in that
+       module to retrieve declared resources using the correct `ClassLoader`.
+
 ## Version 4.7.13-3 (2023-03-23)
  - Fixes an issue with Java 9 modularization not being able to find resources
    attributed to `kmp-tor-binary-<os><arch>` modules not containing a class
@@ -91,3 +98,4 @@
 
 [issue-66]: https://github.com/05nelsonm/kmp-tor-binary/issues/66
 [pr-75]: https://github.com/05nelsonm/kmp-tor-binary/pull/75
+[pr-76]: https://github.com/05nelsonm/kmp-tor-binary/pull/76

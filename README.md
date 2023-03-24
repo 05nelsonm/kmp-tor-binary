@@ -126,8 +126,8 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
    // build.gradle.kts
 
    dependencies {
-       val vTor = "4.7.13-3"
-       val vKmpTor = "1.4.1" // <-- see kmp-tor repo for latest version
+       val vTor = "4.7.13-4"
+       val vKmpTor = "1.4.2" // <-- see kmp-tor repo for latest version
        implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
        // Linux x86_64
@@ -160,6 +160,7 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
            resource = TorBinaryResource.from(
                os = TorBinaryResource.OS.Linux,
                arch = "arm64",
+               loadPathPrefix = "com.example",
                sha256sum = "abcdefg123...",
                resourceManifest = listOf(
                    "directory/file1.gz",
@@ -170,6 +171,18 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
            )
        )
        ```
+     - Then in the module that contains your custom binary resources
+       ```kotlin
+       // pacakge ${loadPathPrefix}.<lowercase os name>.<arch>
+       package com.example.linux.arm64
+       
+       // Must be named "Loader"
+       private class Loader
+       ```
+         - In the event finding your custom resources fails using the standard method, extraction will 
+           fall back to attempting to retrieve the `com.example.linux.arm64.Loader` via reflection and
+           use its `ClassLoader` to retrieve the resources located in that module/jar. This is often the 
+           case for projects that are utilizing the Java 9 `Module` system (such as JavaFX).
 
 ### That's it, you should be good to go for your `Java` project!
 
@@ -191,8 +204,8 @@ TAG_VERSION
   // build.gradle.kts
 
   dependencies {
-      val vTor = "4.7.13-3"
-      val vKmpTor = "1.4.1" // <-- see kmp-tor repo for latest version
+      val vTor = "4.7.13-4"
+      val vKmpTor = "1.4.2" // <-- see kmp-tor repo for latest version
       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
       // Linux x86_64
@@ -209,7 +222,37 @@ TAG_VERSION
       implementation(npm("kmp-tor-binary-mingwx86", vTor))
   }
   ```
+ - If a specific platform or architecture is not currently supported by `kmp-tor-binary`, you can package 
+   your own and provide them to [kmp-tor][url-kmp-tor] at runtime for extraction and execution.
+   ```kotlin
+   // Add the additional `extract` dependency
+   dependencies {
+       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-extract:$vTor")
+   }
+   ```
+     - See [TorBinaryResource][url-tor-binary-resource] documentation for packaging requirements and details.
+     - Load them via `kmp-tor`'s [PlatformInstaller][url-kmp-tor-platform-installer] (available since v`4.7.13-1-1.4.0`)
+       ```kotlin
+       val installer = PlatformInstaller.custom(
+           option = InstallOption.CleanInstallIfMissing,
+           resource = TorBinaryResource.from(
+               os = TorBinaryResource.OS.Linux,
+               arch = "arm64",
 
+               // This will look for your binary assets listed below
+               // in module "com-example-linuxarm64".
+               loadPathPrefix = "com-example",
+
+               sha256sum = "abcdefg123...",
+               resourceManifest = listOf(
+                   "directory/file1.gz",
+                   "directory/file2.gz",
+                   "file3.gz",
+                   "tor.gz",
+               )
+           )
+       )
+       ```
 
 ### That's it, you should be good to go for your `Node.js` project!
 
@@ -270,7 +313,7 @@ to the appropriate `kmp-tor-binary-*` module and update sha256sum/manifest const
 As binaries are reproducibly built, running `git diff` should show no changes.
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-4.7.13--3-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
+[badge-latest-release]: https://img.shields.io/badge/latest--release-4.7.13--4-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
