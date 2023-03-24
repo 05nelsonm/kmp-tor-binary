@@ -71,17 +71,18 @@ public actual class Extractor {
             return this.javaClass.getResourceAsStream("/$resourcePath")!!
         } catch (_: Throwable) {}
 
+        val prefix = "io.matthewnelson.kmp.tor.binary"
         val loader = try {
             when (this) {
-                is TorBinaryResource -> javaClass
-                is TorResourceLinuxX64 -> findLoaderClass("linux.x64")
-                is TorResourceLinuxX86 -> findLoaderClass("linux.x86")
-                is TorResourceMacosArm64 -> findLoaderClass("macos.arm64")
-                is TorResourceMacosX64 -> findLoaderClass("macos.x64")
-                is TorResourceMingwX64 -> findLoaderClass("mingw.x64")
-                is TorResourceMingwX86 -> findLoaderClass("mingw.x86")
-                is TorResourceGeoip -> findLoaderClass("geoip")
-                is TorResourceGeoip6 -> findLoaderClass("geoip")
+                is TorBinaryResource -> findLoaderClass(loadPath)
+                is TorResourceLinuxX64 -> findLoaderClass("$prefix.linux.x64.Loader")
+                is TorResourceLinuxX86 -> findLoaderClass("$prefix.linux.x86.Loader")
+                is TorResourceMacosArm64 -> findLoaderClass("$prefix.macos.arm64.Loader")
+                is TorResourceMacosX64 -> findLoaderClass("$prefix.macos.x64.Loader")
+                is TorResourceMingwX64 -> findLoaderClass("$prefix.mingw.x64.Loader")
+                is TorResourceMingwX86 -> findLoaderClass("$prefix.mingw.x86.Loader")
+                is TorResourceGeoip -> findLoaderClass("$prefix.geoip.Loader")
+                is TorResourceGeoip6 -> findLoaderClass("$prefix.geoip.Loader")
             }
         } catch (e: ClassNotFoundException) {
             throw delegate.resourceNotFound(resourcePath, e)
@@ -95,9 +96,7 @@ public actual class Extractor {
     }
 
     @Throws(ClassNotFoundException::class)
-    private fun findLoaderClass(classpathSuffix: String): Class<*> {
-        val loaderClasspath = "io.matthewnelson.kmp.tor.binary.$classpathSuffix.Loader"
-
+    private fun findLoaderClass(loaderClasspath: String): Class<*> {
         try {
             return Class.forName(loaderClasspath) ?: throw ClassNotFoundException("Failed to find $loaderClasspath")
         } catch (t: Throwable) {
