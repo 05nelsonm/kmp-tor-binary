@@ -16,6 +16,7 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndroid
+import java.io.InputStream
 
 /**
  * Extracts [TorResource]es to their desired
@@ -40,11 +41,7 @@ public actual class Extractor {
         cleanExtraction: Boolean
     ) {
         delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
-            try {
-                javaClass.getResourceAsStream("/$resourcePath")!!
-            } catch (t: Throwable) {
-                throw delegate.resourceNotFound(resourcePath, t)
-            }
+            resource.stream(resourcePath)
         }
     }
 
@@ -65,10 +62,49 @@ public actual class Extractor {
         cleanExtraction: Boolean,
     ): TorFilePath {
         return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
-            try {
-                javaClass.getResourceAsStream("/$resourcePath")!!
-            } catch (t: Throwable) {
-                throw delegate.resourceNotFound(resourcePath, t)
+            resource.stream(resourcePath)
+        }
+    }
+
+    private fun TorResource.stream(resourcePath: String): InputStream {
+        try {
+            return this.javaClass.getResourceAsStream("/$resourcePath")!!
+        } catch (_: Throwable) {}
+
+        val loader = try {
+            when (this) {
+                is TorBinaryResource -> javaClass
+                is TorResourceLinuxX64 -> findLoaderClass("linux.x64")
+                is TorResourceLinuxX86 -> findLoaderClass("linux.x86")
+                is TorResourceMacosArm64 -> findLoaderClass("macos.arm64")
+                is TorResourceMacosX64 -> findLoaderClass("macos.x64")
+                is TorResourceMingwX64 -> findLoaderClass("mingw.x64")
+                is TorResourceMingwX86 -> findLoaderClass("mingw.x86")
+                is TorResourceGeoip -> findLoaderClass("geoip")
+                is TorResourceGeoip6 -> findLoaderClass("geoip")
+            }
+        } catch (e: ClassNotFoundException) {
+            throw delegate.resourceNotFound(resourcePath, e)
+        }
+
+        try {
+            return loader.getResourceAsStream("/$resourcePath")!!
+        } catch (t: Throwable) {
+            throw delegate.resourceNotFound(resourcePath, t)
+        }
+    }
+
+    @Throws(ClassNotFoundException::class)
+    private fun findLoaderClass(classpathSuffix: String): Class<*> {
+        val loaderClasspath = "io.matthewnelson.kmp.tor.binary.$classpathSuffix.Loader"
+
+        try {
+            return Class.forName(loaderClasspath) ?: throw ClassNotFoundException("Failed to find $loaderClasspath")
+        } catch (t: Throwable) {
+            if (t is ClassNotFoundException) {
+                throw t
+            } else {
+                throw ClassNotFoundException("Failed to find $loaderClasspath", t)
             }
         }
     }
