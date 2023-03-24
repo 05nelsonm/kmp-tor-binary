@@ -16,6 +16,7 @@
 package io.matthewnelson.kmp.tor.binary.extract
 
 import io.matthewnelson.kmp.tor.binary.extract.internal.ExtractorDelegateJvmAndroid
+import java.io.InputStream
 
 /**
  * Extracts [TorResource]es to their desired
@@ -40,11 +41,7 @@ public actual class Extractor {
         cleanExtraction: Boolean
     ) {
         delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
-            try {
-                javaClass.getResourceAsStream("/$resourcePath")!!
-            } catch (t: Throwable) {
-                throw delegate.resourceNotFound(resourcePath, t)
-            }
+            resource.stream(resourcePath)
         }
     }
 
@@ -65,10 +62,47 @@ public actual class Extractor {
         cleanExtraction: Boolean,
     ): TorFilePath {
         return delegate.extract(resource, destinationDir, cleanExtraction) { resourcePath ->
-            try {
-                javaClass.getResourceAsStream("/$resourcePath")!!
-            } catch (t: Throwable) {
-                throw delegate.resourceNotFound(resourcePath, t)
+            resource.stream(resourcePath)
+        }
+    }
+
+    private fun TorResource.stream(resourcePath: String): InputStream {
+        try {
+            return this.javaClass.getResourceAsStream("/$resourcePath")!!
+        } catch (_: Throwable) {}
+
+        val prefix = "io.matthewnelson.kmp.tor.binary"
+        val loader = try {
+            when (this) {
+                is TorBinaryResource -> findLoaderClass(loadPath)
+                is TorResourceLinuxX64 -> findLoaderClass("$prefix.linux.x64.Loader")
+                is TorResourceLinuxX86 -> findLoaderClass("$prefix.linux.x86.Loader")
+                is TorResourceMacosArm64 -> findLoaderClass("$prefix.macos.arm64.Loader")
+                is TorResourceMacosX64 -> findLoaderClass("$prefix.macos.x64.Loader")
+                is TorResourceMingwX64 -> findLoaderClass("$prefix.mingw.x64.Loader")
+                is TorResourceMingwX86 -> findLoaderClass("$prefix.mingw.x86.Loader")
+                is TorResource.Geoips -> findLoaderClass("$prefix.geoip.Loader")
+            }
+        } catch (e: ClassNotFoundException) {
+            throw delegate.resourceNotFound(resourcePath, e)
+        }
+
+        try {
+            return loader.getResourceAsStream("/$resourcePath")!!
+        } catch (t: Throwable) {
+            throw delegate.resourceNotFound(resourcePath, t)
+        }
+    }
+
+    @Throws(ClassNotFoundException::class)
+    private fun findLoaderClass(loaderClasspath: String): Class<*> {
+        try {
+            return Class.forName(loaderClasspath) ?: throw ClassNotFoundException("Failed to find $loaderClasspath")
+        } catch (t: Throwable) {
+            if (t is ClassNotFoundException) {
+                throw t
+            } else {
+                throw ClassNotFoundException("Failed to find $loaderClasspath", t)
             }
         }
     }

@@ -17,6 +17,7 @@ package io.matthewnelson.kmp.tor.binary.extract
 
 import org.junit.Test
 import java.io.File
+import kotlin.test.assertEquals
 
 actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
@@ -40,9 +41,14 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
 
     @Test
     fun givenTestResources_whenExtracted_thenIsSuccessful() {
+        val loaderPrefix = "io.matthewnelson"
+        val os = TorBinaryResource.OS.Linux
+        val arch = "test"
+
         val resource = TorBinaryResource.from(
-            os = TorBinaryResource.OS.Linux,
-            arch = "test",
+            os = os,
+            arch = arch,
+            loadPathPrefix = loaderPrefix,
             sha256sum = "a766e07310b1ede3a06ef889cb46023fed5dc8044b326c20adf342242be92ec6",
             resourceManifest = listOf(
                 "subdir/libcrypto.so.1.1.gz",
@@ -54,5 +60,6 @@ actual class ExtractorUnitTest: BaseExtractorJvmJsUnitTest() {
         )
 
         assertBinaryResourceExtractionIsSuccessful(resource)
+        assertEquals("$loaderPrefix.${os.lowercaseName}.$arch.Loader", resource.loadPath)
     }
 }

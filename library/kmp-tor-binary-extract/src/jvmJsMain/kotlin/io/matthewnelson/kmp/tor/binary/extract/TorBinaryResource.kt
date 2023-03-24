@@ -3,6 +3,7 @@ package io.matthewnelson.kmp.tor.binary.extract
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 
 /**
  * Allows for library consumers to provide their own packaged
@@ -45,16 +46,34 @@ import kotlin.jvm.JvmStatic
  *          "tor.gz"
  *      )
  *
- * For NodeJS, binary files must be in a module named kmp-tor-resource-(lowercase os name)(arch)
- *  - e.g. kmp-tor-resource-linuxx64
+ * [loadPath] is the path to find the resources.
+ *  - For JVM:
+ *    - This is the path to a class named `Loader` in the module containing your
+ *      custom binary resources. Simply add `private class Loader` at the classpath
+ *      described below.
+ *    - Defaults to `io.matthewnelson.kmp.tor.resource.(lowercase os name).(arch).Loader`
+ *    - This is only utilized if `javaClass.getResourceAsStream` fails. You can add
+ *      a `private class Loader` to the module containing those binary resources at the
+ *      specified classpath, and reflection will be used to find it in order to load resources
+ *      from that module.
+ *    - e.g. "com.example.kmp.tor.resource.linux.x64.Loader"
+ *  - For Nodejs:
+ *    - This is the module name where the assets are located
+ *    - Defaults to module named `kmp-tor-resource-(lowercase os name)(arch)`
+ *    - e.g. "kmp-tor-resource-linuxx64"
+ *  - [from] has more details on customization of this loadPath via passing
+ *    of a prefix.
  *
  * @see [from]
  * @sample [io.matthewnelson.kmp.tor.binary.extract.TorResourceLinuxX64.resourceManifest]
+ * @sample [io.matthewnelson.kmp.tor.binary.linux.x64.Loader]
  * */
 public class TorBinaryResource private constructor(
     private val os: OS,
     @JvmField
     public val arch: String,
+    @JvmField
+    public val loadPath: String,
     public override val sha256sum: String,
     public override val resourceManifest: List<String>,
 ): TorResource.Binaries() {
@@ -62,11 +81,14 @@ public class TorBinaryResource private constructor(
     public enum class OS {
         Linux,
         Macos,
-        Mingw,
+        Mingw;
+
+        @get:JvmSynthetic
+        internal val lowercaseName: String get() = name.lowercase()
     }
 
     @get:JvmName("osName")
-    public val osName: String get() = os.name.lowercase()
+    public val osName: String get() = os.lowercaseName
 
     public override val resourceDirPath: String get() = "kmptor/$osName/$arch"
 
@@ -77,6 +99,34 @@ public class TorBinaryResource private constructor(
         public fun from(
             os: OS,
             arch: String,
+            sha256sum: String,
+            resourceManifest: List<String>
+        ): TorBinaryResource {
+            return from(os, arch, null, sha256sum, resourceManifest)
+        }
+
+        /**
+         * Validates parameters and returns a [TorBinaryResource].
+         *
+         * [loadPathPrefix] is an optional argument for creating your [loadPath] if
+         * it differs from the default.
+         *
+         * - JVM: classpath prefix to your module's `Loader` class
+         *     - e.g. loadPathPrefix = "com.example" with binaries for os = OS.Linux and arch = "aarch64"
+         *       will result in a loadPath of "com.example.linux.aarch64.Loader"
+         *     - Defaults to: `io.matthewnelson.kmp.tor.resrouce.(lowercase os name).(arch).Loader`
+         *
+         * - Nodejs: the module prefix.
+         *     - e.g. loadPathPrefix = "com-example" with bianries for os = OS.Linux and arch = "aarch64"
+         *       will result in a loadPath of "com-example-linuxaarch64"
+         *     - Defaults to: `kmp-tor-resource-(lowercase os name)(arch)`
+         * */
+        @JvmStatic
+        @Throws(IllegalArgumentException::class)
+        public fun from(
+            os: OS,
+            arch: String,
+            loadPathPrefix: String?,
             sha256sum: String,
             resourceManifest: List<String>
         ): TorBinaryResource {
@@ -119,7 +169,13 @@ public class TorBinaryResource private constructor(
                 "a total of '$torFileCount' listed in the resourceManifest."
             }
 
-            return TorBinaryResource(os, arch, sha256sum, manifest.toList())
+            return TorBinaryResource(
+                os,
+                arch,
+                loadPathPrefix.toLoadPath(os, arch),
+                sha256sum,
+                manifest.toList()
+            )
         }
     }
 }
