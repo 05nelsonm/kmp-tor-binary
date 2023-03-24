@@ -81,8 +81,7 @@ public actual class Extractor {
                 is TorResourceMacosX64 -> findLoaderClass("$prefix.macos.x64.Loader")
                 is TorResourceMingwX64 -> findLoaderClass("$prefix.mingw.x64.Loader")
                 is TorResourceMingwX86 -> findLoaderClass("$prefix.mingw.x86.Loader")
-                is TorResourceGeoip -> findLoaderClass("$prefix.geoip.Loader")
-                is TorResourceGeoip6 -> findLoaderClass("$prefix.geoip.Loader")
+                is TorResource.Geoips -> findLoaderClass("$prefix.geoip.Loader")
             }
         } catch (e: ClassNotFoundException) {
             throw delegate.resourceNotFound(resourcePath, e)
