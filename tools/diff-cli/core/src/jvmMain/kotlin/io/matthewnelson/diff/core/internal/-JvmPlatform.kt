@@ -19,6 +19,6 @@ package io.matthewnelson.diff.core.internal
 
 import okio.FileSystem
 
-@InternalDiffApi
+@JvmSynthetic
 @Suppress("NOTHING_TO_INLINE")
-public actual inline fun FileSystem.Companion.system(): FileSystem = SYSTEM
+internal actual inline fun FileSystem.Companion.system(): FileSystem = SYSTEM

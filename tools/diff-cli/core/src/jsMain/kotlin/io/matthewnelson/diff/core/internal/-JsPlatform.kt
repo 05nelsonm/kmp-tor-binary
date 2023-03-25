@@ -21,6 +21,5 @@ import okio.FileSystem
 
 import okio.NodeJsFileSystem
 
-@InternalDiffApi
 @Suppress("NOTHING_TO_INLINE")
-public actual inline fun FileSystem.Companion.system(): FileSystem = NodeJsFileSystem
+internal actual inline fun FileSystem.Companion.system(): FileSystem = NodeJsFileSystem

@@ -105,6 +105,3 @@ public final class io/matthewnelson/diff/core/Options$Create$Companion {
 public abstract interface annotation class io/matthewnelson/diff/core/internal/InternalDiffApi : java/lang/annotation/Annotation {
 }
 
-public final class io/matthewnelson/diff/core/internal/_JvmPlatformKt {
-}
-
