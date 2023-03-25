@@ -20,6 +20,7 @@ package io.matthewnelson.diff.core.internal.create
 import io.matthewnelson.diff.core.Diff
 import io.matthewnelson.diff.core.Header
 import io.matthewnelson.diff.core.NoDiffException
+import io.matthewnelson.diff.core.Options
 import io.matthewnelson.diff.core.internal.*
 import io.matthewnelson.diff.core.internal.hashLengthOf
 import io.matthewnelson.diff.core.internal.checkIsDirOrNull
@@ -40,7 +41,7 @@ internal sealed class Create private constructor() {
             file1: Path,
             file2: Path,
             diffDir: Path,
-            options: Diff.Options,
+            options: Options.Create,
         ): Path {
             require(file1 != file2) { "files cannot be the same" }
 

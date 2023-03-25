@@ -23,6 +23,7 @@ import io.matthewnelson.diff.cli.internal.OptStaticTime.Companion.staticTimeOpti
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
 import io.matthewnelson.diff.core.NoDiffException
+import io.matthewnelson.diff.core.Options
 import kotlinx.cli.ArgType
 
 internal class Create: Subcommand(
@@ -69,7 +70,7 @@ internal class Create: Subcommand(
                     file1Path = file1Arg,
                     file2Path = file2Arg,
                     diffDirPath = diffDirArg,
-                    options = Diff.Options {
+                    options = Options.Create {
                         diffFileExtensionName(value = diffFileExtNameOpt)
                         useStaticTime = staticTimeOpt
                     },

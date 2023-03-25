@@ -30,11 +30,11 @@ class OptionsUnitTest: DiffCoreTestHelper() {
     fun givenDiffOptions_whenStaticTime_thenWritesStaticTime() {
         file1.writeText("asdfasdf")
         file2.writeText("aaaa")
-        val diffFile = Diff.create(fs, file1, file2, diffDir, Diff.Options {
+        val diffFile = Diff.create(fs, file1, file2, diffDir, Options.Create {
             useStaticTime = true
         })
         val header = Diff.readHeader(fs, diffFile)
-        assertEquals(Diff.Options.STATIC_TIME.toInstant(), header.createdAtInstant)
+        assertEquals(Options.Create.STATIC_TIME.toInstant(), header.createdAtInstant)
     }
 
     @Test
@@ -42,7 +42,7 @@ class OptionsUnitTest: DiffCoreTestHelper() {
         file1.writeText("asdfasdf")
         file2.writeText("aaaa")
         val expected = ".signature"
-        val diffFile = Diff.create(fs, file1, file2, diffDir, Diff.Options {
+        val diffFile = Diff.create(fs, file1, file2, diffDir, Options.Create {
             diffFileExtensionName(expected)
         })
         assertTrue(diffFile.name.endsWith(expected))
