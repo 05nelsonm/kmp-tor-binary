@@ -21,7 +21,7 @@ import io.matthewnelson.diff.cli.internal.header.PrintHeader
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 
-private const val PROGRAM_NAME = "Differ CLI"
+private const val PROGRAM_NAME = "Diff-CLI"
 
 public fun main(args: Array<String>) {
     val parser = ArgParser(programName = PROGRAM_NAME.lowercase().replace(' ', '-'))
