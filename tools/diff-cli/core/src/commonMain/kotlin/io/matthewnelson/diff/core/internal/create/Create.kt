@@ -77,9 +77,7 @@ internal sealed class Create private constructor() {
                             fs.read(file2) bsFile2@ {
 
                                 when (options.schema) {
-                                    Diff.Schema.v1 -> {
-                                        V1(this@bsFile1, f1Length,this@bsFile2, f2Length, bsDiff)
-                                    }
+                                    Diff.Schema.v1 -> V1(this@bsFile1, f1Length,this@bsFile2, f2Length, bsDiff)
                                 }
 
                             }
