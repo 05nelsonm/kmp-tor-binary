@@ -59,7 +59,7 @@ public fun main(args: Array<String>) {
 private fun printHeader() {
     // TODO: BuildConfig https://github.com/gmazzo/gradle-buildconfig-plugin
     val versionName = "0.1.0"
-    val url = "https://github.com/05nelsonm/kmp-tor-binary/tools/differ"
+    val url = "https://github.com/05nelsonm/kmp-tor-binary/tree/master/tools/diff-cli"
 
     println("""
         $PROGRAM_NAME v$versionName
