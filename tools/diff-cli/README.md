@@ -69,12 +69,12 @@ Will then apply the `.signature` to the file it is associated to.
 
 ### Commands
 
-From the root project directory (`kmp-tor-binary`) run
+From the root project directory (`kmp-tor-binary`) run (Windows use `.\tooling.bat`).
 
 ```
 $ ./tooling diff-cli -h
 
-Differ CLI v0.1.0
+Diff-CLI v0.1.0
 Copyright (C) 2023 Matthew Nelson
 Apache License, Version 2.0
 
@@ -83,7 +83,7 @@ which can be applied at a later date and time.
 Was created primarily for applying code signatures
 to reproducibly built software.
 
-Project: https://github.com/05nelsonm/kmp-tor-binary/tools/differ
+Project: https://github.com/05nelsonm/kmp-tor-binary/tree/master/tools/diff-cli
 
 Usage: differ-cli options_list
 Subcommands: 
