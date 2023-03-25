@@ -133,7 +133,7 @@ Options:
 ```
 
 ```shell
-$ ./tooling diff-cli apply -h
+$ ./tooling diff-cli print-header -h
 ```
 
 ```
