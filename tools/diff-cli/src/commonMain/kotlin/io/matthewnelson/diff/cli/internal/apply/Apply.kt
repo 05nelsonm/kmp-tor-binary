@@ -21,6 +21,7 @@ import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
 import kotlinx.cli.ArgType
+import kotlinx.cli.default
 
 internal class Apply: Subcommand(
     name = NAME_CMD,
@@ -42,12 +43,22 @@ internal class Apply: Subcommand(
         description = "The file to apply the diff to (e.g. /path/to/unsigned/file)",
     )
 
+    private val dryRunOpt: Boolean by option(
+        type = ArgType.Boolean,
+        fullName = "dry-run",
+        description = "Will apply the diff to its associated file, but leaves the '.bak' in place instead of atomically moving it"
+    ).default(false)
+
     override val quietOpt: Boolean by quietOption()
 
     override fun execute() {
         with(settings()) {
-            Diff.apply(diffFileArg, fileArg)
-            println("Diff applied to [$fileArg]")
+            Diff.apply(diffFileArg, fileArg, dryRunOpt)
+            if (dryRunOpt) {
+                println("Diff applied to [$fileArg.bak]")
+            } else {
+                println("Diff applied to [$fileArg]")
+            }
         }
     }
 

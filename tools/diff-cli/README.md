@@ -71,11 +71,9 @@ Will then apply the `.signature` to the file it is associated to.
 
 From the root project directory (`kmp-tor-binary`) run
 
-```shell
+```
 $ ./tooling diff-cli -h
-```
 
-```
 Differ CLI v0.1.0
 Copyright (C) 2023 Matthew Nelson
 Apache License, Version 2.0
@@ -100,11 +98,9 @@ Options:
     --help, -h -> Usage info
 ```
 
-```shell
+```
 $ ./tooling diff-cli create -h
-```
 
-```
 Usage: differ-cli create options_list
 Arguments: 
     file1 -> The first file (e.g. /path/to/unsigned/file) { String }
@@ -118,25 +114,22 @@ Options:
 
 ```
 
-```shell
+```
 $ ./tooling diff-cli apply -h
-```
 
-```
 Usage: differ-cli apply options_list
 Arguments: 
     diff-file -> The previously created diff file to be applied (e.g. /path/to/diffs/file.diff) { String }
     file -> The file to apply the diff to (e.g. /path/to/unsigned/file) { String }
 Options: 
+    --dry-run [false] -> Will apply the diff to its associated file, but leaves the '.bak' in place instead of atomically moving it 
     --quiet [false] -> Silences the terminal output 
-    --help, -h -> Usage info
+    --help, -h -> Usage info 
 ```
 
-```shell
+```
 $ ./tooling diff-cli print-header -h
-```
 
-```
 Usage: differ-cli print-header options_list
 Arguments: 
     diff-file -> A diff file (e.g. /path/to/diffs/file.diff) { String }

@@ -31,7 +31,7 @@ class ApplyUnitTest: DiffCoreTestHelper() {
         val diffFile = Diff.create(fs, file1, file2, diffDir)
         fs.delete(file1)
         file1.writeText("some different text")
-        assertThrew<IllegalStateException>(print = false) { Diff.apply(fs, diffFile, file1) }
+        assertThrew<IllegalStateException>(print = false) { Diff.apply(fs, diffFile, file1, false) }
     }
 
     @Test
@@ -52,7 +52,7 @@ class ApplyUnitTest: DiffCoreTestHelper() {
             }
         }
 
-        assertThrew<IllegalStateException>(print = false) { Diff.apply(fs, diffFile, file1) }
+        assertThrew<IllegalStateException>(print = false) { Diff.apply(fs, diffFile, file1, false) }
     }
 
 }

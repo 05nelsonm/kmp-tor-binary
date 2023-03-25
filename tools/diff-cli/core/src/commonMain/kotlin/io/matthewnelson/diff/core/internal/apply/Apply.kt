@@ -34,7 +34,7 @@ internal sealed class Apply private constructor() {
 
     internal companion object {
 
-        internal fun diff(fs: FileSystem, diffFile: Path, applyTo: Path) {
+        internal fun diff(fs: FileSystem, diffFile: Path, applyTo: Path, dryRun: Boolean) {
             check(diffFile != applyTo) { "files cannot be the same" }
             applyTo.checkExistsAndIsFile(fs)
             diffFile.checkExistsAndIsFile(fs)
@@ -124,7 +124,9 @@ internal sealed class Apply private constructor() {
                     throw IOException("Failed to apply diff to ${applyTo.name}", t)
                 }
 
-                fs.atomicMove(bak, applyToCanonical)
+                if (!dryRun) {
+                    fs.atomicMove(bak, applyToCanonical)
+                }
             }
         }
     }
