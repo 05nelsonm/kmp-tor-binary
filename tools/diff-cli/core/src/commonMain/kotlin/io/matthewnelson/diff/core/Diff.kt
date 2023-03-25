@@ -54,129 +54,6 @@ public class Diff private constructor() {
         }
     }
 
-    /**
-     * [Options] for use when creating a new [Diff] via [create].
-     *
-     * @see [Builder]
-     * */
-    public class Options {
-
-        @JvmField
-        public val diffFileExtensionName: String
-        @JvmField
-        public val useStaticTime: Boolean
-        @JvmField
-        public val schema: Schema
-
-        public constructor(): this(Builder())
-
-        public constructor(builder: Builder) {
-            diffFileExtensionName = builder.diffFileExtensionName
-            useStaticTime = builder.useStaticTime
-            schema = builder.schema
-        }
-
-        public constructor(configure: Builder.() -> Unit) {
-            val builder = Builder()
-            configure(builder)
-            diffFileExtensionName = builder.diffFileExtensionName
-            useStaticTime = builder.useStaticTime
-            schema = builder.schema
-        }
-
-        /**
-         * Configure [Options]
-         * */
-        public class Builder  {
-            @get:JvmName("diffFileExtensionName")
-            public var diffFileExtensionName: String = DEFAULT_EXT_NAME
-                private set
-
-            /**
-             * Use a different file extension name for the diff file
-             *
-             * Default is .diff
-             *
-             * @throws [IllegalArgumentException] if [value]:
-             *  - Contains whitespace
-             *  - Contains new lines
-             *  - Does not start with '.'
-             *  - Is less than 2 chars
-             * */
-            @Throws(IllegalArgumentException::class)
-            public fun diffFileExtensionName(value: String): Builder {
-                with(value) {
-                    require(!contains(' ')) { "diff file extension name cannot contain white space" }
-                    require(lines().size == 1) { "diff file extension name cannot contain line breaks" }
-                    require(startsWith('.')) { "diff file extension name must start with a '.'" }
-                    require(length > 1) { "diff file extension name length must be greater than 1" }
-                }
-
-                diffFileExtensionName = value
-                return this
-            }
-
-            /**
-             * Will use a static time value for [Header.createdAt],
-             * instead of now().
-             *
-             * @see [time]
-             * */
-            @JvmField
-            public var useStaticTime: Boolean = false
-
-            public fun useStaticTime(value: Boolean): Builder {
-                useStaticTime = value
-                return this
-            }
-
-            @JvmField
-            public var schema: Schema = Schema.latest()
-            public fun schema(value: Schema): Builder {
-                schema = value
-                return this
-            }
-        }
-
-        internal fun time(): Instant {
-            return if (useStaticTime) {
-                STATIC_TIME.toInstant()
-            } else {
-                Clock.System.now()
-            }
-        }
-
-        override fun equals(other: Any?): Boolean {
-            return  other is Options
-                    && other.diffFileExtensionName == diffFileExtensionName
-                    && other.useStaticTime == useStaticTime
-                    && other.schema == schema
-        }
-
-        override fun hashCode(): Int {
-            var result = 17
-            result = result * 31 + diffFileExtensionName.hashCode()
-            result = result * 31 + useStaticTime.hashCode()
-            result = result * 31 + schema.hashCode()
-            return result
-        }
-
-        override fun toString(): String {
-            return """
-                Diff.Options [
-                    diffFileExtensionName: $diffFileExtensionName
-                    useStaticTime: $useStaticTime
-                    schema: $schema
-                ]
-            """.trimIndent()
-        }
-
-        public companion object {
-            public const val DEFAULT_EXT_NAME: String = ".diff"
-            public const val STATIC_TIME: String = "1971-08-21T00:01:00Z"
-        }
-    }
-
     public companion object {
 
         /**
@@ -184,8 +61,12 @@ public class Diff private constructor() {
          * */
         @JvmStatic
         @Throws(IllegalStateException::class, Exception::class)
-        public fun apply(diffFilePath: String, applyToFilePath: String) {
-            apply(diffFilePath.toPath(), applyToFilePath.toPath())
+        public fun apply(
+            diffFilePath: String,
+            applyToFilePath: String,
+            options: Options.Apply = Options.Apply(),
+        ) {
+            apply(diffFilePath.toPath(), applyToFilePath.toPath(), options)
         }
 
         /**
@@ -193,9 +74,13 @@ public class Diff private constructor() {
          * */
         @JvmStatic
         @Throws(IllegalStateException::class, IOException::class)
-        public fun apply(diffFile: Path, applyTo: Path) {
+        public fun apply(
+            diffFile: Path,
+            applyTo: Path,
+            options: Options.Apply = Options.Apply(),
+        ) {
             @OptIn(InternalDiffApi::class)
-            apply(FileSystem.system(), diffFile, applyTo)
+            apply(FileSystem.system(), diffFile, applyTo, options)
         }
 
         /**
@@ -204,8 +89,13 @@ public class Diff private constructor() {
         @JvmStatic
         @InternalDiffApi
         @Throws(IllegalStateException::class, IOException::class)
-        public fun apply(fs: FileSystem, diffFile: Path, applyTo: Path) {
-            Apply.diff(fs, diffFile, applyTo)
+        public fun apply(
+            fs: FileSystem,
+            diffFile: Path,
+            applyTo: Path,
+            options: Options.Apply = Options.Apply(),
+        ) {
+            Apply.diff(fs, diffFile, applyTo, options)
         }
 
         /**
@@ -223,7 +113,7 @@ public class Diff private constructor() {
             file1Path: String,
             file2Path: String,
             diffDirPath: String,
-            options: Options = Options(),
+            options: Options.Create = Options.Create(),
         ): String {
             return create(file1Path.toPath(), file2Path.toPath(), diffDirPath.toPath(), options).toString()
         }
@@ -243,7 +133,7 @@ public class Diff private constructor() {
             file1: Path,
             file2: Path,
             diffDir: Path,
-            options: Options = Options()
+            options: Options.Create = Options.Create()
         ): Path {
             @OptIn(InternalDiffApi::class)
             return create(FileSystem.system(), file1, file2, diffDir, options)
@@ -266,7 +156,7 @@ public class Diff private constructor() {
             file1: Path,
             file2: Path,
             diffDir: Path,
-            options: Options = Options()
+            options: Options.Create = Options.Create()
         ): Path {
             return Create.diff(fs, file1, file2, diffDir, options)
         }

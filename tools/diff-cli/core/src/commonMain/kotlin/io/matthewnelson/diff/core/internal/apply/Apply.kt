@@ -17,6 +17,7 @@ package io.matthewnelson.diff.core.internal.apply
 
 import io.matthewnelson.diff.core.Diff
 import io.matthewnelson.diff.core.Header.Companion.readDiffHeader
+import io.matthewnelson.diff.core.Options
 import io.matthewnelson.diff.core.internal.*
 import io.matthewnelson.diff.core.internal.BASE_16
 import io.matthewnelson.diff.core.internal.BASE_64
@@ -34,7 +35,7 @@ internal sealed class Apply private constructor() {
 
     internal companion object {
 
-        internal fun diff(fs: FileSystem, diffFile: Path, applyTo: Path) {
+        internal fun diff(fs: FileSystem, diffFile: Path, applyTo: Path, options: Options.Apply) {
             check(diffFile != applyTo) { "files cannot be the same" }
             applyTo.checkExistsAndIsFile(fs)
             diffFile.checkExistsAndIsFile(fs)
@@ -124,7 +125,9 @@ internal sealed class Apply private constructor() {
                     throw IOException("Failed to apply diff to ${applyTo.name}", t)
                 }
 
-                fs.atomicMove(bak, applyToCanonical)
+                if (!options.dryRun) {
+                    fs.atomicMove(bak, applyToCanonical)
+                }
             }
         }
     }
@@ -157,10 +160,8 @@ internal sealed class Apply private constructor() {
                     line == null ||
                     line.startsWith(EOF_HASH) -> break
                     line.startsWith(INDEX) -> {
-                        if (i != 0L) {
-                            feed.doFinal()
-                            feed = newFeed()
-                        }
+                        feed.doFinal()
+                        feed = newFeed()
                         i = line.substringAfter(INDEX).toLong()
                     }
                     else -> {

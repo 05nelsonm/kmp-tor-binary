@@ -16,6 +16,7 @@
 package io.matthewnelson.diff.cli.internal
 
 import io.matthewnelson.diff.core.Diff
+import io.matthewnelson.diff.core.Options
 import kotlinx.cli.*
 
 internal interface OptDiffFileExtName {
@@ -31,7 +32,7 @@ internal interface OptDiffFileExtName {
                 type = ArgType.String,
                 fullName = NAME_OPT,
                 description = description
-            ).default(Diff.Options.DEFAULT_EXT_NAME)
+            ).default(Options.Create.DEFAULT_EXT_NAME)
         }
     }
 }
@@ -46,7 +47,7 @@ internal interface OptStaticTime {
             return option(
                 type = ArgType.Boolean,
                 fullName = NAME_OPT,
-                description = "Uses a static time value of ${Diff.Options.STATIC_TIME} instead of the current time value"
+                description = "Uses a static time value of ${Options.Create.STATIC_TIME} instead of the current time value"
             ).default(false)
         }
     }
