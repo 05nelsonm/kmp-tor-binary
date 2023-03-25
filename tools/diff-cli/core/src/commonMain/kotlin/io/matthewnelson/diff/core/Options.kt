@@ -24,10 +24,65 @@ import kotlin.jvm.JvmName
 
 public sealed class Options {
 
+    public class Apply: Options {
+
+        @JvmField
+        public val dryRun: Boolean
+
+        public constructor(): this(Builder())
+
+        public constructor(builder: Builder): super() {
+            dryRun = builder.dryRun
+        }
+
+        public constructor(configure: Builder.() -> Unit): super() {
+            val builder = Builder()
+            configure(builder)
+            dryRun = builder.dryRun
+        }
+
+        /**
+         * Configure [Options.Apply]
+         * */
+        public class Builder {
+
+            /**
+             * Will apply the diff to its associated file, but skip
+             * the final step of atomically moving the .bak file
+             * into its place.
+             * */
+            @JvmField
+            public var dryRun: Boolean = false
+            public fun dryRun(value: Boolean): Builder {
+                dryRun = value
+                return this
+            }
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return  other is Apply
+                    && other.dryRun == dryRun
+        }
+
+        override fun hashCode(): Int {
+            var result = 17
+            result = result * 31 + dryRun.hashCode()
+            return result
+        }
+
+        override fun toString(): String {
+            return """
+                Options.Apply [
+                    dryRun: $dryRun
+                ]
+            """.trimIndent()
+        }
+    }
+
     /**
      * [Options] for use when creating a new [Diff] via [create].
      *
-     * @see [Builder]
+     * @see [Create.Builder]
      * */
     public class Create: Options {
 
@@ -55,7 +110,7 @@ public sealed class Options {
         }
 
         /**
-         * Configure [Options]
+         * Configure [Options.Create]
          * */
         public class Builder  {
             @get:JvmName("diffFileExtensionName")

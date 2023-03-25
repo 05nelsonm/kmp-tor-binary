@@ -16,18 +16,17 @@
 package io.matthewnelson.diff.core
 
 import io.matthewnelson.diff.core.internal.InternalDiffApi
-import kotlinx.datetime.Clock
 import kotlinx.datetime.toInstant
+import okio.Path.Companion.toPath
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
 @OptIn(InternalDiffApi::class)
 class OptionsUnitTest: DiffCoreTestHelper() {
 
     @Test
-    fun givenDiffOptions_whenStaticTime_thenWritesStaticTime() {
+    fun givenOptionsCreate_whenStaticTime_thenWritesStaticTime() {
         file1.writeText("asdfasdf")
         file2.writeText("aaaa")
         val diffFile = Diff.create(fs, file1, file2, diffDir, Options.Create {
@@ -38,7 +37,7 @@ class OptionsUnitTest: DiffCoreTestHelper() {
     }
 
     @Test
-    fun givenDiffOptions_whenDifferentExtension_thenUses() {
+    fun givenOptionsCreate_whenDifferentExtension_thenUses() {
         file1.writeText("asdfasdf")
         file2.writeText("aaaa")
         val expected = ".signature"
@@ -47,4 +46,25 @@ class OptionsUnitTest: DiffCoreTestHelper() {
         })
         assertTrue(diffFile.name.endsWith(expected))
     }
+
+    @Test
+    fun givenOptionsApply_whenDryRunTrue_thenLeavesFileUnmodified() {
+        val t1 = "some text"
+        val t2 = "emos text"
+        file1.writeText(t1)
+        file2.writeText(t2)
+
+        val diffFile = Diff.create(fs, file1, file2, diffDir)
+
+        Diff.apply(fs, diffFile, file1, Options.Apply { dryRun = true })
+
+        // file1 was not modified
+        assertEquals(t1, fs.read(file1) { readUtf8() })
+
+        // bak still here and is the modified file
+        val bak = "$file1.bak".toPath()
+        assertTrue(fs.exists(bak))
+        assertEquals(t2, fs.read(bak) { readUtf8() })
+    }
+
 }

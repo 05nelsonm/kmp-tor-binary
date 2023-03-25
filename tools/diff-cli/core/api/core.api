@@ -1,7 +1,7 @@
 public final class io/matthewnelson/diff/core/Diff {
 	public static final field Companion Lio/matthewnelson/diff/core/Diff$Companion;
-	public static final fun apply (Ljava/lang/String;Ljava/lang/String;Z)V
-	public static final fun apply (Lokio/Path;Lokio/Path;Z)V
+	public static final fun apply (Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Apply;)V
+	public static final fun apply (Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Options$Apply;)V
 	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Create;)Ljava/lang/String;
 	public static final fun create (Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
@@ -11,8 +11,10 @@ public final class io/matthewnelson/diff/core/Diff {
 }
 
 public final class io/matthewnelson/diff/core/Diff$Companion {
-	public final fun apply (Ljava/lang/String;Ljava/lang/String;Z)V
-	public final fun apply (Lokio/Path;Lokio/Path;Z)V
+	public final fun apply (Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Apply;)V
+	public final fun apply (Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Options$Apply;)V
+	public static synthetic fun apply$default (Lio/matthewnelson/diff/core/Diff$Companion;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Apply;ILjava/lang/Object;)V
+	public static synthetic fun apply$default (Lio/matthewnelson/diff/core/Diff$Companion;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Options$Apply;ILjava/lang/Object;)V
 	public final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Create;)Ljava/lang/String;
 	public final fun create (Lokio/Path;Lokio/Path;Lokio/Path;)Lokio/Path;
@@ -54,6 +56,22 @@ public class io/matthewnelson/diff/core/NoDiffException : java/lang/RuntimeExcep
 }
 
 public abstract class io/matthewnelson/diff/core/Options {
+}
+
+public final class io/matthewnelson/diff/core/Options$Apply : io/matthewnelson/diff/core/Options {
+	public final field dryRun Z
+	public fun <init> ()V
+	public fun <init> (Lio/matthewnelson/diff/core/Options$Apply$Builder;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/diff/core/Options$Apply$Builder {
+	public field dryRun Z
+	public fun <init> ()V
+	public final fun dryRun (Z)Lio/matthewnelson/diff/core/Options$Apply$Builder;
 }
 
 public final class io/matthewnelson/diff/core/Options$Create : io/matthewnelson/diff/core/Options {

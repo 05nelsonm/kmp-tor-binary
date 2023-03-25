@@ -45,7 +45,7 @@ class DiffIntegrationTest: DiffCoreTestHelper() {
         file2.writeText(f2Text)
 
         val diffFile = Diff.create(fs, file1, file2, diffDir)
-        Diff.apply(fs, diffFile, file1, false)
+        Diff.apply(fs, diffFile, file1)
         val f1ApplyText = fs.read(file1) { readUtf8() }
 
         assertEquals(f2Text, f1ApplyText)
@@ -67,7 +67,7 @@ class DiffIntegrationTest: DiffCoreTestHelper() {
         file2.writeText(f2Text)
 
         val diffFile = Diff.create(fs, file1, file2, diffDir)
-        Diff.apply(fs, diffFile, file1, false)
+        Diff.apply(fs, diffFile, file1)
         val f1ApplyText = fs.read(file1) { readUtf8() }
 
         assertEquals(f2Text, f1ApplyText)
@@ -90,7 +90,7 @@ class DiffIntegrationTest: DiffCoreTestHelper() {
         file2.writeText(f2Text)
 
         val diffFile = Diff.create(fs, file1, file2, diffDir)
-        Diff.apply(fs, diffFile, file1, false)
+        Diff.apply(fs, diffFile, file1)
         val f1ApplyText = fs.read(file1) { readUtf8() }
 
         assertEquals(f2Text, f1ApplyText)
@@ -108,7 +108,7 @@ class DiffIntegrationTest: DiffCoreTestHelper() {
         file2.writeText(f2Text)
 
         val diffFile = Diff.create(fs, file1, file2, diffDir)
-        Diff.apply(fs, diffFile, file1, false)
+        Diff.apply(fs, diffFile, file1)
         val f1ApplyText = fs.read(file1) { readUtf8() }
 
         assertEquals(f2Text, f1ApplyText)
@@ -126,7 +126,7 @@ class DiffIntegrationTest: DiffCoreTestHelper() {
         fs.sink(file2, mustCreate = true).use {  }
 
         val diffFile = Diff.create(fs, file1, file2, diffDir)
-        Diff.apply(fs, diffFile, file1, false)
+        Diff.apply(fs, diffFile, file1)
         val f1ApplyText = fs.read(file1) { readUtf8() }
 
         assertEquals("", f1ApplyText)

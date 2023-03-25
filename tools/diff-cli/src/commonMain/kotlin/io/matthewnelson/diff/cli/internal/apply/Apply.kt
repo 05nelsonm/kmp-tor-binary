@@ -20,6 +20,7 @@ import io.matthewnelson.diff.cli.internal.ArgDiffFile.Companion.diffFileArgument
 import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.Subcommand
 import io.matthewnelson.diff.core.Diff
+import io.matthewnelson.diff.core.Options
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
 
@@ -52,8 +53,11 @@ internal class Apply: Subcommand(
     override val quietOpt: Boolean by quietOption()
 
     override fun execute() {
+        Diff.apply(diffFileArg, fileArg, Options.Apply {
+            dryRun = dryRunOpt
+        })
+
         with(settings()) {
-            Diff.apply(diffFileArg, fileArg, dryRunOpt)
             if (dryRunOpt) {
                 println("Diff applied to [$fileArg.bak]")
             } else {

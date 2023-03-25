@@ -61,8 +61,12 @@ public class Diff private constructor() {
          * */
         @JvmStatic
         @Throws(IllegalStateException::class, Exception::class)
-        public fun apply(diffFilePath: String, applyToFilePath: String, dryRun: Boolean) {
-            apply(diffFilePath.toPath(), applyToFilePath.toPath(), dryRun)
+        public fun apply(
+            diffFilePath: String,
+            applyToFilePath: String,
+            options: Options.Apply = Options.Apply(),
+        ) {
+            apply(diffFilePath.toPath(), applyToFilePath.toPath(), options)
         }
 
         /**
@@ -70,9 +74,13 @@ public class Diff private constructor() {
          * */
         @JvmStatic
         @Throws(IllegalStateException::class, IOException::class)
-        public fun apply(diffFile: Path, applyTo: Path, dryRun: Boolean) {
+        public fun apply(
+            diffFile: Path,
+            applyTo: Path,
+            options: Options.Apply = Options.Apply(),
+        ) {
             @OptIn(InternalDiffApi::class)
-            apply(FileSystem.system(), diffFile, applyTo, dryRun)
+            apply(FileSystem.system(), diffFile, applyTo, options)
         }
 
         /**
@@ -81,8 +89,13 @@ public class Diff private constructor() {
         @JvmStatic
         @InternalDiffApi
         @Throws(IllegalStateException::class, IOException::class)
-        public fun apply(fs: FileSystem, diffFile: Path, applyTo: Path, dryRun: Boolean) {
-            Apply.diff(fs, diffFile, applyTo, dryRun)
+        public fun apply(
+            fs: FileSystem,
+            diffFile: Path,
+            applyTo: Path,
+            options: Options.Apply = Options.Apply(),
+        ) {
+            Apply.diff(fs, diffFile, applyTo, options)
         }
 
         /**
