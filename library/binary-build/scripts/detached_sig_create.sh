@@ -162,7 +162,13 @@ macos() {
     # Create diffs between unsigned, and signed
     # binaries (.signature files) to be applied later
     for FILE in $FILES; do
-      ${TOOLING} diff-cli create --diff-ext-name ".signature" "$BUNDLE_UNSIGNED/$FILE" "$BUNDLE_TOR/$FILE" "$DIR_SIGNATURES"
+      if ! ${TOOLING} diff-cli create \
+           --diff-ext-name ".signature" \
+           "$BUNDLE_UNSIGNED/$FILE" \
+           "$BUNDLE_TOR/$FILE" \
+           "$DIR_SIGNATURES"; then
+        exit 1
+      fi
     done
 
     change_dir_or_exit "$DIR_SIGNATURES"
@@ -249,7 +255,13 @@ mingw() {
 
       # Create diffs between unsigned, and signed
       # binaries (.signature files) to be applied later
-      ${TOOLING} diff-cli create --diff-ext-name ".signature" "$DIR_UNSIGNED/$FILE" "$DIR_SIGNED/$FILE" "$DIR_SIGNATURES"
+      if ! ${TOOLING} diff-cli create \
+           --diff-ext-name ".signature" \
+           "$DIR_UNSIGNED/$FILE" \
+           "$DIR_SIGNED/$FILE" \
+           "$DIR_SIGNATURES"; then
+         exit 1
+       fi
     done
 
     change_dir_or_exit "$DIR_SIGNATURES"
