@@ -81,18 +81,18 @@ macos() {
 
   if [ ! -f "$PATH_P12_KEY" ]; then
     echo "
-    File does not exist [$PATH_P12_KEY]
+    ERROR: File does not exist [$PATH_P12_KEY]
     "
     exit 1
   fi
 
-  # Read in App Stroe Connect apikey.json file path
+  # Read in App Store Connect apikey.json file path
   printf "Path to App Store Connect api-key json file (e.g. /home/user/dir/api_key.json): "
   read -r PATH_API_KEY
 
   if [ ! -f "$PATH_API_KEY" ]; then
     echo "
-    File does not exist [$PATH_API_KEY]
+    ERROR: File does not exist [$PATH_API_KEY]
     "
     exit 1
   fi
@@ -192,8 +192,78 @@ mingw() {
     exit 1
   fi
 
+  # Read in .key file path
+  printf "Path to .key file (e.g. /home/user/dir/my_key.key): "
+  read -r PATH_KEY
+
+  if [ ! -f "$PATH_KEY" ]; then
+    echo "
+    ERROR: File does not exist [$PATH_KEY]
+    "
+    exit 1
+  fi
+
+  # Read in cert file path
+  printf "Path to cert file (e.g. /home/user/dir/cert.cer): "
+  read -r PATH_CERT
+
+  if [ ! -f "$PATH_CERT" ]; then
+    echo "
+    ERROR: File does not exist [$PATH_CERT]
+    "
+    exit 1
+  fi
+
   change_dir_or_exit "$DIR_MINGW"
-  # TODO
+
+  # For all archives in built/mingw ending in -unsigned.tar.gz
+  for ARCHIVE in "$(pwd)"/*-unsigned.tar.gz; do
+    DIR_SIGNATURES=$(echo "$ARCHIVE" | sed "s|-unsigned.tar.gz|-signatures|g")
+    OUT="$DIR_SIGNATURES.tar.gz"
+    DIR_SIGNED=$(echo "$ARCHIVE" | sed "s|-unsigned.tar.gz|-signed|g")
+    DIR_UNSIGNED=$(echo "$ARCHIVE" | sed "s|-unsigned.tar.gz|-unsigned|g" )
+
+    rm -rf "$DIR_SIGNED"
+    rm -rf "$DIR_UNSIGNED"
+    rm -rf "$DIR_SIGNATURES"
+    mkdir -p "$DIR_SIGNED"
+    mkdir -p "$DIR_UNSIGNED"
+
+    # Extract unsigned archive contents
+    ${TAR} -xz -C "$DIR_UNSIGNED" -f "$ARCHIVE"
+    change_dir_or_exit "$DIR_UNSIGNED"
+    # shellcheck disable=SC2035
+    FILES=$(${FIND} * -type f)
+
+    change_dir_or_exit "$DIR_PROJECT"
+
+    for FILE in $FILES; do
+      if ! ${OSSLSIGNCODE} sign -certs "$PATH_CERT" \
+           -key "$PATH_KEY" \
+           -t "http://timestamp.comodoca.com" \
+           -in "$DIR_UNSIGNED/$FILE" \
+           -out "$DIR_SIGNED/$FILE"; then
+        exit 1
+      fi
+
+      ${TOOLING} diff-cli create --diff-ext-name ".signature" "$DIR_UNSIGNED/$FILE" "$DIR_SIGNED/$FILE" "$DIR_SIGNATURES"
+    done
+
+    change_dir_or_exit "$DIR_SIGNATURES"
+    # shellcheck disable=SC2035
+    ${TAR} -cz * -f "$OUT"
+    echo "
+    Created $OUT
+    "
+
+    # Clean up
+    rm -rf "$DIR_SIGNATURES"
+    rm -rf "$DIR_SIGNED"
+    rm -rf "$DIR_UNSIGNED"
+
+    change_dir_or_exit "$DIR_MINGW"
+    sleep 1
+  done
 }
 
 case $1 in
