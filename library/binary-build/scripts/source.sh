@@ -17,8 +17,6 @@ readonly FIND=$(which find)
 readonly GIT=$(which git)
 readonly MAKE=$(which make)
 readonly TAR=$(which tar)
-readonly RCODESIGN=$(which rcodesign)
-readonly OSSLSIGNCODE=$(which osslsigncode)
 
 check_find() {
   if [ "$FIND" = "" ]; then
@@ -51,26 +49,6 @@ check_tar() {
   if [ "$TAR" = "" ]; then
     echo "
     ERROR: tar is required to be installed to run this script
-    "
-    exit 1
-  fi
-}
-
-check_rcodesign() {
-  if [ "$RCODESIGN" = "" ]; then
-    echo "
-    ERROR: Apple Codesign is required to be installed to run this script
-           See https://gregoryszorc.com/docs/apple-codesign/main/apple_codesign_getting_started.html#installing
-    "
-    exit 1
-  fi
-}
-
-check_osslsigncode() {
-  if [ "$OSSLSIGNCODE" = "" ]; then
-    echo "
-    ERROR: osslsigncode is required to be installed to run this script
-           See https://github.com/mtrojnar/osslsigncode
     "
     exit 1
   fi

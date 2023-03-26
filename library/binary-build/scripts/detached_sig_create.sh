@@ -28,6 +28,10 @@ readonly TOOLING="$DIR_PROJECT/tooling"
 readonly CMD_MACOS="macos"
 readonly CMD_MINGW="mingw"
 
+# Programs
+readonly RCODESIGN=$(which rcodesign)
+readonly OSSLSIGNCODE=$(which osslsigncode)
+
 help() {
   echo "
     $0
@@ -62,8 +66,16 @@ initialize() {
 
 macos() {
   initialize
-  check_rcodesign
 
+  if [ "$RCODESIGN" = "" ]; then
+    echo "
+    ERROR: Apple Codesign is required to be installed to run this script
+           See https://gregoryszorc.com/docs/apple-codesign/main/apple_codesign_getting_started.html#installing
+    "
+    exit 1
+  fi
+
+  # Read in .p12 key file path
   printf "Path to .p12 key file (e.g. /home/user/dir/key.p12): "
   read -r PATH_P12_KEY
 
@@ -74,7 +86,8 @@ macos() {
     exit 1
   fi
 
-  printf "Path to App Store Connect api-key json file (e.g. /home/user/dir/api-key.json): "
+  # Read in App Stroe Connect apikey.json file path
+  printf "Path to App Store Connect api-key json file (e.g. /home/user/dir/api_key.json): "
   read -r PATH_API_KEY
 
   if [ ! -f "$PATH_API_KEY" ]; then
@@ -86,6 +99,7 @@ macos() {
 
   change_dir_or_exit "$DIR_MACOS"
 
+  # For all archives in built/macos ending in -unsigned.tar.gz
   for ARCHIVE in "$(pwd)"/*-unsigned.tar.gz; do
     DIR_SIGNATURES=$(echo "$ARCHIVE" | sed "s|-unsigned.tar.gz|-signatures|g")
     OUT="$DIR_SIGNATURES.tar.gz"
@@ -95,8 +109,11 @@ macos() {
     BUNDLE_UNSIGNED="$BUNDLE_MACOS/Unsigned"
 
     rm -rf "$BUNDLE"
+
+    # Create .app bundle dirs
     mkdir -p "$BUNDLE_TOR"
 
+    # Generate our Info.plist manifest
     touch "$BUNDLE/Contents/Info.plist"
     echo '<?xml version="1.0" encoding="UTF-8"?>
 <plist version="1.0">
@@ -110,6 +127,7 @@ macos() {
 </dict>
 </plist>' > "$BUNDLE/Contents/Info.plist"
 
+    # Extract unsigned archive contents to the Tor directory within the bundle
     ${TAR} -xz -C "$BUNDLE_TOR" -f "$ARCHIVE"
 
     # By copying and setting tor.program as the bundle executable, we ensure
@@ -122,14 +140,17 @@ macos() {
       exit 1
     fi
 
+    # Sign everything in the app bundle
     if ! ${RCODESIGN} sign --p12-file "$PATH_P12_KEY" --code-signature-flags runtime "$BUNDLE"; then
       exit 1
     fi
 
+    # Submit app bundle for notarization and stapling
     if ! ${RCODESIGN} notary-submit --api-key-path "$PATH_API_KEY" --staple "$BUNDLE"; then
       exit 1
     fi
 
+    # Extract unsigned archive contents again to diff agains
     mkdir -p "$BUNDLE_UNSIGNED"
     ${TAR} -xz -C "$BUNDLE_UNSIGNED" -f "$ARCHIVE"
     change_dir_or_exit "$BUNDLE_UNSIGNED"
@@ -138,6 +159,8 @@ macos() {
 
     change_dir_or_exit "$DIR_PROJECT"
 
+    # Create diffs between unsigned, and signed
+    # binaries (.signature files) to be applied later
     for FILE in $FILES; do
       ${TOOLING} diff-cli create --diff-ext-name ".signature" "$BUNDLE_UNSIGNED/$FILE" "$BUNDLE_TOR/$FILE" "$DIR_SIGNATURES"
     done
@@ -149,6 +172,7 @@ macos() {
     Created $OUT
     "
 
+    # Clean up
     rm -rf "$BUNDLE"
     rm -rf "$DIR_SIGNATURES"
 
@@ -159,7 +183,14 @@ macos() {
 
 mingw() {
   initialize
-  check_osslsigncode
+
+  if [ "$OSSLSIGNCODE" = "" ]; then
+    echo "
+    ERROR: osslsigncode is required to be installed to run this script
+           See https://github.com/mtrojnar/osslsigncode
+    "
+    exit 1
+  fi
 
   change_dir_or_exit "$DIR_MINGW"
   # TODO
