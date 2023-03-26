@@ -19,12 +19,12 @@ set -e
 readonly TIME_START=$(date +%s)
 
 # Absolute path to the directory which this script resides in
-readonly DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null && pwd)"
+readonly DIR=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 readonly DIR_BUILT="$DIR/../built"
 readonly DIR_TOR_BUILD="$DIR/../tor-browser-build"
 readonly DIR_TOR_BUILD_OUT="$DIR_TOR_BUILD/out/tor"
 
-# commands
+# Commands
 readonly CMD_ALL="all"
 
 readonly CMD_A_ALL="all-android"
@@ -41,11 +41,6 @@ readonly CMD_M_X86_64="macos-x86_64"
 readonly CMD_W_I686="windows-i686"
 readonly CMD_W_X86_64="windows-x86_64"
 
-# Programs
-readonly GIT=$(which git)
-readonly MAKE=$(which make)
-readonly TAR=$(which tar)
-
 help() {
   echo "
     $0
@@ -59,21 +54,21 @@ help() {
     Syntax: $0 [command]
 
     Commands:
-                $CMD_ALL                     Builds all targets listed below
+          $CMD_ALL                     Builds all targets listed below
+          $CMD_A_ALL             Builds all android targets
+          $CMD_A_AARCH64
+          $CMD_A_ARMV7
+          $CMD_A_X86
+          $CMD_A_X86_64
+          $CMD_D_ALL             Builds all desktop targets
+          $CMD_L_I686
+          $CMD_L_X86_64
+          $CMD_M_AARCH64
+          $CMD_M_X86_64
+          $CMD_W_I686
+          $CMD_W_X86_64
 
-                $CMD_A_ALL             Builds all android targets
-                $CMD_A_AARCH64
-                $CMD_A_ARMV7
-                $CMD_A_X86
-                $CMD_A_X86_64
-
-                $CMD_D_ALL             Builds all desktop targets
-                $CMD_L_I686
-                $CMD_L_X86_64
-                $CMD_M_AARCH64
-                $CMD_M_X86_64
-                $CMD_W_I686
-                $CMD_W_X86_64
+    Example: $0 $CMD_D_ALL
   "
 }
 
@@ -85,38 +80,17 @@ git_patches_remove() {
   return 0
 }
 
-change_dir_or_exit() {
-  if cd "$1"; then
-    return 0
-  fi
-
-  echo "
-    ERROR: Failed to change dirs to $1
-  "
-  exit 1
-}
-
 initialize() {
-  if [ "$GIT" == "" ]; then
+  if ! source "$DIR/source.sh"; then
     echo "
-    ERROR: git is required to be installed to run this script
+    ERROR: Failed to source source.sh
     "
     exit 1
   fi
 
-  if [ "$MAKE" == "" ]; then
-    echo "
-    ERROR: make is required to be installed to run this script
-    "
-    exit 1
-  fi
-
-  if [ "$TAR" == "" ]; then
-    echo "
-    ERROR: tar is a required to be installed to run this script
-    "
-    exit 1
-  fi
+  check_git
+  check_make
+  check_tar
 
   change_dir_or_exit "$DIR"
 
