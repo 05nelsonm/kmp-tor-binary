@@ -29,7 +29,7 @@ readonly DIR_BUILT="$DIR/../built"
 readonly DIR_PROJECT="$DIR/../../.."
 
 # Programs
-readonly TOOLING="$DIR_PROJECT/tooling"
+readonly TOOLING="$DIR_PROJECT/toolingJvm"
 readonly OPENSSL=$(which openssl)
 readonly GZIP=$(which gzip)
 

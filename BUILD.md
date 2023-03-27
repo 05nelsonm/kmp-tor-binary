@@ -11,7 +11,7 @@ As of [[PR #81]](https://github.com/05nelsonm/kmp-tor-binary/pull/81), this has 
 bump of `tor` will include reproducibly built, codesigned binaries for `macOS` and `Windows`.
 
 - What you will need:
-    - `[Linux x86_64]` or `[macOS x86_64 or aarch64]`
+    - `Linux` or `macOS`
     - Git
     - Gradle
     - Java 11 or higher
