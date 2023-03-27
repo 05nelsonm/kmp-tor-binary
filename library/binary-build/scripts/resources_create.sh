@@ -31,6 +31,7 @@ readonly DIR_PROJECT="$DIR/../../.."
 # Programs
 readonly TOOLING="$DIR_PROJECT/tooling"
 readonly OPENSSL=$(which openssl)
+readonly GZIP=$(which gzip)
 
 help() {
   echo "
@@ -72,12 +73,71 @@ initialize() {
     "
     exit 1
   fi
+
+  if [ "$GZIP" = "" ]; then
+    echo "
+    ERROR: gzip is required to be installed to run this script
+    "
+    exit 1
+  fi
+}
+
+SHA256() {
+  if [ ! -f "$1" ]; then
+    exit 1
+  fi
+
+  ${OPENSSL} dgst -sha256 "$1" | rev | cut -d ' ' -f 1 | rev
 }
 
 geoips() {
-  # TODO
+  change_dir_or_exit "$DIR_BUILT"
+
+  if [ ! -f "$CMD_GEOIPS.tar.gz" ]; then
+    echo "
+    ERROR: File does not exist [$DIR_BUILT/$CMD_GEOIPS.tar.gz]
+    "
+    exit 1
+  fi
+
+  # shellcheck disable=SC2115
+  rm -rf "$DIR_BUILT/$CMD_GEOIPS"
+  mkdir "$DIR_BUILT/$CMD_GEOIPS"
+
+  # Extract geoip file archive contents
+  ${TAR} -xz -C "$DIR_BUILT/$CMD_GEOIPS" -f "$DIR_BUILT/$CMD_GEOIPS.tar.gz"
+
+  # Take pre-gzipped sha256 values
+  SHA256_GEOIP=$(SHA256 "$DIR_BUILT/$CMD_GEOIPS/geoip")
+  SHA256_GEOIP6=$(SHA256 "$DIR_BUILT/$CMD_GEOIPS/geoip6")
+
+  # Gzip directory contents
+  ${GZIP} -rn "$DIR_BUILT/$CMD_GEOIPS"
+
+  # Copy gzipped files to module resource directories
+  DIR_GEOIP_SRC="$DIR/../../kmp-tor-binary-geoip/src"
+
+  mkdir -p "$DIR_GEOIP_SRC/androidMain/res/raw/"
+  mkdir -p "$DIR_GEOIP_SRC/jvmMain/resources/kmptor/"
+  mkdir -p "$DIR_GEOIP_SRC/nativeMain/resources/kmptor/"
+
+  change_dir_or_exit "$DIR_BUILT/$CMD_GEOIPS"
+  cp -R . "$DIR_GEOIP_SRC/androidMain/res/raw/"
+  cp -R . "$DIR_GEOIP_SRC/jvmMain/resources/kmptor/"
+  cp -R . "$DIR_GEOIP_SRC/nativeMain/resources/kmptor/"
+
+  # Write sha256 values
+  TOR_RESOURCE_KT_COMMON="$DIR/../../kmp-tor-binary-extract/src/commonMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorResource.kt"
+  sed -i "s|/\* GEOIP \*/ override val sha256sum: String get() = .*|/\* GEOIP \*/ override val sha256sum: String get() = \"$SHA256_GEOIP\"|g" "$TOR_RESOURCE_KT_COMMON"
+  sed -i "s|/\* GEOIP6 \*/ override val sha256sum: String get() = .*|/\* GEOIP6 \*/ override val sha256sum: String get() = \"$SHA256_GEOIP6\"|g" "$TOR_RESOURCE_KT_COMMON"
+
+  # Clean up
+  change_dir_or_exit "$DIR"
+  # shellcheck disable=SC2115
+  rm -rf "$DIR_BUILT/$CMD_GEOIPS"
+
   echo "
-  $CMD_GEOIPS
+    Geoip files have been copied to module kmp-tor-binary-geoip
   "
 }
 
