@@ -261,56 +261,9 @@ TAG_VERSION
 
 ## Where do the binaries come from?
 
-Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-browser-build] project.
+Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-browser-build]
 
-## Building Binaries Yourself
-
- - NOTE: Current binaries for `macOS` are not reproducibly built because to execute on them require that
-   they be codesigned (which changes the sha256sum output). Current binaries for `kmp-tor-binary-macosx64` 
-   and `kmp-tor-binary-macosarm64` come from TorBrowser, signed with the TorProject's developer ID. See 
-   [this issue](https://github.com/05nelsonm/kmp-tor/issues/285) for more details.
-
- - Work is underway to resolve the above note in a manner whereby binaries published from this project 
-   can be easily verified by consumers.
-
- - Clone the repo and initialize submodules:
-   ```
-   git clone https://github.com/05nelsonm/kmp-tor-binary.git
-   cd kmp-tor-binary
-   git submodule update --init
-   ```
-
- - Install dependencies:
-     - See `tor-browser-build`'s `README` for needed dependencies and install them:
-       ```
-       cd library/binary-build/tor-browser-build
-       nano README
-       ```
-
- - Initialize `tor-browser-build`'s `rbm` submodule:
-   ```
-   make submodule-update
-   ```
-
- - Run the build script:
-     - Change directories back to `binary-build`:
-       ```
-       cd ../
-       ```
-     - Running the script will automatically print `help` to see what targets are available:
-       ```
-       ./scripts/build_binaries.sh
-       ```
-         - Example:
-           ```
-           ./scripts/build_binaries.sh desktop-all
-           ```
-
-
-Building a target will automatically extract, package, and move binaries/geoip files 
-to the appropriate `kmp-tor-binary-*` module and update sha256sum/manifest constants.  
-
-As binaries are reproducibly built, running `git diff` should show no changes.
+You can verify the reproducability of published binaries by following the [BUILD.md](BUILD.md) guide.
 
 <!-- TAG_VERSION -->
 [badge-latest-release]: https://img.shields.io/badge/latest--release-4.7.13--4-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
