@@ -185,12 +185,14 @@ binaries() {
 
       # Apply signatures to each file
       for FILE in $FILES; do
-        if ! ${TOOLING} diff-cli apply "$DIR_SIGNATURES/$FILE.signature" "$DIR_WORK/$FILE"; then
+        if ! ${TOOLING} diff-cli apply --quiet "$DIR_SIGNATURES/$FILE.signature" "$DIR_WORK/$FILE"; then
           exit 1
         fi
 
         # Fix file permissions
         chmod 700 "$DIR_WORK/$FILE"
+
+        echo "    Detached signature has been applied to $1[$ARCH] file $FILE"
       done
 
       # Clean up
