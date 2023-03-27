@@ -16,19 +16,19 @@
 export LC_ALL=C
 set -e
 
-# Absolute path to the directory which this script resides in
-readonly DIR=$( cd "$( dirname "$0" )" >/dev/null && pwd )
-readonly DIR_BUILT="$DIR/../built"
-readonly DIR_MACOS="$DIR_BUILT/macos"
-readonly DIR_MINGW="$DIR_BUILT/mingw"
-readonly DIR_PROJECT="$DIR/../../.."
-readonly TOOLING="$DIR_PROJECT/tooling"
-
 # Commands
 readonly CMD_MACOS="macos"
 readonly CMD_MINGW="mingw"
 
+# Absolute path to the directory which this script resides in
+readonly DIR=$( cd "$( dirname "$0" )" >/dev/null && pwd )
+readonly DIR_BUILT="$DIR/../built"
+readonly DIR_MACOS="$DIR_BUILT/$CMD_MACOS"
+readonly DIR_MINGW="$DIR_BUILT/$CMD_MINGW"
+readonly DIR_PROJECT="$DIR/../../.."
+
 # Programs
+readonly TOOLING="$DIR_PROJECT/tooling"
 readonly RCODESIGN=$(which rcodesign)
 readonly OSSLSIGNCODE=$(which osslsigncode)
 
@@ -162,7 +162,13 @@ macos() {
     # Create diffs between unsigned, and signed
     # binaries (.signature files) to be applied later
     for FILE in $FILES; do
-      ${TOOLING} diff-cli create --diff-ext-name ".signature" "$BUNDLE_UNSIGNED/$FILE" "$BUNDLE_TOR/$FILE" "$DIR_SIGNATURES"
+      if ! ${TOOLING} diff-cli create \
+           --diff-ext-name ".signature" \
+           "$BUNDLE_UNSIGNED/$FILE" \
+           "$BUNDLE_TOR/$FILE" \
+           "$DIR_SIGNATURES"; then
+        exit 1
+      fi
     done
 
     change_dir_or_exit "$DIR_SIGNATURES"
@@ -238,6 +244,7 @@ mingw() {
     change_dir_or_exit "$DIR_PROJECT"
 
     for FILE in $FILES; do
+      # Sign each file
       if ! ${OSSLSIGNCODE} sign -certs "$PATH_CERT" \
            -key "$PATH_KEY" \
            -t "http://timestamp.comodoca.com" \
@@ -246,7 +253,15 @@ mingw() {
         exit 1
       fi
 
-      ${TOOLING} diff-cli create --diff-ext-name ".signature" "$DIR_UNSIGNED/$FILE" "$DIR_SIGNED/$FILE" "$DIR_SIGNATURES"
+      # Create diffs between unsigned, and signed
+      # binaries (.signature files) to be applied later
+      if ! ${TOOLING} diff-cli create \
+           --diff-ext-name ".signature" \
+           "$DIR_UNSIGNED/$FILE" \
+           "$DIR_SIGNED/$FILE" \
+           "$DIR_SIGNATURES"; then
+         exit 1
+       fi
     done
 
     change_dir_or_exit "$DIR_SIGNATURES"

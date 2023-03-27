@@ -14,32 +14,12 @@
 # limitations under the License.
 
 readonly FIND=$(which find)
-readonly GIT=$(which git)
-readonly MAKE=$(which make)
 readonly TAR=$(which tar)
 
 check_find() {
   if [ "$FIND" = "" ]; then
     echo "
     ERROR: find is required to be installed to run this script
-    "
-    exit 1
-  fi
-}
-
-check_git() {
-  if [ "$GIT" = "" ]; then
-    echo "
-    ERROR: git is required to be installed to run this script
-    "
-    exit 1
-  fi
-}
-
-check_make() {
-  if [ "$MAKE" = "" ]; then
-    echo "
-    ERROR: make is required to be installed to run this script
     "
     exit 1
   fi

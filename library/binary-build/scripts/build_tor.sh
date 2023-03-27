@@ -18,12 +18,6 @@ set -e
 
 readonly TIME_START=$(date +%s)
 
-# Absolute path to the directory which this script resides in
-readonly DIR=$( cd "$( dirname "$0" )" >/dev/null && pwd )
-readonly DIR_BUILT="$DIR/../built"
-readonly DIR_TOR_BUILD="$DIR/../tor-browser-build"
-readonly DIR_TOR_BUILD_OUT="$DIR_TOR_BUILD/out/tor"
-
 # Commands
 readonly CMD_ALL="all"
 
@@ -40,6 +34,16 @@ readonly CMD_M_AARCH64="macos-aarch64"
 readonly CMD_M_X86_64="macos-x86_64"
 readonly CMD_W_I686="windows-i686"
 readonly CMD_W_X86_64="windows-x86_64"
+
+# Absolute path to the directory which this script resides in
+readonly DIR=$( cd "$( dirname "$0" )" >/dev/null && pwd )
+readonly DIR_BUILT="$DIR/../built"
+readonly DIR_TOR_BUILD="$DIR/../tor-browser-build"
+readonly DIR_TOR_BUILD_OUT="$DIR_TOR_BUILD/out/tor"
+
+# Programs
+readonly GIT=$(which git)
+readonly MAKE=$(which make)
 
 help() {
   echo "
@@ -88,8 +92,20 @@ initialize() {
     exit 1
   fi
 
-  check_git
-  check_make
+  if [ "$GIT" = "" ]; then
+    echo "
+    ERROR: git is required to be installed to run this script
+    "
+    exit 1
+  fi
+
+  if [ "$MAKE" = "" ]; then
+    echo "
+    ERROR: make is required to be installed to run this script
+    "
+    exit 1
+  fi
+
   check_tar
 
   change_dir_or_exit "$DIR"
