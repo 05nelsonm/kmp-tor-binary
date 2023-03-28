@@ -60,6 +60,7 @@ public class Diff private constructor() {
          * Apply a diff to it's associate file.
          * */
         @JvmStatic
+        @JvmOverloads
         @Throws(IllegalStateException::class, Exception::class)
         public fun apply(
             diffFilePath: String,
@@ -73,6 +74,7 @@ public class Diff private constructor() {
          * Apply a diff to it's associate file.
          * */
         @JvmStatic
+        @JvmOverloads
         @Throws(IllegalStateException::class, IOException::class)
         public fun apply(
             diffFile: Path,
@@ -87,6 +89,7 @@ public class Diff private constructor() {
          * Apply a diff to it's associate file.
          * */
         @JvmStatic
+        @JvmOverloads
         @InternalDiffApi
         @Throws(IllegalStateException::class, IOException::class)
         public fun apply(
@@ -127,7 +130,7 @@ public class Diff private constructor() {
             NoDiffException::class,
             IllegalArgumentException::class,
             IllegalStateException::class,
-            Exception::class,
+            IOException::class,
         )
         public fun create(
             file1: Path,
@@ -149,7 +152,7 @@ public class Diff private constructor() {
             NoDiffException::class,
             IllegalArgumentException::class,
             IllegalStateException::class,
-            Exception::class,
+            IOException::class,
         )
         public fun create(
             fs: FileSystem,

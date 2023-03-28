@@ -85,7 +85,7 @@ to reproducibly built software.
 
 Project: https://github.com/05nelsonm/kmp-tor-binary/tree/master/tools/diff-cli
 
-Usage: differ-cli options_list
+Usage: diff-cli options_list
 Subcommands: 
     create -       Creates a diff from 2 file inputs. The first file is
                    compared to the second file whereby any differences
@@ -101,7 +101,7 @@ Options:
 ```
 $ ./tooling diff-cli create -h
 
-Usage: differ-cli create options_list
+Usage: diff-cli create options_list
 Arguments: 
     file1 -> The first file (e.g. /path/to/unsigned/file) { String }
     file2 -> The second file to diff against the first file (e.g. /path/to/signed/file) { String }
@@ -117,7 +117,7 @@ Options:
 ```
 $ ./tooling diff-cli apply -h
 
-Usage: differ-cli apply options_list
+Usage: diff-cli apply options_list
 Arguments: 
     diff-file -> The previously created diff file to be applied (e.g. /path/to/diffs/file.diff) { String }
     file -> The file to apply the diff to (e.g. /path/to/unsigned/file) { String }
@@ -130,7 +130,7 @@ Options:
 ```
 $ ./tooling diff-cli print-header -h
 
-Usage: differ-cli print-header options_list
+Usage: diff-cli print-header options_list
 Arguments: 
     diff-file -> A diff file (e.g. /path/to/diffs/file.diff) { String }
 Options: 
