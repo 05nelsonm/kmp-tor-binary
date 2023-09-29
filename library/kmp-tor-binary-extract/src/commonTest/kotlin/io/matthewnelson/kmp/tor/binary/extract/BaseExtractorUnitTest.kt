@@ -15,7 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.extract
 
-import io.matthewnelson.encoding.builders.Base16
+import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.matthewnelson.kmp.tor.binary.extract.internal.FILE_NAME_SHA256_SUFFIX
 import io.matthewnelson.kmp.tor.binary.extract.internal.FILE_NAME_SHA256_TOR

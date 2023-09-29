@@ -47,8 +47,8 @@ public actual class Extractor(context: Context) {
         delegate.extract(resource, destination, cleanExtraction) { resourcePath ->
             val resourceId = try {
                 when (resource) {
-                    TorResourceGeoip -> R.raw.geoip
-                    TorResourceGeoip6 -> R.raw.geoip6
+                    TorResourceGeoip -> io.matthewnelson.kmp.tor.binary.geoip.R.raw.geoip
+                    TorResourceGeoip6 -> io.matthewnelson.kmp.tor.binary.geoip.R.raw.geoip6
                 }
             } catch (e: ClassNotFoundException) {
                 throw ExtractionException("Dependency kmp-tor-binary-geoip is missing", e)

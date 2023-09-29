@@ -1,6 +1,8 @@
 public final class io/matthewnelson/diff/core/Diff {
 	public static final field Companion Lio/matthewnelson/diff/core/Diff$Companion;
+	public static final fun apply (Ljava/lang/String;Ljava/lang/String;)V
 	public static final fun apply (Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Apply;)V
+	public static final fun apply (Lokio/Path;Lokio/Path;)V
 	public static final fun apply (Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Options$Apply;)V
 	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
 	public static final fun create (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Create;)Ljava/lang/String;
@@ -11,7 +13,9 @@ public final class io/matthewnelson/diff/core/Diff {
 }
 
 public final class io/matthewnelson/diff/core/Diff$Companion {
+	public final fun apply (Ljava/lang/String;Ljava/lang/String;)V
 	public final fun apply (Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Apply;)V
+	public final fun apply (Lokio/Path;Lokio/Path;)V
 	public final fun apply (Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Options$Apply;)V
 	public static synthetic fun apply$default (Lio/matthewnelson/diff/core/Diff$Companion;Ljava/lang/String;Ljava/lang/String;Lio/matthewnelson/diff/core/Options$Apply;ILjava/lang/Object;)V
 	public static synthetic fun apply$default (Lio/matthewnelson/diff/core/Diff$Companion;Lokio/Path;Lokio/Path;Lio/matthewnelson/diff/core/Options$Apply;ILjava/lang/Object;)V
@@ -29,6 +33,7 @@ public final class io/matthewnelson/diff/core/Diff$Schema : java/lang/Enum {
 	public static final field Companion Lio/matthewnelson/diff/core/Diff$Schema$Companion;
 	public final field code I
 	public static final field v1 Lio/matthewnelson/diff/core/Diff$Schema;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static final fun latest ()Lio/matthewnelson/diff/core/Diff$Schema;
 	public static fun valueOf (Ljava/lang/String;)Lio/matthewnelson/diff/core/Diff$Schema;
 	public static fun values ()[Lio/matthewnelson/diff/core/Diff$Schema;

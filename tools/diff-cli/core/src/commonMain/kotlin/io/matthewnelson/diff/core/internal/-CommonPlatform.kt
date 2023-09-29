@@ -19,7 +19,6 @@ package io.matthewnelson.diff.core.internal
 
 import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.base64.Base64
-import io.matthewnelson.encoding.builders.*
 import okio.FileSystem
 
 @Suppress("NOTHING_TO_INLINE")

@@ -108,6 +108,13 @@ initialize() {
 
   check_tar
 
+  if [ -z "$(which unzstd)" ]; then
+    echo "
+    ERROR: unzstd is required to be installed to run this script
+    "
+    exit 1
+  fi
+
   change_dir_or_exit "$DIR"
 
   if ! ${GIT} submodule update --init; then
@@ -145,20 +152,27 @@ build_and_unpack_tor() {
   change_dir_or_exit "$DIR_TOR_BUILD_OUT"
 
   local ARCHIVE=
-  for ARCHIVE in "$(pwd)"/*.tar.gz; do
+  for ARCHIVE in "$(pwd)/tor-"*.tar.*; do
     break
   done
 
   if [[ "$ARCHIVE" == "" || ! -f "$ARCHIVE" ]]; then
     echo "
-    ERROR: Failed to get *.tar.gz file handle for $1 from tor-browser-build/out/tor/
+    ERROR: Failed to find archive for $1 from tor-browser-build/out/tor/
     "
     exit 1
   fi
 
-  if ! ${TAR} -xzf "$ARCHIVE"; then
+  local tar_ext=
+  tar_ext="$(echo "$ARCHIVE" | rev | cut -d '.' -f 1 | rev)"
+
+  if [ "$tar_ext" = "gz" ]; then
+    ${TAR} -xzf "$ARCHIVE"
+  elif [ "$tar_ext" = "zst" ]; then
+    ${TAR} --use-compress-program=unzstd -xvf "$ARCHIVE"
+  else
     echo "
-    ERROR: Failed to extract contents of $ARCHIVE
+    ERROR: Unknown tar compression method. Was neither .gz or .zst
     "
     exit 1
   fi

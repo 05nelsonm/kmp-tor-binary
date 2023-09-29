@@ -32,6 +32,7 @@ public final class io/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS 
 	public static final field Linux Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
 	public static final field Macos Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
 	public static final field Mingw Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
 	public static fun valueOf (Ljava/lang/String;)Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
 	public static fun values ()[Lio/matthewnelson/kmp/tor/binary/extract/TorBinaryResource$OS;
 }
