@@ -48,6 +48,6 @@ public actual sealed class TorResource private actual constructor() {
 
 public object TorResourceMingwX64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/mingw/x64"
-    /* MINGW_X64 */ override val resourceManifest: List<String> get() = listOf("tor.exe.gz", "tor-gencert.exe.gz")
-    /* MINGW_X64 */ override val sha256sum: String get() = "b9647acee2af7196e809a47487f36b308be735095042f124f236c09e9d986882"
+    /* MINGW_X64 */ override val resourceManifest: List<String> get() = listOf("tor-gencert.exe.gz", "tor.exe.gz")
+    /* MINGW_X64 */ override val sha256sum: String get() = "5bc038e640bb9773a8eea1a2220cc5f264a19b47e521190250e9b0ede00631ca"
 }
