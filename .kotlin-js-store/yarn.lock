@@ -293,40 +293,40 @@ js-yaml@4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-kmp-tor-binary-geoip@4.7.13-4:
-  version "4.7.13-4"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-geoip/-/kmp-tor-binary-geoip-4.7.13-4.tgz#bdd001476d6fac68252e7cde3380c3745c4ced13"
-  integrity sha512-Wd998Rks6HZVYHhJ0YfUGtkl32Fuvupcdd+lFeTZASJ+BlqQ6UDIMpfM/i0EcktQrFOR1eN2a8RYpB4dgv0RoQ==
+kmp-tor-binary-geoip@4.8.6-0:
+  version "4.8.6-0"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-geoip/-/kmp-tor-binary-geoip-4.8.6-0.tgz#522485192fd32297bb463e32966e270bf7b09119"
+  integrity sha512-y48hg284vNDIm9voMs8y8dincMsrcyW6kbbCBLUouz6nqcFGLXT5Jr+tx22qyp0gwmFH8wlZUp9ErEAZj++eew==
 
-kmp-tor-binary-linuxx64@4.7.13-4:
-  version "4.7.13-4"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-linuxx64/-/kmp-tor-binary-linuxx64-4.7.13-4.tgz#3f72818d02578f0ed672eb286ce12ae511434478"
-  integrity sha512-ZHU/aVafDC5G4FdU7IysGNQUAxt2LObekYEkoc38oXP0eZXyYuUZlieqJLwDzTvrqnMfqRbOw66dpuX0HX71dg==
+kmp-tor-binary-linuxx64@4.8.6-0:
+  version "4.8.6-0"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-linuxx64/-/kmp-tor-binary-linuxx64-4.8.6-0.tgz#2fef7d4d45d809544f8933575b93e725179798ae"
+  integrity sha512-8YO+lDKBfBYnNuvbIQxnMV3psrIQbZfwz9loocBeevl2Kqp6ILZFtNAutneV9m9CTGdfeV4QPwTM41ZaVkVzUA==
 
-kmp-tor-binary-linuxx86@4.7.13-4:
-  version "4.7.13-4"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-linuxx86/-/kmp-tor-binary-linuxx86-4.7.13-4.tgz#f1799addc53f1b2d47cd06ce2e2918d71419bcba"
-  integrity sha512-JsOoAshwK8zR6Vn18jacp9/16o9f/wpKsusj0nq9PjJhCR0CLwLmmcTon9zgxCD6KVbRbrseRGrD7oKlbIVj6w==
+kmp-tor-binary-linuxx86@4.8.6-0:
+  version "4.8.6-0"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-linuxx86/-/kmp-tor-binary-linuxx86-4.8.6-0.tgz#8a9993849416af09a495facfb20e018c9865866a"
+  integrity sha512-MRmMlKNj2W//Hbv5sxwcgLw76mF0MPDhmaqT7jQVUUrEi/ZTzn/FTM1vgQsYLpMSv1RPXDByb/8t3lWtKHAYEg==
 
-kmp-tor-binary-macosarm64@4.7.13-4:
-  version "4.7.13-4"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-macosarm64/-/kmp-tor-binary-macosarm64-4.7.13-4.tgz#d0ea8ca81d257c673ab586d85a74cc4ad3942298"
-  integrity sha512-zAnY2Pupt8kALyin9ZuJsljEsRNidUoWIV9rnAMiieXX/uoAaM51YJijTsqVlxvR94qaXWqy+LnSxkImghVTXA==
+kmp-tor-binary-macosarm64@4.8.6-0:
+  version "4.8.6-0"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-macosarm64/-/kmp-tor-binary-macosarm64-4.8.6-0.tgz#e3aa7b481d2ec5f228b8cf955fe9e2ba0a60ab39"
+  integrity sha512-NcS1ssStFFMRzD+VWtmw8PAi5Zpjq0wTNvpra1cpcSWcCW/c99s5vqTO7GX+8AUxeu65t0DNGAdn3oSXTwCRBw==
 
-kmp-tor-binary-macosx64@4.7.13-4:
-  version "4.7.13-4"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-macosx64/-/kmp-tor-binary-macosx64-4.7.13-4.tgz#ab666776a025cd56771f3c5e993aa87803e7f648"
-  integrity sha512-dGr29vWMWXGV5Jw6ZSjq4+nTc+MNXCirhaRa/jvs3NOOB7JumIIiMm+CfkC2woCl3VKFsfJKAJZxzlY7xQfIrg==
+kmp-tor-binary-macosx64@4.8.6-0:
+  version "4.8.6-0"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-macosx64/-/kmp-tor-binary-macosx64-4.8.6-0.tgz#cd6923978af07933d5e4e9e9f46154ca58e2ae8f"
+  integrity sha512-I9HrR41KCltJVAFQEQOVWNA3revgoKWLBePlpGqHNtvV7CxoItmHlCJz9Vxu3STxhC6m9h27/ERb1Jjw1KEbxw==
 
-kmp-tor-binary-mingwx64@4.7.13-4:
-  version "4.7.13-4"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-mingwx64/-/kmp-tor-binary-mingwx64-4.7.13-4.tgz#828bf39d50e39b5f2993917fe5f911e9c4d53c60"
-  integrity sha512-4DjenR18TY2SDHIJNwwjF+DKbSCHP3Heio9vsplwDXZ0k6tRcUqm3QePxbNNLJUrcuhRBziLl98+Dih7b19zOg==
+kmp-tor-binary-mingwx64@4.8.6-0:
+  version "4.8.6-0"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-mingwx64/-/kmp-tor-binary-mingwx64-4.8.6-0.tgz#710b7cd77d98491da03c2e7a6bb3ff1cf0352074"
+  integrity sha512-eeB0AfFlIH/ITjL5wSFJMeUak43TgK8eEHQqhWVW2UozQpoU2CV3WLcRfwdBq68qUHVRzk3qx9L2ozEI7+5gEQ==
 
-kmp-tor-binary-mingwx86@4.7.13-4:
-  version "4.7.13-4"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-mingwx86/-/kmp-tor-binary-mingwx86-4.7.13-4.tgz#4db56aad5c7453572116b1a23adb9e1a3d0f5722"
-  integrity sha512-+0yLThcPE6pA4plJJ4EG6YH5uYdW9sHfmmvyHGTDkuLq2gPyuBgnWGT169kwR30GN7DHz9aDe4go2Ju53lovlg==
+kmp-tor-binary-mingwx86@4.8.6-0:
+  version "4.8.6-0"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-mingwx86/-/kmp-tor-binary-mingwx86-4.8.6-0.tgz#f2c7c57c0ebef6510013473c970c56d861e6f986"
+  integrity sha512-Ry+FQcLlMjvRyvyGjvAMfgHzqVxM8sMciT5sQdVlRCxd2MZLjzp32Se+tE6LlJRCd7DMFHJ0VE/itMLtzLecGA==
 
 locate-path@^6.0.0:
   version "6.0.0"

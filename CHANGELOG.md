@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Version 4.8.6-0 (2023-09-29)
+ - Update dependencies
+     - Kotlin -> `1.9.10`
+     - Tor -> `0.4.8.6`
+
 ## Version 4.7.13-4 (2023-03-24)
  - *Actually* fixes an issue with Java 9 modularization not being able to find
    resources from different modules/jars during extraction. [[#76]][pr-76]

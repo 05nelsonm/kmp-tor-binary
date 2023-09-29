@@ -126,8 +126,8 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
    // build.gradle.kts
 
    dependencies {
-       val vTor = "4.7.13-4"
-       val vKmpTor = "1.4.2" // <-- see kmp-tor repo for latest version
+       val vTor = "4.8.6-0"
+       val vKmpTor = "1.4.4" // <-- see kmp-tor repo for latest version
        implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
        // Linux x86_64
@@ -204,8 +204,8 @@ TAG_VERSION
   // build.gradle.kts
 
   dependencies {
-      val vTor = "4.7.13-4"
-      val vKmpTor = "1.4.2" // <-- see kmp-tor repo for latest version
+      val vTor = "4.8.6-0"
+      val vKmpTor = "1.4.4" // <-- see kmp-tor repo for latest version
       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
       // Linux x86_64
@@ -266,11 +266,11 @@ Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-br
 You can verify the reproducability of published binaries by following the [BUILD.md](BUILD.md) guide.
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-4.7.13--4-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
+[badge-latest-release]: https://img.shields.io/badge/latest--release-4.8.6--0-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->
-[badge-kotlin]: https://img.shields.io/badge/kotlin-1.8.10-blue.svg?logo=kotlin
+[badge-kotlin]: https://img.shields.io/badge/kotlin-1.9.10-blue.svg?logo=kotlin
 
 <!-- TAG_PLATFORMS -->
 [badge-platform-android]: http://img.shields.io/badge/-android-6EDB8D.svg?style=flat
