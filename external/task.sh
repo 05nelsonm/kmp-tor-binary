@@ -443,11 +443,11 @@ rm -rf "$DIR_SCRIPT/xz"
 rm -rf "$DIR_SCRIPT/zlib"
 
 mkdir -p "$DIR_SCRIPT/out"
-mkdir -p "$DIR_SCRIPT/libevent"
-mkdir -p "$DIR_SCRIPT/openssl"
-mkdir -p "$DIR_SCRIPT/tor"
-mkdir -p "$DIR_SCRIPT/xz"
-mkdir -p "$DIR_SCRIPT/zlib"
+mkdir -p "$DIR_SCRIPT/libevent/logs"
+mkdir -p "$DIR_SCRIPT/openssl/logs"
+mkdir -p "$DIR_SCRIPT/tor/logs"
+mkdir -p "$DIR_SCRIPT/xz/logs"
+mkdir -p "$DIR_SCRIPT/zlib/logs"
 '
 
   CONF_CFLAGS='-fno-guess-branch-probability -frandom-seed=0'
@@ -625,83 +625,70 @@ function __build:configure:target:build_script {
   __conf:TOR '--prefix="$DIR_SCRIPT/tor"'
   __conf:TOR 'CFLAGS="$CFLAGS -O3"'
 
-  # TODO: Add logging
-#  # log file
-#  __conf:SCRIPT '
-#echo "
-#    Building $TASK'
-#  __conf:SCRIPT "    LOGS >> $DIR_SCRIPT/$DIR_BUILD/log
-#\"
-#"
-#  __conf:SCRIPT '
-#'
-
   # xz
   __conf:SCRIPT '
 echo "
-    Building lzma for $TASK
-"
-sleep 1
+    Building lzma for $TASK'
+  __conf:SCRIPT "    LOGS >> $DIR_BUILD/xz/logs"
+  __conf:SCRIPT '"
 cd "$DIR_EXTERNAL/xz"
-./autogen.sh'
-  __conf:SCRIPT "$CONF_XZ
-make clean
-make -j$NUM_CPU
-make install"
+./autogen.sh > "$DIR_SCRIPT/xz/logs/autogen.log" 2> "$DIR_SCRIPT/xz/logs/autogen.err"'
+  __conf:SCRIPT "$CONF_XZ > \"\$DIR_SCRIPT/xz/logs/configure.log\" 2> \"\$DIR_SCRIPT/xz/logs/configure.err\"
+make clean > /dev/null
+make -j$NUM_CPU > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
+make install > /dev/null"
 
   # zlib
   __conf:SCRIPT '
 echo "
-    Building zlib for $TASK
-"
-sleep 1
+    Building zlib for $TASK'
+  __conf:SCRIPT "    LOGS >> $DIR_BUILD/zlib/logs"
+  __conf:SCRIPT '"
 cd "$DIR_EXTERNAL/zlib"'
-  __conf:SCRIPT "$CONF_ZLIB
-make clean
-make -j$NUM_CPU
-make install"
+  __conf:SCRIPT "$CONF_ZLIB > \"\$DIR_SCRIPT/zlib/logs/configure.log\" 2> \"\$DIR_SCRIPT/zlib/logs/configure.err\"
+make clean > /dev/null
+make -j$NUM_CPU > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
+make install > /dev/null"
 
   # openssl
   __conf:SCRIPT '
 echo "
-    Building openssl for $TASK
-"
-sleep 1
+    Building openssl for $TASK'
+  __conf:SCRIPT "    LOGS >> $DIR_BUILD/openssl/logs"
+  __conf:SCRIPT '"
 cd "$DIR_EXTERNAL/openssl"'
-  __conf:SCRIPT "$CONF_OPENSSL
-make clean
-make -j$NUM_CPU
-make install_sw"
+  __conf:SCRIPT "$CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
+make clean > /dev/null
+make -j$NUM_CPU > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
+make install_sw > /dev/null"
 
   # libevent
   __conf:SCRIPT '
 echo "
-    Building libevent for $TASK
-"
-sleep 1
+    Building libevent for $TASK'
+  __conf:SCRIPT "    LOGS >> $DIR_BUILD/libevent/logs"
+  __conf:SCRIPT '"
 cd "$DIR_EXTERNAL/libevent"
-./autogen.sh'
-  __conf:SCRIPT "$CONF_LIBEVENT
-make clean
-make -j$NUM_CPU
-make install"
+./autogen.sh > "$DIR_SCRIPT/libevent/logs/autogen.log" 2> "$DIR_SCRIPT/libevent/logs/autogen.err"'
+  __conf:SCRIPT "$CONF_LIBEVENT > \"\$DIR_SCRIPT/libevent/logs/configure.log\" 2> \"\$DIR_SCRIPT/libevent/logs/configure.err\"
+make clean > /dev/null
+make -j$NUM_CPU > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIPT/libevent/logs/make.err\"
+make install > /dev/null"
 
   # tor
   __conf:SCRIPT '
 echo "
-    Building tor for $TASK
-"
-sleep 1
-
+    Building tor for $TASK'
+  __conf:SCRIPT "    LOGS >> $DIR_BUILD/tor/logs"
+  __conf:SCRIPT '"
 export LZMA_CFLAGS="-I$DIR_SCRIPT/xz/include"
 export LZMA_LIBS="$DIR_SCRIPT/xz/lib/liblzma.a"
-
 cd "$DIR_EXTERNAL/tor"
-./autogen.sh'
-  __conf:SCRIPT "$CONF_TOR
-make clean
-make -j$NUM_CPU
-make install
+./autogen.sh > "$DIR_SCRIPT/tor/logs/autogen.log" 2> "$DIR_SCRIPT/tor/logs/autogen.err"'
+  __conf:SCRIPT "$CONF_TOR > \"\$DIR_SCRIPT/tor/logs/configure.log\" 2> \"\$DIR_SCRIPT/tor/logs/configure.err\"
+make clean > /dev/null 2>&1
+make -j$NUM_CPU > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
+make install > /dev/null 2>&1
 "
 
   # out
