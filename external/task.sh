@@ -15,7 +15,7 @@
 export LC_ALL=C
 set -e
 
-readonly NUM_CPU=$(if [[ $NUM_CPU =~ ^[0-9]+$ ]]; then echo "$NUM_CPU"; else echo "2"; fi)
+readonly NUM_JOBS=$(if [[ $NUM_JOBS =~ ^[0-9]+$ ]]; then echo "$NUM_JOBS"; else echo "2"; fi)
 readonly DRY_RUN=$(if [ "$2" = "--dry-run" ]; then echo "true"; else echo "false"; fi)
 
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
@@ -349,11 +349,11 @@ $(
 )
 
     Options:
-        --dry-run                      Will generate build scripts, but not execute anything
+        --dry-run                      Will generate build scripts, but not execute anything.
 
     Environment:
-        NUM_CPU=<number>               Number of CPUs to use when executing make. Defaults to 2
-                                       Example: $ export NUM_CPU=4; $0 build:all:android
+        NUM_JOBS=<number>              Number of jobs when executing make. Defaults to 2.
+                                       Example: $ export NUM_JOBS=4; $0 build:all:android
 
     Example: $0 build:jvm:linux-libc:x86_64 --dry-run
   "
@@ -521,7 +521,7 @@ mkdir -p "$DIR_SCRIPT/zlib/logs"
   --enable-static-openssl \
   --with-openssl-dir="$DIR_SCRIPT/openssl" \
   --enable-static-zlib \
-  --with-zlib-dir="$DIR_SCRIPT/zlib" '
+  --with-zlib-dir="$DIR_SCRIPT/zlib"'
 
   __build:configure:android
   __build:configure:jvm
@@ -637,7 +637,7 @@ cd "$DIR_EXTERNAL/xz"
 ./autogen.sh > "$DIR_SCRIPT/xz/logs/autogen.log" 2> "$DIR_SCRIPT/xz/logs/autogen.err"'
   __conf:SCRIPT "$CONF_XZ > \"\$DIR_SCRIPT/xz/logs/configure.log\" 2> \"\$DIR_SCRIPT/xz/logs/configure.err\"
 make clean > /dev/null
-make -j$NUM_CPU > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
+make -j$NUM_JOBS > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
 make install > /dev/null"
 
   # zlib
@@ -649,7 +649,7 @@ echo "
 cd "$DIR_EXTERNAL/zlib"'
   __conf:SCRIPT "$CONF_ZLIB > \"\$DIR_SCRIPT/zlib/logs/configure.log\" 2> \"\$DIR_SCRIPT/zlib/logs/configure.err\"
 make clean > /dev/null
-make -j$NUM_CPU > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
+make -j$NUM_JOBS > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
 make install > /dev/null"
 
   # openssl
@@ -661,7 +661,7 @@ echo "
 cd "$DIR_EXTERNAL/openssl"'
   __conf:SCRIPT "$CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
 make clean > /dev/null
-make -j$NUM_CPU > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
+make -j$NUM_JOBS > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
 make install_sw > /dev/null"
 
   # libevent
@@ -674,7 +674,7 @@ cd "$DIR_EXTERNAL/libevent"
 ./autogen.sh > "$DIR_SCRIPT/libevent/logs/autogen.log" 2> "$DIR_SCRIPT/libevent/logs/autogen.err"'
   __conf:SCRIPT "$CONF_LIBEVENT > \"\$DIR_SCRIPT/libevent/logs/configure.log\" 2> \"\$DIR_SCRIPT/libevent/logs/configure.err\"
 make clean > /dev/null
-make -j$NUM_CPU > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIPT/libevent/logs/make.err\"
+make -j$NUM_JOBS > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIPT/libevent/logs/make.err\"
 make install > /dev/null"
 
   # tor
@@ -689,7 +689,7 @@ cd "$DIR_EXTERNAL/tor"
 ./autogen.sh > "$DIR_SCRIPT/tor/logs/autogen.log" 2> "$DIR_SCRIPT/tor/logs/autogen.err"'
   __conf:SCRIPT "$CONF_TOR > \"\$DIR_SCRIPT/tor/logs/configure.log\" 2> \"\$DIR_SCRIPT/tor/logs/configure.err\"
 make clean > /dev/null 2>&1
-make -j$NUM_CPU > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
+make -j$NUM_JOBS > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
 make install > /dev/null 2>&1
 "
 
