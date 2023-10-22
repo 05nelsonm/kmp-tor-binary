@@ -374,13 +374,17 @@ function __build:cleanup {
 function __build:configure:target:init {
   __require:os_name_arch
 
-  local dir_platform=
   if [ -n "$is_framework" ]; then
-    dir_platform="framework/"
+    DIR_BUILD="build/framework/$os_name$os_subtype/$os_arch"
+    DIR_OUT="build/framework-out/$os_name$os_subtype/$os_arch"
     __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
   else
-    if [ "$os_name" != "android" ]; then
-      dir_platform="jvm/"
+    if [ "$os_name" = "android" ]; then
+      DIR_BUILD="build/$os_name$os_subtype/$os_arch"
+      DIR_OUT="build/$os_name$os_subtype-out/$os_arch"
+    else
+      DIR_BUILD="build/jvm/$os_name$os_subtype/$os_arch"
+      DIR_OUT="build/jvm-out/$os_name$os_subtype/$os_arch"
     fi
 
     __require:cmd "$DOCKER" "docker"
@@ -388,7 +392,6 @@ function __build:configure:target:init {
     __require:var_set "$G_ID" "G_ID"
   fi
 
-  unset DIR_BUILD
   unset CONF_CC
   unset CONF_LD
   unset CONF_AR
@@ -404,9 +407,6 @@ function __build:configure:target:init {
   unset CONF_XZ
   unset CONF_ZLIB
   unset CMD_SH
-
-  DIR_BUILD="build/$dir_platform$os_name$os_subtype/$os_arch"
-  unset dir_platform
 
   CONF_SCRIPT='#!/bin/sh
 # Copyright (c) 2023 Matthew Nelson
@@ -433,16 +433,17 @@ set -e
   __conf:SCRIPT "readonly TASK=\"$os_name$os_subtype:$os_arch\""
   __conf:SCRIPT '
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
-readonly DIR_EXTERNAL="$(pwd)"
-
-rm -rf "$DIR_SCRIPT/out"
+readonly DIR_EXTERNAL="$(pwd)"'
+  __conf:SCRIPT "readonly DIR_OUT=\"\$DIR_EXTERNAL/$DIR_OUT\""
+  __conf:SCRIPT '
+rm -rf "$DIR_OUT"
 rm -rf "$DIR_SCRIPT/libevent"
 rm -rf "$DIR_SCRIPT/openssl"
 rm -rf "$DIR_SCRIPT/tor"
 rm -rf "$DIR_SCRIPT/xz"
 rm -rf "$DIR_SCRIPT/zlib"
 
-mkdir -p "$DIR_SCRIPT/out"
+mkdir -p "$DIR_OUT"
 mkdir -p "$DIR_SCRIPT/libevent/logs"
 mkdir -p "$DIR_SCRIPT/openssl/logs"
 mkdir -p "$DIR_SCRIPT/tor/logs"
@@ -576,6 +577,7 @@ function __build:configure:non_framework {
 function __build:configure:target:build_script {
   __require:var_set "$os_name" "os_name"
   __require:var_set "$DIR_BUILD" "DIR_BUILD"
+  __require:var_set "$DIR_OUT" "DIR_OUT"
   __require:var_set "$openssl_target" "openssl_target"
   __require:var_set "$host" "host"
 
@@ -695,13 +697,13 @@ make install > /dev/null 2>&1
   if [ -z "$is_framework" ]; then
     case "$os_name" in
       "android"|"linux"|"freebsd")
-        __conf:SCRIPT 'install -s "$DIR_SCRIPT/tor/bin/tor" "$DIR_SCRIPT/out/libkmptor.so"'
+        __conf:SCRIPT 'install -s "$DIR_SCRIPT/tor/bin/tor" "$DIR_OUT/libkmptor.so"'
         ;;
       "macos")
         # TODO
         ;;
       "mingw")
-        __conf:SCRIPT 'install -s "$DIR_SCRIPT/tor/bin/tor.exe" "$DIR_SCRIPT/out/kmptor.dll"'
+        __conf:SCRIPT 'install -s "$DIR_SCRIPT/tor/bin/tor.exe" "$DIR_OUT/kmptor.dll"'
         ;;
       *)
         __error "Unknown os_name >> $os_name"
