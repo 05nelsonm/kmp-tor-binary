@@ -81,9 +81,8 @@ function build:android:arm { ## Builds Android armeabi-v7a
   local openssl_target="android-arm"
   local host="armv7a-linux-androideabi"
   __build:configure:target:init
-
   __build:configure:target:build_script
-#  __exec:docker:run "work" "05nelsonm/ubuntu16-linux-x86_64"
+#  __exec:docker:run "work" "05nelsonm/kmptor-linux-x86_64"
 }
 
 function build:android:arm64 { ## Builds Android arm64-v8a
@@ -92,9 +91,8 @@ function build:android:arm64 { ## Builds Android arm64-v8a
   local openssl_target="android-arm64"
   local host="aarch64-linux-android"
   __build:configure:target:init
-
   __build:configure:target:build_script
-#  __exec:docker:run "work" "05nelsonm/ubuntu16-linux-x86_64"
+#  __exec:docker:run "work" "05nelsonm/kmptor-linux-x86_64"
 }
 
 function build:android:x86 { ## Builds Android x86
@@ -103,9 +101,8 @@ function build:android:x86 { ## Builds Android x86
   local openssl_target="android-x86"
   local host="i686-linux-android"
   __build:configure:target:init
-
   __build:configure:target:build_script
-#  __exec:docker:run "work" "05nelsonm/ubuntu16-linux-x86_64"
+#  __exec:docker:run "work" "05nelsonm/kmptor-linux-x86_64"
 }
 
 function build:android:x86_64 { ## Builds Android x86_64
@@ -114,9 +111,8 @@ function build:android:x86_64 { ## Builds Android x86_64
   local openssl_target="android-x86_64"
   local host="x86_64-linux-android"
   __build:configure:target:init
-
   __build:configure:target:build_script
-#  __exec:docker:run "work" "05nelsonm/ubuntu16-linux-x86_64"
+#  __exec:docker:run "work" "05nelsonm/kmptor-linux-x86_64"
 }
 
 function build:jvm:freebsd:aarch64 { ## Builds FreeBSD aarch64 for JVM
@@ -127,7 +123,6 @@ function build:jvm:freebsd:aarch64 { ## Builds FreeBSD aarch64 for JVM
   # TODO: Fix
   local host="aarch64"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -139,7 +134,6 @@ function build:jvm:freebsd:x86 { ## Builds FreeBSD x86 for JVM
   # TODO: Fix
   local host="i686"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -151,7 +145,6 @@ function build:jvm:freebsd:x86_64 { ## Builds FreeBSD x86_64 for JVM
   # TODO: Fix
   local host="x86_64"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -162,7 +155,6 @@ function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
   local openssl_target="linux-aarch64"
   local host="aarch64"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -174,7 +166,6 @@ function build:jvm:linux-libc:armv5 { ## Builds Linux Libc armv5 for JVM
   # TODO: Fix
   local host="armv5-linux-gnueabi"
   __build:configure:target:init
-
   __conf:CFLAGS '-mfloat-abi=soft'
   __build:configure:target:build_script
 }
@@ -187,7 +178,6 @@ function build:jvm:linux-libc:armv6 { ## Builds Linux Libc armv6 for JVM
   # TODO: Fix
   local host="armv6-linux-gnueabi"
   __build:configure:target:init
-
   __conf:CFLAGS '-mfloat-abi=hard -mfpu=vfp'
   __build:configure:target:build_script
 }
@@ -200,7 +190,6 @@ function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
   # TODO: Fix
   local host="armv7-linux-gnueabi"
   __build:configure:target:init
-
   __conf:CFLAGS '-mfloat-abi=hard -mfpu=vfp'
   __build:configure:target:build_script
 }
@@ -212,7 +201,6 @@ function build:jvm:linux-libc:x86 { ## Builds Linux Libc x86 for JVM
   local openssl_target="linux-x86"
   local host="i686"
   __build:configure:target:init
-
   __conf:CFLAGS '-m32'
   __build:configure:target:build_script
   __exec:docker:run "work" "05nelsonm/kmptor-linux-x86"
@@ -225,7 +213,6 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
   local openssl_target="linux-x86_64"
   local host="x86_64"
   __build:configure:target:init
-
   __conf:CFLAGS '-m64'
   __build:configure:target:build_script
   __exec:docker:run "work" "05nelsonm/kmptor-linux-x86_64"
@@ -238,7 +225,6 @@ function build:jvm:linux-musl:aarch64 { ## Builds Linux Musl aarch64 for JVM
   local openssl_target="linux-aarch64"
   local host="aarch64"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -250,7 +236,6 @@ function build:jvm:linux-musl:x86 { ## Builds Linux Musl x86 for JVM
   # TODO: Fix
   local host="i686"
   __build:configure:target:init
-
   __conf:CFLAGS '-m32'
   __build:configure:target:build_script
 }
@@ -262,7 +247,6 @@ function build:jvm:linux-musl:x86_64 { ## Builds Linux Musl x86_64 for JVM
   local openssl_target="linux-x86_64"
   local host="x86_64"
   __build:configure:target:init
-
   __conf:CFLAGS '-m64'
   __build:configure:target:build_script
 }
@@ -274,7 +258,6 @@ function build:jvm:macos:aarch64 { ## Builds macOS aarch64 for JVM
   # TODO: Fix
   local host="aarch64"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -285,7 +268,6 @@ function build:jvm:macos:x86_64 { ## Builds macOS x86_64 for JVM
   # TODO: Fix
   local host="x86_64"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -295,7 +277,6 @@ function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
   local openssl_target="mingw"
   local host="i686-w64-mingw32"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -305,7 +286,6 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
   local openssl_target="mingw64"
   local host="x86_64-w64-mingw32"
   __build:configure:target:init
-
   __build:configure:target:build_script
 }
 
@@ -318,7 +298,6 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
 #  local openssl_target="ios64-xcrun"
 #  local host=""
 #  __build:configure:target:init
-#
 #  __build:configure:target:build_script
 #}
 
@@ -531,9 +510,7 @@ mkdir -p "$DIR_SCRIPT/zlib/logs"
 
 function __build:configure:android {
   __require:os_name_arch
-  if [ "$os_name" != "android" ]; then
-      return 0
-  fi
+  if [ "$os_name" != "android" ]; then return 0; fi
 
   __conf:OPENSSL 'no-asm'
   __conf:OPENSSL '-D__ANDROID_API__=21'
@@ -543,9 +520,7 @@ function __build:configure:android {
 
 function __build:configure:jvm {
   __require:os_name_arch
-  if [ "$os_name" = "android" ] || [ -n "$is_framework" ]; then
-      return 0
-  fi
+  if [ "$os_name" = "android" ] || [ -n "$is_framework" ]; then return 0; fi
 
   __conf:OPENSSL 'no-asm'
   # TODO
@@ -553,9 +528,7 @@ function __build:configure:jvm {
 
 function __build:configure:framework {
   __require:os_name_arch
-  if [ -z "$is_framework" ]; then
-    return 0
-  fi
+  if [ -z "$is_framework" ]; then return 0; fi
 
   __conf:CFLAGS '-fembed-bitcode'
   __conf:LDFLAGS '-fembed-bitcode'
@@ -564,9 +537,7 @@ function __build:configure:framework {
 
 function __build:configure:non_framework {
   __require:os_name_arch
-  if [ -n "$is_framework" ]; then
-    return 0
-  fi
+  if [ -n "$is_framework" ]; then return 0; fi
 
   __conf:CFLAGS '-fPIC'
   # TODO: JNI
@@ -628,62 +599,62 @@ function __build:configure:target:build_script {
   __conf:TOR 'CFLAGS="$CFLAGS -O3"'
 
   # xz
-  __conf:SCRIPT '
-echo "
-    Building lzma for $TASK'
-  __conf:SCRIPT "    LOGS >> $DIR_BUILD/xz/logs"
-  __conf:SCRIPT '"
-cd "$DIR_EXTERNAL/xz"
-./autogen.sh > "$DIR_SCRIPT/xz/logs/autogen.log" 2> "$DIR_SCRIPT/xz/logs/autogen.err"'
+  __conf:SCRIPT "
+echo \"
+    Building lzma for \$TASK
+    LOGS >> $DIR_BUILD/xz/logs
+\""
+  __conf:SCRIPT 'cd "$DIR_EXTERNAL/xz"'
+  __conf:SCRIPT './autogen.sh > "$DIR_SCRIPT/xz/logs/autogen.log" 2> "$DIR_SCRIPT/xz/logs/autogen.err"'
   __conf:SCRIPT "$CONF_XZ > \"\$DIR_SCRIPT/xz/logs/configure.log\" 2> \"\$DIR_SCRIPT/xz/logs/configure.err\"
 make clean > /dev/null
 make -j$NUM_JOBS > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
 make install > /dev/null"
 
   # zlib
-  __conf:SCRIPT '
-echo "
-    Building zlib for $TASK'
-  __conf:SCRIPT "    LOGS >> $DIR_BUILD/zlib/logs"
-  __conf:SCRIPT '"
-cd "$DIR_EXTERNAL/zlib"'
+  __conf:SCRIPT "
+echo \"
+    Building zlib for \$TASK
+    LOGS >> $DIR_BUILD/zlib/logs
+\""
+  __conf:SCRIPT 'cd "$DIR_EXTERNAL/zlib"'
   __conf:SCRIPT "$CONF_ZLIB > \"\$DIR_SCRIPT/zlib/logs/configure.log\" 2> \"\$DIR_SCRIPT/zlib/logs/configure.err\"
 make clean > /dev/null
 make -j$NUM_JOBS > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
 make install > /dev/null"
 
   # openssl
-  __conf:SCRIPT '
-echo "
-    Building openssl for $TASK'
-  __conf:SCRIPT "    LOGS >> $DIR_BUILD/openssl/logs"
-  __conf:SCRIPT '"
-cd "$DIR_EXTERNAL/openssl"'
+  __conf:SCRIPT "
+echo \"
+    Building openssl for \$TASK
+    LOGS >> $DIR_BUILD/openssl/logs
+\""
+  __conf:SCRIPT 'cd "$DIR_EXTERNAL/openssl"'
   __conf:SCRIPT "$CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
 make clean > /dev/null
 make -j$NUM_JOBS > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
 make install_sw > /dev/null"
 
   # libevent
-  __conf:SCRIPT '
-echo "
-    Building libevent for $TASK'
-  __conf:SCRIPT "    LOGS >> $DIR_BUILD/libevent/logs"
-  __conf:SCRIPT '"
-cd "$DIR_EXTERNAL/libevent"
-./autogen.sh > "$DIR_SCRIPT/libevent/logs/autogen.log" 2> "$DIR_SCRIPT/libevent/logs/autogen.err"'
+  __conf:SCRIPT "
+echo \"
+    Building libevent for \$TASK
+    LOGS >> $DIR_BUILD/libevent/logs
+\""
+  __conf:SCRIPT 'cd "$DIR_EXTERNAL/libevent"'
+  __conf:SCRIPT './autogen.sh > "$DIR_SCRIPT/libevent/logs/autogen.log" 2> "$DIR_SCRIPT/libevent/logs/autogen.err"'
   __conf:SCRIPT "$CONF_LIBEVENT > \"\$DIR_SCRIPT/libevent/logs/configure.log\" 2> \"\$DIR_SCRIPT/libevent/logs/configure.err\"
 make clean > /dev/null
 make -j$NUM_JOBS > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIPT/libevent/logs/make.err\"
 make install > /dev/null"
 
   # tor
-  __conf:SCRIPT '
-echo "
-    Building tor for $TASK'
-  __conf:SCRIPT "    LOGS >> $DIR_BUILD/tor/logs"
-  __conf:SCRIPT '"
-export LZMA_CFLAGS="-I$DIR_SCRIPT/xz/include"
+  __conf:SCRIPT "
+echo \"
+    Building tor for \$TASK
+    LOGS >> $DIR_BUILD/tor/logs
+\""
+  __conf:SCRIPT 'export LZMA_CFLAGS="-I$DIR_SCRIPT/xz/include"
 export LZMA_LIBS="$DIR_SCRIPT/xz/lib/liblzma.a"
 cd "$DIR_EXTERNAL/tor"
 ./autogen.sh > "$DIR_SCRIPT/tor/logs/autogen.log" 2> "$DIR_SCRIPT/tor/logs/autogen.err"'
@@ -734,6 +705,8 @@ function __build:git:apply_patches {
     ${GIT} apply "$patch_file"
     sleep 0.25
   done
+
+  cd "$DIR_SCRIPT"
 }
 
 function __build:git:stash {
@@ -741,155 +714,106 @@ function __build:git:stash {
   cd "$DIR_SCRIPT/$1"
   ${GIT} add --all
   if [ "$(${GIT} stash)" = "No local changes to save" ]; then
+    cd "$DIR_SCRIPT"
     return 0
   fi
   ${GIT} stash drop
+  cd "$DIR_SCRIPT"
 }
 
 function __conf:SCRIPT {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
+  if [ -z "$1" ]; then return 0; fi
   CONF_SCRIPT+="
 $1"
 }
 
 function __conf:CC {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
   CONF_CC="$1"
 }
 
 function __conf:LD {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
   CONF_LD="$1"
 }
 
 function __conf:AR {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
   CONF_AR="$1"
 }
 
 function __conf:AS {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
   CONF_AS="$1"
 }
 
 function __conf:RANLIB {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
   CONF_RANLIB="$1"
 }
 
 function __conf:STRIP {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
   CONF_STRIP="$1"
 }
 
 function __conf:CFLAGS {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
   CONF_CFLAGS+=" $1"
 }
 
 function __conf:LDFLAGS {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
   CONF_LDFLAGS+=" $1"
 }
 
 function __conf:LIBEVENT {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
+  if [ -z "$1" ]; then return 0;fi
   CONF_LIBEVENT+=" \\
   $1"
 }
 
 function __conf:OPENSSL {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
+  if [ -z "$1" ]; then return 0; fi
   CONF_OPENSSL+=" \\
   $1"
 }
 
 function __conf:TOR {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
+  if [ -z "$1" ]; then return 0; fi
   CONF_TOR+=" \\
   $1"
 }
 
 function __conf:XZ {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
+  if [ -z "$1" ]; then return 0; fi
   CONF_XZ+=" \\
   $1"
 }
 
 function __conf:ZLIB   {
-  if [ -z "$1" ]; then
-    return 0
-  fi
-
+  if [ -z "$1" ]; then return 0; fi
   CONF_ZLIB+=" \\
   $1"
 }
 
 function __exec:sh {
-  if $DRY_RUN; then
-    return 0
-  fi
-
+  if $DRY_RUN; then return 0;fi
   sh -c "$CMD_SH"
 }
 
 function __exec:docker:run {
-  if $DRY_RUN; then
-    return 0
-  fi
-
+  if $DRY_RUN; then return 0; fi
   __require:var_set "$1" "image work directory name"
   __require:var_set "$2" "image"
 
+  local docker_file=
   case "$2" in
-    "05nelsonm/kmptor-linux-x86")
-      ${DOCKER} build -f "$DIR_SCRIPT/docker/Dockerfile.linux-x86" -t "$2" .
-      ;;
-    "05nelsonm/kmptor-linux-x86_64")
-      ${DOCKER} build -f "$DIR_SCRIPT/docker/Dockerfile.linux-x86_64" -t "$2" .
-      ;;
+    "05nelsonm/kmptor-linux-x86") docker_file="Dockerfile.linux-x86";;
+    "05nelsonm/kmptor-linux-x86_64") docker_file="Dockerfile.linux-x86_64";;
   esac
 
+  if [ -n "$docker_file" ]; then
+    ${DOCKER} build -f "$DIR_SCRIPT/docker/$docker_file" -t "$2" "$DIR_SCRIPT/docker"
+  fi
+
+  # Not the slickest way, but will end the task after a build completes
+  # Necessary when running build:all:* tasks
+  trap 'echo "    SIGINT intercepted... exiting..."; exit 1' SIGINT
   ${DOCKER} run --rm -u "$U_ID:$G_ID" -v "$DIR_SCRIPT:/$1" "$2" sh -c "$CMD_SH"
+  trap - SIGINT
 }
 
 #function __exec:docker:cross {
@@ -897,10 +821,7 @@ function __exec:docker:run {
 #}
 
 function __require:cmd {
-  if [ -f "$1" ]; then
-    return 0
-  fi
-
+  if [ -f "$1" ]; then return 0; fi
   __error "$2 is required to run this script"
 }
 
@@ -914,17 +835,12 @@ function __require:var_set {
 }
 
 function __require:not_empty {
-  if [ -n "$1" ]; then
-    return 0
-  fi
-
+  if [ -n "$1" ]; then return 0; fi
   __error "$2"
 }
 
 function __require:no_build_lock {
-  if [ ! -f "$FILE_BUILD_LOCK" ]; then
-    return 0
-  fi
+  if [ ! -f "$FILE_BUILD_LOCK" ]; then return 0; fi
 
   # Don't use __error here because it checks DRY_RUN
   echo 1>&2 "
@@ -948,9 +864,7 @@ function __init {
   # Ensure always start in the external directory
   cd "$DIR_SCRIPT"
 
-  if ! echo "$1" | grep -q "^build"; then
-    return 0
-  fi
+  if ! echo "$1" | grep -q "^build"; then return 0; fi
 
   __require:cmd "$GIT" "git"
   __require:no_build_lock
@@ -959,14 +873,13 @@ function __init {
 
   mkdir -p "build"
   trap '__build:cleanup' EXIT
-  touch "$FILE_BUILD_LOCK"
+  echo "$1" > "$FILE_BUILD_LOCK"
 
   __build:git:apply_patches "libevent"
   __build:git:apply_patches "openssl"
   __build:git:apply_patches "tor"
   __build:git:apply_patches "xz"
   __build:git:apply_patches "zlib"
-  cd "$DIR_SCRIPT"
 }
 
 # Run
