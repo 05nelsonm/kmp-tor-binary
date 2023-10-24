@@ -1,0 +1,8 @@
+FROM 05nelsonm/build-env.android.base
+
+ENV CROSS_TRIPLE i686-linux-android
+ENV ANDROID_API 21
+ENV ANDROID_NDK_REVISION 26b
+
+RUN cd /var/opt && \
+    ./install_android.sh

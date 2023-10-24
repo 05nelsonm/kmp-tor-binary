@@ -1,0 +1,13 @@
+FROM 05nelsonm/build-env.linux-libc.x86
+
+RUN apt-get update --yes && \
+    apt-get install --yes \
+    gcc-mingw-w64-i686
+
+ENV CROSS_TRIPLE i686-w64-mingw32
+ENV CROSS_ROOT /usr/bin
+ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
+    AR=/usr/bin/${CROSS_TRIPLE}-ar \
+    CC=/usr/bin/${CROSS_TRIPLE}-gcc \
+    CPP=/usr/bin/${CROSS_TRIPLE}-cpp \
+    LD=/usr/bin/${CROSS_TRIPLE}-ld

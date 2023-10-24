@@ -1,0 +1,15 @@
+FROM dockcross/base:20230926-9eb419c
+
+RUN apt-get update --yes && \
+    apt-get install --no-install-recommends --yes \
+      autopoint \
+      doxygen \
+      patch \
+      perl \
+      po4a \
+      unzip
+
+COPY install_android.sh /var/opt
+COPY entrypoint_android.sh /dockcross
+
+ENTRYPOINT ["/dockcross/entrypoint_android.sh"]
