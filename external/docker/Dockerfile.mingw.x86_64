@@ -1,8 +1,11 @@
-FROM 05nelsonm/build-env.linux-libc.x86_64
+FROM 05nelsonm/build-env.linux-libc.base
 
 RUN apt-get update --yes && \
     apt-get install --yes \
-    gcc-mingw-w64-x86-64
+      binutils-mingw-w64-x86-64 \
+      g++-mingw-w64-x86-64 \
+      gcc-mingw-w64-x86-64 \
+      mingw-w64-tools
 
 ENV CROSS_TRIPLE x86_64-w64-mingw32
 ENV CROSS_ROOT /usr/bin
@@ -10,4 +13,10 @@ ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
     AR=/usr/bin/${CROSS_TRIPLE}-ar \
     CC=/usr/bin/${CROSS_TRIPLE}-gcc \
     CPP=/usr/bin/${CROSS_TRIPLE}-cpp \
+    CXX=/usr/bin/${CROSS_TRIPLE}-g++ \
     LD=/usr/bin/${CROSS_TRIPLE}-ld
+
+# binutils
+ENV WIDL=/usr/bin/${CROSS_TRIPLE}-widl \
+    WINDMC=/usr/bin/${CROSS_TRIPLE}-windmc \
+    WINDRES=/usr/bin/${CROSS_TRIPLE}-windres
