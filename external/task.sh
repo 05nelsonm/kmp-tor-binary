@@ -16,8 +16,6 @@ export LC_ALL=C
 set -e
 
 # TODO: Move to arg parser
-readonly NUM_JOBS=$(if [[ $NUM_JOBS =~ ^[0-9]+$ ]]; then echo "$NUM_JOBS"; else echo "2"; fi)
-# TODO: Move to arg parser
 readonly DRY_RUN=$(if [ "$2" = "--dry-run" ]; then echo "true"; else echo "false"; fi)
 
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
@@ -79,7 +77,6 @@ function build:android:arm { ## Builds Android armeabi-v7a
   local os_name="android"
   local os_arch="armeabi-v7a"
   local openssl_target="android-arm"
-  local host="armv7a-linux-androideabi"
   __build:configure:target:init
   __exec:docker:run
 }
@@ -88,7 +85,6 @@ function build:android:arm64 { ## Builds Android arm64-v8a
   local os_name="android"
   local os_arch="arm64-v8a"
   local openssl_target="android-arm64"
-  local host="aarch64-linux-android"
   __build:configure:target:init
   __exec:docker:run
 }
@@ -97,7 +93,6 @@ function build:android:x86 { ## Builds Android x86
   local os_name="android"
   local os_arch="x86"
   local openssl_target="android-x86"
-  local host="i686-linux-android"
   __build:configure:target:init
   __exec:docker:run
 }
@@ -106,7 +101,6 @@ function build:android:x86_64 { ## Builds Android x86_64
   local os_name="android"
   local os_arch="x86_64"
   local openssl_target="android-x86_64"
-  local host="x86_64-linux-android"
   __build:configure:target:init
   __exec:docker:run
 }
@@ -115,8 +109,6 @@ function build:jvm:freebsd:aarch64 { ## Builds FreeBSD aarch64 for JVM
   local os_name="freebsd"
   local os_arch="aarch64"
   local openssl_target="BSD-aarch64"
-  # TODO: Check container arch
-  local host="aarch64-unknown-freebsd11"
   __build:configure:target:init
   # TODO __exec:docker:run
 }
@@ -125,8 +117,6 @@ function build:jvm:freebsd:x86 { ## Builds FreeBSD x86 for JVM
   local os_name="freebsd"
   local os_arch="x86"
   local openssl_target="BSD-x86"
-  # TODO: Check container arch
-  local host="i686-freebsd9"
   __build:configure:target:init
   # TODO __exec:docker:run
 }
@@ -135,8 +125,6 @@ function build:jvm:freebsd:x86_64 { ## Builds FreeBSD x86_64 for JVM
   local os_name="freebsd"
   local os_arch="x86_64"
   local openssl_target="BSD-x86_64"
-  # TODO: Check container arch
-  local host="x86_64-freebsd9"
   __build:configure:target:init
   # TODO __exec:docker:run
 }
@@ -146,7 +134,6 @@ function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
   local os_subtype="-libc"
   local os_arch="aarch64"
   local openssl_target="linux-aarch64"
-  local host="aarch64-linux-gnu"
   __build:configure:target:init
   __exec:docker:run
 }
@@ -156,7 +143,6 @@ function build:jvm:linux-libc:x86 { ## Builds Linux Libc x86 for JVM
   local os_subtype="-libc"
   local os_arch="x86"
   local openssl_target="linux-x86"
-  local host="i686-linux-gnu"
   __build:configure:target:init
   __conf:CFLAGS '-m32'
   __exec:docker:run
@@ -167,7 +153,6 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
   local os_subtype="-libc"
   local os_arch="x86_64"
   local openssl_target="linux-x86_64"
-  local host="x86_64-linux-gnu"
   __build:configure:target:init
   __conf:CFLAGS '-m64'
   __exec:docker:run
@@ -178,7 +163,6 @@ function build:jvm:linux-musl:aarch64 { ## Builds Linux Musl aarch64 for JVM
   local os_subtype="-musl"
   local os_arch="aarch64"
   local openssl_target="linux-aarch64"
-  local host="aarch64-linux-musl"
   __build:configure:target:init
   # TODO __exec:docker:run
 }
@@ -188,7 +172,6 @@ function build:jvm:linux-musl:x86 { ## Builds Linux Musl x86 for JVM
   local os_subtype="-musl"
   local os_arch="x86"
   local openssl_target="linux-x86"
-  local host="i686-linux-musl"
   __build:configure:target:init
   __conf:CFLAGS '-m32'
   # TODO __exec:docker:run
@@ -199,7 +182,6 @@ function build:jvm:linux-musl:x86_64 { ## Builds Linux Musl x86_64 for JVM
   local os_subtype="-musl"
   local os_arch="x86_64"
   local openssl_target="linux-x86_64"
-  local host="x86_64-linux-musl"
   __build:configure:target:init
   __conf:CFLAGS '-m64'
   # TODO __exec:docker:run
@@ -209,8 +191,6 @@ function build:jvm:macos:aarch64 { ## Builds macOS aarch64 for JVM
   local os_name="macos"
   local os_arch="aarch64"
   local openssl_target="darwin64-arm64-cc"
-  # TODO: Fix
-  local host="aarch64"
   __build:configure:target:init
   # TODO __exec:docker:run
 }
@@ -219,8 +199,6 @@ function build:jvm:macos:x86_64 { ## Builds macOS x86_64 for JVM
   local os_name="macos"
   local os_arch="x86_64"
   local openssl_target="darwin64-x86_64-cc"
-  # TODO: Fix
-  local host="x86_64"
   __build:configure:target:init
   # TODO __exec:docker:run
 }
@@ -229,8 +207,9 @@ function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
   local os_name="mingw"
   local os_arch="x86"
   local openssl_target="mingw"
-  local host="i686-w64-mingw32"
   __build:configure:target:init
+  __conf:CFLAGS '-m32'
+  __conf:LDFLAGS '-Wl,--no-seh'
   __exec:docker:run
 }
 
@@ -238,8 +217,8 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
   local os_name="mingw"
   local os_arch="x86_64"
   local openssl_target="mingw64"
-  local host="x86_64-w64-mingw32"
   __build:configure:target:init
+  __conf:CFLAGS '-m64'
   __exec:docker:run
 }
 
@@ -250,7 +229,6 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
 #  local os_arch="x86_64"
 #  local is_framework="yes"
 #  local openssl_target="ios64-xcrun"
-#  local host=""
 #  __build:configure:target:init
 #}
 
@@ -282,10 +260,6 @@ $(
 
     Options:
         --dry-run                      Will generate build scripts, but not execute anything.
-
-    Environment:
-        NUM_JOBS=<number>              Number of jobs when executing make. Defaults to 2.
-                                       Example: $ export NUM_JOBS=4; $0 build:all:android
 
     Example: $0 build:all:jvm --dry-run
   "
@@ -366,33 +340,51 @@ set -e
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 readonly DIR_EXTERNAL="$(pwd)"'
   __conf:SCRIPT "readonly DIR_OUT=\"\$DIR_EXTERNAL/$DIR_OUT\""
-  __conf:SCRIPT '
+  __conf:SCRIPT 'readonly DIR_TMP="/tmp/tor_build"
+readonly NUM_JOBS="$(nproc)"
+
 rm -rf "$DIR_OUT"
+rm -rf "$DIR_TMP"
 rm -rf "$DIR_SCRIPT/libevent"
 rm -rf "$DIR_SCRIPT/openssl"
 rm -rf "$DIR_SCRIPT/tor"
 rm -rf "$DIR_SCRIPT/xz"
 rm -rf "$DIR_SCRIPT/zlib"
 
-mkdir -p "$DIR_OUT"
+mkdir -p "$DIR_TMP"
 mkdir -p "$DIR_SCRIPT/libevent/logs"
 mkdir -p "$DIR_SCRIPT/openssl/logs"
 mkdir -p "$DIR_SCRIPT/tor/logs"
 mkdir -p "$DIR_SCRIPT/xz/logs"
 mkdir -p "$DIR_SCRIPT/zlib/logs"
 '
+  __conf:SCRIPT "trap 'rm -rf \$DIR_TMP' EXIT
+"
+
+  if [ "$os_name" = "mingw" ]; then
+    __conf:SCRIPT 'export CHOST="$CROSS_TRIPLE"'
+  fi
 
   CONF_CFLAGS='-fno-guess-branch-probability -frandom-seed=0'
+  __conf:CFLAGS '-fvisibility=hidden'
+  if [ "$os_name" = "mingw" ]; then
+    __conf:CFLAGS '-fno-strict-overflow'
+    __conf:CFLAGS '-fstack-protector-strong'
+  else
+    __conf:CFLAGS '-fPIC'
+  fi
   __conf:CFLAGS '-I$DIR_SCRIPT/libevent/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/openssl/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/xz/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/zlib/include'
-  __conf:CFLAGS '-fvisibility=hidden'
 
   CONF_LDFLAGS='-L$DIR_SCRIPT/libevent/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/openssl/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/xz/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/zlib/lib'
+  if [ "$os_name" = "mingw" ]; then
+    __conf:LDFLAGS '-Wl,--no-insert-timestamp -Wl,--subsystem,windows'
+  fi
 
   CONF_XZ='./configure --enable-static \
   --disable-doc \
@@ -458,14 +450,12 @@ mkdir -p "$DIR_SCRIPT/zlib/logs"
 
   # non-framework (i.e. android or jvm)
   if [ -z "$is_framework" ]; then
-    __conf:CFLAGS '-fPIC'
     __conf:OPENSSL 'no-asm'
     # TODO: JNI
   fi
 
   # android
   if [ "$os_name" = "android" ]; then
-    # TODO: __conf:STRIP ''
     __conf:OPENSSL '-D__ANDROID_API__=21'
     __conf:TOR '--enable-android'
   fi
@@ -493,7 +483,6 @@ function __build:configure:target:build_script {
   __require:var_set "$DIR_BUILD" "DIR_BUILD"
   __require:var_set "$DIR_OUT" "DIR_OUT"
   __require:var_set "$openssl_target" "openssl_target"
-  __require:var_set "$host" "host"
 
   if [ -n "$CONF_CC" ]; then
     __conf:SCRIPT "export CC=\"$CONF_CC\""
@@ -510,26 +499,57 @@ function __build:configure:target:build_script {
   if [ -n "$CONF_RANLIB" ]; then
     __conf:SCRIPT "export RANLIB=\"$CONF_RANLIB\""
   else
-    __conf:SCRIPT "export RANLIB=\"$host-ranlib\""
+    __conf:SCRIPT 'export RANLIB="$CROSS_TRIPLE-ranlib"'
   fi
   if [ -n "$CONF_STRIP" ]; then
     __conf:SCRIPT "export STRIP=\"$CONF_STRIP\""
   else
-    __conf:SCRIPT "export STRIP=\"$host-strip\""
+    __conf:SCRIPT 'export STRIP="$CROSS_TRIPLE-strip"'
   fi
 
   __conf:SCRIPT "export CFLAGS=\"$CONF_CFLAGS\""
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
 
-  __conf:SCRIPT 'export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib"'
-  __conf:SCRIPT 'export LIBS="-ldl -L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
+  if [ "$os_name" = "linux" ]; then
+    __conf:SCRIPT 'export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib"'
+    __conf:SCRIPT 'export LIBS="-ldl -L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
+  fi
 
-  __conf:XZ "--host=$host"
+  # xz
+  __conf:XZ '--host="$CROSS_TRIPLE"'
   __conf:XZ '--prefix="$DIR_SCRIPT/xz"'
   __conf:XZ 'CFLAGS="$CFLAGS -O3"'
 
+  __conf:SCRIPT "
+echo \"
+    Building lzma for \$TASK
+    LOGS >> $DIR_BUILD/xz/logs
+\""
+  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/xz" "$DIR_TMP"'
+  __conf:SCRIPT "cd \"\$DIR_TMP/xz\"
+./autogen.sh > \"\$DIR_SCRIPT/xz/logs/autogen.log\" 2> \"\$DIR_SCRIPT/xz/logs/autogen.err\"
+$CONF_XZ > \"\$DIR_SCRIPT/xz/logs/configure.log\" 2> \"\$DIR_SCRIPT/xz/logs/configure.err\"
+make clean > /dev/null
+make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
+make install > /dev/null"
+
+  # zlib
   __conf:ZLIB '--prefix="$DIR_SCRIPT/zlib"'
 
+  __conf:SCRIPT "
+echo \"
+    Building zlib for \$TASK
+    LOGS >> $DIR_BUILD/zlib/logs
+\""
+  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/zlib" "$DIR_TMP"'
+  __conf:SCRIPT "cd \"\$DIR_TMP/zlib\"
+$CONF_ZLIB > \"\$DIR_SCRIPT/zlib/logs/configure.log\" 2> \"\$DIR_SCRIPT/zlib/logs/configure.err\"
+make clean > /dev/null
+make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
+make install > /dev/null
+"
+
+  # openssl
   __conf:OPENSSL '--release'
   __conf:OPENSSL '--libdir=lib'
   __conf:OPENSSL '--prefix="$DIR_SCRIPT/openssl"'
@@ -537,66 +557,42 @@ function __build:configure:target:build_script {
   # TODO: Need to check ./Configure output to see if this is necessary
   __conf:OPENSSL 'PKG_CONFIG_PATH="$DIR_SCRIPT/zlib/lib/pkgconfig"'
 
-  __conf:LIBEVENT "--host=$host"
-  __conf:LIBEVENT '--prefix="$DIR_SCRIPT/libevent"'
-  __conf:LIBEVENT 'CFLAGS="$CFLAGS -O3"'
-  __conf:LIBEVENT 'PKG_CONFIG_PATH="$DIR_SCRIPT/openssl/lib/pkgconfig"'
-
-  __conf:TOR "--host=$host"
-  __conf:TOR '--prefix="$DIR_SCRIPT/tor"'
-  __conf:TOR 'CFLAGS="$CFLAGS -O3"'
-
-  # xz
-  __conf:SCRIPT "
-echo \"
-    Building lzma for \$TASK
-    LOGS >> $DIR_BUILD/xz/logs
-\""
-  __conf:SCRIPT "cd \"\$DIR_EXTERNAL/xz\"
-./autogen.sh > \"\$DIR_SCRIPT/xz/logs/autogen.log\" 2> \"\$DIR_SCRIPT/xz/logs/autogen.err\"
-$CONF_XZ > \"\$DIR_SCRIPT/xz/logs/configure.log\" 2> \"\$DIR_SCRIPT/xz/logs/configure.err\"
-make clean > /dev/null
-make -j$NUM_JOBS > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
-make install > /dev/null"
-
-  # zlib
-  __conf:SCRIPT "
-echo \"
-    Building zlib for \$TASK
-    LOGS >> $DIR_BUILD/zlib/logs
-\""
-  __conf:SCRIPT "cd \"\$DIR_EXTERNAL/zlib\"
-$CONF_ZLIB > \"\$DIR_SCRIPT/zlib/logs/configure.log\" 2> \"\$DIR_SCRIPT/zlib/logs/configure.err\"
-make clean > /dev/null
-make -j$NUM_JOBS > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
-make install > /dev/null"
-
-  # openssl
   __conf:SCRIPT "
 echo \"
     Building openssl for \$TASK
     LOGS >> $DIR_BUILD/openssl/logs
 \""
-  __conf:SCRIPT "cd \"\$DIR_EXTERNAL/openssl\"
+  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/openssl" "$DIR_TMP"'
+  __conf:SCRIPT "cd \"\$DIR_TMP/openssl\"
 $CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
 make clean > /dev/null
-make -j$NUM_JOBS > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
+make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
 make install_sw > /dev/null"
 
   # libevent
+  __conf:LIBEVENT '--host="$CROSS_TRIPLE"'
+  __conf:LIBEVENT '--prefix="$DIR_SCRIPT/libevent"'
+  __conf:LIBEVENT 'CFLAGS="$CFLAGS -O3"'
+  __conf:LIBEVENT 'PKG_CONFIG_PATH="$DIR_SCRIPT/openssl/lib/pkgconfig"'
+
   __conf:SCRIPT "
 echo \"
     Building libevent for \$TASK
     LOGS >> $DIR_BUILD/libevent/logs
 \""
-  __conf:SCRIPT "cd \"\$DIR_EXTERNAL/libevent\"
+  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/libevent" "$DIR_TMP"'
+  __conf:SCRIPT "cd \"\$DIR_TMP/libevent\"
 ./autogen.sh > \"\$DIR_SCRIPT/libevent/logs/autogen.log\" 2> \"\$DIR_SCRIPT/libevent/logs/autogen.err\"
 $CONF_LIBEVENT > \"\$DIR_SCRIPT/libevent/logs/configure.log\" 2> \"\$DIR_SCRIPT/libevent/logs/configure.err\"
 make clean > /dev/null
-make -j$NUM_JOBS > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIPT/libevent/logs/make.err\"
+make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIPT/libevent/logs/make.err\"
 make install > /dev/null"
 
   # tor
+  __conf:TOR '--host="$CROSS_TRIPLE"'
+  __conf:TOR '--prefix="$DIR_SCRIPT/tor"'
+  __conf:TOR 'CFLAGS="$CFLAGS -O3"'
+
   __conf:SCRIPT "
 echo \"
     Building tor for \$TASK
@@ -606,15 +602,21 @@ echo \"
 # Must specify it here so configure picks it up.
 export LZMA_CFLAGS="-I$DIR_SCRIPT/xz/include"
 export LZMA_LIBS="$DIR_SCRIPT/xz/lib/liblzma.a"'
-  __conf:SCRIPT "cd \"\$DIR_EXTERNAL/tor\"
+  if [ "$os_name" = "mingw" ]; then
+    __conf:SCRIPT 'export LIBS="-L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
+  fi
+  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/tor" "$DIR_TMP"'
+  __conf:SCRIPT "cd \"\$DIR_TMP/tor\"
 ./autogen.sh > \"\$DIR_SCRIPT/tor/logs/autogen.log\" 2> \"\$DIR_SCRIPT/tor/logs/autogen.err\"
 $CONF_TOR > \"\$DIR_SCRIPT/tor/logs/configure.log\" 2> \"\$DIR_SCRIPT/tor/logs/configure.err\"
 make clean > /dev/null 2>&1
-make -j$NUM_JOBS > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
+make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
 make install > /dev/null 2>&1
 "
 
   # out
+  __conf:SCRIPT 'mkdir -p "$DIR_OUT"'
+
   if [ -z "$is_framework" ]; then
     local lib_name_pre_strip=
     local lib_name_post_strip=
@@ -754,8 +756,8 @@ function __exec:docker:run {
   if $DRY_RUN; then return 0; fi
 
   # Build linux libc/musl base image if needed
-  if [ -n "$os_subtype" ] && [ "$os_arch" != "x86_64" ]; then
-    __exec:docker:build "linux$os_subtype.x86_64"
+  if [ -n "$os_subtype" ]; then
+    __exec:docker:build "linux$os_subtype.base"
   fi
 
   # Build android base image if needed
@@ -765,7 +767,7 @@ function __exec:docker:run {
 
   # Build linux-libc base images if needed
   if [ "$os_name" = "mingw" ]; then
-    __exec:docker:build "linux-libc.x86_64"
+    __exec:docker:build "linux-libc.base"
 
     if [ "$os_arch" = "x86" ]; then
       __exec:docker:build "linux-libc.x86"
