@@ -357,6 +357,8 @@ mkdir -p "$DIR_SCRIPT/openssl/logs"
 mkdir -p "$DIR_SCRIPT/tor/logs"
 mkdir -p "$DIR_SCRIPT/xz/logs"
 mkdir -p "$DIR_SCRIPT/zlib/logs"
+
+export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/lib/pkgconfig:$DIR_SCRIPT/xz/lib/pkgconfig:$DIR_SCRIPT/zlib/lib/pkgconfig"
 '
   __conf:SCRIPT "trap 'rm -rf \$DIR_TMP' EXIT
 "
@@ -511,7 +513,7 @@ function __build:configure:target:build_script {
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
 
   if [ "$os_name" = "linux" ]; then
-    __conf:SCRIPT 'export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib"'
+    __conf:SCRIPT 'export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib:$LD_LIBRARY_PATH"'
     __conf:SCRIPT 'export LIBS="-ldl -L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
   fi
 
@@ -546,16 +548,13 @@ echo \"
 $CONF_ZLIB > \"\$DIR_SCRIPT/zlib/logs/configure.log\" 2> \"\$DIR_SCRIPT/zlib/logs/configure.err\"
 make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
-make install > /dev/null
-"
+make install > /dev/null"
 
   # openssl
   __conf:OPENSSL '--release'
   __conf:OPENSSL '--libdir=lib'
   __conf:OPENSSL '--prefix="$DIR_SCRIPT/openssl"'
   __conf:OPENSSL "$openssl_target"
-  # TODO: Need to check ./Configure output to see if this is necessary
-  __conf:OPENSSL 'PKG_CONFIG_PATH="$DIR_SCRIPT/zlib/lib/pkgconfig"'
 
   __conf:SCRIPT "
 echo \"
@@ -573,7 +572,6 @@ make install_sw > /dev/null"
   __conf:LIBEVENT '--host="$CROSS_TRIPLE"'
   __conf:LIBEVENT '--prefix="$DIR_SCRIPT/libevent"'
   __conf:LIBEVENT 'CFLAGS="$CFLAGS -O3"'
-  __conf:LIBEVENT 'PKG_CONFIG_PATH="$DIR_SCRIPT/openssl/lib/pkgconfig"'
 
   __conf:SCRIPT "
 echo \"
