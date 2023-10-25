@@ -1,19 +1,19 @@
 # https://github.com/dockcross/dockcross/blob/master/linux-x86/Dockerfile.in
-FROM 05nelsonm/build-env.linux-libc.x86_64
+FROM 05nelsonm/build-env.linux-libc.base
 
 RUN dpkg --add-architecture i386 && \
     apt-get update --yes && \
     apt-get install --yes \
-    gcc-multilib \
-    libc6:i386
+      gcc-multilib \
+      libc6:i386
 
 ENV CROSS_TRIPLE i686-linux-gnu
-ENV CROSS_ROOT /usr/${CROSS_TRIPLE}
-ENV PATH ${PATH}:${CROSS_ROOT}/bin
+ENV CROSS_ROOT /usr/${CROSS_TRIPLE}/bin
+ENV PATH ${PATH}:${CROSS_ROOT}
 
 # Create symlinks for x86_64 binaries that support x86 and x86_64 targets natively
-RUN mkdir -p ${CROSS_ROOT}/bin && \
-  cd ${CROSS_ROOT}/bin && \
+RUN mkdir -p ${CROSS_ROOT} && \
+  cd ${CROSS_ROOT} && \
   ln -s /usr/bin/x86_64-linux-gnu-ar ${CROSS_TRIPLE}-ar && \
   ln -s /usr/bin/x86_64-linux-gnu-as ${CROSS_TRIPLE}-as && \
   ln -s /usr/bin/x86_64-linux-gnu-c++filt ${CROSS_TRIPLE}-c++filt && \
@@ -47,12 +47,12 @@ RUN mkdir -p ${CROSS_ROOT}/bin && \
   ln -s /usr/bin/x86_64-linux-gnu-strings ${CROSS_TRIPLE}-strings && \
   ln -s /usr/bin/x86_64-linux-gnu-strip ${CROSS_TRIPLE}-strip
 
-ENV AS=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-as \
-    AR=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-ar \
-    CC=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-gcc \
-    CPP=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-cpp \
-    CXX=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-g++ \
-    LD=${CROSS_ROOT}/bin/${CROSS_TRIPLE}-ld
+ENV AS=${CROSS_ROOT}/${CROSS_TRIPLE}-as \
+    AR=${CROSS_ROOT}/${CROSS_TRIPLE}-ar \
+    CC=${CROSS_ROOT}/${CROSS_TRIPLE}-gcc \
+    CPP=${CROSS_ROOT}/${CROSS_TRIPLE}-cpp \
+    CXX=${CROSS_ROOT}/${CROSS_TRIPLE}-g++ \
+    LD=${CROSS_ROOT}/${CROSS_TRIPLE}-ld
 
 COPY entrypoint_linux32.sh /var/opt
 

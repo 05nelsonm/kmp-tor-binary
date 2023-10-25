@@ -1,9 +1,10 @@
-FROM 05nelsonm/build-env.linux-libc.x86_64
+FROM 05nelsonm/build-env.linux-libc.base
 
-RUN dpkg --add-architecture aarch64 && \
-    apt-get update --yes && \
+RUN apt-get update --yes && \
     apt-get install --yes \
-      gcc-aarch64-linux-gnu
+      g++-aarch64-linux-gnu \
+      gcc-aarch64-linux-gnu \
+      pkg-config-aarch64-linux-gnu
 
 ENV CROSS_TRIPLE aarch64-linux-gnu
 ENV CROSS_ROOT /usr/bin
@@ -12,4 +13,5 @@ ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
     AR=/usr/bin/${CROSS_TRIPLE}-ar \
     CC=/usr/bin/${CROSS_TRIPLE}-gcc \
     CPP=/usr/bin/${CROSS_TRIPLE}-cpp \
+    CXX=/usr/bin/${CROSS_TRIPLE}-g++ \
     LD=/usr/bin/${CROSS_TRIPLE}-ld

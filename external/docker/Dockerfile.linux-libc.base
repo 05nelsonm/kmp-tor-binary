@@ -1,0 +1,30 @@
+FROM amd64/ubuntu:16.04@sha256:a3785f78ab8547ae2710c89e627783cfa7ee7824d3468cae6835c9f4eae23ff7
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update --yes && \
+    apt-get upgrade --yes && \
+    echo "path-exclude=/usr/share/locale/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+    echo "path-exclude=/usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+    echo "path-exclude=/usr/share/doc/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
+    apt-get install --no-install-recommends --yes \
+      autogen \
+      automake \
+      autopoint \
+      build-essential \
+      ca-certificates \
+      curl \
+      doxygen \
+      libtool \
+      make \
+      patch \
+      perl \
+      pkg-config \
+      po4a \
+      python3 && \
+    apt-get autoremove --purge --yes && \
+    apt-get clean && \
+    rm -rf /var/lib/{apt,dpkg,cache,lob}/ && \
+    rm -rf /etc/ssh/*key*
+
+WORKDIR /work
