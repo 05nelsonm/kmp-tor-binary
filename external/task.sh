@@ -383,12 +383,13 @@ mkdir -p "$DIR_SCRIPT/zlib/logs"
 export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/lib/pkgconfig:$DIR_SCRIPT/xz/lib/pkgconfig:$DIR_SCRIPT/zlib/lib/pkgconfig"
 '
 
-  __conf:CFLAGS '-fno-guess-branch-probability -frandom-seed=0'
-  __conf:CFLAGS '-fvisibility=hidden'
   __conf:CFLAGS '-I$DIR_SCRIPT/libevent/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/openssl/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/xz/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/zlib/include'
+  __conf:CFLAGS '-fno-guess-branch-probability'
+  __conf:CFLAGS '-frandom-seed=0'
+  __conf:CFLAGS '-fvisibility=hidden'
 
   __conf:LDFLAGS '-L$DIR_SCRIPT/libevent/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/openssl/lib'
@@ -502,7 +503,9 @@ function __build:configure:target:build_script {
 
   # LDFLAGS
   if [ "$os_name" = "mingw" ]; then
-    __conf:LDFLAGS '-Wl,--no-insert-timestamp -Wl,--subsystem,windows'
+    __conf:LDFLAGS '-Wl,--no-insert-timestamp'
+    __conf:LDFLAGS '-Wl,--subsystem,windows'
+    __conf:LDFLAGS '-static-libgcc'
   fi
   if [ -n "$is_framework" ]; then
     __conf:LDFLAGS '-fembed-bitcode'
@@ -559,6 +562,9 @@ make install > /dev/null"
   if [ "$os_name" = "android" ]; then
     __conf:OPENSSL '-D__ANDROID_API__=21'
   fi
+  if [ "$os_name" = "mingw" ]; then
+    __conf:OPENSSL '-static'
+  fi
   __conf:OPENSSL '--release'
   __conf:OPENSSL '--libdir=lib'
   __conf:OPENSSL '--with-zlib-lib="$DIR_SCRIPT/zlib/lib/libz.a"'
@@ -571,9 +577,19 @@ echo \"
     Building openssl for \$TASK_TARGET
     LOGS >> $DIR_BUILD/openssl/logs
 \""
-  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/openssl" "$DIR_TMP"'
-  __conf:SCRIPT "cd \"\$DIR_TMP/openssl\"
-$CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
+  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/openssl" "$DIR_TMP"
+cd "$DIR_TMP/openssl"'
+
+  if [ "$os_name" = "mingw" ]; then
+    __conf:SCRIPT "
+# https://github.com/openssl/openssl/issues/14574
+# https://github.com/netdata/netdata/pull/15842
+sed -i \"s/disable('static', 'pic', 'threads');/disable('static', 'pic');/\" \"Configure\"
+"
+  fi
+
+  __conf:SCRIPT "$CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
+perl configdata.pm --dump >> \"\$DIR_SCRIPT/openssl/logs/configure.log\"
 make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
 make install_sw > /dev/null"
@@ -817,12 +833,17 @@ function __exec:docker:run {
     SIGINT intercepted... exiting...
 "; exit 1' SIGINT
 
-  ${DOCKER} run \
+  if ! ${DOCKER} run \
     --rm \
     -u "$U_ID:$G_ID" \
     -v "$DIR_TASK:/work" \
     "05nelsonm/build-env.$docker_name" \
-    "./$DIR_BUILD/build.sh"
+    "./$DIR_BUILD/build.sh"; then
+
+    __error "
+    Something went wrong with the build... Check logs...
+    "
+  fi
 
   trap - SIGINT
 }
