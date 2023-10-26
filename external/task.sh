@@ -53,6 +53,7 @@ function build:all:jvm:freebsd { ## Builds all FreeBSD targets for JVM
 
 function build:all:jvm:linux-libc { ## Builds all Linux Libc targets for JVM
   build:jvm:linux-libc:aarch64
+  build:jvm:linux-libc:armv7
   build:jvm:linux-libc:x86
   build:jvm:linux-libc:x86_64
 }
@@ -135,6 +136,17 @@ function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
   local os_arch="aarch64"
   local openssl_target="linux-aarch64"
   __build:configure:target:init
+  __conf:CFLAGS '-march=armv8-a'
+  __exec:docker:run
+}
+
+function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
+  local os_name="linux"
+  local os_subtype="-libc"
+  local os_arch="armv7"
+  local openssl_target="linux-armv4"
+  __build:configure:target:init
+  __conf:CFLAGS '-march=armv7-a -mfloat-abi=hard -mfpu=vfp'
   __exec:docker:run
 }
 
@@ -314,7 +326,7 @@ function __build:configure:target:init {
   unset CONF_XZ
   unset CONF_ZLIB
 
-  CONF_SCRIPT='#!/usr/bin/env bash
+  CONF_SCRIPT='#!/bin/sh
 # Copyright (c) 2023 Matthew Nelson
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -500,7 +512,7 @@ function __build:configure:target:build_script {
 
   if [ "$os_name" = "linux" ]; then
     __conf:SCRIPT 'export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib:$LD_LIBRARY_PATH"'
-    __conf:SCRIPT 'export LIBS="-ldl -L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
+    __conf:SCRIPT 'export LIBS="-L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
   fi
 
   if [ "$os_name" = "mingw" ]; then

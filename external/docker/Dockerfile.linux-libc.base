@@ -28,3 +28,7 @@ RUN apt-get update --yes && \
     rm -rf /etc/ssh/*key*
 
 WORKDIR /work
+
+COPY entrypoint_buildenv.sh /var/opt
+
+ENTRYPOINT ["/var/opt/entrypoint_buildenv.sh"]
