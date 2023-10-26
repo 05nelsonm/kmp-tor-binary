@@ -291,8 +291,8 @@ function __build:configure:target:init {
     __require:var_set "$G_ID" "G_ID"
 
     if [ "$os_name" = "android" ]; then
-      DIR_BUILD="build/$os_name$os_subtype/$os_arch"
-      DIR_OUT="build/$os_name$os_subtype-out/$os_arch"
+      DIR_BUILD="build/$os_name/$os_arch"
+      DIR_OUT="build/$os_name-out/$os_arch"
     else
       DIR_BUILD="build/jvm/$os_name$os_subtype/$os_arch"
       DIR_OUT="build/jvm-out/$os_name$os_subtype/$os_arch"
@@ -305,8 +305,8 @@ function __build:configure:target:init {
   unset CONF_AS
   unset CONF_RANLIB
   unset CONF_STRIP
-  unset CONF_LDFLAGS
   unset CONF_CFLAGS
+  unset CONF_LDFLAGS
   unset CONF_SCRIPT
   unset CONF_LIBEVENT
   unset CONF_OPENSSL
@@ -314,7 +314,7 @@ function __build:configure:target:init {
   unset CONF_XZ
   unset CONF_ZLIB
 
-  CONF_SCRIPT='#!/bin/sh
+  CONF_SCRIPT='#!/usr/bin/env bash
 # Copyright (c) 2023 Matthew Nelson
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -342,18 +342,18 @@ set -e
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 readonly DIR_EXTERNAL="$(pwd)"'
   __conf:SCRIPT "readonly DIR_OUT=\"\$DIR_EXTERNAL/$DIR_OUT\""
-  __conf:SCRIPT 'readonly DIR_TMP="/tmp/tor_build"
+  __conf:SCRIPT 'readonly DIR_TMP="$(mktemp -d)"'
+  __conf:SCRIPT "trap 'rm -rf \$DIR_TMP' EXIT"
+  __conf:SCRIPT '
 readonly NUM_JOBS="$(nproc)"
 
 rm -rf "$DIR_OUT"
-rm -rf "$DIR_TMP"
 rm -rf "$DIR_SCRIPT/libevent"
 rm -rf "$DIR_SCRIPT/openssl"
 rm -rf "$DIR_SCRIPT/tor"
 rm -rf "$DIR_SCRIPT/xz"
 rm -rf "$DIR_SCRIPT/zlib"
 
-mkdir -p "$DIR_TMP"
 mkdir -p "$DIR_SCRIPT/libevent/logs"
 mkdir -p "$DIR_SCRIPT/openssl/logs"
 mkdir -p "$DIR_SCRIPT/tor/logs"
@@ -362,8 +362,6 @@ mkdir -p "$DIR_SCRIPT/zlib/logs"
 
 export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/lib/pkgconfig:$DIR_SCRIPT/xz/lib/pkgconfig:$DIR_SCRIPT/zlib/lib/pkgconfig"
 '
-  __conf:SCRIPT "trap 'rm -rf \$DIR_TMP' EXIT
-"
 
   __conf:CFLAGS '-fno-guess-branch-probability -frandom-seed=0'
   __conf:CFLAGS '-fvisibility=hidden'
@@ -537,7 +535,9 @@ make install > /dev/null"
   if [ -z "$is_framework" ]; then
     __conf:OPENSSL 'no-asm'
 #  else
-    # handeled by each target individually
+    # Handled by each target individually.
+    # Depending on platform and architecture of the framework
+    # being built, will either be no-asm or no-async
   fi
   if [ "${os_arch: -2}" = "64" ]; then
     __conf:OPENSSL 'enable-ec_nistp_64_gcc_128'
