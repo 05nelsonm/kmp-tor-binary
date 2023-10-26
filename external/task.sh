@@ -18,8 +18,8 @@ set -e
 # TODO: Move to arg parser
 readonly DRY_RUN=$(if [ "$2" = "--dry-run" ]; then echo "true"; else echo "false"; fi)
 
-readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
-readonly FILE_BUILD_LOCK="$DIR_SCRIPT/build/.lock"
+readonly DIR_TASK=$( cd "$( dirname "$0" )" >/dev/null && pwd )
+readonly FILE_BUILD_LOCK="$DIR_TASK/build/.lock"
 
 # Programs
 readonly DOCKER=$(which docker)
@@ -233,7 +233,7 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
 
 function clean { ## Deletes the build directory
   __require:no_build_lock
-  rm -rf "$DIR_SCRIPT/build"
+  rm -rf "$DIR_TASK/build"
 }
 
 function help { ## THIS MENU
@@ -244,7 +244,7 @@ function help { ## THIS MENU
 
     Build tor binaries
 
-    Location: $DIR_SCRIPT
+    Location: $DIR_TASK
     Syntax: $0 [task] [option]
 
     Tasks:
@@ -651,11 +651,11 @@ function __build:git:apply_patches {
   __require:not_empty "$1" "project name must not be empty"
   local dir_current=
   dir_current="$(pwd)"
-  cd "$DIR_SCRIPT/$1"
+  cd "$DIR_TASK/$1"
 
   local patch_file=
-  for patch_file in "$DIR_SCRIPT/patches/$1/"*.patch; do
-    if [ "$patch_file" = "$DIR_SCRIPT/patches/$1/*.patch" ]; then
+  for patch_file in "$DIR_TASK/patches/$1/"*.patch; do
+    if [ "$patch_file" = "$DIR_TASK/patches/$1/*.patch" ]; then
       # no patch files
       continue
     fi
@@ -673,7 +673,7 @@ function __build:git:clean {
   local dir_current=
   dir_current="$(pwd)"
 
-  cd "$DIR_SCRIPT/$1"
+  cd "$DIR_TASK/$1"
 
   ${GIT} clean -X --force --quiet
 
@@ -685,7 +685,7 @@ function __build:git:stash {
   local dir_current=
   dir_current="$(pwd)"
 
-  cd "$DIR_SCRIPT/$1"
+  cd "$DIR_TASK/$1"
 
   ${GIT} add --all
 
@@ -808,7 +808,7 @@ function __exec:docker:run {
   ${DOCKER} run \
     --rm \
     -u "$U_ID:$G_ID" \
-    -v "$DIR_SCRIPT:/work" \
+    -v "$DIR_TASK:/work" \
     "05nelsonm/build-env.$docker_name" \
     "./$DIR_BUILD/build.sh"
 
@@ -817,9 +817,9 @@ function __exec:docker:run {
 
 function __exec:docker:build {
   ${DOCKER} build \
-    -f "$DIR_SCRIPT/docker/Dockerfile.$1" \
+    -f "$DIR_TASK/docker/Dockerfile.$1" \
     -t "05nelsonm/build-env.$1" \
-    "$DIR_SCRIPT/docker"
+    "$DIR_TASK/docker"
 }
 
 function __require:cmd {
@@ -859,7 +859,7 @@ function __error {
 
 function __init {
   # Ensure always starting in the external directory
-  cd "$DIR_SCRIPT"
+  cd "$DIR_TASK"
 
   if ! echo "$1" | grep -q "^build"; then return 0; fi
 
