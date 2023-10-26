@@ -145,6 +145,7 @@ function build:jvm:linux-libc:x86 { ## Builds Linux Libc x86 for JVM
   local openssl_target="linux-x86"
   __build:configure:target:init
   __conf:CFLAGS '-m32'
+  __conf:LDFLAGS '-m32'
   __exec:docker:run
 }
 
@@ -154,7 +155,6 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
   local os_arch="x86_64"
   local openssl_target="linux-x86_64"
   __build:configure:target:init
-  __conf:CFLAGS '-m64'
   __exec:docker:run
 }
 
@@ -174,6 +174,7 @@ function build:jvm:linux-musl:x86 { ## Builds Linux Musl x86 for JVM
   local openssl_target="linux-x86"
   __build:configure:target:init
   __conf:CFLAGS '-m32'
+  __conf:LDFLAGS '-m32'
   # TODO __exec:docker:run
 }
 
@@ -183,7 +184,6 @@ function build:jvm:linux-musl:x86_64 { ## Builds Linux Musl x86_64 for JVM
   local os_arch="x86_64"
   local openssl_target="linux-x86_64"
   __build:configure:target:init
-  __conf:CFLAGS '-m64'
   # TODO __exec:docker:run
 }
 
@@ -209,7 +209,7 @@ function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
   local openssl_target="mingw"
   __build:configure:target:init
   __conf:CFLAGS '-m32'
-  __conf:LDFLAGS '-Wl,--no-seh'
+  __conf:LDFLAGS '-m32 -Wl,--no-seh'
   __exec:docker:run
 }
 
@@ -218,7 +218,6 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
   local os_arch="x86_64"
   local openssl_target="mingw64"
   __build:configure:target:init
-  __conf:CFLAGS '-m64'
   __exec:docker:run
 }
 
@@ -277,14 +276,20 @@ function __build:cleanup {
 # shellcheck disable=SC2016
 # shellcheck disable=SC1004
 function __build:configure:target:init {
-  __require:os_name_arch
+  __require:var_set "$os_name" "os_name"
+  __require:var_set "$os_arch" "os_arch"
 
   if [ -n "$is_framework" ]; then
     # TODO: require cross_triple to be set as we're not running in docker
+    __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
+
     DIR_BUILD="build/framework/$os_name$os_subtype/$os_arch"
     DIR_OUT="build/framework-out/$os_name$os_subtype/$os_arch"
-    __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
   else
+    __require:cmd "$DOCKER" "docker"
+    __require:var_set "$U_ID" "U_ID"
+    __require:var_set "$G_ID" "G_ID"
+
     if [ "$os_name" = "android" ]; then
       DIR_BUILD="build/$os_name$os_subtype/$os_arch"
       DIR_OUT="build/$os_name$os_subtype-out/$os_arch"
@@ -292,10 +297,6 @@ function __build:configure:target:init {
       DIR_BUILD="build/jvm/$os_name$os_subtype/$os_arch"
       DIR_OUT="build/jvm-out/$os_name$os_subtype/$os_arch"
     fi
-
-    __require:cmd "$DOCKER" "docker"
-    __require:var_set "$U_ID" "U_ID"
-    __require:var_set "$G_ID" "G_ID"
   fi
 
   unset CONF_CC
@@ -364,30 +365,17 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:SCRIPT "trap 'rm -rf \$DIR_TMP' EXIT
 "
 
-  if [ "$os_name" = "mingw" ]; then
-    __conf:SCRIPT 'export CHOST="$CROSS_TRIPLE"'
-  fi
-
-  CONF_CFLAGS='-fno-guess-branch-probability -frandom-seed=0'
+  __conf:CFLAGS '-fno-guess-branch-probability -frandom-seed=0'
   __conf:CFLAGS '-fvisibility=hidden'
-  if [ "$os_name" = "mingw" ]; then
-    __conf:CFLAGS '-fno-strict-overflow'
-    __conf:CFLAGS '-fstack-protector-strong'
-  else
-    __conf:CFLAGS '-fPIC'
-  fi
   __conf:CFLAGS '-I$DIR_SCRIPT/libevent/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/openssl/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/xz/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/zlib/include'
 
-  CONF_LDFLAGS='-L$DIR_SCRIPT/libevent/lib'
+  __conf:LDFLAGS '-L$DIR_SCRIPT/libevent/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/openssl/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/xz/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/zlib/lib'
-  if [ "$os_name" = "mingw" ]; then
-    __conf:LDFLAGS '-Wl,--no-insert-timestamp -Wl,--subsystem,windows'
-  fi
 
   CONF_XZ='./configure --enable-static \
   --disable-doc \
@@ -419,20 +407,6 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   no-whirlpool \
   no-ui-console'
 
-  if [ "${os_arch: -2}" = "64" ]; then
-    __conf:OPENSSL 'enable-ec_nistp_64_gcc_128'
-  fi
-
-  if [ -z "$is_framework" ]; then
-    __conf:OPENSSL 'no-asm'
-#  else
-    # handeled by each target
-  fi
-
-  if [ "$os_name" = "android" ]; then
-    __conf:OPENSSL '-D__ANDROID_API__=21'
-  fi
-
   # TODO: maybe?
   # --disable-openssl
   # --disable-doxygen-html
@@ -460,37 +434,16 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --with-openssl-dir="$DIR_SCRIPT/openssl" \
   --enable-static-zlib \
   --with-zlib-dir="$DIR_SCRIPT/zlib"'
-
-  # non-framework (i.e. android or jvm)
-
-  # android
-  if [ "$os_name" = "android" ]; then
-    __conf:TOR '--enable-android'
-  fi
-
-  # jvm
-#  if [ "$os_name" != "android" ] && [ -z "$is_framework" ]; then
-#    # TODO
-#  fi
-
-  # framework
-  if [ -n "$is_framework" ]; then
-    __conf:CFLAGS '-fembed-bitcode'
-    __conf:LDFLAGS '-fembed-bitcode'
-    # TODO: https://github.com/iCepa/Tor.framework/tree/pure_pod/Tor
-  fi
-
-  # Returns before calling build_script so target specific
-  # flags can be configured.
 }
 
 # shellcheck disable=SC2016
 # shellcheck disable=SC1004
 function __build:configure:target:build_script {
-  __require:os_name_arch
+  __require:var_set "$os_name" "os_name"
+  __require:var_set "$os_arch" "os_arch"
+  __require:var_set "$openssl_target" "openssl_target"
   __require:var_set "$DIR_BUILD" "DIR_BUILD"
   __require:var_set "$DIR_OUT" "DIR_OUT"
-  __require:var_set "$openssl_target" "openssl_target"
 
   if [ -n "$CONF_CC" ]; then
     __conf:SCRIPT "export CC=\"$CONF_CC\""
@@ -515,12 +468,36 @@ function __build:configure:target:build_script {
     __conf:SCRIPT 'export STRIP="$CROSS_TRIPLE-strip"'
   fi
 
+  # CFLAGS
+  if [ "$os_name" = "mingw" ]; then
+    __conf:CFLAGS '-fno-strict-overflow'
+    __conf:CFLAGS '-fstack-protector-strong'
+  else
+    __conf:CFLAGS '-fPIC'
+  fi
+  if [ -n "$is_framework" ]; then
+    __conf:CFLAGS '-fembed-bitcode'
+  fi
+
   __conf:SCRIPT "export CFLAGS=\"$CONF_CFLAGS\""
+
+  # LDFLAGS
+  if [ "$os_name" = "mingw" ]; then
+    __conf:LDFLAGS '-Wl,--no-insert-timestamp -Wl,--subsystem,windows'
+  fi
+  if [ -n "$is_framework" ]; then
+    __conf:LDFLAGS '-fembed-bitcode'
+  fi
+
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
 
   if [ "$os_name" = "linux" ]; then
     __conf:SCRIPT 'export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib:$LD_LIBRARY_PATH"'
     __conf:SCRIPT 'export LIBS="-ldl -L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
+  fi
+
+  if [ "$os_name" = "mingw" ]; then
+    __conf:SCRIPT 'export CHOST="$CROSS_TRIPLE"'
   fi
 
   # xz
@@ -557,6 +534,17 @@ make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zl
 make install > /dev/null"
 
   # openssl
+  if [ -z "$is_framework" ]; then
+    __conf:OPENSSL 'no-asm'
+#  else
+    # handeled by each target individually
+  fi
+  if [ "${os_arch: -2}" = "64" ]; then
+    __conf:OPENSSL 'enable-ec_nistp_64_gcc_128'
+  fi
+  if [ "$os_name" = "android" ]; then
+    __conf:OPENSSL '-D__ANDROID_API__=21'
+  fi
   __conf:OPENSSL '--release'
   __conf:OPENSSL '--libdir=lib'
   __conf:OPENSSL '--prefix="$DIR_SCRIPT/openssl"'
@@ -593,6 +581,9 @@ make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIP
 make install > /dev/null"
 
   # tor
+  if [ "$os_name" = "android" ]; then
+    __conf:TOR '--enable-android'
+  fi
   __conf:TOR '--host="$CROSS_TRIPLE"'
   __conf:TOR '--prefix="$DIR_SCRIPT/tor"'
   __conf:TOR 'CFLAGS="$CFLAGS -O3"'
@@ -738,11 +729,19 @@ function __conf:STRIP {
 }
 
 function __conf:CFLAGS {
-  CONF_CFLAGS+=" $1"
+  if [ -z "$CONF_CFLAGS" ]; then
+    CONF_CFLAGS="$1"
+  else
+    CONF_CFLAGS+=" $1"
+  fi
 }
 
 function __conf:LDFLAGS {
-  CONF_LDFLAGS+=" $1"
+  if [ -z "$CONF_LDFLAGS" ]; then
+    CONF_LDFLAGS="$1"
+  else
+    CONF_LDFLAGS+=" $1"
+  fi
 }
 
 function __conf:LIBEVENT {
@@ -826,11 +825,6 @@ function __exec:docker:build {
 function __require:cmd {
   if [ -f "$1" ]; then return 0; fi
   __error "$2 is required to run this script"
-}
-
-function __require:os_name_arch {
-  __require:var_set "$os_name" "os_name"
-  __require:var_set "$os_arch" "os_arch"
 }
 
 function __require:var_set {
