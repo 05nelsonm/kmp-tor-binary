@@ -336,8 +336,16 @@ export LC_ALL=C
 export SOURCE_DATE_EPOCH="1234567890"
 export TZ=UTC
 set -e
+
+if [ -z "$CROSS_TRIPLE" ]; then
+  echo 1>&2 "
+    CROSS_TRIPLE environment variable must be set.
+    Are you not using task.sh?
+  "
+  exit 3
+fi
 '
-  __conf:SCRIPT "readonly TASK=\"$os_name$os_subtype:$os_arch\""
+  __conf:SCRIPT "readonly TASK_TARGET=\"$os_name$os_subtype:$os_arch\""
   __conf:SCRIPT '
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 readonly DIR_EXTERNAL="$(pwd)"'
@@ -505,7 +513,7 @@ function __build:configure:target:build_script {
 
   __conf:SCRIPT "
 echo \"
-    Building lzma for \$TASK
+    Building lzma for \$TASK_TARGET
     LOGS >> $DIR_BUILD/xz/logs
 \""
   __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/xz" "$DIR_TMP"'
@@ -521,7 +529,7 @@ make install > /dev/null"
 
   __conf:SCRIPT "
 echo \"
-    Building zlib for \$TASK
+    Building zlib for \$TASK_TARGET
     LOGS >> $DIR_BUILD/zlib/logs
 \""
   __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/zlib" "$DIR_TMP"'
@@ -552,7 +560,7 @@ make install > /dev/null"
 
   __conf:SCRIPT "
 echo \"
-    Building openssl for \$TASK
+    Building openssl for \$TASK_TARGET
     LOGS >> $DIR_BUILD/openssl/logs
 \""
   __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/openssl" "$DIR_TMP"'
@@ -569,7 +577,7 @@ make install_sw > /dev/null"
 
   __conf:SCRIPT "
 echo \"
-    Building libevent for \$TASK
+    Building libevent for \$TASK_TARGET
     LOGS >> $DIR_BUILD/libevent/logs
 \""
   __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/libevent" "$DIR_TMP"'
@@ -590,7 +598,7 @@ make install > /dev/null"
 
   __conf:SCRIPT "
 echo \"
-    Building tor for \$TASK
+    Building tor for \$TASK_TARGET
     LOGS >> $DIR_BUILD/tor/logs
 \""
   __conf:SCRIPT '# Includes are not enough when using --enable-lzma flag.
