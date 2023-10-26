@@ -396,6 +396,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   CONF_ZLIB='./configure --static'
 
   CONF_OPENSSL='./Configure no-shared \
+  no-asm \
   no-comp \
   no-dtls \
   no-err \
@@ -540,13 +541,6 @@ make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zl
 make install > /dev/null"
 
   # openssl
-  if [ -z "$is_framework" ]; then
-    __conf:OPENSSL 'no-asm'
-#  else
-    # Handled by each target individually.
-    # Depending on platform and architecture of the framework
-    # being built, will either be no-asm or no-async
-  fi
   if [ "${os_arch: -2}" = "64" ]; then
     __conf:OPENSSL 'enable-ec_nistp_64_gcc_128'
   fi
@@ -555,6 +549,8 @@ make install > /dev/null"
   fi
   __conf:OPENSSL '--release'
   __conf:OPENSSL '--libdir=lib'
+  __conf:OPENSSL '--with-zlib-lib="$DIR_SCRIPT/zlib/lib/libz.a"'
+  __conf:OPENSSL '--with-zlib-include="$DIR_SCRIPT/zlib/include"'
   __conf:OPENSSL '--prefix="$DIR_SCRIPT/openssl"'
   __conf:OPENSSL "$openssl_target"
 

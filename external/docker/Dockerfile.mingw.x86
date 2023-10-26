@@ -20,3 +20,11 @@ ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
 ENV WIDL=/usr/bin/${CROSS_TRIPLE}-widl \
     WINDMC=/usr/bin/${CROSS_TRIPLE}-windmc \
     WINDRES=/usr/bin/${CROSS_TRIPLE}-windres
+
+# Openssl fails tests when `async` is enabled for i686 b/c we're using
+# a really old version of mingw (2014) that does not include this patch
+# https://sourceforge.net/p/mingw-w64/mailman/message/34403784/
+RUN cd /usr/i686-w64-mingw32/include && \
+    sed -i "s|__CRT_INLINE struct _TEB *NtCurrentTeb(void)|FORCEINLINE struct _TEB *NtCurrentTeb(void)|" "winnt.h" && \
+    sed -i "s|__CRT_INLINE PVOID GetCurrentFiber(void)|FORCEINLINE PVOID GetCurrentFiber(void)|" "winnt.h" && \
+    sed -i "s|__CRT_INLINE PVOID GetFiberData(void)|FORCEINLINE PVOID GetFiberData(void)|" "winnt.h"
