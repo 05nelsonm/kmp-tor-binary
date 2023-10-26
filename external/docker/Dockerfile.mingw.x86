@@ -1,4 +1,4 @@
-FROM 05nelsonm/build-env.linux-libc.x86
+FROM 05nelsonm/build-env.linux-libc.base
 
 RUN apt-get update --yes && \
     apt-get install --yes \

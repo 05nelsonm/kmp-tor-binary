@@ -807,10 +807,6 @@ function __exec:docker:run {
   # Build linux-libc base images if needed
   if [ "$os_name" = "mingw" ]; then
     __exec:docker:build "linux-libc.base"
-
-    if [ "$os_arch" = "x86" ]; then
-      __exec:docker:build "linux-libc.x86"
-    fi
   fi
 
   # Build final container
