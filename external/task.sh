@@ -280,6 +280,7 @@ function __build:configure:target:init {
   __require:os_name_arch
 
   if [ -n "$is_framework" ]; then
+    # TODO: require cross_triple to be set as we're not running in docker
     DIR_BUILD="build/framework/$os_name$os_subtype/$os_arch"
     DIR_OUT="build/framework-out/$os_name$os_subtype/$os_arch"
     __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
@@ -422,6 +423,16 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:OPENSSL 'enable-ec_nistp_64_gcc_128'
   fi
 
+  if [ -z "$is_framework" ]; then
+    __conf:OPENSSL 'no-asm'
+#  else
+    # handeled by each target
+  fi
+
+  if [ "$os_name" = "android" ]; then
+    __conf:OPENSSL '-D__ANDROID_API__=21'
+  fi
+
   # TODO: maybe?
   # --disable-openssl
   # --disable-doxygen-html
@@ -451,14 +462,9 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --with-zlib-dir="$DIR_SCRIPT/zlib"'
 
   # non-framework (i.e. android or jvm)
-  if [ -z "$is_framework" ]; then
-    __conf:OPENSSL 'no-asm'
-    # TODO: JNI
-  fi
 
   # android
   if [ "$os_name" = "android" ]; then
-    __conf:OPENSSL '-D__ANDROID_API__=21'
     __conf:TOR '--enable-android'
   fi
 
@@ -652,6 +658,8 @@ make install > /dev/null 2>&1
 
 function __build:git:apply_patches {
   __require:not_empty "$1" "project name must not be empty"
+  local dir_current=
+  dir_current="$(pwd)"
   cd "$DIR_SCRIPT/$1"
 
   local patch_file=
@@ -666,19 +674,37 @@ function __build:git:apply_patches {
     sleep 0.25
   done
 
-  cd "$DIR_SCRIPT"
+  cd "$dir_current"
+}
+
+function __build:git:clean {
+  __require:not_empty "$1" "project name must not be empty"
+  local dir_current=
+  dir_current="$(pwd)"
+
+  cd "$DIR_SCRIPT/$1"
+
+  ${GIT} clean -X --force --quiet
+
+  cd "$dir_current"
 }
 
 function __build:git:stash {
   __require:not_empty "$1" "project name must not be empty"
+  local dir_current=
+  dir_current="$(pwd)"
+
   cd "$DIR_SCRIPT/$1"
+
   ${GIT} add --all
+
   if [ "$(${GIT} stash)" = "No local changes to save" ]; then
-    cd "$DIR_SCRIPT"
+    cd "$dir_current"
     return 0
   fi
+
   ${GIT} stash drop
-  cd "$DIR_SCRIPT"
+  cd "$dir_current"
 }
 
 function __conf:SCRIPT {
@@ -838,7 +864,7 @@ function __error {
 }
 
 function __init {
-  # Ensure always start in the external directory
+  # Ensure always starting in the external directory
   cd "$DIR_SCRIPT"
 
   if ! echo "$1" | grep -q "^build"; then return 0; fi
@@ -853,10 +879,15 @@ function __init {
   echo "$1" > "$FILE_BUILD_LOCK"
   trap 'echo "    There was a build error. Check logs..."' ERR
 
+  __build:git:clean "libevent"
   __build:git:apply_patches "libevent"
+  __build:git:clean "openssl"
   __build:git:apply_patches "openssl"
+  __build:git:clean "tor"
   __build:git:apply_patches "tor"
+  __build:git:clean "xz"
   __build:git:apply_patches "xz"
+  __build:git:clean "zlib"
   __build:git:apply_patches "zlib"
 }
 
