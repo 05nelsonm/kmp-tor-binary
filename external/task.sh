@@ -290,6 +290,7 @@ function __build:cleanup {
 function __build:configure:target:init {
   __require:var_set "$os_name" "os_name"
   __require:var_set "$os_arch" "os_arch"
+  __require:var_set "$openssl_target" "openssl_target"
 
   if [ -n "$is_framework" ]; then
     # TODO: require cross_triple to be set as we're not running in docker
@@ -383,6 +384,7 @@ mkdir -p "$DIR_SCRIPT/zlib/logs"
 export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/lib/pkgconfig:$DIR_SCRIPT/xz/lib/pkgconfig:$DIR_SCRIPT/zlib/lib/pkgconfig"
 '
 
+  # CFLAGS
   __conf:CFLAGS '-I$DIR_SCRIPT/libevent/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/openssl/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/xz/include'
@@ -390,12 +392,31 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:CFLAGS '-fno-guess-branch-probability'
   __conf:CFLAGS '-frandom-seed=0'
   __conf:CFLAGS '-fvisibility=hidden'
+  if [ "$os_name" = "mingw" ]; then
+    __conf:CFLAGS '-fno-strict-overflow'
+    __conf:CFLAGS '-fstack-protector-strong'
+  else
+    __conf:CFLAGS '-fPIC'
+  fi
+  if [ -n "$is_framework" ]; then
+    __conf:CFLAGS '-fembed-bitcode'
+  fi
 
+  # LDFLAGS
   __conf:LDFLAGS '-L$DIR_SCRIPT/libevent/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/openssl/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/xz/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/zlib/lib'
+  if [ "$os_name" = "mingw" ]; then
+    __conf:LDFLAGS '-Wl,--no-insert-timestamp'
+    __conf:LDFLAGS '-Wl,--subsystem,windows'
+    __conf:LDFLAGS '-static-libgcc'
+  fi
+  if [ -n "$is_framework" ]; then
+    __conf:LDFLAGS '-fembed-bitcode'
+  fi
 
+  # LZMA
   CONF_XZ='./configure --enable-static \
   --disable-doc \
   --disable-lzma-links \
@@ -404,10 +425,16 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-scripts \
   --disable-shared \
   --disable-xz \
-  --disable-xzdec'
+  --disable-xzdec \
+  --host="$CROSS_TRIPLE" \
+  --prefix="$DIR_SCRIPT/xz" \
+  CFLAGS="$CFLAGS -O3"'
 
-  CONF_ZLIB='./configure --static'
+  # ZLIB
+  CONF_ZLIB='./configure --static \
+  --prefix="$DIR_SCRIPT/zlib"'
 
+  # OPENSSL
   CONF_OPENSSL='./Configure no-shared \
   no-asm \
   no-comp \
@@ -425,18 +452,36 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   no-rc5 \
   no-rmd160 \
   no-whirlpool \
-  no-ui-console'
+  no-ui-console \
+  --release \
+  --libdir=lib \
+  --with-zlib-lib="$DIR_SCRIPT/zlib/lib/libz.a" \
+  --with-zlib-include="$DIR_SCRIPT/zlib/include" \
+  --prefix="$DIR_SCRIPT/openssl"'
 
-  # TODO: maybe?
-  # --disable-openssl
-  # --disable-doxygen-html
+  if [ "${os_arch: -2}" = "64" ]; then
+    __conf:OPENSSL 'enable-ec_nistp_64_gcc_128'
+  fi
+  if [ "$os_name" = "android" ]; then
+    __conf:OPENSSL '-D__ANDROID_API__=21'
+  fi
+  if [ "$os_name" = "mingw" ]; then
+    __conf:OPENSSL '-static'
+  fi
+  __conf:OPENSSL "$openssl_target"
+
+  # LIBEVENT
   CONF_LIBEVENT='./configure --enable-static \
   --enable-gcc-hardening \
   --disable-debug-mode \
   --disable-libevent-regress \
   --disable-samples \
-  --disable-shared'
+  --disable-shared \
+  --host="$CROSS_TRIPLE" \
+  --prefix="$DIR_SCRIPT/libevent" \
+  CFLAGS="$CFLAGS -O3"'
 
+  # TOR
   CONF_TOR='./configure --disable-asciidoc \
   --disable-dependency-tracking \
   --disable-html-manual \
@@ -453,15 +498,20 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --enable-static-openssl \
   --with-openssl-dir="$DIR_SCRIPT/openssl" \
   --enable-static-zlib \
-  --with-zlib-dir="$DIR_SCRIPT/zlib"'
+  --with-zlib-dir="$DIR_SCRIPT/zlib" \
+  --host="$CROSS_TRIPLE" \
+  --prefix="$DIR_SCRIPT/tor" \
+  CFLAGS="$CFLAGS -O3"'
+
+  if [ "$os_name" = "android" ]; then
+    __conf:TOR '--enable-android'
+  fi
 }
 
 # shellcheck disable=SC2016
 # shellcheck disable=SC1004
 function __build:configure:target:build_script {
   __require:var_set "$os_name" "os_name"
-  __require:var_set "$os_arch" "os_arch"
-  __require:var_set "$openssl_target" "openssl_target"
   __require:var_set "$DIR_BUILD" "DIR_BUILD"
   __require:var_set "$DIR_OUT" "DIR_OUT"
 
@@ -488,29 +538,7 @@ function __build:configure:target:build_script {
     __conf:SCRIPT 'export STRIP="$CROSS_TRIPLE-strip"'
   fi
 
-  # CFLAGS
-  if [ "$os_name" = "mingw" ]; then
-    __conf:CFLAGS '-fno-strict-overflow'
-    __conf:CFLAGS '-fstack-protector-strong'
-  else
-    __conf:CFLAGS '-fPIC'
-  fi
-  if [ -n "$is_framework" ]; then
-    __conf:CFLAGS '-fembed-bitcode'
-  fi
-
   __conf:SCRIPT "export CFLAGS=\"$CONF_CFLAGS\""
-
-  # LDFLAGS
-  if [ "$os_name" = "mingw" ]; then
-    __conf:LDFLAGS '-Wl,--no-insert-timestamp'
-    __conf:LDFLAGS '-Wl,--subsystem,windows'
-    __conf:LDFLAGS '-static-libgcc'
-  fi
-  if [ -n "$is_framework" ]; then
-    __conf:LDFLAGS '-fembed-bitcode'
-  fi
-
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
 
   if [ "$os_name" = "linux" ]; then
@@ -522,11 +550,7 @@ function __build:configure:target:build_script {
     __conf:SCRIPT 'export CHOST="$CROSS_TRIPLE"'
   fi
 
-  # xz
-  __conf:XZ '--host="$CROSS_TRIPLE"'
-  __conf:XZ '--prefix="$DIR_SCRIPT/xz"'
-  __conf:XZ 'CFLAGS="$CFLAGS -O3"'
-
+  # LZMA
   __conf:SCRIPT "
 echo \"
     Building lzma for \$TASK_TARGET
@@ -540,9 +564,7 @@ make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
 make install > /dev/null"
 
-  # zlib
-  __conf:ZLIB '--prefix="$DIR_SCRIPT/zlib"'
-
+  # ZLIB
   __conf:SCRIPT "
 echo \"
     Building zlib for \$TASK_TARGET
@@ -555,23 +577,7 @@ make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
 make install > /dev/null"
 
-  # openssl
-  if [ "${os_arch: -2}" = "64" ]; then
-    __conf:OPENSSL 'enable-ec_nistp_64_gcc_128'
-  fi
-  if [ "$os_name" = "android" ]; then
-    __conf:OPENSSL '-D__ANDROID_API__=21'
-  fi
-  if [ "$os_name" = "mingw" ]; then
-    __conf:OPENSSL '-static'
-  fi
-  __conf:OPENSSL '--release'
-  __conf:OPENSSL '--libdir=lib'
-  __conf:OPENSSL '--with-zlib-lib="$DIR_SCRIPT/zlib/lib/libz.a"'
-  __conf:OPENSSL '--with-zlib-include="$DIR_SCRIPT/zlib/include"'
-  __conf:OPENSSL '--prefix="$DIR_SCRIPT/openssl"'
-  __conf:OPENSSL "$openssl_target"
-
+  # OPENSSL
   __conf:SCRIPT "
 echo \"
     Building openssl for \$TASK_TARGET
@@ -594,11 +600,7 @@ make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
 make install_sw > /dev/null"
 
-  # libevent
-  __conf:LIBEVENT '--host="$CROSS_TRIPLE"'
-  __conf:LIBEVENT '--prefix="$DIR_SCRIPT/libevent"'
-  __conf:LIBEVENT 'CFLAGS="$CFLAGS -O3"'
-
+  # LIBEVENT
   __conf:SCRIPT "
 echo \"
     Building libevent for \$TASK_TARGET
@@ -612,30 +614,22 @@ make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIPT/libevent/logs/make.err\"
 make install > /dev/null"
 
-  # tor
-  if [ "$os_name" = "android" ]; then
-    __conf:TOR '--enable-android'
-  fi
-  __conf:TOR '--host="$CROSS_TRIPLE"'
-  __conf:TOR '--prefix="$DIR_SCRIPT/tor"'
-  __conf:TOR 'CFLAGS="$CFLAGS -O3"'
-
+  # TOR
   __conf:SCRIPT "
 echo \"
     Building tor for \$TASK_TARGET
     LOGS >> $DIR_BUILD/tor/logs
 \""
-  __conf:SCRIPT '# Includes are not enough when using --enable-lzma flag.
+  __conf:SCRIPT '
+# Includes are not enough when using --enable-lzma flag.
 # Must specify it here so configure picks it up.
 export LZMA_CFLAGS="-I$DIR_SCRIPT/xz/include"
-export LZMA_LIBS="$DIR_SCRIPT/xz/lib/liblzma.a"'
-  if [ "$os_name" = "mingw" ]; then
-    __conf:SCRIPT 'export LIBS="-L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
-  fi
-  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/tor" "$DIR_TMP"'
-  __conf:SCRIPT "cd \"\$DIR_TMP/tor\"
-./autogen.sh > \"\$DIR_SCRIPT/tor/logs/autogen.log\" 2> \"\$DIR_SCRIPT/tor/logs/autogen.err\"
-$CONF_TOR > \"\$DIR_SCRIPT/tor/logs/configure.log\" 2> \"\$DIR_SCRIPT/tor/logs/configure.err\"
+export LZMA_LIBS="$DIR_SCRIPT/xz/lib/liblzma.a"
+
+cp -R "$DIR_EXTERNAL/tor" "$DIR_TMP"
+cd "$DIR_TMP/tor"
+./autogen.sh > "$DIR_SCRIPT/tor/logs/autogen.log" 2> "$DIR_SCRIPT/tor/logs/autogen.err"'
+  __conf:SCRIPT "$CONF_TOR > \"\$DIR_SCRIPT/tor/logs/configure.log\" 2> \"\$DIR_SCRIPT/tor/logs/configure.err\"
 make clean > /dev/null 2>&1
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
 make install > /dev/null 2>&1
@@ -704,11 +698,9 @@ function __build:git:clean {
   __require:not_empty "$1" "project name must not be empty"
   local dir_current=
   dir_current="$(pwd)"
-
   cd "$DIR_TASK/$1"
 
   ${GIT} clean -X --force --quiet
-
   cd "$dir_current"
 }
 
@@ -716,7 +708,6 @@ function __build:git:stash {
   __require:not_empty "$1" "project name must not be empty"
   local dir_current=
   dir_current="$(pwd)"
-
   cd "$DIR_TASK/$1"
 
   ${GIT} add --all
@@ -833,19 +824,22 @@ function __exec:docker:run {
     SIGINT intercepted... exiting...
 "; exit 1' SIGINT
 
-  if ! ${DOCKER} run \
+  ${DOCKER} run \
     --rm \
     -u "$U_ID:$G_ID" \
     -v "$DIR_TASK:/work" \
     "05nelsonm/build-env.$docker_name" \
-    "./$DIR_BUILD/build.sh"; then
+    "./$DIR_BUILD/build.sh"
 
-    __error "
-    Something went wrong with the build... Check logs...
-    "
+  local rc=$?
+  if [ $rc -eq 0 ]; then
+    trap - SIGINT
+    return 0
   fi
 
-  trap - SIGINT
+  __error "
+    Something went wrong with the build... Check logs...
+  "
 }
 
 function __exec:docker:build {
