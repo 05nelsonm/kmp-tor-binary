@@ -633,6 +633,7 @@ cd "$DIR_TMP/tor"
 make clean > /dev/null 2>&1
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
 make install > /dev/null 2>&1
+cp libtor.a \"\$DIR_SCRIPT/tor/\"
 "
 
   # out
