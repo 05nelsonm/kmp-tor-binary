@@ -220,8 +220,7 @@ function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
   local os_arch="x86"
   local openssl_target="mingw"
   __build:configure:target:init
-  __conf:CFLAGS '-m32'
-  __conf:LDFLAGS '-m32 -Wl,--no-seh'
+  __conf:LDFLAGS '-Wl,--no-seh'
   __exec:docker:run
 }
 
@@ -381,6 +380,8 @@ mkdir -p "$DIR_SCRIPT/tor/logs"
 mkdir -p "$DIR_SCRIPT/xz/logs"
 mkdir -p "$DIR_SCRIPT/zlib/logs"
 
+export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib:$LD_LIBRARY_PATH"
+export LIBS="-L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"
 export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/lib/pkgconfig:$DIR_SCRIPT/xz/lib/pkgconfig:$DIR_SCRIPT/zlib/lib/pkgconfig"
 '
 
@@ -389,14 +390,17 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:CFLAGS '-I$DIR_SCRIPT/openssl/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/xz/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/zlib/include'
+  __conf:CFLAGS '-O3'
   __conf:CFLAGS '-fno-guess-branch-probability'
   __conf:CFLAGS '-frandom-seed=0'
-  __conf:CFLAGS '-fvisibility=hidden'
+
   if [ "$os_name" = "mingw" ]; then
+    __conf:CFLAGS '-static'
     __conf:CFLAGS '-fno-strict-overflow'
     __conf:CFLAGS '-fstack-protector-strong'
   else
     __conf:CFLAGS '-fPIC'
+    __conf:CFLAGS '-fvisibility=hidden'
   fi
   if [ -n "$is_framework" ]; then
     __conf:CFLAGS '-fembed-bitcode'
@@ -407,10 +411,10 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:LDFLAGS '-L$DIR_SCRIPT/openssl/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/xz/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/zlib/lib'
+
   if [ "$os_name" = "mingw" ]; then
     __conf:LDFLAGS '-Wl,--no-insert-timestamp'
-    __conf:LDFLAGS '-Wl,--subsystem,windows'
-#    __conf:LDFLAGS '-static-libgcc'
+    __conf:LDFLAGS '-static-libgcc'
   fi
   if [ -n "$is_framework" ]; then
     __conf:LDFLAGS '-fembed-bitcode'
@@ -427,8 +431,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-xz \
   --disable-xzdec \
   --host="$CROSS_TRIPLE" \
-  --prefix="$DIR_SCRIPT/xz" \
-  CFLAGS="$CFLAGS -O3"'
+  --prefix="$DIR_SCRIPT/xz"'
 
   # ZLIB
   CONF_ZLIB='./configure --static \
@@ -453,7 +456,6 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   no-rmd160 \
   no-whirlpool \
   no-ui-console \
-  --release \
   --libdir=lib \
   --with-zlib-lib="$DIR_SCRIPT/zlib/lib/libz.a" \
   --with-zlib-include="$DIR_SCRIPT/zlib/include" \
@@ -465,9 +467,11 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   if [ "$os_name" = "android" ]; then
     __conf:OPENSSL '-D__ANDROID_API__=21'
   fi
-#  if [ "$os_name" = "mingw" ]; then
-#    __conf:OPENSSL '-static'
-#  fi
+  if [ "$os_name" = "mingw" ]; then
+    # Even though -static is declared in CFLAGS, it is declared here
+    # because openssl's Configure file is jank.
+    __conf:OPENSSL '-static'
+  fi
   __conf:OPENSSL "$openssl_target"
 
   # LIBEVENT
@@ -478,8 +482,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-samples \
   --disable-shared \
   --host="$CROSS_TRIPLE" \
-  --prefix="$DIR_SCRIPT/libevent" \
-  CFLAGS="$CFLAGS -O3"'
+  --prefix="$DIR_SCRIPT/libevent"'
 
   # TOR
   CONF_TOR='./configure --disable-asciidoc \
@@ -500,11 +503,16 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --enable-static-zlib \
   --with-zlib-dir="$DIR_SCRIPT/zlib" \
   --host="$CROSS_TRIPLE" \
-  --prefix="$DIR_SCRIPT/tor" \
-  CFLAGS="$CFLAGS -O3"'
+  --prefix="$DIR_SCRIPT/tor"'
 
   if [ "$os_name" = "android" ]; then
     __conf:TOR '--enable-android'
+  fi
+  if [ "$os_name" = "mingw" ]; then
+    # Linkage to console so when clicking on tor.exe it opens.
+    # This is the same behavior had with tor-browser-build's
+    # output of tor.
+    __conf:TOR 'LDFLAGS="$LDFLAGS -Wl,--subsystem,console"'
   fi
 }
 
@@ -540,11 +548,6 @@ function __build:configure:target:build_script {
 
   __conf:SCRIPT "export CFLAGS=\"$CONF_CFLAGS\""
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
-
-  if [ "$os_name" = "linux" ]; then
-    __conf:SCRIPT 'export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib:$LD_LIBRARY_PATH"'
-    __conf:SCRIPT 'export LIBS="-L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"'
-  fi
 
   if [ "$os_name" = "mingw" ]; then
     __conf:SCRIPT 'export CHOST="$CROSS_TRIPLE"'
@@ -586,13 +589,13 @@ echo \"
   __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/openssl" "$DIR_TMP"
 cd "$DIR_TMP/openssl"'
 
-#  if [ "$os_name" = "mingw" ]; then
-#    __conf:SCRIPT "
-## https://github.com/openssl/openssl/issues/14574
-## https://github.com/netdata/netdata/pull/15842
-#sed -i \"s/disable('static', 'pic', 'threads');/disable('static', 'pic');/\" \"Configure\"
-#"
-#  fi
+  if [ "$os_name" = "mingw" ]; then
+    __conf:SCRIPT "
+# https://github.com/openssl/openssl/issues/14574
+# https://github.com/netdata/netdata/pull/15842
+sed -i \"s/disable('static', 'pic', 'threads');/disable('static', 'pic');/\" \"Configure\"
+"
+  fi
 
   __conf:SCRIPT "$CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
 perl configdata.pm --dump >> \"\$DIR_SCRIPT/openssl/logs/configure.log\"
@@ -633,38 +636,39 @@ cd "$DIR_TMP/tor"
 make clean > /dev/null 2>&1
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
 make install > /dev/null 2>&1
-cp libtor.a \"\$DIR_SCRIPT/tor/\"
 "
 
   # out
   __conf:SCRIPT 'mkdir -p "$DIR_OUT"'
 
   if [ -z "$is_framework" ]; then
-    local lib_name_pre_strip=
-    local lib_name_post_strip=
+    local lib_name=
+    local lib_name_out=
 
     case "$os_name" in
       "android"|"linux"|"freebsd")
-        lib_name_pre_strip="tor"
-        lib_name_post_strip="libkmptor.so"
+        lib_name="tor"
+        lib_name_out="libtor.so"
         ;;
       "macos")
-        lib_name_pre_strip="tor"
-        lib_name_post_strip="libkmptor.dylib"
+        lib_name="tor"
+        lib_name_out="libtor.dylib"
         ;;
       "mingw")
-        lib_name_pre_strip="tor.exe"
-        lib_name_post_strip="kmptor.dll"
+        lib_name="tor.exe"
+        # Do not modify the name for Windows. Otherwise it
+        # may be flaged by Windows Defender as a virus.
+        lib_name_out="tor.exe"
         ;;
       *)
         __error "Unknown os_name >> $os_name"
         ;;
     esac
 
-    __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$lib_name_pre_strip\" \"\$DIR_OUT/$lib_name_post_strip\""
-    __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$lib_name_post_strip\""
-    __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$lib_name_pre_strip\")\""
-    __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$lib_name_post_strip\")\""
+    __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$lib_name\" \"\$DIR_OUT/$lib_name_out\""
+    __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$lib_name_out\""
+    __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$lib_name\")\""
+    __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$lib_name_out\")\""
   # else
     # TODO: framework
   fi
@@ -843,6 +847,7 @@ function __exec:docker:run {
   "
 }
 
+# TODO: Publish to hub.docker.com once images are finalized
 function __exec:docker:build {
   ${DOCKER} build \
     -f "$DIR_TASK/docker/Dockerfile.$1" \

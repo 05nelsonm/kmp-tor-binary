@@ -24,11 +24,10 @@ RUN apt-get update --yes && \
       python3 && \
     apt-get autoremove --purge --yes && \
     apt-get clean && \
-    rm -rf /var/lib/{apt,dpkg,cache,lob}/ && \
     rm -rf /etc/ssh/*key*
 
 WORKDIR /work
 
-COPY entrypoint_buildenv.sh /var/opt
+COPY entrypoint_base.sh /var/opt
 
-ENTRYPOINT ["/var/opt/entrypoint_buildenv.sh"]
+ENTRYPOINT ["/var/opt/entrypoint_base.sh"]
