@@ -395,6 +395,11 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:CFLAGS '-frandom-seed=0'
 
   if [ "$os_name" = "mingw" ]; then
+    # In order to utilize the -fstack-protector-strong flag,
+    # we also must comiple with -static to ensure libssp-0.dll
+    # will not be included in the final product.
+    #
+    # $ objdump -p build/jvm-out/mingw/<arch>/tor.exe | grep "DLL Name"
     __conf:CFLAGS '-static'
     __conf:CFLAGS '-fno-strict-overflow'
     __conf:CFLAGS '-fstack-protector-strong'
@@ -509,9 +514,10 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:TOR '--enable-android'
   fi
   if [ "$os_name" = "mingw" ]; then
-    # Linkage to console so when clicking on tor.exe it opens.
-    # This is the same behavior had with tor-browser-build's
-    # output of tor.
+    __conf:TOR '--enable-static-tor'
+    # So if tor.exe is clicked on, it opens in console.
+    # This is the same behavior as the tor.exe output by
+    # tor-browser-build.
     __conf:TOR 'LDFLAGS="$LDFLAGS -Wl,--subsystem,console"'
   fi
 }
