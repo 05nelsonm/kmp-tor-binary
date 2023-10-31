@@ -1,22 +1,26 @@
-FROM 05nelsonm/build-env.linux-libc.base
+FROM 05nelsonm/build-env.linux-libc.base:latest
 
-RUN apt-get update --yes && \
+RUN echo 'Installing packages for mingw x86_64' && \
+    apt-get update --yes && \
     apt-get install --yes \
       binutils-mingw-w64-x86-64 \
       g++-mingw-w64-x86-64 \
       gcc-mingw-w64-x86-64 \
       mingw-w64-tools
 
-ENV CROSS_TRIPLE x86_64-w64-mingw32
-ENV CROSS_ROOT /usr/bin
-ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
-    AR=/usr/bin/${CROSS_TRIPLE}-ar \
-    CC=/usr/bin/${CROSS_TRIPLE}-gcc \
-    CPP=/usr/bin/${CROSS_TRIPLE}-cpp \
-    CXX=/usr/bin/${CROSS_TRIPLE}-g++ \
-    LD=/usr/bin/${CROSS_TRIPLE}-ld
+ENV CROSS_TARGET x86_64-w64-mingw32
+ENV CROSS_BIN /usr/bin
+
+ENV AR=${CROSS_BIN}/${CROSS_TARGET}-ar \
+    AS=${CROSS_BIN}/${CROSS_TARGET}-as \
+    CC=${CROSS_BIN}/${CROSS_TARGET}-gcc \
+    CPP=${CROSS_BIN}/${CROSS_TARGET}-cpp \
+    CXX=${CROSS_BIN}/${CROSS_TARGET}-g++ \
+    LD=${CROSS_BIN}/${CROSS_TARGET}-ld \
+    RANLIB=${CROSS_BIN}/${CROSS_TARGET}-ranlib \
+    STRIP=${CROSS_BIN}/${CROSS_TARGET}-strip
 
 # binutils
-ENV WIDL=/usr/bin/${CROSS_TRIPLE}-widl \
-    WINDMC=/usr/bin/${CROSS_TRIPLE}-windmc \
-    WINDRES=/usr/bin/${CROSS_TRIPLE}-windres
+ENV WIDL=${CROSS_BIN}/${CROSS_TARGET}-widl \
+    WINDMC=${CROSS_BIN}/${CROSS_TARGET}-windmc \
+    WINDRES=${CROSS_BIN}/${CROSS_TARGET}-windres

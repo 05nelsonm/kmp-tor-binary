@@ -292,7 +292,7 @@ function __build:configure:target:init {
   __require:var_set "$openssl_target" "openssl_target"
 
   if [ -n "$is_framework" ]; then
-    # TODO: require cross_triple to be set as we're not running in docker
+    # TODO: require cross_target to be set as we're not running in docker
     __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
 
     DIR_BUILD="build/framework/$os_name$os_subtype/$os_arch"
@@ -349,9 +349,9 @@ export SOURCE_DATE_EPOCH="1234567890"
 export TZ=UTC
 set -e
 
-if [ -z "$CROSS_TRIPLE" ]; then
+if [ -z "$CROSS_TARGET" ]; then
   echo 1>&2 "
-    CROSS_TRIPLE environment variable must be set.
+    CROSS_TARGET environment variable must be set.
     Are you not using task.sh?
   "
   exit 3
@@ -435,7 +435,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-shared \
   --disable-xz \
   --disable-xzdec \
-  --host="$CROSS_TRIPLE" \
+  --host="$CROSS_TARGET" \
   --prefix="$DIR_SCRIPT/xz"'
 
   # ZLIB
@@ -486,7 +486,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-libevent-regress \
   --disable-samples \
   --disable-shared \
-  --host="$CROSS_TRIPLE" \
+  --host="$CROSS_TARGET" \
   --prefix="$DIR_SCRIPT/libevent"'
 
   # TOR
@@ -507,7 +507,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --with-openssl-dir="$DIR_SCRIPT/openssl" \
   --enable-static-zlib \
   --with-zlib-dir="$DIR_SCRIPT/zlib" \
-  --host="$CROSS_TRIPLE" \
+  --host="$CROSS_TARGET" \
   --prefix="$DIR_SCRIPT/tor"'
 
   if [ "$os_name" = "android" ]; then
@@ -543,20 +543,16 @@ function __build:configure:target:build_script {
   fi
   if [ -n "$CONF_RANLIB" ]; then
     __conf:SCRIPT "export RANLIB=\"$CONF_RANLIB\""
-  else
-    __conf:SCRIPT 'export RANLIB="$CROSS_TRIPLE-ranlib"'
   fi
   if [ -n "$CONF_STRIP" ]; then
     __conf:SCRIPT "export STRIP=\"$CONF_STRIP\""
-  else
-    __conf:SCRIPT 'export STRIP="$CROSS_TRIPLE-strip"'
   fi
 
   __conf:SCRIPT "export CFLAGS=\"$CONF_CFLAGS\""
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
 
   if [ "$os_name" = "mingw" ]; then
-    __conf:SCRIPT 'export CHOST="$CROSS_TRIPLE"'
+    __conf:SCRIPT 'export CHOST="$CROSS_TARGET"'
   fi
 
   # LZMA

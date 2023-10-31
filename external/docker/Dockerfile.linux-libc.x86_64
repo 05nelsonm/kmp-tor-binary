@@ -1,12 +1,13 @@
-FROM 05nelsonm/build-env.linux-libc.base
+FROM 05nelsonm/build-env.linux-libc.base:latest
 
-ENV CROSS_TRIPLE x86_64-linux-gnu
-ENV CROSS_ROOT /usr/bin
+ENV CROSS_TARGET x86_64-linux-gnu
+ENV CROSS_BIN /usr/bin
 
-ENV AS=/usr/bin/${CROSS_TRIPLE}-as \
-    AR=/usr/bin/${CROSS_TRIPLE}-ar \
-    CC=/usr/bin/${CROSS_TRIPLE}-gcc \
-    CPP=/usr/bin/${CROSS_TRIPLE}-cpp \
-    CXX=/usr/bin/${CROSS_TRIPLE}-g++ \
-    LD=/usr/bin/${CROSS_TRIPLE}-ld \
-    STRIP=/usr/bin/${CROSS_TRIPLE}-strip
+ENV AR=${CROSS_BIN}/${CROSS_TARGET}-ar \
+    AS=${CROSS_BIN}/${CROSS_TARGET}-as \
+    CC=${CROSS_BIN}/${CROSS_TARGET}-gcc \
+    CPP=${CROSS_BIN}/${CROSS_TARGET}-cpp \
+    CXX=${CROSS_BIN}/${CROSS_TARGET}-g++ \
+    LD=${CROSS_BIN}/${CROSS_TARGET}-ld \
+    RANLIB=${CROSS_BIN}/${CROSS_TARGET}-ranlib \
+    STRIP=${CROSS_BIN}/${CROSS_TARGET}-strip

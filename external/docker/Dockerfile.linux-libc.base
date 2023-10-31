@@ -1,8 +1,9 @@
-FROM amd64/ubuntu:16.04@sha256:a3785f78ab8547ae2710c89e627783cfa7ee7824d3468cae6835c9f4eae23ff7
+FROM amd64/ubuntu:16.04
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update --yes && \
+RUN echo 'Preparing base' && \
+    apt-get update --yes && \
     apt-get upgrade --yes && \
     echo "path-exclude=/usr/share/locale/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
     echo "path-exclude=/usr/share/man/*" >> /etc/dpkg/dpkg.cfg.d/01_nodoc && \
@@ -15,16 +16,58 @@ RUN apt-get update --yes && \
       ca-certificates \
       curl \
       doxygen \
+      git \
       libtool \
       make \
       patch \
       perl \
       pkg-config \
       po4a \
-      python3 && \
+      unzip && \
     apt-get autoremove --purge --yes && \
     apt-get clean && \
     rm -rf /etc/ssh/*key*
+
+RUN echo 'Installing packages to build Python' && \
+    apt-get install --no-install-recommends --yes \
+      libreadline-gplv2-dev \
+      libbz2-dev \
+      liblzma-dev \
+      libncursesw5-dev \
+      libssl-dev \
+      zlib1g-dev
+
+RUN echo 'Building Python' && \
+    mkdir -p /build && \
+    cd /build && \
+    curl -O https://www.python.org/ftp/python/3.6.15/Python-3.6.15.tgz && \
+    if [ "$(sha256sum Python-3.6.15.tgz | cut -d ' ' -f 1)" != "54570b7e339e2cfd72b29c7e2fdb47c0b7b18b7412e61de5b463fc087c13b043" ]; then exit 1; fi && \
+    tar xzf Python-3.6.15.tgz && \
+    cd Python-3.6.15 && \
+    ./configure --enable-optimizations && \
+    make -j$(nproc) && \
+    make altinstall && \
+    cd / && \
+    rm -rf /build
+
+# Need cmake 3.20+ to build clang
+RUN echo 'Building cmake' && \
+    mkdir -p /build && \
+    cd /build && \
+    git clone https://gitlab.kitware.com/cmake/cmake.git && \
+    cd cmake && \
+    git checkout v3.26.5 && \
+    mkdir -p build && \
+    cd build && \
+    ../bootstrap --no-qt-gui \
+      --system-bzip2 \
+      --system-liblzma \
+      --system-zlib \
+      --prefix=/usr/local && \
+    make -j$(nproc) && \
+    make install && \
+    cd / && \
+    rm -rf /build
 
 WORKDIR /work
 
