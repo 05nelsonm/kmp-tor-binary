@@ -1,0 +1,11 @@
+FROM 05nelsonm/build-env.macos.base:latest
+
+ENV CROSS_TARGET aarch64-apple-darwin${VERSION_DARWIN}
+
+ENV AR=${CROSS_BIN}/${CROSS_TARGET}-ar \
+    AS=${CROSS_BIN}/${CROSS_TARGET}-as \
+    CC=${CROSS_BIN}/${CROSS_TARGET}-clang \
+    CXX=${CROSS_BIN}/${CROSS_TARGET}-clang++ \
+    LD=${CROSS_BIN}/${CROSS_TARGET}-ld \
+    RANLIB=${CROSS_BIN}/${CROSS_TARGET}-ranlib \
+    STRIP=${CROSS_BIN}/${CROSS_TARGET}-strip

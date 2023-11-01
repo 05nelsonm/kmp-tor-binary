@@ -1,0 +1,60 @@
+FROM 05nelsonm/build-env.linux-libc.base:latest
+
+ENV CROSS_BIN /usr/local/osxcross/bin
+
+ENV VERSION_DARWIN=21.4 \
+    VERSION_SDK=12.3 \
+    SHA256_SDK=5beee35d42f5bc4d1490b8856416ec5db63495cb31414f08caf63b63ce6e50c1
+
+ENV PATH_SDK /usr/local/osxcross/SDK/MacOSX${VERSION_SDK}.sdk
+ENV PATH ${CROSS_BIN}:$PATH
+
+ENV OSXCROSS_ENABLE_WERROR_IMPLICIT_FUNCTION_DECLARATION 1
+
+# Creating the SDK package one can use linux-libc.base image temporarily after
+# downloading the desired Command_Line_Tools_for_Xcode_XX.X.X.dmg
+#
+# $ docker run --rm -e ID_U="$(id -u)" -e ID_G="$(id -g)" -e VERSION_XCODE_CLI="13.3.1" -e VERSION_MAC_SDK="12.3" -v ./:/work -it 05nelsonm/build-env.linux-libc.base bash
+# $ apt-get install --no-install-recommends --yes clang cpio icu-devtools libicu-dev libxml2-dev
+# $ mkdir -p /build
+# $ cd /build
+# $ git clone https://github.com/tpoechtrager/osxcross.git
+# $ cd osxcross
+# $ git checkout 2389e32b8b6a531ce7280ae2c852c137cd771d80
+# $ sed -i 's,verbose_cmd "$TARGET_DIR/SDK/tools/bin/pbzx -n \\"$PKG/Payload\\" | cpio -i -D $TMP_DIR/out",verbose_cmd "$TARGET_DIR/SDK/tools/bin/pbzx -n \\"$PKG/Payload\\" | \(cd $TMP_DIR/out \&\& cpio -i)",' tools/gen_sdk_package_tools_dmg.sh
+# $ SDK_COMPRESSOR=gz ./tools/gen_sdk_package_tools_dmg.sh /work/docker/xcode-cli/Command_Line_Tools_for_Xcode_$VERSION_XCODE_CLI.dmg
+# $ chown "$ID_U:$ID_G" MacOSX$VERSION_MAC_SDK.sdk.tar.gz
+# $ mv MacOSX$VERSION_MAC_SDK.sdk.tar.gz /work/docker
+# $ sha256sum /work/docker/MacOSX$VERSION_MAC_SDK.sdk.tar.gz
+# $ exit
+
+# Prepare osxcross clone
+RUN echo 'Installing packages for osxcross' && \
+    apt-get update --yes && \
+    apt-get install --no-install-recommends --yes \
+      icu-devtools \
+      libicu-dev \
+      libxml2-dev \
+      uuid-dev
+
+RUN echo 'Building apple clang & osxcross. THIS WILL TAKE A WHILE!' && \
+    mkdir -p /build && \
+    cd /build && \
+    git clone https://github.com/tpoechtrager/osxcross.git && \
+    cd osxcross && \
+    git checkout 2389e32b8b6a531ce7280ae2c852c137cd771d80 && \
+    cd /build/osxcross/tarballs && \
+    curl -O https://raw.githubusercontent.com/05nelsonm/build-env/sdk/macos/MacOSX${VERSION_SDK}.sdk.tar.gz && \
+    if [ "$(sha256sum MacOSX${VERSION_SDK}.sdk.tar.gz | cut -d ' ' -f 1)" != "$SHA256_SDK" ]; then exit 1; fi && \
+    cd /build/osxcross && \
+    ENABLE_BOOTSTRAP=1 \
+      ENABLE_FULL_BOOTSTRAP=1 \
+      ENABLE_CLANG_INSTALL=1 \
+      CLANG_VERSION=15 \
+      UNATTENDED=1 \
+      ./build_apple_clang.sh && \
+    TARGET_DIR=/usr/local/osxcross \
+      UNATTENDED=1 \
+      ./build.sh && \
+    cd / && \
+    rm -rf /build

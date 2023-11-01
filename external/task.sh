@@ -146,7 +146,9 @@ function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
   local os_arch="armv7"
   local openssl_target="linux-armv4"
   __build:configure:target:init
-  __conf:CFLAGS '-march=armv7-a -mfloat-abi=hard -mfpu=vfp'
+  __conf:CFLAGS '-march=armv7-a'
+  __conf:CFLAGS '-mfloat-abi=hard'
+  __conf:CFLAGS '-mfpu=vfp'
   __exec:docker:run
 }
 
@@ -203,16 +205,18 @@ function build:jvm:macos:aarch64 { ## Builds macOS aarch64 for JVM
   local os_name="macos"
   local os_arch="aarch64"
   local openssl_target="darwin64-arm64-cc"
+  local cc_clang="yes"
   __build:configure:target:init
-  # TODO __exec:docker:run
+  __exec:docker:run
 }
 
 function build:jvm:macos:x86_64 { ## Builds macOS x86_64 for JVM
   local os_name="macos"
   local os_arch="x86_64"
   local openssl_target="darwin64-x86_64-cc"
+  local cc_clang="yes"
   __build:configure:target:init
-  # TODO __exec:docker:run
+  __exec:docker:run
 }
 
 function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
@@ -374,11 +378,23 @@ rm -rf "$DIR_SCRIPT/tor"
 rm -rf "$DIR_SCRIPT/xz"
 rm -rf "$DIR_SCRIPT/zlib"
 
-mkdir -p "$DIR_SCRIPT/libevent/logs"
-mkdir -p "$DIR_SCRIPT/openssl/logs"
-mkdir -p "$DIR_SCRIPT/tor/logs"
-mkdir -p "$DIR_SCRIPT/xz/logs"
+mkdir -p "$DIR_SCRIPT/zlib/include"
+mkdir -p "$DIR_SCRIPT/zlib/lib"
 mkdir -p "$DIR_SCRIPT/zlib/logs"
+
+mkdir -p "$DIR_SCRIPT/xz/include"
+mkdir -p "$DIR_SCRIPT/xz/lib"
+mkdir -p "$DIR_SCRIPT/xz/logs"
+
+mkdir -p "$DIR_SCRIPT/openssl/include"
+mkdir -p "$DIR_SCRIPT/openssl/lib"
+mkdir -p "$DIR_SCRIPT/openssl/logs"
+
+mkdir -p "$DIR_SCRIPT/libevent/include"
+mkdir -p "$DIR_SCRIPT/libevent/lib"
+mkdir -p "$DIR_SCRIPT/libevent/logs"
+
+mkdir -p "$DIR_SCRIPT/tor/logs"
 
 export LD_LIBRARY_PATH="$DIR_SCRIPT/libevent/lib:$DIR_SCRIPT/openssl/lib:$DIR_SCRIPT/xz/lib:$DIR_SCRIPT/zlib/lib:$LD_LIBRARY_PATH"
 export LIBS="-L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/xz/lib -L$DIR_SCRIPT/zlib/lib"
@@ -391,9 +407,12 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:CFLAGS '-I$DIR_SCRIPT/xz/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/zlib/include'
   __conf:CFLAGS '-O3'
-  __conf:CFLAGS '-fno-guess-branch-probability'
   __conf:CFLAGS '-frandom-seed=0'
 
+  if [ -z "$is_framework" ] && [ -z "$cc_clang" ]; then
+    # non-framework (i.e. jvm) that is using gcc
+    __conf:CFLAGS '-fno-guess-branch-probability'
+  fi
   if [ "$os_name" = "mingw" ]; then
     # In order to utilize the -fstack-protector-strong flag,
     # we also must comiple with -static to ensure libssp-0.dll
@@ -425,6 +444,10 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:LDFLAGS '-fembed-bitcode'
   fi
 
+  # ZLIB
+  CONF_ZLIB='./configure --static \
+  --prefix="$DIR_SCRIPT/zlib"'
+
   # LZMA
   CONF_XZ='./configure --enable-static \
   --disable-doc \
@@ -437,10 +460,6 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-xzdec \
   --host="$CROSS_TARGET" \
   --prefix="$DIR_SCRIPT/xz"'
-
-  # ZLIB
-  CONF_ZLIB='./configure --static \
-  --prefix="$DIR_SCRIPT/zlib"'
 
   # OPENSSL
   CONF_OPENSSL='./Configure no-shared \
@@ -462,7 +481,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   no-whirlpool \
   no-ui-console \
   --libdir=lib \
-  --with-zlib-lib="$DIR_SCRIPT/zlib/lib/libz.a" \
+  --with-zlib-lib="$DIR_SCRIPT/zlib/lib" \
   --with-zlib-include="$DIR_SCRIPT/zlib/include" \
   --prefix="$DIR_SCRIPT/openssl"'
 
@@ -483,6 +502,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   CONF_LIBEVENT='./configure --enable-static \
   --enable-gcc-hardening \
   --disable-debug-mode \
+  --disable-doxygen-html \
   --disable-libevent-regress \
   --disable-samples \
   --disable-shared \
@@ -555,20 +575,6 @@ function __build:configure:target:build_script {
     __conf:SCRIPT 'export CHOST="$CROSS_TARGET"'
   fi
 
-  # LZMA
-  __conf:SCRIPT "
-echo \"
-    Building lzma for \$TASK_TARGET
-    LOGS >> $DIR_BUILD/xz/logs
-\""
-  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/xz" "$DIR_TMP"'
-  __conf:SCRIPT "cd \"\$DIR_TMP/xz\"
-./autogen.sh > \"\$DIR_SCRIPT/xz/logs/autogen.log\" 2> \"\$DIR_SCRIPT/xz/logs/autogen.err\"
-$CONF_XZ > \"\$DIR_SCRIPT/xz/logs/configure.log\" 2> \"\$DIR_SCRIPT/xz/logs/configure.err\"
-make clean > /dev/null
-make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
-make install > /dev/null"
-
   # ZLIB
   __conf:SCRIPT "
 echo \"
@@ -580,7 +586,22 @@ echo \"
 $CONF_ZLIB > \"\$DIR_SCRIPT/zlib/logs/configure.log\" 2> \"\$DIR_SCRIPT/zlib/logs/configure.err\"
 make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
-make install > /dev/null"
+make install >> \"\$DIR_SCRIPT/zlib/logs/make.log\" 2>> \"\$DIR_SCRIPT/zlib/logs/make.err\""
+
+  # LZMA
+  __conf:SCRIPT "
+echo \"
+    Building lzma for \$TASK_TARGET
+    LOGS >> $DIR_BUILD/xz/logs
+\""
+  __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/xz" "$DIR_TMP"'
+  __conf:SCRIPT "cd \"\$DIR_TMP/xz\"
+./autogen.sh --no-po4a \\
+  --no-doxygen > \"\$DIR_SCRIPT/xz/logs/autogen.log\" 2> \"\$DIR_SCRIPT/xz/logs/autogen.err\"
+$CONF_XZ > \"\$DIR_SCRIPT/xz/logs/configure.log\" 2> \"\$DIR_SCRIPT/xz/logs/configure.err\"
+make clean > /dev/null
+make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/xz/logs/make.log\" 2> \"\$DIR_SCRIPT/xz/logs/make.err\"
+make install >> \"\$DIR_SCRIPT/xz/logs/make.log\" 2>> \"\$DIR_SCRIPT/xz/logs/make.err\""
 
   # OPENSSL
   __conf:SCRIPT "
@@ -603,7 +624,7 @@ sed -i \"s/disable('static', 'pic', 'threads');/disable('static', 'pic');/\" \"C
 perl configdata.pm --dump >> \"\$DIR_SCRIPT/openssl/logs/configure.log\"
 make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/openssl/logs/make.log\" 2> \"\$DIR_SCRIPT/openssl/logs/make.err\"
-make install_sw > /dev/null"
+make install_sw >> \"\$DIR_SCRIPT/openssl/logs/make.log\" 2>> \"\$DIR_SCRIPT/openssl/logs/make.err\""
 
   # LIBEVENT
   __conf:SCRIPT "
@@ -617,7 +638,7 @@ echo \"
 $CONF_LIBEVENT > \"\$DIR_SCRIPT/libevent/logs/configure.log\" 2> \"\$DIR_SCRIPT/libevent/logs/configure.err\"
 make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/libevent/logs/make.log\" 2> \"\$DIR_SCRIPT/libevent/logs/make.err\"
-make install > /dev/null"
+make install >> \"\$DIR_SCRIPT/libevent/logs/make.log\" 2>> \"\$DIR_SCRIPT/libevent/logs/make.err\""
 
   # TOR
   __conf:SCRIPT "
@@ -637,7 +658,7 @@ cd "$DIR_TMP/tor"
   __conf:SCRIPT "$CONF_TOR > \"\$DIR_SCRIPT/tor/logs/configure.log\" 2> \"\$DIR_SCRIPT/tor/logs/configure.err\"
 make clean > /dev/null 2>&1
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/tor/logs/make.log\" 2> \"\$DIR_SCRIPT/tor/logs/make.err\"
-make install > /dev/null 2>&1
+make install >> \"\$DIR_SCRIPT/tor/logs/make.log\" 2>> \"\$DIR_SCRIPT/tor/logs/make.err\"
 "
 
   # out
@@ -775,7 +796,7 @@ function __conf:LDFLAGS {
 }
 
 function __conf:LIBEVENT {
-  if [ -z "$1" ]; then return 0;fi
+  if [ -z "$1" ]; then return 0; fi
   CONF_LIBEVENT+=" \\
   $1"
 }
@@ -816,6 +837,12 @@ function __exec:docker:run {
   # Build android base image if needed
   if [ "$os_name" = "android" ]; then
     __exec:docker:build "android.base"
+  fi
+
+  # Build macos base image if needed
+  if [ "$os_name" = "macos" ]; then
+    __exec:docker:build "linux-libc.base"
+    __exec:docker:build "macos.base"
   fi
 
   # Build linux-libc base images if needed

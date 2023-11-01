@@ -15,17 +15,18 @@ RUN echo 'Preparing base' && \
       build-essential \
       ca-certificates \
       curl \
-      doxygen \
+      gettext \
       git \
       libtool \
       make \
       patch \
       perl \
       pkg-config \
-      po4a \
-      unzip && \
-    apt-get autoremove --purge --yes && \
-    apt-get clean && \
+      unzip \
+      wget \
+      zip && \
+    apt-get clean autoclean --yes && \
+    apt-get autoremove --yes && \
     rm -rf /etc/ssh/*key*
 
 RUN echo 'Installing packages to build Python' && \
