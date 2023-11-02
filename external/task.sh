@@ -37,19 +37,19 @@ function build:all:android { ## Builds all Android targets
   build:android:x86_64
 }
 
-function build:all:jvm { ## Builds all FreeBSD, Linux, macOS, Windows targets for JVM
-  build:all:jvm:freebsd
+function build:all:jvm { ## Builds all Linux, macOS, Windows targets for JVM
+#  build:all:jvm:freebsd
   build:all:jvm:linux-libc
-  build:all:jvm:linux-musl
+#  build:all:jvm:linux-musl
   build:all:jvm:macos
   build:all:jvm:mingw
 }
 
-function build:all:jvm:freebsd { ## Builds all FreeBSD targets for JVM
-  build:jvm:freebsd:aarch64
-  build:jvm:freebsd:x86
-  build:jvm:freebsd:x86_64
-}
+#function build:all:jvm:freebsd { ## Builds all FreeBSD targets for JVM
+#  build:jvm:freebsd:aarch64
+#  build:jvm:freebsd:x86
+#  build:jvm:freebsd:x86_64
+#}
 
 function build:all:jvm:linux-libc { ## Builds all Linux Libc targets for JVM
   build:jvm:linux-libc:aarch64
@@ -58,11 +58,11 @@ function build:all:jvm:linux-libc { ## Builds all Linux Libc targets for JVM
   build:jvm:linux-libc:x86_64
 }
 
-function build:all:jvm:linux-musl { ## Builds all Linux Musl targets for JVM
-  build:jvm:linux-musl:aarch64
-  build:jvm:linux-musl:x86
-  build:jvm:linux-musl:x86_64
-}
+#function build:all:jvm:linux-musl { ## Builds all Linux Musl targets for JVM
+#  build:jvm:linux-musl:aarch64
+#  build:jvm:linux-musl:x86
+#  build:jvm:linux-musl:x86_64
+#}
 
 function build:all:jvm:macos { ## Builds all macOS targets for JVM
   build:jvm:macos:aarch64
@@ -114,29 +114,29 @@ function build:android:x86_64 { ## Builds Android x86_64
   __exec:docker:run
 }
 
-function build:jvm:freebsd:aarch64 { ## Builds FreeBSD aarch64 for JVM
-  local os_name="freebsd"
-  local os_arch="aarch64"
-  local openssl_target="BSD-aarch64"
-  __build:configure:target:init
-  # TODO __exec:docker:run
-}
+#function build:jvm:freebsd:aarch64 { ## Builds FreeBSD aarch64 for JVM
+#  local os_name="freebsd"
+#  local os_arch="aarch64"
+#  local openssl_target="BSD-aarch64"
+#  __build:configure:target:init
+#  # TODO __exec:docker:run
+#}
 
-function build:jvm:freebsd:x86 { ## Builds FreeBSD x86 for JVM
-  local os_name="freebsd"
-  local os_arch="x86"
-  local openssl_target="BSD-x86"
-  __build:configure:target:init
-  # TODO __exec:docker:run
-}
+#function build:jvm:freebsd:x86 { ## Builds FreeBSD x86 for JVM
+#  local os_name="freebsd"
+#  local os_arch="x86"
+#  local openssl_target="BSD-x86"
+#  __build:configure:target:init
+#  # TODO __exec:docker:run
+#}
 
-function build:jvm:freebsd:x86_64 { ## Builds FreeBSD x86_64 for JVM
-  local os_name="freebsd"
-  local os_arch="x86_64"
-  local openssl_target="BSD-x86_64"
-  __build:configure:target:init
-  # TODO __exec:docker:run
-}
+#function build:jvm:freebsd:x86_64 { ## Builds FreeBSD x86_64 for JVM
+#  local os_name="freebsd"
+#  local os_arch="x86_64"
+#  local openssl_target="BSD-x86_64"
+#  __build:configure:target:init
+#  # TODO __exec:docker:run
+#}
 
 function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
   local os_name="linux"
@@ -180,34 +180,34 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-musl:aarch64 { ## Builds Linux Musl aarch64 for JVM
-  local os_name="linux"
-  local os_subtype="-musl"
-  local os_arch="aarch64"
-  local openssl_target="linux-aarch64"
-  __build:configure:target:init
-  # TODO __exec:docker:run
-}
+#function build:jvm:linux-musl:aarch64 { ## Builds Linux Musl aarch64 for JVM
+#  local os_name="linux"
+#  local os_subtype="-musl"
+#  local os_arch="aarch64"
+#  local openssl_target="linux-aarch64"
+#  __build:configure:target:init
+#  # TODO __exec:docker:run
+#}
 
-function build:jvm:linux-musl:x86 { ## Builds Linux Musl x86 for JVM
-  local os_name="linux"
-  local os_subtype="-musl"
-  local os_arch="x86"
-  local openssl_target="linux-x86"
-  __build:configure:target:init
-  __conf:CFLAGS '-m32'
-  __conf:LDFLAGS '-m32'
-  # TODO __exec:docker:run
-}
+#function build:jvm:linux-musl:x86 { ## Builds Linux Musl x86 for JVM
+#  local os_name="linux"
+#  local os_subtype="-musl"
+#  local os_arch="x86"
+#  local openssl_target="linux-x86"
+#  __build:configure:target:init
+#  __conf:CFLAGS '-m32'
+#  __conf:LDFLAGS '-m32'
+#  # TODO __exec:docker:run
+#}
 
-function build:jvm:linux-musl:x86_64 { ## Builds Linux Musl x86_64 for JVM
-  local os_name="linux"
-  local os_subtype="-musl"
-  local os_arch="x86_64"
-  local openssl_target="linux-x86_64"
-  __build:configure:target:init
-  # TODO __exec:docker:run
-}
+#function build:jvm:linux-musl:x86_64 { ## Builds Linux Musl x86_64 for JVM
+#  local os_name="linux"
+#  local os_subtype="-musl"
+#  local os_arch="x86_64"
+#  local openssl_target="linux-x86_64"
+#  __build:configure:target:init
+#  # TODO __exec:docker:run
+#}
 
 function build:jvm:macos:aarch64 { ## Builds macOS aarch64 for JVM
   local os_name="macos"
