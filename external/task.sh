@@ -418,6 +418,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:CFLAGS '-I$DIR_SCRIPT/zlib/include'
   __conf:CFLAGS '-O3'
   __conf:CFLAGS '-frandom-seed=0'
+  __conf:CFLAGS '-fstack-protector-strong'
 
   if [ -z "$is_framework" ] && [ -z "$cc_clang" ]; then
     # non-framework (i.e. jvm) that is using gcc
@@ -431,7 +432,6 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     # $ objdump -p build/jvm-out/mingw/<arch>/tor.exe | grep "DLL Name"
     __conf:CFLAGS '-static'
     __conf:CFLAGS '-fno-strict-overflow'
-    __conf:CFLAGS '-fstack-protector-strong'
   else
     __conf:CFLAGS '-fPIC'
     __conf:CFLAGS '-fvisibility=hidden'
