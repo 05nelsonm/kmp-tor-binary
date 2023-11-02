@@ -21,6 +21,9 @@ readonly DRY_RUN=$(if [ "$2" = "--dry-run" ]; then echo "true"; else echo "false
 readonly DIR_TASK=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 readonly FILE_BUILD_LOCK="$DIR_TASK/build/.lock"
 
+# See https://github.com/05nelsonm/build-env
+readonly TAG_DOCKER_BUILD_ENV="0.1.0"
+
 # Programs
 readonly DOCKER=$(which docker)
 readonly GIT=$(which git)
@@ -838,32 +841,6 @@ function __exec:docker:run {
   __build:configure:target:build_script
   if $DRY_RUN; then return 0; fi
 
-  # Build linux libc/musl base image if needed
-  if [ -n "$os_subtype" ]; then
-    __exec:docker:build "linux$os_subtype.base"
-  fi
-
-  # Build android base image if needed
-  if [ "$os_name" = "android" ]; then
-    __exec:docker:build "linux-libc.base"
-    __exec:docker:build "android.base"
-  fi
-
-  # Build macos base image if needed
-  if [ "$os_name" = "macos" ]; then
-    __exec:docker:build "linux-libc.base"
-    __exec:docker:build "macos.base"
-  fi
-
-  # Build linux-libc base images if needed
-  if [ "$os_name" = "mingw" ]; then
-    __exec:docker:build "linux-libc.base"
-  fi
-
-  # Build final container
-  local docker_name="$os_name$os_subtype.$os_arch"
-  __exec:docker:build "$docker_name"
-
   trap 'echo "
     SIGINT intercepted... exiting...
 "; exit 1' SIGINT
@@ -872,7 +849,7 @@ function __exec:docker:run {
     --rm \
     -u "$U_ID:$G_ID" \
     -v "$DIR_TASK:/work" \
-    "05nelsonm/build-env.$docker_name" \
+    "05nelsonm/build-env.$os_name$os_subtype.$os_arch:$TAG_DOCKER_BUILD_ENV" \
     "./$DIR_BUILD/build.sh"
 
   local rc=$?
@@ -884,14 +861,6 @@ function __exec:docker:run {
   __error "
     Something went wrong with the build... Check logs...
   "
-}
-
-# TODO: Publish to hub.docker.com once images are finalized
-function __exec:docker:build {
-  ${DOCKER} build \
-    -f "$DIR_TASK/docker/Dockerfile.$1" \
-    -t "05nelsonm/build-env.$1" \
-    "$DIR_TASK/docker"
 }
 
 function __require:cmd {
@@ -961,10 +930,10 @@ function __init {
 if [ -z "$1" ] || [ "$1" = "help" ] || echo "$1" | grep -q "^__"; then
   help
 elif ! grep -qE "^function $1 {" "$0"; then
+  help
   echo 1>&2 "
     ERROR: Unknown task '$1'
   "
-  help
 else
   __init "$1"
   TIMEFORMAT="
