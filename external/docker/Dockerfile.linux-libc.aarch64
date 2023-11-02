@@ -7,14 +7,14 @@ RUN echo 'Installing packages for aarch64' && \
       gcc-aarch64-linux-gnu \
       pkg-config-aarch64-linux-gnu
 
-ENV CROSS_TARGET aarch64-linux-gnu
+ENV CROSS_TRIPLE aarch64-linux-gnu
 ENV CROSS_BIN /usr/bin
 
-ENV AR=${CROSS_BIN}/${CROSS_TARGET}-ar \
-    AS=${CROSS_BIN}/${CROSS_TARGET}-as \
-    CC=${CROSS_BIN}/${CROSS_TARGET}-gcc \
-    CPP=${CROSS_BIN}/${CROSS_TARGET}-cpp \
-    CXX=${CROSS_BIN}/${CROSS_TARGET}-g++ \
-    LD=${CROSS_BIN}/${CROSS_TARGET}-ld \
-    RANLIB=${CROSS_BIN}/${CROSS_TARGET}-ranlib \
-    STRIP=${CROSS_BIN}/${CROSS_TARGET}-strip
+ENV AR=${CROSS_BIN}/${CROSS_TRIPLE}-ar \
+    AS=${CROSS_BIN}/${CROSS_TRIPLE}-as \
+    CC=${CROSS_BIN}/${CROSS_TRIPLE}-gcc \
+    CPP=${CROSS_BIN}/${CROSS_TRIPLE}-cpp \
+    CXX=${CROSS_BIN}/${CROSS_TRIPLE}-g++ \
+    LD=${CROSS_BIN}/${CROSS_TRIPLE}-ld \
+    RANLIB=${CROSS_BIN}/${CROSS_TRIPLE}-ranlib \
+    STRIP=${CROSS_BIN}/${CROSS_TRIPLE}-strip

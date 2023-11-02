@@ -1,6 +1,13 @@
 FROM 05nelsonm/build-env.linux-libc.base:latest
 
-ENV CROSS_TRIPLE x86_64-linux-gnu
+RUN echo 'Installing packages for armv7a' && \
+    apt-get update --yes && \
+    apt-get install --yes \
+      g++-arm-linux-gnueabihf \
+      gcc-arm-linux-gnueabihf \
+      pkg-config-arm-linux-gnueabihf
+
+ENV CROSS_TRIPLE arm-linux-gnueabihf
 ENV CROSS_BIN /usr/bin
 
 ENV AR=${CROSS_BIN}/${CROSS_TRIPLE}-ar \

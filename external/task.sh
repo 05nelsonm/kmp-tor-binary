@@ -31,8 +31,8 @@ readonly U_ID=$(id -u)
 readonly G_ID=$(id -g)
 
 function build:all:android { ## Builds all Android targets
-  build:android:arm
-  build:android:arm64
+  build:android:aarch64
+  build:android:armv7a
   build:android:x86
   build:android:x86_64
 }
@@ -53,7 +53,7 @@ function build:all:jvm:freebsd { ## Builds all FreeBSD targets for JVM
 
 function build:all:jvm:linux-libc { ## Builds all Linux Libc targets for JVM
   build:jvm:linux-libc:aarch64
-  build:jvm:linux-libc:armv7
+  build:jvm:linux-libc:armv7a
   build:jvm:linux-libc:x86
   build:jvm:linux-libc:x86_64
 }
@@ -74,18 +74,22 @@ function build:all:jvm:mingw { ## Builds all Windows targets for JVM
   build:jvm:mingw:x86_64
 }
 
-function build:android:arm { ## Builds Android armeabi-v7a
+function build:android:aarch64 { ## Builds Android arm64-v8a
   local os_name="android"
-  local os_arch="armeabi-v7a"
-  local openssl_target="android-arm"
+  local os_arch="aarch64"
+  local openssl_target="android-arm64"
+  local ndk_abi="arm64-v8a"
+  local cc_clang="yes"
   __build:configure:target:init
   __exec:docker:run
 }
 
-function build:android:arm64 { ## Builds Android arm64-v8a
+function build:android:armv7a { ## Builds Android armeabi-v7a
   local os_name="android"
-  local os_arch="arm64-v8a"
-  local openssl_target="android-arm64"
+  local os_arch="armv7a"
+  local openssl_target="android-arm"
+  local ndk_abi="armeabi-v7a"
+  local cc_clang="yes"
   __build:configure:target:init
   __exec:docker:run
 }
@@ -94,6 +98,8 @@ function build:android:x86 { ## Builds Android x86
   local os_name="android"
   local os_arch="x86"
   local openssl_target="android-x86"
+  local ndk_abi="x86"
+  local cc_clang="yes"
   __build:configure:target:init
   __exec:docker:run
 }
@@ -102,6 +108,8 @@ function build:android:x86_64 { ## Builds Android x86_64
   local os_name="android"
   local os_arch="x86_64"
   local openssl_target="android-x86_64"
+  local ndk_abi="x86_64"
+  local cc_clang="yes"
   __build:configure:target:init
   __exec:docker:run
 }
@@ -140,10 +148,10 @@ function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
+function build:jvm:linux-libc:armv7a { ## Builds Linux Libc armv7a for JVM
   local os_name="linux"
   local os_subtype="-libc"
-  local os_arch="armv7"
+  local os_arch="armv7a"
   local openssl_target="linux-armv4"
   __build:configure:target:init
   __conf:CFLAGS '-march=armv7-a'
@@ -296,7 +304,7 @@ function __build:configure:target:init {
   __require:var_set "$openssl_target" "openssl_target"
 
   if [ -n "$is_framework" ]; then
-    # TODO: require cross_target to be set as we're not running in docker
+    # TODO: require cross_triple to be set as we're not running in docker
     __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
 
     DIR_BUILD="build/framework/$os_name$os_subtype/$os_arch"
@@ -307,8 +315,10 @@ function __build:configure:target:init {
     __require:var_set "$G_ID" "G_ID"
 
     if [ "$os_name" = "android" ]; then
-      DIR_BUILD="build/$os_name/$os_arch"
-      DIR_OUT="build/$os_name-out/$os_arch"
+      __require:var_set "$ndk_abi" "ndk_abi"
+
+      DIR_BUILD="build/$os_name/$ndk_abi"
+      DIR_OUT="build/$os_name-out/$ndk_abi"
     else
       DIR_BUILD="build/jvm/$os_name$os_subtype/$os_arch"
       DIR_OUT="build/jvm-out/$os_name$os_subtype/$os_arch"
@@ -353,9 +363,9 @@ export SOURCE_DATE_EPOCH="1234567890"
 export TZ=UTC
 set -e
 
-if [ -z "$CROSS_TARGET" ]; then
+if [ -z "$CROSS_TRIPLE" ]; then
   echo 1>&2 "
-    CROSS_TARGET environment variable must be set.
+    CROSS_TRIPLE environment variable must be set.
     Are you not using task.sh?
   "
   exit 3
@@ -458,7 +468,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-shared \
   --disable-xz \
   --disable-xzdec \
-  --host="$CROSS_TARGET" \
+  --host="$CROSS_TRIPLE" \
   --prefix="$DIR_SCRIPT/xz"'
 
   # OPENSSL
@@ -506,14 +516,12 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-libevent-regress \
   --disable-samples \
   --disable-shared \
-  --host="$CROSS_TARGET" \
+  --host="$CROSS_TRIPLE" \
   --prefix="$DIR_SCRIPT/libevent"'
 
   # TOR
   CONF_TOR='./configure --disable-asciidoc \
-  --disable-dependency-tracking \
   --disable-html-manual \
-  --disable-linker-hardening \
   --disable-manpage \
   --disable-system-torrc \
   --disable-systemd \
@@ -527,7 +535,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --with-openssl-dir="$DIR_SCRIPT/openssl" \
   --enable-static-zlib \
   --with-zlib-dir="$DIR_SCRIPT/zlib" \
-  --host="$CROSS_TARGET" \
+  --host="$CROSS_TRIPLE" \
   --prefix="$DIR_SCRIPT/tor"'
 
   if [ "$os_name" = "android" ]; then
@@ -572,7 +580,7 @@ function __build:configure:target:build_script {
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
 
   if [ "$os_name" = "mingw" ]; then
-    __conf:SCRIPT 'export CHOST="$CROSS_TARGET"'
+    __conf:SCRIPT 'export CHOST="$CROSS_TRIPLE"'
   fi
 
   # ZLIB
@@ -584,6 +592,7 @@ echo \"
   __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/zlib" "$DIR_TMP"'
   __conf:SCRIPT "cd \"\$DIR_TMP/zlib\"
 $CONF_ZLIB > \"\$DIR_SCRIPT/zlib/logs/configure.log\" 2> \"\$DIR_SCRIPT/zlib/logs/configure.err\"
+cat configure.log >> \"\$DIR_SCRIPT/zlib/logs/configure.log\"
 make clean > /dev/null
 make -j\"\$NUM_JOBS\" > \"\$DIR_SCRIPT/zlib/logs/make.log\" 2> \"\$DIR_SCRIPT/zlib/logs/make.err\"
 make install >> \"\$DIR_SCRIPT/zlib/logs/make.log\" 2>> \"\$DIR_SCRIPT/zlib/logs/make.err\""
@@ -836,6 +845,7 @@ function __exec:docker:run {
 
   # Build android base image if needed
   if [ "$os_name" = "android" ]; then
+    __exec:docker:build "linux-libc.base"
     __exec:docker:build "android.base"
   fi
 

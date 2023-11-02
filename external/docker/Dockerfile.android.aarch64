@@ -1,6 +1,6 @@
 FROM 05nelsonm/build-env.android.base:latest
 
-ENV CROSS_TARGET i686-linux-android
+ENV CROSS_TARGET aarch64-linux-android
 ENV CROSS_TRIPLE ${CROSS_TARGET}${VERSION_ANDROID}
 
 ENV CC=${CROSS_BIN}/${CROSS_TRIPLE}-clang \

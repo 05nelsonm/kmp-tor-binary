@@ -1,13 +1,13 @@
 FROM 05nelsonm/build-env.linux-libc.base:latest
 
-ENV CROSS_BIN /usr/local/osxcross/bin
-
-ENV VERSION_DARWIN=21.4 \
-    VERSION_SDK=12.3 \
-    SHA256_SDK=5beee35d42f5bc4d1490b8856416ec5db63495cb31414f08caf63b63ce6e50c1
+ENV SHA256_SDK=5beee35d42f5bc4d1490b8856416ec5db63495cb31414f08caf63b63ce6e50c1 \
+    VERSION_DARWIN=21.4 \
+    VERSION_SDK=12.3
 
 ENV PATH_SDK /usr/local/osxcross/SDK/MacOSX${VERSION_SDK}.sdk
-ENV PATH ${CROSS_BIN}:$PATH
+
+ENV CROSS_BIN /usr/local/osxcross/bin
+ENV PATH ${CROSS_BIN}:${PATH}
 
 ENV OSXCROSS_ENABLE_WERROR_IMPLICIT_FUNCTION_DECLARATION 1
 
@@ -45,7 +45,7 @@ RUN echo 'Building apple clang & osxcross. THIS WILL TAKE A WHILE!' && \
     git checkout 2389e32b8b6a531ce7280ae2c852c137cd771d80 && \
     cd /build/osxcross/tarballs && \
     curl -O https://raw.githubusercontent.com/05nelsonm/build-env/sdk/macos/MacOSX${VERSION_SDK}.sdk.tar.gz && \
-    if [ "$(sha256sum MacOSX${VERSION_SDK}.sdk.tar.gz | cut -d ' ' -f 1)" != "$SHA256_SDK" ]; then exit 1; fi && \
+    if [ "$(sha256sum MacOSX${VERSION_SDK}.sdk.tar.gz | cut -d ' ' -f 1)" != "${SHA256_SDK}" ]; then exit 1; fi && \
     cd /build/osxcross && \
     ENABLE_BOOTSTRAP=1 \
       ENABLE_FULL_BOOTSTRAP=1 \
