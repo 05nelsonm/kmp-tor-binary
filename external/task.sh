@@ -852,15 +852,7 @@ function __exec:docker:run {
     "05nelsonm/build-env.$os_name$os_subtype.$os_arch:$TAG_DOCKER_BUILD_ENV" \
     "./$DIR_BUILD/build.sh"
 
-  local rc=$?
-  if [ $rc -eq 0 ]; then
-    trap - SIGINT
-    return 0
-  fi
-
-  __error "
-    Something went wrong with the build... Check logs...
-  "
+  trap - SIGINT
 }
 
 function __require:cmd {
@@ -912,7 +904,6 @@ function __init {
   mkdir -p "build"
   trap '__build:cleanup' EXIT
   echo "$1" > "$FILE_BUILD_LOCK"
-  trap 'echo "    There was a build error. Check logs..."' ERR
 
   __build:git:clean "libevent"
   __build:git:apply_patches "libevent"
@@ -939,5 +930,5 @@ else
   TIMEFORMAT="
     Task '$1' completed in %3lR
   "
-  time ${1}
+  time "$@"
 fi
