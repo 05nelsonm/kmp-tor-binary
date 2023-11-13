@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.multiplatform) apply(false)
     alias(libs.plugins.android.library) apply(false)
@@ -66,9 +65,7 @@ apiValidation {
 
         // Don't check these projects when building JVM only or Android only
         if (!KMP_TARGETS_ALL && ((!ANDROID && JVM) || (ANDROID && !JVM))) {
-            ignoredProjects.add("kmp-tor-binary-android")
-            ignoredProjects.add("kmp-tor-binary-extract")
-            ignoredProjects.add("kmp-tor-binary-geoip")
+            ignoredProjects.add("binary")
         }
     }
 }

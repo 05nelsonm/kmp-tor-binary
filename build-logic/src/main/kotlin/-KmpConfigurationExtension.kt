@@ -24,45 +24,38 @@ import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 fun KmpConfigurationExtension.configureShared(
-    androidNameSpace: String? = null,
-    enableJvm: Boolean = true,
+    androidNameSpace: String,
     publish: Boolean = false,
     npmPublish: Boolean = false,
-    explicitApi: Boolean = true,
     action: Action<KmpConfigurationContainerDsl>
 ) {
-    configure {
-        if (enableJvm) {
-            jvm {
-                if (androidNameSpace == null) { target { withJava() } }
+    require(androidNameSpace.isNotBlank()) { "androidNameSpace cannot be blank" }
 
-                kotlinJvmTarget = JavaVersion.VERSION_1_8
-                compileSourceCompatibility = JavaVersion.VERSION_1_8
-                compileTargetCompatibility = JavaVersion.VERSION_1_8
+    configure {
+        androidLibrary {
+            if (publish) target { publishLibraryVariants("release") }
+
+            android {
+                buildToolsVersion = "33.0.2"
+                compileSdk = 33
+                namespace = androidNameSpace
+
+                defaultConfig {
+                    minSdk = 21
+
+                    testInstrumentationRunnerArguments["disableAnalytics"] = true.toString()
+                }
             }
+
+            kotlinJvmTarget = JavaVersion.VERSION_1_8
+            compileSourceCompatibility = JavaVersion.VERSION_1_8
+            compileTargetCompatibility = JavaVersion.VERSION_1_8
         }
 
-        if (androidNameSpace != null) {
-            androidLibrary {
-                target { publishLibraryVariants("release") }
-
-                android {
-                    buildToolsVersion = "33.0.1"
-                    compileSdk = 33
-                    namespace = androidNameSpace
-
-                    defaultConfig {
-                        minSdk = 16
-                        targetSdk = 33
-
-                        testInstrumentationRunnerArguments["disableAnalytics"] = "true"
-                    }
-                }
-
-                kotlinJvmTarget = JavaVersion.VERSION_1_8
-                compileSourceCompatibility = JavaVersion.VERSION_1_8
-                compileTargetCompatibility = JavaVersion.VERSION_1_8
-            }
+        jvm {
+            kotlinJvmTarget = JavaVersion.VERSION_1_8
+            compileSourceCompatibility = JavaVersion.VERSION_1_8
+            compileTargetCompatibility = JavaVersion.VERSION_1_8
         }
 
         common {
@@ -70,7 +63,7 @@ fun KmpConfigurationExtension.configureShared(
             if (npmPublish) { pluginIds("publication-npm") }
         }
 
-        if (explicitApi) { kotlin { explicitApi() } }
+        kotlin { explicitApi() }
 
         action.execute(this)
     }
