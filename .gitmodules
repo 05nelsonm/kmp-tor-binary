@@ -1,6 +1,3 @@
-[submodule "library/binary-build/tor-browser-build"]
-	path = library/binary-build/tor-browser-build
-	url = https://gitlab.torproject.org/tpo/applications/tor-browser-build.git
 [submodule "external/libevent"]
 	path = external/libevent
 	url = https://github.com/libevent/libevent.git
