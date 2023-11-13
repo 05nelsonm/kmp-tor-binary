@@ -27,6 +27,7 @@ readonly TAG_DOCKER_BUILD_ENV="0.1.0"
 # Programs
 readonly DOCKER=$(which docker)
 readonly GIT=$(which git)
+readonly GZIP=$(which gzip)
 readonly OSSLSIGNCODE=$(which osslsigncode)
 readonly RCODESIGN=$(which rcodesign)
 readonly XCRUN=$(which xcrun)
@@ -249,7 +250,79 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
   __exec:docker:run
 }
 
-function sign:apple { ## Generate detached signatures for all Apple binaries present in build dir.   2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store/connect/api_key.json
+# TODO: macOS, iOS, tvOS, watchOS frameworks
+
+#function build:framework:ios:x86_64 { ## Builds iOS x86_64 Framework
+#  local os_name="ios"
+#  local os_arch="x86_64"
+#  local is_framework="yes"
+#  local openssl_target="ios64-xcrun"
+#  __build:configure:target:init
+#}
+
+function clean { ## Deletes the build dir
+  rm -rf "$DIR_TASK/build"
+}
+
+function help { ## THIS MENU
+  # shellcheck disable=SC2154
+  echo "
+    $0
+    Copyright (C) 2023 Matthew Nelson
+
+    Tasks for building, codesigning, and packaging tor binaries
+
+    Location: $DIR_TASK
+    Syntax: $0 [task] [option] [args]
+
+    Tasks:
+$(
+    # function names + comments & colorization
+    grep -E '^function .* {.*?## .*$$' "$0" |
+    grep -v "^function __" |
+    sed -e 's/function //' |
+    sort |
+    awk 'BEGIN {FS = "{.*?## "}; {printf "        \033[93m%-30s\033[92m %s\033[0m\n", $1, $2}'
+)
+
+    Options:
+        --dry-run                      Debugging output that does not execute.
+
+    Example: $0 build:all:jvm --dry-run
+  "
+}
+
+function package { ## Packages build dir output
+  __require:cmd "$GZIP" "gzip"
+
+  DIR_STAGING="$(mktemp -d)"
+  trap 'rm -rf "$DIR_STAGING"' SIGINT ERR
+
+  # TODO: Need to see if android will strip gzip headers from
+  #  files located in resources dir. May need to package
+  #  as a jar file to prevent that.
+  __package:geoip "geoip"
+  __package:geoip "geoip6"
+
+  __package:android "arm64-v8a"
+  __package:android "armeabi-v7a"
+  __package:android "x86"
+  __package:android "x86_64"
+
+  __package:jvm "linux-libc/aarch64" "tor"
+  __package:jvm "linux-libc/armv7a" "tor"
+  __package:jvm "linux-libc/x86" "tor"
+  __package:jvm "linux-libc/x86_64" "tor"
+  __package:jvm:codesigned "macos/aarch64" "tor"
+  __package:jvm:codesigned "macos/x86_64" "tor"
+  __package:jvm:codesigned "mingw/x86" "tor.exe"
+  __package:jvm:codesigned "mingw/x86_64" "tor.exe"
+
+  rm -rf "$DIR_STAGING"
+  trap - SIGINT ERR
+}
+
+function sign:apple { ## 2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store/connect/api_key.json
   # shellcheck disable=SC2128
   if [ $# -ne 2 ]; then
     __error "Usage: $0 $FUNCNAME /path/to/key.p12 /path/to/app/store/connect/api_key.json"
@@ -263,7 +336,7 @@ function sign:apple { ## Generate detached signatures for all Apple binaries pre
   __signature:generate:apple "$1" "$2" "jvm-out/macos/x86_64"
 }
 
-function sign:mingw { ## Generate detached signatures for all Mingw binaries present in build dir.   2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
+function sign:mingw { ## 2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
   # shellcheck disable=SC2128
   if [ $# -ne 2 ]; then
     __error "Usage: $0 $FUNCNAME /path/to/file.key /path/to/cert.cer"
@@ -275,49 +348,6 @@ function sign:mingw { ## Generate detached signatures for all Mingw binaries pre
 
   __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86"
   __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86_64"
-}
-
-# TODO: macOS, iOS, tvOS, watchOS frameworks
-
-#function build:framework:ios:x86_64 { ## Builds iOS x86_64 Framework
-#  local os_name="ios"
-#  local os_arch="x86_64"
-#  local is_framework="yes"
-#  local openssl_target="ios64-xcrun"
-#  __build:configure:target:init
-#}
-
-function clean { ## Deletes the build directory
-  __require:no_build_lock
-  rm -rf "$DIR_TASK/build"
-}
-
-function help { ## THIS MENU
-  # shellcheck disable=SC2154
-  echo "
-    $0
-    Copyright (C) 2023 Matthew Nelson
-
-    Tasks for building, codesigning, and packaging tor binaries
-
-    Location: $DIR_TASK
-    Syntax: $0 [task] [option]
-
-    Tasks:
-$(
-    # function names + comments & colorization
-    grep -E '^function .* {.*?## .*$$' "$0" |
-    grep -v "^function __" |
-    sed -e 's/function //' |
-    sort |
-    awk 'BEGIN {FS = "{.*?## "}; {printf "        \033[93m%-30s\033[92m %s\033[0m\n", $1, $2}'
-)
-
-    Options:
-        --dry-run                      Will generate build scripts, but not execute anything.
-
-    Example: $0 build:all:jvm --dry-run
-  "
 }
 
 function __build:cleanup {
@@ -655,6 +685,7 @@ echo \"
 cd "$DIR_TMP/openssl"'
 
   if [ "$os_name" = "mingw" ]; then
+    # TODO: Move to patch file
     __conf:SCRIPT "
 # https://github.com/openssl/openssl/issues/14574
 # https://github.com/netdata/netdata/pull/15842
@@ -869,7 +900,11 @@ function __conf:ZLIB   {
 
 function __exec:docker:run {
   __build:configure:target:build_script
-  if $DRY_RUN; then return 0; fi
+
+  if $DRY_RUN; then
+    echo "Build Script >> $DIR_BUILD/build.sh"
+    return 0
+  fi
 
   trap 'echo "
     SIGINT intercepted... exiting...
@@ -885,12 +920,91 @@ function __exec:docker:run {
   trap - SIGINT
 }
 
+function __package:geoip {
+  local permissions="664"
+  local gzip="yes"
+  __package "tor/src/config" "jvmAndroidMain/resources/kmptor" "$1"
+}
+
+function __package:android {
+  local permissions="755"
+  # no gzip
+  __package "build/android-out/$1" "androidMain/jniLibs/$1" "libtor.so"
+}
+
+function __package:jvm {
+  local permissions="755"
+  local gzip="yes"
+  __package "build/jvm-out/$1" "jvmMain/resources/kmptor/$1" "$2"
+}
+
+function __package:jvm:codesigned {
+  local detached_sig="jvm-out/$1"
+  __package:jvm "$@"
+}
+
+function __package {
+  __require:var_set "$1" "Packaging target dir (relative to dir kmp-tor-binary/external)"
+  __require:var_set "$2" "Binary module src path (relative to dir kmp-tor-binary/library/binary/src)"
+  __require:var_set "$3" "File name"
+
+  __require:var_set "$permissions" "permissions"
+  __require:var_set "$DIR_STAGING" "DIR_STAGING"
+
+  if [ ! -f "$DIR_TASK/$1/$3" ]; then return 0; fi
+
+  if $DRY_RUN; then
+    echo "
+    Packaging Target:     kmp-tor-binary/external/$1/$3
+    Detached Signature:   $detached_sig
+    gzip:                 $gzip
+    permissions:          $permissions
+    Module Src Dir:       kmp-tor-binary/library/binary/src/$2
+    "
+    return 0
+  fi
+
+  cp -a "$DIR_TASK/$1/$3" "$DIR_STAGING"
+
+  if [ -n "$detached_sig" ]; then
+    cd "$DIR_TASK/.."
+
+    ./toolingJvm diff-cli apply \
+      "$DIR_TASK/codesign/$detached_sig/$3.signature" \
+      "$DIR_STAGING/$3"
+
+    cd "$DIR_TASK"
+  fi
+
+  # Need to apply permissions after detached signature
+  # because the tool strips that as the file is atomically
+  # moved instead of being modified in place (see Issue #77).
+  chmod "$permissions" "$DIR_STAGING/$3"
+
+  local file_ext=""
+  if [ -n "$gzip" ]; then
+    ${GZIP} --no-name "$DIR_STAGING/$3"
+    file_ext=".gz"
+  fi
+
+  local dir_module="$DIR_TASK/../library/binary/src/$2"
+  mkdir -p "$dir_module"
+  mv -v "$DIR_STAGING/$3$file_ext" "$dir_module"
+}
+
 function __signature:generate:apple {
   __require:var_set "$3" "build output directory path (e.g. jvm-out/macos/aarch64)"
 
   if [ ! -f "$DIR_TASK/build/$3/tor" ]; then
+    echo "
+    build/$3/tor not found. Skipping...
+    "
     return 0
   fi
+
+  echo "
+    Creating detached signature for build/$3/tor
+  "
 
   DIR_TMP="$(mktemp -d)"
   trap 'rm -rf "$DIR_TMP"' SIGINT ERR
@@ -953,8 +1067,15 @@ function __signature:generate:mingw {
   __require:var_set "$3" "build output directory path (e.g. jvm-out/mingw/x86)"
 
   if [ ! -f "$DIR_TASK/build/$3/tor.exe" ]; then
+    echo "
+    build/$3/tor.exe not found. Skipping...
+    "
     return 0
   fi
+
+  echo "
+    Creating detached signature for build/$3/tor.exe
+  "
 
   DIR_TMP="$(mktemp -d)"
   trap 'rm -rf "$DIR_TMP"' SIGINT ERR
@@ -1026,18 +1147,27 @@ function __error {
   exit 3
 }
 
-function __init {
+# Run
+if [ -z "$1" ] || [ "$1" = "help" ] || echo "$1" | grep -q "^__"; then
+  help
+elif ! grep -qE "^function $1 {" "$0"; then
+  help
+  echo 1>&2 "
+    ERROR: Unknown task '$1'
+  "
+else
+  __require:no_build_lock
+
   # Ensure always starting in the external directory
   cd "$DIR_TASK"
+  mkdir -p "build"
 
   if echo "$1" | grep -q "^build"; then
     __require:cmd "$GIT" "git"
-    __require:no_build_lock
 
     ${GIT} submodule update --init
 
     __require:no_build_lock
-    mkdir -p "build"
     trap '__build:cleanup' EXIT
     echo "$1" > "$FILE_BUILD_LOCK"
 
@@ -1051,24 +1181,20 @@ function __init {
     __build:git:apply_patches "xz"
     __build:git:clean "zlib"
     __build:git:apply_patches "zlib"
-  fi
+  elif echo "$1" | grep -q "^package"; then
+    __require:cmd "$GIT" "git"
 
-  if echo "$1" | grep -q "^sign"; then
-    if $DRY_RUN; then exit 0; fi
+    ${GIT} submodule update --init "$DIR_TASK/tor"
+    __build:git:clean tor
+
     __require:no_build_lock
+    trap 'rm -rf "$FILE_BUILD_LOCK"' EXIT
+    echo "$1" > "$FILE_BUILD_LOCK"
+  elif echo "$1" | grep -q "^sign"; then
+    trap 'rm -rf "$FILE_BUILD_LOCK"' EXIT
+    echo "$1" > "$FILE_BUILD_LOCK"
   fi
-}
 
-# Run
-if [ -z "$1" ] || [ "$1" = "help" ] || echo "$1" | grep -q "^__"; then
-  help
-elif ! grep -qE "^function $1 {" "$0"; then
-  help
-  echo 1>&2 "
-    ERROR: Unknown task '$1'
-  "
-else
-  __init "$1"
   TIMEFORMAT="
     Task '$1' completed in %3lR
   "
