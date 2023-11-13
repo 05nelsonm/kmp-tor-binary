@@ -260,7 +260,7 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
 #  __build:configure:target:init
 #}
 
-function clean { ## Deletes the build directory
+function clean { ## Deletes the build dir
   rm -rf "$DIR_TASK/build"
 }
 
@@ -273,7 +273,7 @@ function help { ## THIS MENU
     Tasks for building, codesigning, and packaging tor binaries
 
     Location: $DIR_TASK
-    Syntax: $0 [task] [option]
+    Syntax: $0 [task] [option] [args]
 
     Tasks:
 $(
@@ -286,7 +286,7 @@ $(
 )
 
     Options:
-        --dry-run                      Will generate build scripts, but not execute anything.
+        --dry-run                      Debugging output that does not execute.
 
     Example: $0 build:all:jvm --dry-run
   "
@@ -322,7 +322,7 @@ function package { ## Packages build dir output
   trap - SIGINT ERR
 }
 
-function sign:apple { ## Generate detached signatures for all Apple binaries present in build dir.   2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store/connect/api_key.json
+function sign:apple { ## 2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store/connect/api_key.json
   # shellcheck disable=SC2128
   if [ $# -ne 2 ]; then
     __error "Usage: $0 $FUNCNAME /path/to/key.p12 /path/to/app/store/connect/api_key.json"
@@ -336,7 +336,7 @@ function sign:apple { ## Generate detached signatures for all Apple binaries pre
   __signature:generate:apple "$1" "$2" "jvm-out/macos/x86_64"
 }
 
-function sign:mingw { ## Generate detached signatures for all Mingw binaries present in build dir.   2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
+function sign:mingw { ## 2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
   # shellcheck disable=SC2128
   if [ $# -ne 2 ]; then
     __error "Usage: $0 $FUNCNAME /path/to/file.key /path/to/cert.cer"
@@ -900,7 +900,11 @@ function __conf:ZLIB   {
 
 function __exec:docker:run {
   __build:configure:target:build_script
-  if $DRY_RUN; then return 0; fi
+
+  if $DRY_RUN; then
+    echo "Build Script >> $DIR_BUILD/build.sh"
+    return 0
+  fi
 
   trap 'echo "
     SIGINT intercepted... exiting...
@@ -951,7 +955,7 @@ function __package {
 
   if $DRY_RUN; then
     echo "
-    Build Target:   $1/$3
+    Build Target:      $1/$3
     Detached Sig:      $detached_sig
     gzip:              $gzip
     permissions:       $permissions
@@ -972,6 +976,9 @@ function __package {
     cd "$DIR_TASK"
   fi
 
+  # Need to apply permissions after detached signature
+  # because the tool strips that as the file is atomically
+  # moved instead of being modified in place (see Issue #77).
   chmod "$permissions" "$DIR_STAGING/$3"
 
   local file_ext=""
