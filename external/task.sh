@@ -288,7 +288,6 @@ function sign:mingw { ## Generate detached signatures for all Mingw binaries pre
 #}
 
 function clean { ## Deletes the build directory
-  __require:no_build_lock
   rm -rf "$DIR_TASK/build"
 }
 
@@ -655,6 +654,7 @@ echo \"
 cd "$DIR_TMP/openssl"'
 
   if [ "$os_name" = "mingw" ]; then
+    # TODO: Move to patch file
     __conf:SCRIPT "
 # https://github.com/openssl/openssl/issues/14574
 # https://github.com/netdata/netdata/pull/15842
@@ -889,8 +889,15 @@ function __signature:generate:apple {
   __require:var_set "$3" "build output directory path (e.g. jvm-out/macos/aarch64)"
 
   if [ ! -f "$DIR_TASK/build/$3/tor" ]; then
+    echo "
+    build/$3/tor not found. Skipping...
+    "
     return 0
   fi
+
+  echo "
+    Creating detached signature for build/$3/tor
+  "
 
   DIR_TMP="$(mktemp -d)"
   trap 'rm -rf "$DIR_TMP"' SIGINT ERR
@@ -953,8 +960,15 @@ function __signature:generate:mingw {
   __require:var_set "$3" "build output directory path (e.g. jvm-out/mingw/x86)"
 
   if [ ! -f "$DIR_TASK/build/$3/tor.exe" ]; then
+    echo "
+    build/$3/tor.exe not found. Skipping...
+    "
     return 0
   fi
+
+  echo "
+    Creating detached signature for build/$3/tor.exe
+  "
 
   DIR_TMP="$(mktemp -d)"
   trap 'rm -rf "$DIR_TMP"' SIGINT ERR
@@ -1026,13 +1040,22 @@ function __error {
   exit 3
 }
 
-function __init {
+# Run
+if [ -z "$1" ] || [ "$1" = "help" ] || echo "$1" | grep -q "^__"; then
+  help
+elif ! grep -qE "^function $1 {" "$0"; then
+  help
+  echo 1>&2 "
+    ERROR: Unknown task '$1'
+  "
+else
+  __require:no_build_lock
+
   # Ensure always starting in the external directory
   cd "$DIR_TASK"
 
   if echo "$1" | grep -q "^build"; then
     __require:cmd "$GIT" "git"
-    __require:no_build_lock
 
     ${GIT} submodule update --init
 
@@ -1053,22 +1076,6 @@ function __init {
     __build:git:apply_patches "zlib"
   fi
 
-  if echo "$1" | grep -q "^sign"; then
-    if $DRY_RUN; then exit 0; fi
-    __require:no_build_lock
-  fi
-}
-
-# Run
-if [ -z "$1" ] || [ "$1" = "help" ] || echo "$1" | grep -q "^__"; then
-  help
-elif ! grep -qE "^function $1 {" "$0"; then
-  help
-  echo 1>&2 "
-    ERROR: Unknown task '$1'
-  "
-else
-  __init "$1"
   TIMEFORMAT="
     Task '$1' completed in %3lR
   "
