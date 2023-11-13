@@ -677,33 +677,33 @@ make install >> \"\$DIR_SCRIPT/tor/logs/make.log\" 2>> \"\$DIR_SCRIPT/tor/logs/m
   __conf:SCRIPT 'mkdir -p "$DIR_OUT"'
 
   if [ -z "$is_framework" ]; then
-    local lib_name=
-    local lib_name_out=
+    local bin_name=
+    local bin_name_out=
 
     case "$os_name" in
-      "android"|"linux"|"freebsd")
-        lib_name="tor"
-        lib_name_out="libtor.so"
+      "android")
+        bin_name="tor"
+        bin_name_out="libtor.so"
         ;;
-      "macos")
-        lib_name="tor"
-        lib_name_out="libtor.dylib"
+      "linux"|"freebsd"|"macos")
+        bin_name="tor"
+        bin_name_out="tor"
         ;;
       "mingw")
-        lib_name="tor.exe"
+        bin_name="tor.exe"
         # Do not modify the name for Windows. Otherwise it
         # may be flaged by Windows Defender as a virus.
-        lib_name_out="tor.exe"
+        bin_name_out="tor.exe"
         ;;
       *)
         __error "Unknown os_name >> $os_name"
         ;;
     esac
 
-    __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$lib_name\" \"\$DIR_OUT/$lib_name_out\""
-    __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$lib_name_out\""
-    __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$lib_name\")\""
-    __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$lib_name_out\")\""
+    __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$bin_name\" \"\$DIR_OUT/$bin_name_out\""
+    __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$bin_name_out\""
+    __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$bin_name\")\""
+    __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$bin_name_out\")\""
   # else
     # TODO: framework
   fi
