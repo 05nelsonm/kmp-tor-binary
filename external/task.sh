@@ -27,6 +27,7 @@ readonly TAG_DOCKER_BUILD_ENV="0.1.0"
 # Programs
 readonly DOCKER=$(which docker)
 readonly GIT=$(which git)
+readonly GZIP=$(which gzip)
 readonly OSSLSIGNCODE=$(which osslsigncode)
 readonly RCODESIGN=$(which rcodesign)
 readonly XCRUN=$(which xcrun)
@@ -249,34 +250,6 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
   __exec:docker:run
 }
 
-function sign:apple { ## Generate detached signatures for all Apple binaries present in build dir.   2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store/connect/api_key.json
-  # shellcheck disable=SC2128
-  if [ $# -ne 2 ]; then
-    __error "Usage: $0 $FUNCNAME /path/to/key.p12 /path/to/app/store/connect/api_key.json"
-  fi
-
-  __require:cmd "$RCODESIGN" "rcodesign"
-  __require:file_exists "$1" "p12 file does not exist"
-  __require:file_exists "$2" "App Store Connect api key file does not exist"
-
-  __signature:generate:apple "$1" "$2" "jvm-out/macos/aarch64"
-  __signature:generate:apple "$1" "$2" "jvm-out/macos/x86_64"
-}
-
-function sign:mingw { ## Generate detached signatures for all Mingw binaries present in build dir.   2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
-  # shellcheck disable=SC2128
-  if [ $# -ne 2 ]; then
-    __error "Usage: $0 $FUNCNAME /path/to/file.key /path/to/cert.cer"
-  fi
-
-  __require:cmd "$OSSLSIGNCODE" "osslsigncode"
-  __require:file_exists "$1" "key file does not exist"
-  __require:file_exists "$2" "cert file does not exist"
-
-  __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86"
-  __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86_64"
-}
-
 # TODO: macOS, iOS, tvOS, watchOS frameworks
 
 #function build:framework:ios:x86_64 { ## Builds iOS x86_64 Framework
@@ -317,6 +290,64 @@ $(
 
     Example: $0 build:all:jvm --dry-run
   "
+}
+
+function package { ## Packages build dir output
+  __require:cmd "$GZIP" "gzip"
+
+  DIR_STAGING="$(mktemp -d)"
+  trap 'rm -rf "$DIR_STAGING"' SIGINT ERR
+
+  # TODO: Need to see if android will strip gzip headers from
+  #  files located in resources dir. May need to package
+  #  as a jar file to prevent that.
+  __package:geoip "geoip"
+  __package:geoip "geoip6"
+
+  __package:android "arm64-v8a"
+  __package:android "armeabi-v7a"
+  __package:android "x86"
+  __package:android "x86_64"
+
+  __package:jvm "linux-libc/aarch64" "tor"
+  __package:jvm "linux-libc/armv7a" "tor"
+  __package:jvm "linux-libc/x86" "tor"
+  __package:jvm "linux-libc/x86_64" "tor"
+  __package:jvm:codesigned "macos/aarch64" "tor"
+  __package:jvm:codesigned "macos/x86_64" "tor"
+  __package:jvm:codesigned "mingw/x86" "tor.exe"
+  __package:jvm:codesigned "mingw/x86_64" "tor.exe"
+
+  rm -rf "$DIR_STAGING"
+  trap - SIGINT ERR
+}
+
+function sign:apple { ## Generate detached signatures for all Apple binaries present in build dir.   2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store/connect/api_key.json
+  # shellcheck disable=SC2128
+  if [ $# -ne 2 ]; then
+    __error "Usage: $0 $FUNCNAME /path/to/key.p12 /path/to/app/store/connect/api_key.json"
+  fi
+
+  __require:cmd "$RCODESIGN" "rcodesign"
+  __require:file_exists "$1" "p12 file does not exist"
+  __require:file_exists "$2" "App Store Connect api key file does not exist"
+
+  __signature:generate:apple "$1" "$2" "jvm-out/macos/aarch64"
+  __signature:generate:apple "$1" "$2" "jvm-out/macos/x86_64"
+}
+
+function sign:mingw { ## Generate detached signatures for all Mingw binaries present in build dir.   2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
+  # shellcheck disable=SC2128
+  if [ $# -ne 2 ]; then
+    __error "Usage: $0 $FUNCNAME /path/to/file.key /path/to/cert.cer"
+  fi
+
+  __require:cmd "$OSSLSIGNCODE" "osslsigncode"
+  __require:file_exists "$1" "key file does not exist"
+  __require:file_exists "$2" "cert file does not exist"
+
+  __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86"
+  __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86_64"
 }
 
 function __build:cleanup {
@@ -885,6 +916,75 @@ function __exec:docker:run {
   trap - SIGINT
 }
 
+function __package:geoip {
+  local permissions="664"
+  local gzip="yes"
+  __package "tor/src/config" "jvmAndroidMain/resources/kmptor" "$1"
+}
+
+function __package:android {
+  local permissions="755"
+  # no gzip
+  __package "build/android-out/$1" "androidMain/jniLibs/$1" "libtor.so"
+}
+
+function __package:jvm {
+  local permissions="755"
+  local gzip="yes"
+  __package "build/jvm-out/$1" "jvmMain/resources/kmptor/$1" "$2"
+}
+
+function __package:jvm:codesigned {
+  local detached_sig="jvm-out/$1"
+  __package:jvm "$@"
+}
+
+function __package {
+  __require:var_set "$1" "binary output directory (relative to external dir)"
+  __require:var_set "$2" "gradle module src path (relative to library/binary/src dir)"
+  __require:var_set "$3" "file name"
+
+  __require:var_set "$permissions" "permissions"
+  __require:var_set "$DIR_STAGING" "DIR_STAGING"
+
+  if [ ! -f "$DIR_TASK/$1/$3" ]; then return 0; fi
+
+  if $DRY_RUN; then
+    echo "
+    Build Target:   $1/$3
+    Detached Sig:      $detached_sig
+    gzip:              $gzip
+    permissions:       $permissions
+    Module Src Dir:    src/$2
+    "
+    return 0
+  fi
+
+  cp -a "$DIR_TASK/$1/$3" "$DIR_STAGING"
+
+  if [ -n "$detached_sig" ]; then
+    cd "$DIR_TASK/.."
+
+    ./toolingJvm diff-cli apply \
+      "$DIR_TASK/codesign/$detached_sig/$3.signature" \
+      "$DIR_STAGING/$3"
+
+    cd "$DIR_TASK"
+  fi
+
+  chmod "$permissions" "$DIR_STAGING/$3"
+
+  local file_ext=""
+  if [ -n "$gzip" ]; then
+    ${GZIP} --no-name "$DIR_STAGING/$3"
+    file_ext=".gz"
+  fi
+
+  local dir_module="$DIR_TASK/../library/binary/src/$2"
+  mkdir -p "$dir_module"
+  mv -v "$DIR_STAGING/$3$file_ext" "$dir_module"
+}
+
 function __signature:generate:apple {
   __require:var_set "$3" "build output directory path (e.g. jvm-out/macos/aarch64)"
 
@@ -1053,6 +1153,7 @@ else
 
   # Ensure always starting in the external directory
   cd "$DIR_TASK"
+  mkdir -p "build"
 
   if echo "$1" | grep -q "^build"; then
     __require:cmd "$GIT" "git"
@@ -1060,7 +1161,6 @@ else
     ${GIT} submodule update --init
 
     __require:no_build_lock
-    mkdir -p "build"
     trap '__build:cleanup' EXIT
     echo "$1" > "$FILE_BUILD_LOCK"
 
@@ -1074,6 +1174,18 @@ else
     __build:git:apply_patches "xz"
     __build:git:clean "zlib"
     __build:git:apply_patches "zlib"
+  elif echo "$1" | grep -q "^package"; then
+    __require:cmd "$GIT" "git"
+
+    ${GIT} submodule update --init "$DIR_TASK/tor"
+    __build:git:clean tor
+
+    __require:no_build_lock
+    trap 'rm -rf "$FILE_BUILD_LOCK"' EXIT
+    echo "$1" > "$FILE_BUILD_LOCK"
+  elif echo "$1" | grep -q "^sign"; then
+    trap 'rm -rf "$FILE_BUILD_LOCK"' EXIT
+    echo "$1" > "$FILE_BUILD_LOCK"
   fi
 
   TIMEFORMAT="
