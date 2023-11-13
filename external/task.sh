@@ -944,9 +944,9 @@ function __package:jvm:codesigned {
 }
 
 function __package {
-  __require:var_set "$1" "binary output directory (relative to external dir)"
-  __require:var_set "$2" "gradle module src path (relative to library/binary/src dir)"
-  __require:var_set "$3" "file name"
+  __require:var_set "$1" "Packaging target dir (relative to dir kmp-tor-binary/external)"
+  __require:var_set "$2" "Binary module src path (relative to dir kmp-tor-binary/library/binary/src)"
+  __require:var_set "$3" "File name"
 
   __require:var_set "$permissions" "permissions"
   __require:var_set "$DIR_STAGING" "DIR_STAGING"
@@ -955,11 +955,11 @@ function __package {
 
   if $DRY_RUN; then
     echo "
-    Build Target:      $1/$3
-    Detached Sig:      $detached_sig
-    gzip:              $gzip
-    permissions:       $permissions
-    Module Src Dir:    src/$2
+    Packaging Target:     kmp-tor-binary/external/$1/$3
+    Detached Signature:   $detached_sig
+    gzip:                 $gzip
+    permissions:          $permissions
+    Module Src Dir:       kmp-tor-binary/library/binary/src/$2
     "
     return 0
   fi
