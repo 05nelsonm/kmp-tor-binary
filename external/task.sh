@@ -27,6 +27,8 @@ readonly TAG_DOCKER_BUILD_ENV="0.1.0"
 # Programs
 readonly DOCKER=$(which docker)
 readonly GIT=$(which git)
+readonly OSSLSIGNCODE=$(which osslsigncode)
+readonly RCODESIGN=$(which rcodesign)
 readonly XCRUN=$(which xcrun)
 
 # Docker
@@ -247,6 +249,34 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
   __exec:docker:run
 }
 
+function sign:apple { ## Generate detached signatures for all Apple binaries present in build dir.   2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store/connect/api_key.json
+  # shellcheck disable=SC2128
+  if [ $# -ne 2 ]; then
+    __error "Usage: $0 $FUNCNAME /path/to/key.p12 /path/to/app/store/connect/api_key.json"
+  fi
+
+  __require:cmd "$RCODESIGN" "rcodesign"
+  __require:file_exists "$1" "p12 file does not exist"
+  __require:file_exists "$2" "App Store Connect api key file does not exist"
+
+  __signature:generate:apple "$1" "$2" "jvm-out/macos/aarch64"
+  __signature:generate:apple "$1" "$2" "jvm-out/macos/x86_64"
+}
+
+function sign:mingw { ## Generate detached signatures for all Mingw binaries present in build dir.   2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
+  # shellcheck disable=SC2128
+  if [ $# -ne 2 ]; then
+    __error "Usage: $0 $FUNCNAME /path/to/file.key /path/to/cert.cer"
+  fi
+
+  __require:cmd "$OSSLSIGNCODE" "osslsigncode"
+  __require:file_exists "$1" "key file does not exist"
+  __require:file_exists "$2" "cert file does not exist"
+
+  __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86"
+  __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86_64"
+}
+
 # TODO: macOS, iOS, tvOS, watchOS frameworks
 
 #function build:framework:ios:x86_64 { ## Builds iOS x86_64 Framework
@@ -268,7 +298,7 @@ function help { ## THIS MENU
     $0
     Copyright (C) 2023 Matthew Nelson
 
-    Build tor binaries
+    Tasks for building, codesigning, and packaging tor binaries
 
     Location: $DIR_TASK
     Syntax: $0 [task] [option]
@@ -855,9 +885,115 @@ function __exec:docker:run {
   trap - SIGINT
 }
 
+function __signature:generate:apple {
+  __require:var_set "$3" "build output directory path (e.g. jvm-out/macos/aarch64)"
+
+  if [ ! -f "$DIR_TASK/build/$3/tor" ]; then
+    return 0
+  fi
+
+  DIR_TMP="$(mktemp -d)"
+  trap 'rm -rf "$DIR_TMP"' SIGINT ERR
+
+  # TODO: handle non-macos
+  local dir_bundle="$DIR_TMP/KmpTor.app"
+  local dir_bundle_macos="$dir_bundle/Contents/MacOS"
+  local dir_bundle_libs="$dir_bundle_macos/Tor"
+  mkdir -p "$dir_bundle_libs"
+  echo '<?xml version="1.0" encoding="UTF-8"?>
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>tor.program</string>
+    <key>CFBundleIdentifier</key>
+    <string>io.matthewnelson</string>
+    <key>LSUIElement</key>
+    <true/>
+</dict>
+</plist>' > "$dir_bundle/Contents/Info.plist"
+
+  cp "$DIR_TASK/build/$3/tor" "$dir_bundle_macos/tor.program"
+  cp "$DIR_TASK/build/$3/tor" "$dir_bundle_libs/tor"
+
+  ${RCODESIGN} sign \
+    --p12-file "$1" \
+    --code-signature-flags runtime \
+    "$dir_bundle"
+
+  echo ""
+  sleep 1
+
+  ${RCODESIGN} notary-submit \
+    --api-key-path "$2" \
+    --staple \
+    "$dir_bundle"
+
+  mkdir -p "$DIR_TASK/codesign/$3"
+  rm -rf "$DIR_TASK/codesign/$3/tor.signature"
+
+  echo ""
+  cd "$DIR_TASK/.."
+
+  ./toolingJvm diff-cli create \
+    --diff-ext-name ".signature" \
+    "$DIR_TASK/build/$3/tor" \
+    "$dir_bundle_libs/tor" \
+    "$DIR_TASK/codesign/$3"
+
+  echo ""
+  cd "$DIR_TASK"
+
+  local dir_tmp="$DIR_TMP"
+  unset DIR_TMP
+  trap - SIGINT ERR
+  rm -rf "$dir_tmp"
+}
+
+function __signature:generate:mingw {
+  __require:var_set "$3" "build output directory path (e.g. jvm-out/mingw/x86)"
+
+  if [ ! -f "$DIR_TASK/build/$3/tor.exe" ]; then
+    return 0
+  fi
+
+  DIR_TMP="$(mktemp -d)"
+  trap 'rm -rf "$DIR_TMP"' SIGINT ERR
+
+  ${OSSLSIGNCODE} sign \
+    -key "$1" \
+    -certs "$2" \
+    -t "http://timestamp.comodoca.com" \
+    -in "$DIR_TASK/build/$3/tor.exe" \
+    -out "$DIR_TMP/tor.exe"
+
+  mkdir -p "$DIR_TASK/codesign/$3"
+  rm -rf "$DIR_TASK/codesign/$3/tor.exe.signature"
+
+  echo ""
+  cd "$DIR_TASK/.."
+
+  ./toolingJvm diff-cli create \
+    --diff-ext-name ".signature" \
+    "$DIR_TASK/build/$3/tor.exe" \
+    "$DIR_TMP/tor.exe" \
+    "$DIR_TASK/codesign/$3"
+
+  echo ""
+  cd "$DIR_TASK"
+
+  local dir_tmp="$DIR_TMP"
+  unset DIR_TMP
+  trap - SIGINT ERR
+  rm -rf "$dir_tmp"
+}
+
 function __require:cmd {
+  __require:file_exists "$1" "$2 is required to run this script"
+}
+
+function __require:file_exists {
   if [ -f "$1" ]; then return 0; fi
-  __error "$2 is required to run this script"
+  __error "$2"
 }
 
 function __require:var_set {
@@ -874,7 +1010,7 @@ function __require:no_build_lock {
 
   # Don't use __error here because it checks DRY_RUN
   echo 1>&2 "
-    ERROR: Another build is in progress
+    ERROR: A build is in progress
 
     If this is not the case, delete the following file and re-run the task
     $FILE_BUILD_LOCK
@@ -894,27 +1030,33 @@ function __init {
   # Ensure always starting in the external directory
   cd "$DIR_TASK"
 
-  if ! echo "$1" | grep -q "^build"; then return 0; fi
+  if echo "$1" | grep -q "^build"; then
+    __require:cmd "$GIT" "git"
+    __require:no_build_lock
 
-  __require:cmd "$GIT" "git"
-  __require:no_build_lock
+    ${GIT} submodule update --init
 
-  ${GIT} submodule update --init
+    __require:no_build_lock
+    mkdir -p "build"
+    trap '__build:cleanup' EXIT
+    echo "$1" > "$FILE_BUILD_LOCK"
 
-  mkdir -p "build"
-  trap '__build:cleanup' EXIT
-  echo "$1" > "$FILE_BUILD_LOCK"
+    __build:git:clean "libevent"
+    __build:git:apply_patches "libevent"
+    __build:git:clean "openssl"
+    __build:git:apply_patches "openssl"
+    __build:git:clean "tor"
+    __build:git:apply_patches "tor"
+    __build:git:clean "xz"
+    __build:git:apply_patches "xz"
+    __build:git:clean "zlib"
+    __build:git:apply_patches "zlib"
+  fi
 
-  __build:git:clean "libevent"
-  __build:git:apply_patches "libevent"
-  __build:git:clean "openssl"
-  __build:git:apply_patches "openssl"
-  __build:git:clean "tor"
-  __build:git:apply_patches "tor"
-  __build:git:clean "xz"
-  __build:git:apply_patches "xz"
-  __build:git:clean "zlib"
-  __build:git:apply_patches "zlib"
+  if echo "$1" | grep -q "^sign"; then
+    if $DRY_RUN; then exit 0; fi
+    __require:no_build_lock
+  fi
 }
 
 # Run
