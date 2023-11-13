@@ -42,6 +42,11 @@ kmpConfiguration {
                     implementation("$group:binary-android:$version")
                 }
             }
+            sourceSetTest {
+                dependencies {
+                    implementation("$group:binary-android-unit-test:$version")
+                }
+            }
         }
 
         jvm {

@@ -19,7 +19,7 @@ plugins {
 
 kmpConfiguration {
     configureShared(
-        androidNameSpace = "io.matthewnelson.kmp.tor.binary",
+        androidNamespace = "io.matthewnelson.kmp.tor.binary",
         publish = true
     ) {
         androidLibrary {
@@ -40,6 +40,12 @@ kmpConfiguration {
 
                     // geoip/geoip6 files
                     resources.srcDirs("src/jvmAndroidMain/resources")
+                }
+            }
+
+            sourceSetTest {
+                dependencies {
+                    implementation(project(":library:binary-android-unit-test"))
                 }
             }
 
