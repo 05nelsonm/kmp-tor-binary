@@ -1,3 +1,6 @@
+import dev.petuska.npm.publish.extension.domain.NpmPackage
+import dev.petuska.npm.publish.extension.domain.NpmPackages
+
 /*
  * Copyright (c) 2023 Matthew Nelson
  *
@@ -50,24 +53,47 @@ npmPublish {
                 from(binarySrc.resolve("jvmMain").resolve("resources"))
             }
 
-            packageJson {
-                homepage.set("https://github.com/05nelsonm/${rootProject.name}")
-                license.set("Apache 2.0")
-
-                repository {
-                    type.set("git")
-                    url.set("git+https://github.com/05nelsonm/${rootProject.name}.git")
-                }
-                author {
-                    name.set("Matthew Nelson")
-                }
-                bugs {
-                    url.set("https://github.com/05nelsonm/${rootProject.name}/issues")
-                }
-
-                keywords.add("tor")
-                keywords.add("kmp-tor")
-            }
+            packageInfoJson()
         }
+
+        register("binary-termux") {
+            packageName.set("${rootProject.name}-termux")
+            version.set("${project.version}")
+
+            main.set("index.js")
+            readme.set(projectDir.resolve("binary-termux").resolve("README.md"))
+
+            files {
+                val binarySrc = projectDir
+                    .resolveSibling("binary-termux")
+                    .resolve("src")
+
+                // tor binary resources
+                from(binarySrc.resolve("jvmMain").resolve("resources"))
+            }
+
+            packageInfoJson()
+        }
+    }
+}
+
+fun NpmPackage.packageInfoJson() {
+    packageJson {
+        homepage.set("https://github.com/05nelsonm/${rootProject.name}")
+        license.set("Apache 2.0")
+
+        repository {
+            type.set("git")
+            url.set("git+https://github.com/05nelsonm/${rootProject.name}.git")
+        }
+        author {
+            name.set("Matthew Nelson")
+        }
+        bugs {
+            url.set("https://github.com/05nelsonm/${rootProject.name}/issues")
+        }
+
+        keywords.add("tor")
+        keywords.add("kmp-tor")
     }
 }
