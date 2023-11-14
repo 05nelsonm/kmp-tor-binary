@@ -37,7 +37,7 @@ npmPublish {
             version.set("${project.version}")
 
             main.set("index.js")
-            readme.set(projectDir.resolve("README.md"))
+            readme.set(projectDir.resolve("binary").resolve("README.md"))
 
             files {
                 val binarySrc = projectDir
