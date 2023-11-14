@@ -35,7 +35,7 @@ repositories {
 }
 
 kmpConfiguration {
-    configureShared(androidNameSpace = "tools.check.publication") {
+    configureShared(androidNamespace = "tools.check.publication") {
         androidLibrary {
             sourceSetMain {
                 dependencies {

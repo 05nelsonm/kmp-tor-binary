@@ -20,7 +20,7 @@ plugins {
 kmpConfiguration {
     configureShared(
         androidNamespace = "io.matthewnelson.kmp.tor.binary",
-        publish = true
+        publish = true,
     ) {
         androidLibrary {
             android {
@@ -53,6 +53,15 @@ kmpConfiguration {
                 dependencies {
                     implementation(libs.androidx.test.core)
                     implementation(libs.androidx.test.runner)
+                }
+            }
+        }
+
+        js {
+            sourceSetMain {
+                dependencies {
+                    // resources
+                    implementation(npm("kmp-tor-binary", "$version"))
                 }
             }
         }

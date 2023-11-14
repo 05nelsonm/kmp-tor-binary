@@ -16,8 +16,18 @@ private val CHECK_PUBLICATION: String? by settings
 if (CHECK_PUBLICATION != null) {
     include(":tools:check-publication")
 } else {
-    include(":library:binary")
-    include(":library:binary-android-unit-test")
-    include(":tools:diff-cli")
-    include(":tools:diff-cli:core")
+    listOf(
+        "binary",
+        "binary-android-unit-test",
+        "binary-npmjs",
+    ).forEach { module ->
+        include(":library:$module")
+    }
+
+    listOf(
+        "diff-cli",
+        "diff-cli:core",
+    ).forEach { module ->
+        include(":tools:$module")
+    }
 }

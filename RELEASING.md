@@ -2,7 +2,7 @@
 
 ### Linux
 
-- Ensure java version is greater than or equal to 11
+- Ensure java version is greater than or equal to 17
 ```bash
 java --version
 ```
@@ -26,17 +26,13 @@ git checkout -b release_"$VERSION_NAME"
 - Update `CHANGELOG.md`
 
 - Ensure that credentials for `Npmjs` are set in `~/.gradle/gradle.properties`
-  ```
-  NPMJS_AUTH_TOKEN=<auth token>
-  ```
+```
+NPMJS_AUTH_TOKEN=<auth token>
+```
 
 - Publish assets to `Npmjs`
 ```bash
-PUBLISH_TASKS=$(./gradlew tasks -DKMP_TARGETS_ALL |
-  grep "NpmPublicationToNpmjs" |
-  cut -d ' ' -f 1
-)
-./gradlew $PUBLISH_TASKS --no-daemon --no-parallel -DKMP_TARGETS_ALL
+./gradlew publishBinaryPackageToNpmjsRegistry
 ```
 
 - Update `.kotlin-js-store/yarn.lock`

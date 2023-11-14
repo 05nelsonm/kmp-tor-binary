@@ -2,43 +2,43 @@
 androidx-test-core = "1.5.0"
 androidx-test-runner = "1.5.2"
 
-android = "8.1.2"
-binaryCompat = "0.13.2"
-configuration = "0.1.4"
-cryptoHash = "0.3.0"
 encoding = "2.0.0"
-gradleVersions = "0.48.0"
-kotlin = "1.9.10"
-kotlinTime = "0.4.1"
-kotlinCli = "0.3.6"
-npmPublish = "2.1.2"
+
+gradle-android = "8.1.2"
+gradle-binary-compat = "0.13.2"
+gradle-kmp-configuration = "0.1.4"
+gradle-kotlin = "1.9.10"
+gradle-publish-maven = "0.25.3"
+gradle-publish-npm = "3.4.1"
+
+kotlincrypto-hash = "0.3.0"
+kotlinx-datetime = "0.4.1"
+kotlinx-cli = "0.3.6"
+
 okio = "3.5.0"
-publish = "0.25.3"
 
 [libraries]
 androidx-test-core = { module = "androidx.test:core", version.ref = "androidx-test-core" }
 androidx-test-runner = { module = "androidx.test:runner", version.ref = "androidx-test-runner" }
 
-gradle-android = { module = "com.android.tools.build:gradle", version.ref = "android" }
-gradle-kmp-configuration = { module = "io.matthewnelson:gradle-kmp-configuration-plugin", version.ref = "configuration" }
-gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-gradle-maven-publish = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "publish" }
-
-# 3.0.0+ change to >>>           dev.petuska:npm-publish-gradle-plugin
-gradle-npm-publish = { module = "dev.petuska:npm-publish", version.ref = "npmPublish" }
-
-# Tests/tooling
 encoding-base16 = { module = "io.matthewnelson.encoding:base16", version.ref = "encoding" }
 encoding-base64 = { module = "io.matthewnelson.encoding:base64", version.ref = "encoding" }
-kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "cryptoHash" }
-kotlin-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinCli" }
-kotlin-time = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinTime" }
+
+gradle-android = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
+gradle-kmp-configuration = { module = "io.matthewnelson:gradle-kmp-configuration-plugin", version.ref = "gradle-kmp-configuration" }
+gradle-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "gradle-kotlin" }
+gradle-publish-maven = { module = "com.vanniktech:gradle-maven-publish-plugin", version.ref = "gradle-publish-maven" }
+
+kotlincrypto-hash-sha2 = { module = "org.kotlincrypto.hash:sha2", version.ref = "kotlincrypto-hash" }
+kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinx-cli" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+
 okio-okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
 okio-fakeFileSystem = { module = "com.squareup.okio:okio-fakefilesystem", version.ref = "okio" }
 okio-node = { module = "com.squareup.okio:okio-nodefilesystem", version.ref = "okio" }
 
 [plugins]
-android-library = { id = "com.android.library", version.ref = "android" }
-binaryCompat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "binaryCompat" }
-gradleVersions = { id = "com.github.ben-manes.versions", version.ref = "gradleVersions" }
-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+android-library = { id = "com.android.library", version.ref = "gradle-android" }
+binary-compat = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "gradle-binary-compat" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "gradle-kotlin" }
+publish-npm = { id = "dev.petuska.npm.publish", version.ref = "gradle-publish-npm" }

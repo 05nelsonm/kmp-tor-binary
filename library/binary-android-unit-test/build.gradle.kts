@@ -24,6 +24,12 @@ kmpConfiguration {
 
             android {
                 sourceSets.getByName("main").resources.srcDirs(
+                    // Only want to include binary resources from jvmMain
+                    // and not geoip files which are positioned at
+                    // jvmAndroidMain/resources.
+                    //
+                    // Doing so would cause a conflict for anyone depending
+                    // on both :library:binary and :library:binary-android-unit-test
                     projectDir
                         .resolveSibling("binary")
                         .resolve("src")
@@ -33,8 +39,6 @@ kmpConfiguration {
             }
         }
 
-        common {
-            pluginIds("publication")
-        }
+        common { pluginIds("publication") }
     }
 }

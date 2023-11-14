@@ -28,7 +28,7 @@ kmpConfiguration {
         }
 
         js {
-            target { nodejs { testTask { useMocha { timeout = "30s" } } } }
+            target { nodejs { testTask(Action { useMocha { timeout = "30s" } }) } }
 
             sourceSetMain {
                 dependencies {
@@ -45,7 +45,6 @@ kmpConfiguration {
         tvosSimulatorArm64()
         watchosArm32()
         watchosArm64()
-        watchosX86()
         watchosX64()
         watchosSimulatorArm64()
 
@@ -60,7 +59,7 @@ kmpConfiguration {
                     implementation(libs.encoding.base16)
                     implementation(libs.encoding.base64)
                     implementation(libs.kotlincrypto.hash.sha2)
-                    implementation(libs.kotlin.time)
+                    implementation(libs.kotlinx.datetime)
                     implementation(libs.okio.okio)
                 }
             }

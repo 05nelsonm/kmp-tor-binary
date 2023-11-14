@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 fun KmpConfigurationExtension.configureShared(
     androidNamespace: String,
     publish: Boolean = false,
-    npmPublish: Boolean = false,
     action: Action<KmpConfigurationContainerDsl>
 ) {
     require(androidNamespace.isNotBlank()) { "androidNamespace cannot be blank" }
@@ -43,10 +42,17 @@ fun KmpConfigurationExtension.configureShared(
             compileTargetCompatibility = JavaVersion.VERSION_1_8
         }
 
-        common {
-            if (publish) { pluginIds("publication") }
-            if (npmPublish) { pluginIds("publication-npm") }
+        js {
+            target {
+                nodejs {
+                    testTask(Action {
+                        useMocha { timeout = "30s" }
+                    })
+                }
+            }
         }
+
+        if (publish) common { pluginIds("publication") }
 
         kotlin { explicitApi() }
 
@@ -109,6 +115,8 @@ fun KmpConfigurationExtension.configureTool(
         if (enableNative) {
             fun KotlinNativeTarget.setup() { binaries { executable { entryPoint = entryNative } } }
 
+            // TODO: This needs fixing
+            //  See https://github.com/05nelsonm/encoding/blob/master/sample/build.gradle.kts
             val osName = System.getProperty("os.name")
             when {
                 osName.startsWith("Windows", true) -> {
@@ -131,7 +139,7 @@ fun KmpConfigurationExtension.configureTool(
                 val libs = project.the<LibrariesForLibs>()
 
                 dependencies {
-                    implementation(libs.kotlin.cli)
+                    implementation(libs.kotlinx.cli)
                 }
             }
 
