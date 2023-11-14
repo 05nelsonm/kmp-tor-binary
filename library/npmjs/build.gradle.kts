@@ -35,7 +35,7 @@ npmPublish {
 
     packages {
         register("binary") {
-            packageName.set(rootProject.name)
+            packageName.set("${rootProject.name}-resources")
             version.set("${project.version}")
 
             main.set("index.js")
