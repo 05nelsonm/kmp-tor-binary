@@ -306,6 +306,10 @@ function package { ## Packages build dir output
   __package:android "x86"
   __package:android "x86_64"
 
+  __package:jvm "linux-android/aarch64" "tor"
+  __package:jvm "linux-android/armv7a" "tor"
+  __package:jvm "linux-android/x86" "tor"
+  __package:jvm "linux-android/x86_64" "tor"
   __package:jvm "linux-libc/aarch64" "tor"
   __package:jvm "linux-libc/armv7a" "tor"
   __package:jvm "linux-libc/x86" "tor"
@@ -314,10 +318,6 @@ function package { ## Packages build dir output
   __package:jvm:codesigned "macos/x86_64" "tor"
   __package:jvm:codesigned "mingw/x86" "tor.exe"
   __package:jvm:codesigned "mingw/x86_64" "tor.exe"
-  __package:jvm:termux "linux-android/aarch64" "tor"
-  __package:jvm:termux "linux-android/armv7a" "tor"
-  __package:jvm:termux "linux-android/x86" "tor"
-  __package:jvm:termux "linux-android/x86_64" "tor"
 
   rm -rf "$DIR_STAGING"
   trap - SIGINT ERR
@@ -959,11 +959,6 @@ function __package:jvm:codesigned {
   __package:jvm "$@"
 }
 
-function __package:jvm:termux {
-  local module_ext="-termux"
-  __package:jvm "$@"
-}
-
 function __package {
   __require:var_set "$1" "Packaging target dir (relative to dir kmp-tor-binary/external)"
   __require:var_set "$2" "Binary module src path (relative to dir kmp-tor-binary/library/binary/src)"
@@ -980,7 +975,7 @@ function __package {
     Detached Signature:   $detached_sig
     gzip:                 $gzip
     permissions:          $permissions
-    Module Src Dir:       kmp-tor-binary/library/binary$module_ext/src/$2
+    Module Src Dir:       kmp-tor-binary/library/binary/src/$2
     "
     return 0
   fi
@@ -1008,7 +1003,7 @@ function __package {
     file_ext=".gz"
   fi
 
-  local dir_module="$DIR_TASK/../library/binary$module_ext/src/$2"
+  local dir_module="$DIR_TASK/../library/binary/src/$2"
   mkdir -p "$dir_module"
   mv -v "$DIR_STAGING/$3$file_ext" "$dir_module"
 }

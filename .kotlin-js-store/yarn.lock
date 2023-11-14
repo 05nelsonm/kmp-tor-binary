@@ -293,15 +293,10 @@ js-yaml@4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-kmp-tor-binary-termux@4.8.7-0:
+kmp-tor-binary-resources@4.8.7-0:
   version "4.8.7-0"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-termux/-/kmp-tor-binary-termux-4.8.7-0.tgz#aba1124b42d7ffa49869ef409b42718799dcf0eb"
-  integrity sha512-ZNprNu7z6gK8QbPPmMAKCO+1iKg4vrmfiRZj7r7fgTWhZ6AxGyjWb/Uvf01g0Xyfmgn5PMSy9YacJU1Va9KYJg==
-
-kmp-tor-binary@4.8.7-0:
-  version "4.8.7-0"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary/-/kmp-tor-binary-4.8.7-0.tgz#e1a1a596611dec54463389168fb7bfc3a7d938fc"
-  integrity sha512-7bINqpxONBinexKXcOsZs8EmGtn78zML6cGKx2g4vudcMekMpLglNP0A5FTsR37+kJCZX0lVJkCfiZI838k0FQ==
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-resources/-/kmp-tor-binary-resources-4.8.7-0.tgz#d37e22146641e2ed9e5680cabb45c4f91ab7f9fb"
+  integrity sha512-WBjsmsILXpB4E5woVeNeS7kn3+L1pcQi/MvcC0mElfYkjY/Q4ATGhUJhNxY2HSsb/nKSJ047e26cZzlPQIzxBA==
 
 locate-path@^6.0.0:
   version "6.0.0"

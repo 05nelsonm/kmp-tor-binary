@@ -61,7 +61,7 @@ kmpConfiguration {
             sourceSetMain {
                 dependencies {
                     // resources
-                    implementation(npm("kmp-tor-binary", "$version"))
+                    implementation(npm("kmp-tor-binary-resources", "$version"))
                 }
             }
         }

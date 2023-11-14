@@ -19,7 +19,6 @@ if (CHECK_PUBLICATION != null) {
     listOf(
         "binary",
         "binary-android-unit-test",
-        "binary-termux",
         "npmjs",
     ).forEach { module ->
         include(":library:$module")
