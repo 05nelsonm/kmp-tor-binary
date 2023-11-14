@@ -54,15 +54,6 @@ kmpConfiguration {
             sourceSetMain {
                 dependencies {
                     implementation("$group:binary-jvm:$version")
-                    implementation("$group:binary-termux:$version")
-                }
-            }
-        }
-
-        js {
-            sourceSetMain {
-                dependencies {
-                    implementation("$group:binary-termux:$version")
                 }
             }
         }

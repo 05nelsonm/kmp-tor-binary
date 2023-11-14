@@ -39,7 +39,7 @@ npmPublish {
             version.set("${project.version}")
 
             main.set("index.js")
-            readme.set(projectDir.resolve("binary").resolve("README.md"))
+            readme.set(projectDir.resolve("README.md"))
 
             files {
                 val binarySrc = projectDir
@@ -48,25 +48,6 @@ npmPublish {
 
                 // geoip resources
                 from(binarySrc.resolve("jvmAndroidMain").resolve("resources"))
-                // tor binary resources
-                from(binarySrc.resolve("jvmMain").resolve("resources"))
-            }
-
-            packageInfoJson()
-        }
-
-        register("binary-termux") {
-            packageName.set("${rootProject.name}-termux")
-            version.set("${project.version}")
-
-            main.set("index.js")
-            readme.set(projectDir.resolve("binary-termux").resolve("README.md"))
-
-            files {
-                val binarySrc = projectDir
-                    .resolveSibling("binary-termux")
-                    .resolve("src")
-
                 // tor binary resources
                 from(binarySrc.resolve("jvmMain").resolve("resources"))
             }
