@@ -314,6 +314,10 @@ function package { ## Packages build dir output
   __package:jvm:codesigned "macos/x86_64" "tor"
   __package:jvm:codesigned "mingw/x86" "tor.exe"
   __package:jvm:codesigned "mingw/x86_64" "tor.exe"
+  __package:jvm:termux "linux-android/aarch64" "tor"
+  __package:jvm:termux "linux-android/armv7a" "tor"
+  __package:jvm:termux "linux-android/x86" "tor"
+  __package:jvm:termux "linux-android/x86_64" "tor"
 
   rm -rf "$DIR_STAGING"
   trap - SIGINT ERR
@@ -440,8 +444,15 @@ readonly DIR_EXTERNAL="$(pwd)"'
   __conf:SCRIPT "trap 'rm -rf \$DIR_TMP' EXIT"
   __conf:SCRIPT '
 readonly NUM_JOBS="$(nproc)"
+'
 
-rm -rf "$DIR_OUT"
+  if [ "$os_name" = "android" ]; then
+    __conf:SCRIPT "readonly DIR_OUT_JVM=\"\$DIR_EXTERNAL/build/jvm-out/linux-$os_name/$os_arch\""
+    __conf:SCRIPT '
+rm -rf "$DIR_OUT_JVM"'
+  fi
+
+  __conf:SCRIPT 'rm -rf "$DIR_OUT"
 rm -rf "$DIR_SCRIPT/libevent"
 rm -rf "$DIR_SCRIPT/openssl"
 rm -rf "$DIR_SCRIPT/tor"
@@ -760,6 +771,14 @@ make install >> \"\$DIR_SCRIPT/tor/logs/make.log\" 2>> \"\$DIR_SCRIPT/tor/logs/m
 
     __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$bin_name\" \"\$DIR_OUT/$bin_name_out\""
     __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$bin_name_out\""
+
+    if [ "$os_name" = "android" ]; then
+      __conf:SCRIPT "
+mkdir -p \"\$DIR_OUT_JVM\"
+cp -a \"\$DIR_OUT/$bin_name_out\" \"\$DIR_OUT_JVM/tor\"
+"
+    fi
+
     __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$bin_name\")\""
     __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$bin_name_out\")\""
   # else
@@ -940,6 +959,11 @@ function __package:jvm:codesigned {
   __package:jvm "$@"
 }
 
+function __package:jvm:termux {
+  local module_ext="-termux"
+  __package:jvm "$@"
+}
+
 function __package {
   __require:var_set "$1" "Packaging target dir (relative to dir kmp-tor-binary/external)"
   __require:var_set "$2" "Binary module src path (relative to dir kmp-tor-binary/library/binary/src)"
@@ -956,7 +980,7 @@ function __package {
     Detached Signature:   $detached_sig
     gzip:                 $gzip
     permissions:          $permissions
-    Module Src Dir:       kmp-tor-binary/library/binary/src/$2
+    Module Src Dir:       kmp-tor-binary/library/binary$module_ext/src/$2
     "
     return 0
   fi
@@ -984,7 +1008,7 @@ function __package {
     file_ext=".gz"
   fi
 
-  local dir_module="$DIR_TASK/../library/binary/src/$2"
+  local dir_module="$DIR_TASK/../library/binary$module_ext/src/$2"
   mkdir -p "$dir_module"
   mv -v "$DIR_STAGING/$3$file_ext" "$dir_module"
 }

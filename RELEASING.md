@@ -32,7 +32,7 @@ NPMJS_AUTH_TOKEN=<auth token>
 
 - Publish assets to `Npmjs`
 ```bash
-./gradlew publishBinaryPackageToNpmjsRegistry
+./gradlew publishBinaryPackageToNpmjsRegistry publishBinaryTermuxPackageToNpmjsRegistry
 ```
 
 - Update `.kotlin-js-store/yarn.lock`

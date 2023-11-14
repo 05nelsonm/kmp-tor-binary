@@ -39,6 +39,7 @@ kmpConfiguration {
         androidLibrary {
             sourceSetMain {
                 dependencies {
+                    // Should be a SEPARATE publication and not use binary-jvm
                     implementation("$group:binary-android:$version")
                 }
             }
@@ -53,6 +54,15 @@ kmpConfiguration {
             sourceSetMain {
                 dependencies {
                     implementation("$group:binary-jvm:$version")
+                    implementation("$group:binary-termux:$version")
+                }
+            }
+        }
+
+        js {
+            sourceSetMain {
+                dependencies {
+                    implementation("$group:binary-termux:$version")
                 }
             }
         }
