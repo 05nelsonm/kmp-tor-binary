@@ -298,9 +298,6 @@ function package { ## Packages build dir output
   DIR_STAGING="$(mktemp -d)"
   trap 'rm -rf "$DIR_STAGING"' SIGINT ERR
 
-  # TODO: Need to see if android will strip gzip headers from
-  #  files located in resources dir. May need to package
-  #  as a jar file to prevent that.
   __package:geoip "geoip"
   __package:geoip "geoip6"
 

@@ -35,93 +35,24 @@ repositories {
 }
 
 kmpConfiguration {
-    configureShared(
-        androidNameSpace = "io.matthewnelson.kmp.tor.binary.tools.check.publication",
-        explicitApi = false,
-    ) {
+    configureShared(androidNamespace = "tools.check.publication") {
+        androidLibrary {
+            sourceSetMain {
+                dependencies {
+                    implementation("$group:binary-android:$version")
+                }
+            }
+            sourceSetTest {
+                dependencies {
+                    implementation("$group:binary-android-unit-test:$version")
+                }
+            }
+        }
+
         jvm {
             sourceSetMain {
                 dependencies {
-                    implementation("$group:kmp-tor-binary-extract:$version")
-                    implementation("$group:kmp-tor-binary-geoip:$version")
-
-                    implementation("$group:kmp-tor-binary-linuxx64:$version")
-                    implementation("$group:kmp-tor-binary-linuxx86:$version")
-                    implementation("$group:kmp-tor-binary-macosx64:$version")
-                    implementation("$group:kmp-tor-binary-macosarm64:$version")
-                    implementation("$group:kmp-tor-binary-mingwx64:$version")
-                    implementation("$group:kmp-tor-binary-mingwx86:$version")
-                }
-            }
-        }
-
-        androidLibrary {
-            android {
-                defaultConfig {
-                    minSdk = 21
-                }
-            }
-            sourceSetMain {
-                dependencies {
-                    implementation("$group:kmp-tor-binary-android:$version")
-                    implementation("$group:kmp-tor-binary-extract:$version")
-                    implementation("$group:kmp-tor-binary-geoip:$version")
-                }
-            }
-        }
-
-        js {
-            target {
-                nodejs {
-                    testTask {
-                        useMocha { timeout = "30s" }
-                    }
-                }
-            }
-
-            sourceSetMain {
-                dependencies {
-                    implementation("$group:kmp-tor-binary-extract:$version")
-
-                    implementation(npm("kmp-tor-binary-geoip", "$version"))
-                    implementation(npm("kmp-tor-binary-linuxx64", "$version"))
-                    implementation(npm("kmp-tor-binary-linuxx86", "$version"))
-                    implementation(npm("kmp-tor-binary-macosx64", "$version"))
-                    implementation(npm("kmp-tor-binary-macosarm64", "$version"))
-                    implementation(npm("kmp-tor-binary-mingwx64", "$version"))
-                    implementation(npm("kmp-tor-binary-mingwx86", "$version"))
-                }
-            }
-        }
-
-        linuxX64 {
-            sourceSetMain {
-                dependencies {
-//                    implementation("$group:kmp-tor-binary-linuxx64:$version")
-                }
-            }
-        }
-
-        macosX64 {
-            sourceSetMain {
-                dependencies {
-//                    implementation("$group:kmp-tor-binary-macosx64:$version")
-                }
-            }
-        }
-
-        macosArm64 {
-            sourceSetMain {
-                dependencies {
-//                    implementation("$group:kmp-tor-binary-macosarm64:$version")
-                }
-            }
-        }
-
-        mingwX64 {
-            sourceSetMain {
-                dependencies {
-//                    implementation("$group:kmp-tor-binary-mingwx64:$version")
+                    implementation("$group:binary-jvm:$version")
                 }
             }
         }
@@ -129,8 +60,7 @@ kmpConfiguration {
         common {
             sourceSetMain {
                 dependencies {
-//                    implementation("$group:kmp-tor-binary-extract:$version")
-//                    implementation("$group:kmp-tor-binary-geoip:$version")
+                    implementation("$group:binary:$version")
                 }
             }
         }

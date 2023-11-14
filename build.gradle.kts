@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension
 
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.multiplatform) apply(false)
     alias(libs.plugins.android.library) apply(false)
-    alias(libs.plugins.binaryCompat)
-    alias(libs.plugins.gradleVersions)
+    alias(libs.plugins.binary.compat)
+    alias(libs.plugins.kotlin.multiplatform) apply(false)
+    alias(libs.plugins.publish.npm) apply(false)
 }
 
 allprojects {
@@ -66,39 +64,7 @@ apiValidation {
 
         // Don't check these projects when building JVM only or Android only
         if (!KMP_TARGETS_ALL && ((!ANDROID && JVM) || (ANDROID && !JVM))) {
-            ignoredProjects.add("kmp-tor-binary-android")
-            ignoredProjects.add("kmp-tor-binary-extract")
-            ignoredProjects.add("kmp-tor-binary-geoip")
-        }
-    }
-}
-
-fun isNonStable(version: String): Boolean {
-    val stableKeyword = listOf("RELEASE", "FINAL", "GA").any { version.toUpperCase().contains(it) }
-    val regex = "^[0-9,.v-]+(-r)?$".toRegex()
-    val isStable = stableKeyword || regex.matches(version)
-    return isStable.not()
-}
-
-tasks.withType<DependencyUpdatesTask> {
-    // Example 1: reject all non stable versions
-    rejectVersionIf {
-        isNonStable(candidate.version)
-    }
-
-    // Example 2: disallow release candidates as upgradable versions from stable versions
-    rejectVersionIf {
-        isNonStable(candidate.version) && !isNonStable(currentVersion)
-    }
-
-    // Example 3: using the full syntax
-    resolutionStrategy {
-        componentSelection {
-            all {
-                if (isNonStable(candidate.version) && !isNonStable(currentVersion)) {
-                    reject("Release candidate")
-                }
-            }
+            ignoredProjects.add("binary")
         }
     }
 }

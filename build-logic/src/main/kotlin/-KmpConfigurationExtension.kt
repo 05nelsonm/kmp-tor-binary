@@ -15,6 +15,7 @@
  **/
 import io.matthewnelson.kmp.configuration.extension.KmpConfigurationExtension
 import io.matthewnelson.kmp.configuration.extension.container.target.KmpConfigurationContainerDsl
+import io.matthewnelson.kmp.configuration.extension.container.target.TargetAndroidContainer
 import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
@@ -24,55 +25,67 @@ import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 fun KmpConfigurationExtension.configureShared(
-    androidNameSpace: String? = null,
-    enableJvm: Boolean = true,
+    androidNamespace: String,
     publish: Boolean = false,
-    npmPublish: Boolean = false,
-    explicitApi: Boolean = true,
     action: Action<KmpConfigurationContainerDsl>
 ) {
+    require(androidNamespace.isNotBlank()) { "androidNamespace cannot be blank" }
+
     configure {
-        if (enableJvm) {
-            jvm {
-                if (androidNameSpace == null) { target { withJava() } }
-
-                kotlinJvmTarget = JavaVersion.VERSION_1_8
-                compileSourceCompatibility = JavaVersion.VERSION_1_8
-                compileTargetCompatibility = JavaVersion.VERSION_1_8
-            }
+        androidLibrary(namespace = androidNamespace) {
+            if (publish) target { publishLibraryVariants("release") }
         }
 
-        if (androidNameSpace != null) {
-            androidLibrary {
-                target { publishLibraryVariants("release") }
+        jvm {
+            kotlinJvmTarget = JavaVersion.VERSION_1_8
+            compileSourceCompatibility = JavaVersion.VERSION_1_8
+            compileTargetCompatibility = JavaVersion.VERSION_1_8
+        }
 
-                android {
-                    buildToolsVersion = "33.0.1"
-                    compileSdk = 33
-                    namespace = androidNameSpace
-
-                    defaultConfig {
-                        minSdk = 16
-                        targetSdk = 33
-
-                        testInstrumentationRunnerArguments["disableAnalytics"] = "true"
-                    }
+        js {
+            target {
+                nodejs {
+                    testTask(Action {
+                        useMocha { timeout = "30s" }
+                    })
                 }
-
-                kotlinJvmTarget = JavaVersion.VERSION_1_8
-                compileSourceCompatibility = JavaVersion.VERSION_1_8
-                compileTargetCompatibility = JavaVersion.VERSION_1_8
             }
         }
 
-        common {
-            if (publish) { pluginIds("publication") }
-            if (npmPublish) { pluginIds("publication-npm") }
-        }
+        if (publish) common { pluginIds("publication") }
 
-        if (explicitApi) { kotlin { explicitApi() } }
+        kotlin { explicitApi() }
 
         action.execute(this)
+    }
+}
+
+fun KmpConfigurationContainerDsl.androidLibrary(
+    namespace: String,
+    buildTools: String? = "33.0.2",
+    compileSdk: Int = 33,
+    minSdk: Int = 21,
+    javaVersion: JavaVersion = JavaVersion.VERSION_1_8,
+    action: (Action<TargetAndroidContainer.Library>)? = null,
+) {
+    androidLibrary {
+        android {
+            buildTools?.let { buildToolsVersion = it }
+            this.compileSdk = compileSdk
+            this.namespace = namespace
+
+            defaultConfig {
+                this.minSdk = minSdk
+
+                testInstrumentationRunnerArguments["disableAnalytics"] = true.toString()
+            }
+        }
+
+        kotlinJvmTarget = javaVersion
+        compileSourceCompatibility = javaVersion
+        compileTargetCompatibility = javaVersion
+
+        action?.execute(this)
     }
 }
 
@@ -102,6 +115,8 @@ fun KmpConfigurationExtension.configureTool(
         if (enableNative) {
             fun KotlinNativeTarget.setup() { binaries { executable { entryPoint = entryNative } } }
 
+            // TODO: This needs fixing
+            //  See https://github.com/05nelsonm/encoding/blob/master/sample/build.gradle.kts
             val osName = System.getProperty("os.name")
             when {
                 osName.startsWith("Windows", true) -> {
@@ -124,7 +139,7 @@ fun KmpConfigurationExtension.configureTool(
                 val libs = project.the<LibrariesForLibs>()
 
                 dependencies {
-                    implementation(libs.kotlin.cli)
+                    implementation(libs.kotlinx.cli)
                 }
             }
 

@@ -13,16 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-plugins {
-    `kotlin-dsl`
-}
+package io.matthewnelson.kmp.tor.binary.android.unit.test
 
-dependencies {
-    implementation(libs.gradle.android)
-    implementation(libs.gradle.kmp.configuration)
-    implementation(libs.gradle.kotlin)
-    implementation(libs.gradle.publish.maven)
-
-    // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
-}
+@Suppress("unused")
+private class Loader
