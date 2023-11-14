@@ -1,6 +1,3 @@
-import dev.petuska.npm.publish.extension.domain.NpmPackage
-import dev.petuska.npm.publish.extension.domain.NpmPackages
-
 /*
  * Copyright (c) 2023 Matthew Nelson
  *
@@ -16,6 +13,8 @@ import dev.petuska.npm.publish.extension.domain.NpmPackages
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+import dev.petuska.npm.publish.extension.domain.NpmPackage
+
 plugins {
     alias(libs.plugins.publish.npm)
 }
