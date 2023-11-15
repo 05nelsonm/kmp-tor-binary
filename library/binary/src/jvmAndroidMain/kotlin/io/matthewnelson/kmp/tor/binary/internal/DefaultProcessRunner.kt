@@ -15,19 +15,35 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
+import io.matthewnelson.kmp.tor.binary.util.waitFor
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.milliseconds
 
 internal object DefaultProcessRunner: ProcessRunner {
 
     @JvmSynthetic
     @Throws(IOException::class, InterruptedException::class)
-    override fun runAndWait(command: String): String = runAndWait(command, 5.seconds)
+    override fun runAndWait(command: String): String = runAndWait(command, 250.milliseconds)
 
     @JvmSynthetic
     @Throws(IOException::class, InterruptedException::class)
     override fun runAndWait(command: String, timeout: Duration): String {
-        TODO("Not yet implemented")
+        val p = Runtime.getRuntime().exec(command)
+        p.waitFor(timeout)
+
+        return p.inputStream.use { iStream ->
+            val b = ByteArrayOutputStream()
+            val buf = ByteArray(4096)
+
+            while (true) {
+                val read = iStream.read(buf)
+                if (read == -1) break
+                b.write(buf, 0, read)
+            }
+
+            b.toString()
+        }
     }
 }
