@@ -43,16 +43,34 @@ import kotlin.time.Duration.Companion.milliseconds
  *
  * [sqlite-jdbc](https://github.com/xerial/sqlite-jdbc/blob/master/src/main/java/org/sqlite/util/OSInfo.java)
  * */
-public actual class OSInfo private actual constructor(private val process: ProcessRunner) {
+public actual class OSInfo private actual constructor(
+    private val process: ProcessRunner,
+    private val pathMapFiles: String,
+    private val pathOSRelease: String,
+) {
 
     public actual companion object {
 
         @JvmField
-        public actual val INSTANCE: OSInfo = get(DefaultProcessRunner)
+        public actual val INSTANCE: OSInfo = get()
 
         @JvmStatic
         @JvmSynthetic
-        internal fun get(process: ProcessRunner): OSInfo = OSInfo(process)
+        internal fun get(
+            process: ProcessRunner = DefaultProcessRunner,
+            pathMapFile: String = PATH_MAP_FILES,
+            pathOSRelease: String = PATH_OS_RELEASE,
+        ): OSInfo = OSInfo(process, pathMapFile, pathOSRelease)
+    }
+
+    @get:JvmName("osHost")
+    public actual val osHost: OSHost by lazy {
+        osHost(System.getProperty("os.name")?.ifBlank { null } ?: "unknown")
+    }
+
+    @get:JvmName("osArch")
+    public actual val osArch: OSArch by lazy {
+        osArch(System.getProperty("os.arch")?.ifBlank { null } ?: "unknown")
     }
 
     private val archMap: Map<String, OSArch> by lazy {
@@ -72,14 +90,6 @@ public actual class OSInfo private actual constructor(private val process: Proce
             put("aarch64", OSArch.Aarch64)
             put("arm64", OSArch.Aarch64)
         }
-    }
-
-    public actual val osHost: OSHost by lazy {
-        osHost(System.getProperty("os.name"))
-    }
-
-    public actual val osArch: OSArch by lazy {
-        osArch(System.getProperty("os.arch"))
     }
 
     @JvmSynthetic
@@ -120,7 +130,7 @@ public actual class OSInfo private actual constructor(private val process: Proce
 
     private fun isAndroidRuntime(): Boolean {
         return System.getProperty("java.runtime.name", "")
-            .contains("android", true)
+            ?.contains("android", true) == true
     }
 
     private fun isAndroidTermux(): Boolean {
@@ -134,7 +144,7 @@ public actual class OSInfo private actual constructor(private val process: Proce
     }
 
     private fun isLinuxMusl(): Boolean {
-        val mapFilesDir = File("/proc/self/map_files")
+        val mapFilesDir = File(pathMapFiles)
 
         if (mapFilesDir.exists()) {
             try {
@@ -159,7 +169,7 @@ public actual class OSInfo private actual constructor(private val process: Proce
             // it's an older kernel which may not have map_files
             // directory.
             try {
-                File("/etc/os-release")
+                File(pathOSRelease)
                     .inputStream()
                     .bufferedReader()
                     .use { reader ->
@@ -218,7 +228,7 @@ public actual class OSInfo private actual constructor(private val process: Proce
         }
 
         // For java7, still need to run some shell commands to determine ABI of JVM
-        val javaHome = System.getProperty("java.home").ifBlank { return null }
+        val javaHome = System.getProperty("java.home")?.ifBlank { null } ?: return null
 
         // determine if first JVM found uses ARM hard-float ABI
         try {

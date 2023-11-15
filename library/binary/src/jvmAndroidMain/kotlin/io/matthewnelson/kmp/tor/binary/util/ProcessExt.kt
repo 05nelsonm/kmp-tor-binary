@@ -32,7 +32,7 @@ import kotlin.time.Duration
  * @param [timeout] The duration in which to block for
  * @param [destroyOnTimeout] Will call [Process.destroyForcibly] in the
  *   event that [timeout] is exceeded before the process finishes.
- * @return t/f for if the process has completed
+ * @return true if the process has completed, false if timed out
  * */
 public fun Process.waitFor(timeout: Duration, destroyOnTimeout: Boolean = false): Boolean {
     val startTime = System.nanoTime()

@@ -13,7 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+
 package io.matthewnelson.kmp.tor.binary.util
 
-internal actual object OSInfo {
+import io.matthewnelson.kmp.tor.binary.internal.ProcessRunner
+
+public actual class OSInfo private actual constructor(
+    private val process: ProcessRunner,
+    private val pathMapFiles: String,
+    private val pathOSRelease: String
+) {
+
+    public actual val osHost: OSHost
+        get() = TODO("Not yet implemented")
+    public actual val osArch: OSArch
+        get() = TODO("Not yet implemented")
+
+    public actual companion object {
+
+        public actual val INSTANCE: OSInfo
+            get() = TODO("Not yet implemented")
+    }
 }
