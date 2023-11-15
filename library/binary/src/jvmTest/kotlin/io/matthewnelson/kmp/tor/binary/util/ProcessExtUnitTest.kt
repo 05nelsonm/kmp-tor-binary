@@ -26,10 +26,8 @@ class ProcessExtUnitTest {
 
     @Test
     fun givenProcess_whenWaitFor_thenBlocksUntilCompletion() {
-        when (OSInfo.INSTANCE.osHost) {
-            is OSHost.Linux,
-            is OSHost.MacOS -> { /* run */ }
-            else -> return
+        if (OSInfo.INSTANCE.osHost is OSHost.Unsupported) {
+            return
         }
 
         val runTime = measureTime {

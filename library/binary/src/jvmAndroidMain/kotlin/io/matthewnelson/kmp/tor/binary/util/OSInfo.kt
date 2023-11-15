@@ -36,6 +36,7 @@ import io.matthewnelson.kmp.tor.binary.internal.DefaultProcessRunner
 import io.matthewnelson.kmp.tor.binary.internal.ProcessRunner
 import java.io.File
 import java.util.*
+import kotlin.time.Duration.Companion.milliseconds
 
 /**
  * Implementation based off of:
@@ -109,7 +110,7 @@ public actual class OSInfo private actual constructor(private val process: Proce
 
         return when {
             mapped != null -> mapped
-            lArch.startsWith("arm") -> TODO()
+            lArch.startsWith("arm") -> resolveLinuxArmArchType()
             else -> null
         } ?: OSArch.Unsupported(
             name.replace("\\W", "")
@@ -180,5 +181,72 @@ public actual class OSInfo private actual constructor(private val process: Proce
         }
 
         return false
+    }
+
+    private fun resolveLinuxArmArchType(): OSArch? {
+        if (osHost !is OSHost.Linux) return null
+
+        // aarch64, armv5t, armv5te, armv5tej, armv5tejl, armv6, armv7, armv7l
+        val machineHardwareName = try {
+            process.runAndWait(listOf("uname", "-m"))
+        } catch (_: Throwable) {
+            return null
+        }
+
+        // Should never be the case because it's in archMap which
+        // is always checked before calling this function.
+        if (machineHardwareName.startsWith("aarch64")) {
+            return OSArch.Aarch64
+        }
+
+        // If android and NOT aarch64, return the only other
+        // supported arm architecture.
+        if (osHost is OSHost.Linux.Android) {
+            return OSArch.Armv7a
+        }
+
+        if (machineHardwareName.startsWith("armv7")) {
+            return OSArch.Armv7a
+        }
+
+        // Java 1.8 introduces a system property to determine armel or armhf
+        // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8005545
+        System.getProperty("sun.arch.abi")?.let { abi ->
+            if (abi.startsWith("gnueabihf")) {
+                return OSArch.Armv7a
+            }
+        }
+
+        // For java7, still need to run some shell commands to determine ABI of JVM
+        val javaHome = System.getProperty("java.home").ifBlank { return null }
+
+        // determine if first JVM found uses ARM hard-float ABI
+        try {
+            Runtime.getRuntime().exec(arrayOf("which", "readelf")).let { process ->
+                // If it did not finish before timeout
+                if (!process.waitFor(250.milliseconds, destroyOnTimeout = true)) return null
+
+                if (process.exitValue() != 0) return null
+            }
+
+            val cmdArray = arrayOf(
+                "/bin/sh",
+                "-c",
+                "find '"
+                        + javaHome
+                        + "' -name 'libjvm.so' | head -1 | xargs readelf -A | "
+                        + "grep 'Tag_ABI_VFP_args: VFP registers'"
+            )
+
+            Runtime.getRuntime().exec(cmdArray).let { process ->
+                // If it did not finish before timeout
+                if (!process.waitFor(250.milliseconds, destroyOnTimeout = true)) return null
+
+                if (process.exitValue() == 0) return OSArch.Armv7a
+            }
+        } catch (_: Throwable) {}
+
+        // Unsupported
+        return null
     }
 }

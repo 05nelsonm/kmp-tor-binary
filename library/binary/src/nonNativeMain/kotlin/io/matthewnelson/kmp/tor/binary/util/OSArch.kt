@@ -28,9 +28,13 @@ public sealed class OSArch private constructor(
     public val path: String
 ) {
 
+    // android, linux-libc, macOS
     public object Aarch64: OSArch("aarch64")
+    // android, linux-libc
     public object Armv7a: OSArch("armv7a")
+    // android, linux-libc, windows
     public object X86: OSArch("x86")
+    // all
     public object X86_64: OSArch("x86_64")
 
     public class Unsupported internal constructor(
