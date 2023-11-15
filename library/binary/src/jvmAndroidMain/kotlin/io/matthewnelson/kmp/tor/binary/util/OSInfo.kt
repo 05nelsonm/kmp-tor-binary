@@ -105,8 +105,13 @@ public actual class OSInfo private actual constructor(private val process: Proce
     }
 
     private fun isAndroidTermux(): Boolean {
-        // TODO
-        return false
+        return try {
+            process.runAndWait("uname -o")
+                .lowercase()
+                .contains("android")
+        } catch (_: Throwable) {
+            false
+        }
     }
 
     private fun isLinuxMusl(): Boolean {
