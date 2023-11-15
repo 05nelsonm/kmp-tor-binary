@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:JvmName("ProcessExt")
+
 package io.matthewnelson.kmp.tor.binary.util
 
 import java.util.concurrent.TimeUnit
@@ -28,9 +30,11 @@ import kotlin.time.Duration
  * the [Process] completes.
  *
  * @param [timeout] The duration in which to block for
+ * @param [destroyOnTimeout] Will call [Process.destroyForcibly] in the
+ *   event that [timeout] is exceeded before the process finishes.
  * @return t/f for if the process has completed
  * */
-public fun Process.waitFor(timeout: Duration): Boolean {
+public fun Process.waitFor(timeout: Duration, destroyOnTimeout: Boolean = false): Boolean {
     val startTime = System.nanoTime()
     var remaining = timeout.inWholeNanoseconds
 
@@ -51,6 +55,10 @@ public fun Process.waitFor(timeout: Duration): Boolean {
 
         remaining = timeout.inWholeNanoseconds - (System.nanoTime() - startTime)
     } while (remaining > 0)
+
+    if (destroyOnTimeout) {
+        destroyForcibly()
+    }
 
     return false
 }
