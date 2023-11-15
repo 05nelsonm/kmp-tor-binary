@@ -32,7 +32,7 @@ public sealed class OSArch private constructor(
     public object Aarch64: OSArch("aarch64")
     // android, linux-libc
     public object Armv7a: OSArch("armv7a")
-    // android, linux-libc, windows
+    // android, linux-libc, mingw
     public object X86: OSArch("x86")
     // all
     public object X86_64: OSArch("x86_64")

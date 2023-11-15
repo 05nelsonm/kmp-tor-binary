@@ -129,7 +129,7 @@ public actual class OSInfo private actual constructor(
     }
 
     private fun isAndroidRuntime(): Boolean {
-        return System.getProperty("java.runtime.name", "")
+        return System.getProperty("java.runtime.name")
             ?.contains("android", true) == true
     }
 
@@ -145,6 +145,7 @@ public actual class OSInfo private actual constructor(
 
     private fun isLinuxMusl(): Boolean {
         val mapFilesDir = File(pathMapFiles)
+        var fileCount = -1
 
         if (mapFilesDir.exists()) {
             try {
@@ -153,6 +154,10 @@ public actual class OSInfo private actual constructor(
                     .maxDepth(1)
                     .iterator()
                     .forEach { file ->
+
+                        // first file is always "map_files"
+                        fileCount++
+
                         // map_files directory contains symbolic links that must
                         // be resolved which canonicalPath will do for us.
                         val canonicalPath = file.canonicalPath
@@ -163,8 +168,12 @@ public actual class OSInfo private actual constructor(
                             return true
                         }
                     }
-            } catch (_: Throwable) {}
-        } else {
+            } catch (_: Throwable) {
+                fileCount = 0
+            }
+        }
+
+        if (fileCount < 1) {
             // Fallback to checking for Alpine Linux in the event
             // it's an older kernel which may not have map_files
             // directory.
@@ -185,7 +194,7 @@ public actual class OSInfo private actual constructor(
                         }
                     }
             } catch (_: Throwable) {
-                // EOF
+                // EOF or does not exist
                 return false
             }
         }
