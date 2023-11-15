@@ -1,4 +1,19 @@
 /*
+ *  Copyright 2008 Taro L. Saito
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ **/
+/*
  * Copyright (c) 2023 Matthew Nelson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,8 +49,8 @@ public actual class OSInfo private actual constructor(private val process: Proce
         @JvmField
         public actual val INSTANCE: OSInfo = get(DefaultProcessRunner)
 
-        @JvmSynthetic
         @JvmStatic
+        @JvmSynthetic
         internal fun get(process: ProcessRunner): OSInfo = OSInfo(process)
     }
 
@@ -90,8 +105,11 @@ public actual class OSInfo private actual constructor(private val process: Proce
     internal fun osArch(name: String): OSArch {
         val lArch = name.lowercase(Locale.US)
 
+        val mapped = archMap[lArch]
+
         return when {
-            // TODO
+            mapped != null -> mapped
+            lArch.startsWith("arm") -> TODO()
             else -> null
         } ?: OSArch.Unsupported(
             name.replace("\\W", "")
@@ -106,7 +124,7 @@ public actual class OSInfo private actual constructor(private val process: Proce
 
     private fun isAndroidTermux(): Boolean {
         return try {
-            process.runAndWait("uname -o")
+            process.runAndWait(listOf("uname", "-o"))
                 .lowercase()
                 .contains("android")
         } catch (_: Throwable) {
@@ -144,22 +162,19 @@ public actual class OSInfo private actual constructor(private val process: Proce
                     .inputStream()
                     .bufferedReader()
                     .use { reader ->
-                        var isAlpine = false
-
                         while (true) {
                             val line = reader.readLine()
 
 //                            println(line)
 
+                            // ID and ID_LIKE arguments
                             if (line.startsWith("ID")) {
-                                isAlpine = line.contains("alpine")
-                                break
+                                if (line.contains("alpine")) return true
                             }
                         }
-
-                        return isAlpine
                     }
             } catch (_: Throwable) {
+                // EOF
                 return false
             }
         }

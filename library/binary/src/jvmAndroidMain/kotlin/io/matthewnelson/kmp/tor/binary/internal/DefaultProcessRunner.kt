@@ -25,13 +25,13 @@ internal object DefaultProcessRunner: ProcessRunner {
 
     @JvmSynthetic
     @Throws(IOException::class, InterruptedException::class)
-    override fun runAndWait(command: String): String = runAndWait(command, 250.milliseconds)
+    override fun runAndWait(commands: List<String>): String = runAndWait(commands, 250.milliseconds)
 
     @JvmSynthetic
     @Throws(IOException::class, InterruptedException::class)
-    override fun runAndWait(command: String, timeout: Duration): String {
-        val p = Runtime.getRuntime().exec(command)
-        p.waitFor(timeout)
+    override fun runAndWait(commands: List<String>, timeout: Duration): String {
+        val p = Runtime.getRuntime().exec(commands.toTypedArray())
+        p.waitFor(timeout, destroyOnTimeout = true)
 
         return p.inputStream.use { iStream ->
             val b = ByteArrayOutputStream()

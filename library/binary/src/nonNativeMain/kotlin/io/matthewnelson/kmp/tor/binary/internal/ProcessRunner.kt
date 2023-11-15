@@ -20,8 +20,8 @@ import kotlin.time.Duration
 internal interface ProcessRunner {
 
     @Throws(Exception::class)
-    fun runAndWait(command: String): String
+    fun runAndWait(commands: List<String>): String
 
     @Throws(Exception::class)
-    fun runAndWait(command: String, timeout: Duration): String
+    fun runAndWait(commands: List<String>, timeout: Duration): String
 }
