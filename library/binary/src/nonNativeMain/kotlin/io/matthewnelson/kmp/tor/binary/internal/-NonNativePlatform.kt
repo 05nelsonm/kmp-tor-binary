@@ -16,10 +16,14 @@
 package io.matthewnelson.kmp.tor.binary.internal
 
 import io.matthewnelson.kmp.tor.binary.util.OSArch
+import kotlin.jvm.JvmSynthetic
 
+@JvmSynthetic
 internal const val PATH_MAP_FILES = "/proc/self/map_files"
+@JvmSynthetic
 internal const val PATH_OS_RELEASE = "/etc/os-release"
 
+@get:JvmSynthetic
 internal val ARCH_MAP: Map<String, OSArch> by lazy {
     mutableMapOf<String, OSArch>().apply {
         put("x86", OSArch.X86)
