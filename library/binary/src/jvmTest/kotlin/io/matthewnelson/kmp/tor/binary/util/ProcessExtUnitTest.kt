@@ -26,7 +26,7 @@ class ProcessExtUnitTest {
 
     @Test
     fun givenProcess_whenWaitFor_thenBlocksUntilCompletion() {
-        if (OSInfo.INSTANCE.osHost is OSHost.Unsupported) {
+        if (OSInfo.INSTANCE.osHost is OSHost.Unknown) {
             return
         }
 

@@ -100,16 +100,16 @@ public actual class OSInfo private actual constructor(
             lName.contains("windows") -> OSHost.Windows
             lName.contains("mac") -> OSHost.MacOS
             lName.contains("darwin") -> OSHost.MacOS
-            lName.contains("freebsd") -> null // Not yet supported
+            lName.contains("freebsd") -> OSHost.FreeBSD
             isAndroidRuntime() -> OSHost.Linux.Android
             isAndroidTermux() -> OSHost.Linux.Android
-            isLinuxMusl() -> null // Not yet supported
+            isLinuxMusl() -> OSHost.Linux.Musl
             lName.contains("linux") -> OSHost.Linux.Libc
-            else -> null
-        } ?: OSHost.Unsupported(
-            name.replace("\\W", "")
-                .lowercase(Locale.US)
-        )
+            else -> OSHost.Unknown(
+                name.replace("\\W", "")
+                    .lowercase(Locale.US)
+            )
+        }
     }
 
     @JvmSynthetic
@@ -120,7 +120,7 @@ public actual class OSInfo private actual constructor(
 
         return when {
             mapped != null -> mapped
-            lArch.startsWith("arm") -> resolveLinuxArmArchType()
+            lArch.startsWith("arm") -> resolveArmArchType()
             else -> null
         } ?: OSArch.Unsupported(
             name.replace("\\W", "")
@@ -202,8 +202,12 @@ public actual class OSInfo private actual constructor(
         return false
     }
 
-    private fun resolveLinuxArmArchType(): OSArch? {
-        if (osHost !is OSHost.Linux) return null
+    private fun resolveArmArchType(): OSArch? {
+        when (osHost) {
+            is OSHost.Linux,
+            is OSHost.FreeBSD -> { /* run */ }
+            else -> return null
+        }
 
         // aarch64, armv5t, armv5te, armv5tej, armv5tejl, armv6, armv7, armv7l
         val machineHardwareName = try {

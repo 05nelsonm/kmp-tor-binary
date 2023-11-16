@@ -36,6 +36,10 @@ public abstract class io/matthewnelson/kmp/tor/binary/util/OSHost {
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/matthewnelson/kmp/tor/binary/util/OSHost$FreeBSD : io/matthewnelson/kmp/tor/binary/util/OSHost {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/util/OSHost$FreeBSD;
+}
+
 public abstract class io/matthewnelson/kmp/tor/binary/util/OSHost$Linux : io/matthewnelson/kmp/tor/binary/util/OSHost {
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
@@ -48,11 +52,15 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSHost$Linux$Libc : io/m
 	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/util/OSHost$Linux$Libc;
 }
 
+public final class io/matthewnelson/kmp/tor/binary/util/OSHost$Linux$Musl : io/matthewnelson/kmp/tor/binary/util/OSHost$Linux {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/util/OSHost$Linux$Musl;
+}
+
 public final class io/matthewnelson/kmp/tor/binary/util/OSHost$MacOS : io/matthewnelson/kmp/tor/binary/util/OSHost {
 	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/util/OSHost$MacOS;
 }
 
-public final class io/matthewnelson/kmp/tor/binary/util/OSHost$Unsupported : io/matthewnelson/kmp/tor/binary/util/OSHost {
+public final class io/matthewnelson/kmp/tor/binary/util/OSHost$Unknown : io/matthewnelson/kmp/tor/binary/util/OSHost {
 	public final field name Ljava/lang/String;
 	public fun <init> (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;

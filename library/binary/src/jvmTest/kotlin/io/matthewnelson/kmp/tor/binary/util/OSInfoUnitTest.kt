@@ -45,7 +45,7 @@ class OSInfoUnitTest {
         assertTrue(OSInfo.INSTANCE.osHost("Mac OS") is OSHost.MacOS)
         assertTrue(OSInfo.INSTANCE.osHost("Mac OS X") is OSHost.MacOS)
 
-        assertTrue(OSInfo.INSTANCE.osHost("FreeBSD") is OSHost.Unsupported)
+        assertTrue(OSInfo.INSTANCE.osHost("FreeBSD") is OSHost.FreeBSD)
 
         // Termux
         var count = 0
@@ -83,8 +83,7 @@ class OSInfoUnitTest {
                 .resolve("os-release")
                 .path,
         ).let { osInfo ->
-            // Currently unsupported, but should NOT be OSHost.Linux.Libc
-            assertTrue(osInfo.osHost("Linux") is OSHost.Unsupported)
+            assertTrue(osInfo.osHost("Linux") is OSHost.Linux.Musl)
         }
 
         // Linux-Musl w/o map_files directory
@@ -99,8 +98,7 @@ class OSInfoUnitTest {
                 .resolve("os-release") // alpine linux
                 .path,
         ).let { osInfo ->
-            // Currently unsupported, but should NOT be OSHost.Linux.Libc
-            assertTrue(osInfo.osHost("Linux") is OSHost.Unsupported)
+            assertTrue(osInfo.osHost("Linux") is OSHost.Linux.Musl)
         }
     }
 

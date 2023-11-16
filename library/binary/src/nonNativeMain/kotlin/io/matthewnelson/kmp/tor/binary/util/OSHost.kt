@@ -28,20 +28,20 @@ public sealed class OSHost private constructor(
     public val path: String
 ) {
 
-//    public object FreeBSD: OSHost("freebsd")
+    public object FreeBSD: OSHost("freebsd")
 
     public sealed class Linux private constructor(subtype: String): OSHost("linux-$subtype") {
 
         public object Android: Linux("android")
         public object Libc: Linux("libc")
-//        public object Musl: Linux("musl")
+        public object Musl: Linux("musl")
 
     }
 
     public object MacOS: OSHost("macos")
     public object Windows: OSHost("mingw")
 
-    public class Unsupported(
+    public class Unknown(
         @JvmField
         public val name: String
     ): OSHost("") {
