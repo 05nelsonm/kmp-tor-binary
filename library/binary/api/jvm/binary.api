@@ -1,3 +1,7 @@
+public final class io/matthewnelson/kmp/tor/binary/internal/_JvmPlatformKt {
+	public static final synthetic fun forciblyDestroyInternal (Ljava/lang/Process;)Ljava/lang/Process;
+}
+
 public abstract class io/matthewnelson/kmp/tor/binary/util/OSArch {
 	public final field path Ljava/lang/String;
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -88,6 +92,7 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSInfo$Companion {
 }
 
 public final class io/matthewnelson/kmp/tor/binary/util/ProcessExt {
+	public static final fun forciblyDestroy (Ljava/lang/Process;)Ljava/lang/Process;
 	public static final fun waitFor-8Mi8wO0 (Ljava/lang/Process;JZ)Z
 	public static synthetic fun waitFor-8Mi8wO0$default (Ljava/lang/Process;JZILjava/lang/Object;)Z
 }

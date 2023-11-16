@@ -17,6 +17,7 @@
 
 package io.matthewnelson.kmp.tor.binary.util
 
+import io.matthewnelson.kmp.tor.binary.internal.forciblyDestroyInternal
 import java.util.concurrent.TimeUnit
 import kotlin.math.min
 import kotlin.time.Duration
@@ -42,7 +43,7 @@ public fun Process.waitFor(timeout: Duration, destroyOnTimeout: Boolean = true):
         try {
             exitValue()
             return true
-        } catch (ex: IllegalThreadStateException) {
+        } catch (_: IllegalThreadStateException) {
             if (remaining > 0) {
                 Thread.sleep(
                     min(
@@ -57,8 +58,16 @@ public fun Process.waitFor(timeout: Duration, destroyOnTimeout: Boolean = true):
     } while (remaining > 0)
 
     if (destroyOnTimeout) {
-        destroyForcibly()
+        forciblyDestroy()
     }
 
     return false
 }
+
+/**
+ * Calls [Process.destroyForcibly], but for Android performs a
+ * check if the call is available (API 26+). If unavailable, falls
+ * back to calling [Process.destroy].
+ * */
+@Suppress("NOTHING_TO_INLINE")
+public inline fun Process.forciblyDestroy(): Process = forciblyDestroyInternal()
