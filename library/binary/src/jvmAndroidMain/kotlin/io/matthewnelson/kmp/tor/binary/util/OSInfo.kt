@@ -204,9 +204,9 @@ public actual class OSInfo private actual constructor(
 
     private fun resolveArmArchType(): OSArch? {
         when (osHost) {
-            is OSHost.Linux,
-            is OSHost.FreeBSD -> { /* run */ }
-            else -> return null
+            is OSHost.Windows,
+            is OSHost.Unknown -> return null
+            else -> { /* run */ }
         }
 
         // aarch64, armv5t, armv5te, armv5tej, armv5tejl, armv6, armv7, armv7l
@@ -218,8 +218,15 @@ public actual class OSInfo private actual constructor(
 
         // Should never be the case because it's in archMap which
         // is always checked before calling this function.
-        if (machineHardwareName.startsWith("aarch64")) {
+        if (
+            machineHardwareName.startsWith("aarch64")
+            || machineHardwareName.startsWith("arm64")
+        ) {
             return OSArch.Aarch64
+        }
+
+        if (osHost is OSHost.MacOS) {
+            return null
         }
 
         // If android and NOT aarch64, return the only other
