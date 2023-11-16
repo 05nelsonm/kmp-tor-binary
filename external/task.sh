@@ -946,7 +946,7 @@ function __exec:docker:run {
 function __package:geoip {
   local permissions="664"
   local gzip="yes"
-  __package "tor/src/config" "jvmAndroidMain/resources/kmptor" "$1"
+  __package "tor/src/config" "jvmAndroidMain/resources/io/matthewnelson/kmp/tor/binary" "$1"
 }
 
 function __package:android {
@@ -958,7 +958,7 @@ function __package:android {
 function __package:jvm {
   local permissions="755"
   local gzip="yes"
-  __package "build/jvm-out/$1" "jvmMain/resources/kmptor/$1" "$2"
+  __package "build/jvm-out/$1" "jvmMain/resources/io/matthewnelson/kmp/tor/binary/native/$1" "$2"
 }
 
 function __package:jvm:codesigned {
