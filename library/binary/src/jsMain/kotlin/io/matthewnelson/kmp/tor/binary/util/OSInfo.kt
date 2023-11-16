@@ -17,6 +17,11 @@
 
 package io.matthewnelson.kmp.tor.binary.util
 
+import io.matthewnelson.kmp.tor.binary.internal.*
+import io.matthewnelson.kmp.tor.binary.internal.ARCH_MAP
+import io.matthewnelson.kmp.tor.binary.internal.DefaultProcessRunner
+import io.matthewnelson.kmp.tor.binary.internal.PATH_MAP_FILES
+import io.matthewnelson.kmp.tor.binary.internal.PATH_OS_RELEASE
 import io.matthewnelson.kmp.tor.binary.internal.ProcessRunner
 
 public actual class OSInfo private actual constructor(
@@ -25,14 +30,79 @@ public actual class OSInfo private actual constructor(
     private val pathOSRelease: String
 ) {
 
-    public actual val osHost: OSHost
-        get() = TODO("Not yet implemented")
-    public actual val osArch: OSArch
-        get() = TODO("Not yet implemented")
-
     public actual companion object {
 
-        public actual val INSTANCE: OSInfo
-            get() = TODO("Not yet implemented")
+        public actual val INSTANCE: OSInfo = get()
+
+        internal fun get(
+            process: ProcessRunner = DefaultProcessRunner,
+            pathMapFiles: String = PATH_MAP_FILES,
+            pathOSRelease: String = PATH_OS_RELEASE,
+        ): OSInfo = OSInfo(process, pathMapFiles, pathOSRelease)
+    }
+
+    public actual val osHost: OSHost by lazy {
+        osHost(platform()?.ifBlank { null } ?: "unknown")
+    }
+
+    public actual val osArch: OSArch by lazy {
+        osArch(arch()?.ifBlank { null } ?: "unknown")
+    }
+
+    // https://nodejs.org/api/os.html#osplatform
+    internal fun osHost(name: String): OSHost {
+        return when (val lName = name.lowercase()) {
+            "win32" -> OSHost.Windows
+            "darwin" -> OSHost.MacOS
+            "freebsd" -> OSHost.FreeBSD
+            "android" -> OSHost.Linux.Android
+            "linux" -> {
+                if (isLinuxMusl()) {
+                    OSHost.Linux.Musl
+                } else {
+                    OSHost.Linux.Libc
+                }
+            }
+            else -> OSHost.Unknown(lName)
+        }
+    }
+
+    // https://nodejs.org/api/os.html#osarch
+    internal fun osArch(name: String): OSArch {
+        val lArch = name.lowercase()
+
+        val mapped = ARCH_MAP[lArch]
+
+        return when {
+            mapped != null -> mapped
+            lArch.startsWith("arm") -> resolveArmArchType()
+            else -> null
+        } ?: OSArch.Unsupported(lArch)
+    }
+
+    private fun isLinuxMusl(): Boolean {
+        if (!existsSync(pathMapFiles)) return false
+
+        try {
+            readdirSync(pathMapFiles, OptionsReadDir()).forEach { entry ->
+                var path = normalize(resolve(pathMapFiles, entry))
+                if (lstatSync(path).isSymbolicLink()) {
+                    path = readlinkSync(path)
+                }
+
+//                println(path)
+
+                if (path.lowercase().contains("musl")) {
+                    return true
+                }
+            }
+        } catch (_: Throwable) {}
+
+        return false
+    }
+
+    private fun resolveArmArchType(): OSArch? {
+        // TODO
+        return null
     }
 }

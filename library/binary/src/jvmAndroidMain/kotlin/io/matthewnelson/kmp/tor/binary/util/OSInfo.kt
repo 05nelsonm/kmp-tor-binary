@@ -61,9 +61,9 @@ public actual class OSInfo private actual constructor(
         @JvmSynthetic
         internal fun get(
             process: ProcessRunner = DefaultProcessRunner,
-            pathMapFile: String = PATH_MAP_FILES,
+            pathMapFiles: String = PATH_MAP_FILES,
             pathOSRelease: String = PATH_OS_RELEASE,
-        ): OSInfo = OSInfo(process, pathMapFile, pathOSRelease)
+        ): OSInfo = OSInfo(process, pathMapFiles, pathOSRelease)
     }
 
     @get:JvmName("osHost")
@@ -178,7 +178,9 @@ public actual class OSInfo private actual constructor(
 
                             // ID and ID_LIKE arguments
                             if (line.startsWith("ID")) {
-                                if (line.contains("alpine")) return true
+                                if (line.contains("alpine", ignoreCase = true)) {
+                                    return true
+                                }
                             }
                         }
                     }
