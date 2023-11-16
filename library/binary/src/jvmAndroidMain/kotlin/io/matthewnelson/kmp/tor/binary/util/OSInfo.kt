@@ -46,7 +46,7 @@ import kotlin.time.Duration.Companion.milliseconds
  *
  * [sqlite-jdbc](https://github.com/xerial/sqlite-jdbc/blob/master/src/main/java/org/sqlite/util/OSInfo.java)
  * */
-public actual class OSInfo private actual constructor(
+public actual class OSInfo private constructor(
     private val process: ProcessRunner,
     private val pathMapFiles: String,
     private val pathOSRelease: String,

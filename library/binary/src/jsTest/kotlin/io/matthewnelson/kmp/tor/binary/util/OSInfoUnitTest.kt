@@ -16,7 +16,6 @@
 package io.matthewnelson.kmp.tor.binary.util
 
 import io.matthewnelson.kmp.tor.binary.MAP_FILES_NOT_MUSL
-import io.matthewnelson.kmp.tor.binary.OS_RELEASE_NOT_MUSL
 import io.matthewnelson.kmp.tor.binary.TEST_SUPPORT_DIR
 import kotlin.test.Test
 import kotlin.test.assertTrue
@@ -35,7 +34,6 @@ class OSInfoUnitTest {
 
         OSInfo.get(
             pathMapFiles = MAP_FILES_NOT_MUSL.toString(),
-            pathOSRelease = OS_RELEASE_NOT_MUSL.toString()
         ).let { osInfo ->
             assertTrue(osInfo.osHost("linux") is OSHost.Linux.Libc)
         }
@@ -50,7 +48,6 @@ class OSInfoUnitTest {
                 .resolve("msl")
                 .resolve("map_files")
                 .toString(),
-            pathOSRelease = OS_RELEASE_NOT_MUSL.toString(),
         ).let { osInfo ->
             assertTrue(osInfo.osHost("linux") is OSHost.Linux.Musl)
         }
@@ -61,10 +58,6 @@ class OSInfoUnitTest {
             pathMapFiles = TEST_SUPPORT_DIR
                 .resolve("msl")
                 .resolve("does_not_exist")
-                .toString(),
-            pathOSRelease = TEST_SUPPORT_DIR
-                .resolve("msl")
-                .resolve("os-release") // alpine linux
                 .toString(),
         ).let { osInfo ->
             // There is no fallback to checking os-release file for alpine

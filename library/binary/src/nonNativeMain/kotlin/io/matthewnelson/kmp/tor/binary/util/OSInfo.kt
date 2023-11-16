@@ -17,15 +17,10 @@
 
 package io.matthewnelson.kmp.tor.binary.util
 
-import io.matthewnelson.kmp.tor.binary.internal.ProcessRunner
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 
-public expect class OSInfo private constructor(
-    process: ProcessRunner,
-    pathMapFiles: String,
-    pathOSRelease: String,
-) {
+public expect class OSInfo {
 
     @get:JvmName("osHost")
     public val osHost: OSHost

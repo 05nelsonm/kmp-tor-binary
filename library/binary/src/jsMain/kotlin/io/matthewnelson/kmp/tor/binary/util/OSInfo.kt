@@ -19,15 +19,10 @@ package io.matthewnelson.kmp.tor.binary.util
 
 import io.matthewnelson.kmp.tor.binary.internal.*
 import io.matthewnelson.kmp.tor.binary.internal.ARCH_MAP
-import io.matthewnelson.kmp.tor.binary.internal.DefaultProcessRunner
 import io.matthewnelson.kmp.tor.binary.internal.PATH_MAP_FILES
-import io.matthewnelson.kmp.tor.binary.internal.PATH_OS_RELEASE
-import io.matthewnelson.kmp.tor.binary.internal.ProcessRunner
 
-public actual class OSInfo private actual constructor(
-    private val process: ProcessRunner,
+public actual class OSInfo private constructor(
     private val pathMapFiles: String,
-    private val pathOSRelease: String
 ) {
 
     public actual companion object {
@@ -35,10 +30,8 @@ public actual class OSInfo private actual constructor(
         public actual val INSTANCE: OSInfo = get()
 
         internal fun get(
-            process: ProcessRunner = DefaultProcessRunner,
             pathMapFiles: String = PATH_MAP_FILES,
-            pathOSRelease: String = PATH_OS_RELEASE,
-        ): OSInfo = OSInfo(process, pathMapFiles, pathOSRelease)
+        ): OSInfo = OSInfo(pathMapFiles)
     }
 
     public actual val osHost: OSHost by lazy {
