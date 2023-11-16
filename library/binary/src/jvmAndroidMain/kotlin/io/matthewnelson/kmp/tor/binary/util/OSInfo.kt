@@ -254,7 +254,7 @@ public actual class OSInfo private actual constructor(
         try {
             Runtime.getRuntime().exec(arrayOf("which", "readelf")).let { process ->
                 // If it did not finish before timeout
-                if (!process.waitFor(250.milliseconds, destroyOnTimeout = true)) return null
+                if (!process.waitFor(250.milliseconds)) return null
 
                 if (process.exitValue() != 0) return null
             }
@@ -270,7 +270,7 @@ public actual class OSInfo private actual constructor(
 
             Runtime.getRuntime().exec(cmdArray).let { process ->
                 // If it did not finish before timeout
-                if (!process.waitFor(250.milliseconds, destroyOnTimeout = true)) return null
+                if (!process.waitFor(250.milliseconds)) return null
 
                 if (process.exitValue() == 0) return OSArch.Armv7a
             }

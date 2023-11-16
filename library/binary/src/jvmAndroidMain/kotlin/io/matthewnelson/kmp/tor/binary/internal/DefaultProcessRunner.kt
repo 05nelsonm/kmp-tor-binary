@@ -31,7 +31,7 @@ internal object DefaultProcessRunner: ProcessRunner {
     @Throws(IOException::class, InterruptedException::class)
     override fun runAndWait(commands: List<String>, timeout: Duration): String {
         val p = Runtime.getRuntime().exec(commands.toTypedArray())
-        p.waitFor(timeout, destroyOnTimeout = true)
+        p.waitFor(timeout)
 
         return p.inputStream.use { iStream ->
             ByteArrayOutputStream().use { oStream ->

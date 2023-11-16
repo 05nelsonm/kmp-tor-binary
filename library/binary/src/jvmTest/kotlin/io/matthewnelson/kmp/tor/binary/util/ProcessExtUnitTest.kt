@@ -32,8 +32,8 @@ class ProcessExtUnitTest {
 
         val runTime = measureTime {
             val p = Runtime.getRuntime().exec(arrayOf("sleep", "0.25"))
-            assertFalse(p.waitFor(100.milliseconds))
-            assertTrue(p.waitFor(1.seconds, destroyOnTimeout = true))
+            assertFalse(p.waitFor(100.milliseconds, destroyOnTimeout = false))
+            assertTrue(p.waitFor(1.seconds))
         }
 
         assertTrue(runTime < 500.milliseconds)

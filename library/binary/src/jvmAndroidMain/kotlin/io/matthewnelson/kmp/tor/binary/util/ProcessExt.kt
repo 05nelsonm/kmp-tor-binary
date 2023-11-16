@@ -29,12 +29,12 @@ import kotlin.time.Duration
  * Will block current thread for specified [timeout], or until
  * the [Process] completes.
  *
- * @param [timeout] The duration in which to block for
+ * @param [timeout] The maximum duration to wait for process completion.
  * @param [destroyOnTimeout] Will call [Process.destroyForcibly] in the
- *   event that [timeout] is exceeded before the process finishes.
- * @return true if the process has completed, false if timed out
+ *   event that [timeout] is exceeded without process completion.
+ * @return true if the process has completed, false if it has not.
  * */
-public fun Process.waitFor(timeout: Duration, destroyOnTimeout: Boolean = false): Boolean {
+public fun Process.waitFor(timeout: Duration, destroyOnTimeout: Boolean = true): Boolean {
     val startTime = System.nanoTime()
     var remaining = timeout.inWholeNanoseconds
 
