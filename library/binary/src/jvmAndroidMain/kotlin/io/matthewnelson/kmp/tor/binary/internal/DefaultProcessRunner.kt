@@ -34,16 +34,17 @@ internal object DefaultProcessRunner: ProcessRunner {
         p.waitFor(timeout, destroyOnTimeout = true)
 
         return p.inputStream.use { iStream ->
-            val b = ByteArrayOutputStream()
-            val buf = ByteArray(4096)
+            ByteArrayOutputStream().use { oStream ->
+                val buf = ByteArray(4096)
 
-            while (true) {
-                val read = iStream.read(buf)
-                if (read == -1) break
-                b.write(buf, 0, read)
+                while (true) {
+                    val read = iStream.read(buf)
+                    if (read == -1) break
+                    oStream.write(buf, 0, read)
+                }
+
+                oStream.toString()
             }
-
-            b.toString()
         }
     }
 }
