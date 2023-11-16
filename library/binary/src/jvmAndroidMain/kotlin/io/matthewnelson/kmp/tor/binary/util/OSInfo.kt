@@ -32,6 +32,7 @@
 
 package io.matthewnelson.kmp.tor.binary.util
 
+import io.matthewnelson.kmp.tor.binary.internal.ARCH_MAP
 import io.matthewnelson.kmp.tor.binary.internal.DefaultProcessRunner
 import io.matthewnelson.kmp.tor.binary.internal.PATH_MAP_FILES
 import io.matthewnelson.kmp.tor.binary.internal.PATH_OS_RELEASE
@@ -75,25 +76,6 @@ public actual class OSInfo private actual constructor(
         osArch(System.getProperty("os.arch")?.ifBlank { null } ?: "unknown")
     }
 
-    private val archMap: Map<String, OSArch> by lazy {
-        mutableMapOf<String, OSArch>().apply {
-            put("x86", OSArch.X86)
-            put("i386", OSArch.X86)
-            put("i486", OSArch.X86)
-            put("i586", OSArch.X86)
-            put("i686", OSArch.X86)
-            put("pentium", OSArch.X86)
-
-            put("x86_64", OSArch.X86_64)
-            put("amd64", OSArch.X86_64)
-            put("em64t", OSArch.X86_64)
-            put("universal", OSArch.X86_64) // openjdk7 Mac
-
-            put("aarch64", OSArch.Aarch64)
-            put("arm64", OSArch.Aarch64)
-        }
-    }
-
     @JvmSynthetic
     internal fun osHost(name: String): OSHost {
         val lName = name.lowercase(Locale.US)
@@ -105,8 +87,13 @@ public actual class OSInfo private actual constructor(
             lName.contains("freebsd") -> OSHost.FreeBSD
             isAndroidRuntime() -> OSHost.Linux.Android
             isAndroidTermux() -> OSHost.Linux.Android
-            isLinuxMusl() -> OSHost.Linux.Musl
-            lName.contains("linux") -> OSHost.Linux.Libc
+            lName.contains("linux") -> {
+                if (isLinuxMusl()) {
+                    OSHost.Linux.Musl
+                } else {
+                    OSHost.Linux.Libc
+                }
+            }
             else -> OSHost.Unknown(
                 name.replace("\\W", "")
                     .lowercase(Locale.US)
@@ -118,7 +105,7 @@ public actual class OSInfo private actual constructor(
     internal fun osArch(name: String): OSArch {
         val lArch = name.lowercase(Locale.US)
 
-        val mapped = archMap[lArch]
+        val mapped = ARCH_MAP[lArch]
 
         return when {
             mapped != null -> mapped

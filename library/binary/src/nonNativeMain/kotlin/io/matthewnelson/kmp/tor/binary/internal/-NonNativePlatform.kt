@@ -15,5 +15,27 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
+import io.matthewnelson.kmp.tor.binary.util.OSArch
+
 internal const val PATH_MAP_FILES = "/proc/self/map_files"
 internal const val PATH_OS_RELEASE = "/etc/os-release"
+
+internal val ARCH_MAP: Map<String, OSArch> by lazy {
+    mutableMapOf<String, OSArch>().apply {
+        put("x86", OSArch.X86)
+        put("i386", OSArch.X86)
+        put("i486", OSArch.X86)
+        put("i586", OSArch.X86)
+        put("i686", OSArch.X86)
+        put("pentium", OSArch.X86)
+
+        put("x64", OSArch.X86_64)
+        put("x86_64", OSArch.X86_64)
+        put("amd64", OSArch.X86_64)
+        put("em64t", OSArch.X86_64)
+        put("universal", OSArch.X86_64)
+
+        put("aarch64", OSArch.Aarch64)
+        put("arm64", OSArch.Aarch64)
+    }
+}
