@@ -33,6 +33,8 @@
 package io.matthewnelson.kmp.tor.binary.util
 
 import io.matthewnelson.kmp.tor.binary.internal.DefaultProcessRunner
+import io.matthewnelson.kmp.tor.binary.internal.PATH_MAP_FILES
+import io.matthewnelson.kmp.tor.binary.internal.PATH_OS_RELEASE
 import io.matthewnelson.kmp.tor.binary.internal.ProcessRunner
 import java.io.File
 import java.util.*

@@ -13,28 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+package io.matthewnelson.kmp.tor.binary.internal
 
-package io.matthewnelson.kmp.tor.binary.util
-
-import io.matthewnelson.kmp.tor.binary.internal.ProcessRunner
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmName
-
-public expect class OSInfo private constructor(
-    process: ProcessRunner,
-    pathMapFiles: String,
-    pathOSRelease: String,
-) {
-
-    @get:JvmName("osHost")
-    public val osHost: OSHost
-    @get:JvmName("osArch")
-    public val osArch: OSArch
-
-    public companion object {
-
-        @JvmField
-        public val INSTANCE: OSInfo
-    }
-}
+internal const val PATH_MAP_FILES = "/proc/self/map_files"
+internal const val PATH_OS_RELEASE = "/etc/os-release"
