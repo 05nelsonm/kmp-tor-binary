@@ -72,6 +72,10 @@ class OSInfoUnitTest {
             assertTrue(osInfo.osHost("GNU/Linux") is OSHost.Linux.Libc)
         }
 
+        // Remaining linux tests cannot be run on windows host machine
+        // because symbolic links are not a thing.
+        if (OSInfo.INSTANCE.osHost is OSHost.Windows) return
+
         // Linux-Musl WITH map_files directory
         OSInfo.get(
             pathMapFile = testSupportDir
