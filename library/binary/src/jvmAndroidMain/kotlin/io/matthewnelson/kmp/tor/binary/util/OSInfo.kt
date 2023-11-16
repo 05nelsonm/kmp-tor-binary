@@ -234,18 +234,18 @@ public actual class OSInfo private actual constructor(
         // If android and NOT aarch64, return the only other
         // supported arm architecture.
         if (osHost is OSHost.Linux.Android) {
-            return OSArch.Armv7a
+            return OSArch.Armv7
         }
 
         if (machineHardwareName.startsWith("armv7")) {
-            return OSArch.Armv7a
+            return OSArch.Armv7
         }
 
         // Java 1.8 introduces a system property to determine armel or armhf
         // http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8005545
         System.getProperty("sun.arch.abi")?.let { abi ->
             if (abi.startsWith("gnueabihf")) {
-                return OSArch.Armv7a
+                return OSArch.Armv7
             }
         }
 
@@ -274,7 +274,7 @@ public actual class OSInfo private actual constructor(
                 // If it did not finish before timeout
                 if (!process.waitFor(250.milliseconds)) return null
 
-                if (process.exitValue() == 0) return OSArch.Armv7a
+                if (process.exitValue() == 0) return OSArch.Armv7
             }
         } catch (_: Throwable) {}
 

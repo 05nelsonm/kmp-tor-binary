@@ -38,7 +38,7 @@ readonly G_ID=$(id -g)
 
 function build:all:android { ## Builds all Android targets
   build:android:aarch64
-  build:android:armv7a
+  build:android:armv7
   build:android:x86
   build:android:x86_64
 }
@@ -59,7 +59,7 @@ function build:all:jvm { ## Builds all Linux, macOS, Windows targets for JVM
 
 function build:all:jvm:linux-libc { ## Builds all Linux Libc targets for JVM
   build:jvm:linux-libc:aarch64
-  build:jvm:linux-libc:armv7a
+  build:jvm:linux-libc:armv7
   build:jvm:linux-libc:x86
   build:jvm:linux-libc:x86_64
 }
@@ -90,9 +90,9 @@ function build:android:aarch64 { ## Builds Android arm64-v8a
   __exec:docker:run
 }
 
-function build:android:armv7a { ## Builds Android armeabi-v7a
+function build:android:armv7 { ## Builds Android armeabi-v7a
   local os_name="android"
-  local os_arch="armv7a"
+  local os_arch="armv7"
   local openssl_target="android-arm"
   local ndk_abi="armeabi-v7a"
   local cc_clang="yes"
@@ -154,10 +154,10 @@ function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-libc:armv7a { ## Builds Linux Libc armv7a for JVM
+function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
   local os_name="linux"
   local os_subtype="-libc"
-  local os_arch="armv7a"
+  local os_arch="armv7"
   local openssl_target="linux-armv4"
   __build:configure:target:init
   __conf:CFLAGS '-march=armv7-a'
@@ -307,11 +307,11 @@ function package { ## Packages build dir output
   __package:android "x86_64"
 
   __package:jvm "linux-android/aarch64" "tor"
-  __package:jvm "linux-android/armv7a" "tor"
+  __package:jvm "linux-android/armv7" "tor"
   __package:jvm "linux-android/x86" "tor"
   __package:jvm "linux-android/x86_64" "tor"
   __package:jvm "linux-libc/aarch64" "tor"
-  __package:jvm "linux-libc/armv7a" "tor"
+  __package:jvm "linux-libc/armv7" "tor"
   __package:jvm "linux-libc/x86" "tor"
   __package:jvm "linux-libc/x86_64" "tor"
   __package:jvm:codesigned "macos/aarch64" "tor"
@@ -926,11 +926,18 @@ function __exec:docker:run {
     SIGINT intercepted... exiting...
 "; exit 1' SIGINT
 
+  # map os_arch to what docker container expects
+  local docker_arch=
+  case "$os_arch" in
+    "armv7") docker_arch="armv7a"  ;;
+    *)       docker_arch="$os_arch";;
+  esac
+
   ${DOCKER} run \
     --rm \
     -u "$U_ID:$G_ID" \
     -v "$DIR_TASK:/work" \
-    "05nelsonm/build-env.$os_name$os_subtype.$os_arch:$TAG_DOCKER_BUILD_ENV" \
+    "05nelsonm/build-env.$os_name$os_subtype.$docker_arch:$TAG_DOCKER_BUILD_ENV" \
     "./$DIR_BUILD/build.sh"
 
   trap - SIGINT

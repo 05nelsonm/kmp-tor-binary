@@ -14,8 +14,8 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSArch$Aarch64 : io/matt
 	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/util/OSArch$Aarch64;
 }
 
-public final class io/matthewnelson/kmp/tor/binary/util/OSArch$Armv7a : io/matthewnelson/kmp/tor/binary/util/OSArch {
-	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/util/OSArch$Armv7a;
+public final class io/matthewnelson/kmp/tor/binary/util/OSArch$Armv7 : io/matthewnelson/kmp/tor/binary/util/OSArch {
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/util/OSArch$Armv7;
 }
 
 public final class io/matthewnelson/kmp/tor/binary/util/OSArch$Unsupported : io/matthewnelson/kmp/tor/binary/util/OSArch {
