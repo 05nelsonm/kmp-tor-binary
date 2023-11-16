@@ -1,4 +1,4 @@
-# kmp-tor-binary
+# kmp-tor-binary-resources
 
 npm distribution of Tor binary resources for Kotlin Multi-Platform Tor
 
