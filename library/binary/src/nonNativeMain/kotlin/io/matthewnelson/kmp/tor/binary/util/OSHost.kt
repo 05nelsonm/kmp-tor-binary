@@ -41,7 +41,7 @@ public sealed class OSHost private constructor(
     public object MacOS: OSHost("macos")
     public object Windows: OSHost("mingw")
 
-    public class Unsupported internal constructor(
+    public class Unsupported(
         @JvmField
         public val name: String
     ): OSHost("") {

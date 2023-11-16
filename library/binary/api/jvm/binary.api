@@ -16,6 +16,7 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSArch$Armv7a : io/matth
 
 public final class io/matthewnelson/kmp/tor/binary/util/OSArch$Unsupported : io/matthewnelson/kmp/tor/binary/util/OSArch {
 	public final field arch Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -53,6 +54,7 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSHost$MacOS : io/matthe
 
 public final class io/matthewnelson/kmp/tor/binary/util/OSHost$Unsupported : io/matthewnelson/kmp/tor/binary/util/OSHost {
 	public final field name Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;)V
 	public fun toString ()Ljava/lang/String;
 }
 

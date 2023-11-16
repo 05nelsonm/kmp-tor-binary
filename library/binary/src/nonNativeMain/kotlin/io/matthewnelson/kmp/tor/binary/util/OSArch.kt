@@ -37,7 +37,7 @@ public sealed class OSArch private constructor(
     // all
     public object X86_64: OSArch("x86_64")
 
-    public class Unsupported internal constructor(
+    public class Unsupported(
         @JvmField
         public val arch: String
     ): OSArch("") {
