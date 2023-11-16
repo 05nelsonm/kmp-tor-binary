@@ -22,33 +22,59 @@ import kotlin.jvm.JvmField
  *
  * [path] is directly correlated to the resource
  * path in which tor will be located.
+ *
+ * [arches] are the supported architectures for the
+ * given [OSHost].
  * */
 public sealed class OSHost private constructor(
     @JvmField
-    public val path: String
+    public val path: String,
+    @JvmField
+    public val arches: Set<OSArch>,
 ) {
 
-    public object FreeBSD: OSHost("freebsd")
+    public object FreeBSD: OSHost("freebsd", emptySet())
 
-    public sealed class Linux private constructor(subtype: String): OSHost("linux-$subtype") {
+    public sealed class Linux private constructor(
+        subtype: String,
+        arches: Set<OSArch>,
+    ): OSHost("linux-$subtype", arches) {
 
-        public object Android: Linux("android")
-        public object Libc: Linux("libc")
-        public object Musl: Linux("musl")
+        public object Android: Linux("android", setOf(
+            OSArch.Aarch64,
+            OSArch.Armv7a,
+            OSArch.X86,
+            OSArch.X86_64,
+        ))
+        public object Libc: Linux("libc", setOf(
+            OSArch.Aarch64,
+            OSArch.Armv7a,
+            OSArch.X86,
+            OSArch.X86_64,
+        ))
+        public object Musl: Linux("musl", emptySet())
 
     }
 
-    public object MacOS: OSHost("macos")
-    public object Windows: OSHost("mingw")
+    public object MacOS: OSHost("macos", setOf(
+        OSArch.Aarch64,
+        OSArch.X86_64,
+    ))
+    public object Windows: OSHost("mingw", setOf(
+        OSArch.X86,
+        OSArch.X86_64,
+    ))
 
     public class Unknown(
         @JvmField
         public val name: String
-    ): OSHost("") {
+    ): OSHost("", emptySet()) {
+        override fun equals(other: Any?): Boolean = other is Unknown && other.name == name
+        override fun hashCode(): Int = 17 * 31 + name.hashCode()
         override fun toString(): String = name
     }
 
-    final override fun equals(other: Any?): Boolean = other is OSHost && other.toString() == toString()
-    final override fun hashCode(): Int = 17 * 31 + toString().hashCode()
+    override fun equals(other: Any?): Boolean = other is OSHost && other.path == path
+    override fun hashCode(): Int = 17 * 31 + path.hashCode()
     override fun toString(): String = path
 }

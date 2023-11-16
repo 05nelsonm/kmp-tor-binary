@@ -1,8 +1,8 @@
 public abstract class io/matthewnelson/kmp/tor/binary/util/OSArch {
 	public final field path Ljava/lang/String;
 	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun equals (Ljava/lang/Object;)Z
-	public final fun hashCode ()I
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -17,6 +17,8 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSArch$Armv7a : io/matth
 public final class io/matthewnelson/kmp/tor/binary/util/OSArch$Unsupported : io/matthewnelson/kmp/tor/binary/util/OSArch {
 	public final field arch Ljava/lang/String;
 	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -29,10 +31,11 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSArch$X86_64 : io/matth
 }
 
 public abstract class io/matthewnelson/kmp/tor/binary/util/OSHost {
+	public final field arches Ljava/util/Set;
 	public final field path Ljava/lang/String;
-	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun equals (Ljava/lang/Object;)Z
-	public final fun hashCode ()I
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Set;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
@@ -41,7 +44,7 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSHost$FreeBSD : io/matt
 }
 
 public abstract class io/matthewnelson/kmp/tor/binary/util/OSHost$Linux : io/matthewnelson/kmp/tor/binary/util/OSHost {
-	public synthetic fun <init> (Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/util/Set;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
 }
 
 public final class io/matthewnelson/kmp/tor/binary/util/OSHost$Linux$Android : io/matthewnelson/kmp/tor/binary/util/OSHost$Linux {
@@ -63,6 +66,8 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSHost$MacOS : io/matthe
 public final class io/matthewnelson/kmp/tor/binary/util/OSHost$Unknown : io/matthewnelson/kmp/tor/binary/util/OSHost {
 	public final field name Ljava/lang/String;
 	public fun <init> (Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 

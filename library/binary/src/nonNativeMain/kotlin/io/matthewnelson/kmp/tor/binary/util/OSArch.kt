@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("ClassName")
+
 package io.matthewnelson.kmp.tor.binary.util
 
 import kotlin.jvm.JvmField
@@ -28,23 +30,21 @@ public sealed class OSArch private constructor(
     public val path: String
 ) {
 
-    // android, linux-libc, macOS
     public object Aarch64: OSArch("aarch64")
-    // android, linux-libc
     public object Armv7a: OSArch("armv7a")
-    // android, linux-libc, mingw
     public object X86: OSArch("x86")
-    // all
     public object X86_64: OSArch("x86_64")
 
     public class Unsupported(
         @JvmField
         public val arch: String
     ): OSArch("") {
+        override fun equals(other: Any?): Boolean = other is Unsupported && other.arch == arch
+        override fun hashCode(): Int = 17 * 31 + arch.hashCode()
         override fun toString(): String = arch
     }
 
-    final override fun equals(other: Any?): Boolean = other is OSArch && other.toString() == toString()
-    final override fun hashCode(): Int = 17 * 31 + toString().hashCode()
+    override fun equals(other: Any?): Boolean = other is OSArch && other.path == path
+    override fun hashCode(): Int = 17 * 31 + path.hashCode()
     override fun toString(): String = path
 }
