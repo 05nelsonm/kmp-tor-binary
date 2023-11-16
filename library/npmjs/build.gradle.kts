@@ -16,6 +16,7 @@
 import dev.petuska.npm.publish.extension.domain.NpmPackage
 
 plugins {
+    id("base")
     alias(libs.plugins.publish.npm)
 }
 
@@ -27,6 +28,8 @@ npmPublish {
     val npmjsAuthToken = rootProject.findProperty("NPMJS_AUTH_TOKEN") as? String
     if (npmjsAuthToken.isNullOrBlank()) return@npmPublish
 
+//    dry.set(true)
+
     registries {
         npmjs {
             authToken.set(npmjsAuthToken)
@@ -34,7 +37,7 @@ npmPublish {
     }
 
     packages {
-        register("binary") {
+        register("binary-resources") {
             packageName.set("${rootProject.name}-resources")
             version.set("${project.version}")
 
@@ -76,4 +79,8 @@ fun NpmPackage.packageInfoJson() {
         keywords.add("tor")
         keywords.add("kmp-tor")
     }
+}
+
+tasks.getByName("clean") {
+    projectDir.resolve("build").delete()
 }
