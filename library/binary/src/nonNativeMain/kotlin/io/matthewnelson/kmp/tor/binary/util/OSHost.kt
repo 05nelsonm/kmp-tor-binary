@@ -42,13 +42,13 @@ public sealed class OSHost private constructor(
 
         public object Android: Linux("android", setOf(
             OSArch.Aarch64,
-            OSArch.Armv7a,
+            OSArch.Armv7,
             OSArch.X86,
             OSArch.X86_64,
         ))
         public object Libc: Linux("libc", setOf(
             OSArch.Aarch64,
-            OSArch.Armv7a,
+            OSArch.Armv7,
             OSArch.X86,
             OSArch.X86_64,
         ))

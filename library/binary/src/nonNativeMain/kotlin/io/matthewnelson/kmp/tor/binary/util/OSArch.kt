@@ -31,7 +31,7 @@ public sealed class OSArch private constructor(
 ) {
 
     public object Aarch64: OSArch("aarch64")
-    public object Armv7a: OSArch("armv7a")
+    public object Armv7: OSArch("armv7")
     public object X86: OSArch("x86")
     public object X86_64: OSArch("x86_64")
 
