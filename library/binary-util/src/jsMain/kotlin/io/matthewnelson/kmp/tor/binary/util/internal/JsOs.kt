@@ -15,10 +15,15 @@
  **/
 @file:JsModule("os")
 @file:JsNonModule
+@file:Suppress("FunctionName")
+
 package io.matthewnelson.kmp.tor.binary.util.internal
 
-internal external fun arch(): String?
+@JsName("arch")
+internal external fun os_arch(): String?
 
-internal external fun machine(): String?
+@JsName("machine")
+internal external fun os_machine(): String?
 
-internal external fun platform(): String?
+@JsName("platform")
+internal external fun os_platform(): String?

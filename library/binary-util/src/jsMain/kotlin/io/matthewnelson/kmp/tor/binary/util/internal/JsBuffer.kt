@@ -15,9 +15,12 @@
  **/
 @file:JsModule("buffer")
 @file:JsNonModule
+@file:Suppress("ClassName")
+
 package io.matthewnelson.kmp.tor.binary.util.internal
 
-internal open external class Buffer {
-    open var length: Number
+@JsName("Buffer")
+internal external class buffer_Buffer {
+    val length: Number
     fun toString(encoding: String, start: Number, end: Number): String
 }

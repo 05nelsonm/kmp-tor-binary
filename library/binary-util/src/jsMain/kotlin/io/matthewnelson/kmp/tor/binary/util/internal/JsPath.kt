@@ -15,10 +15,15 @@
  **/
 @file:JsModule("path")
 @file:JsNonModule
+@file:Suppress("FunctionName")
+
 package io.matthewnelson.kmp.tor.binary.util.internal
 
-internal external val sep: String
+@JsName("sep")
+internal external val path_sep: String
 
-internal external fun normalize(path: String): String
+@JsName("normalize")
+internal external fun path_normalize(path: String): String
 
-internal external fun resolve(vararg path: String): String
+@JsName("resolve")
+internal external fun path_resolve(vararg path: String): String

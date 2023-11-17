@@ -18,20 +18,19 @@
 package io.matthewnelson.kmp.tor.binary.util
 
 import io.matthewnelson.kmp.tor.binary.util.internal.ARCH_MAP
+import io.matthewnelson.kmp.tor.binary.util.internal.Options
 import io.matthewnelson.kmp.tor.binary.util.internal.PATH_MAP_FILES
 import io.matthewnelson.kmp.tor.binary.util.internal.PATH_OS_RELEASE
-import io.matthewnelson.kmp.tor.binary.util.internal.OptionsReadDir
-import io.matthewnelson.kmp.tor.binary.util.internal.OptionsReadFileUtf8
-import io.matthewnelson.kmp.tor.binary.util.internal.arch
-import io.matthewnelson.kmp.tor.binary.util.internal.existsSync
-import io.matthewnelson.kmp.tor.binary.util.internal.lstatSync
-import io.matthewnelson.kmp.tor.binary.util.internal.machine
-import io.matthewnelson.kmp.tor.binary.util.internal.normalize
-import io.matthewnelson.kmp.tor.binary.util.internal.platform
-import io.matthewnelson.kmp.tor.binary.util.internal.readFileSync
-import io.matthewnelson.kmp.tor.binary.util.internal.readdirSync
-import io.matthewnelson.kmp.tor.binary.util.internal.readlinkSync
-import io.matthewnelson.kmp.tor.binary.util.internal.resolve
+import io.matthewnelson.kmp.tor.binary.util.internal.fs_existsSync
+import io.matthewnelson.kmp.tor.binary.util.internal.fs_lstatSync
+import io.matthewnelson.kmp.tor.binary.util.internal.fs_readFileSync
+import io.matthewnelson.kmp.tor.binary.util.internal.fs_readdirSync
+import io.matthewnelson.kmp.tor.binary.util.internal.fs_readlinkSync
+import io.matthewnelson.kmp.tor.binary.util.internal.os_arch
+import io.matthewnelson.kmp.tor.binary.util.internal.os_machine
+import io.matthewnelson.kmp.tor.binary.util.internal.os_platform
+import io.matthewnelson.kmp.tor.binary.util.internal.path_normalize
+import io.matthewnelson.kmp.tor.binary.util.internal.path_resolve
 
 public actual class OSInfo private constructor(
     private val pathMapFiles: String,
@@ -47,8 +46,8 @@ public actual class OSInfo private constructor(
         internal fun get(
             pathMapFiles: String = PATH_MAP_FILES,
             pathOSRelease: String = PATH_OS_RELEASE,
-            machineName: () -> String? = ::machine,
-            osName: () -> String? = ::platform,
+            machineName: () -> String? = ::os_machine,
+            osName: () -> String? = ::os_platform,
         ): OSInfo = OSInfo(
             pathMapFiles = pathMapFiles,
             pathOSRelease = pathOSRelease,
@@ -62,7 +61,7 @@ public actual class OSInfo private constructor(
     }
 
     public actual val osArch: OSArch by lazy {
-        osArch(arch()?.ifBlank { null } ?: "unknown")
+        osArch(os_arch()?.ifBlank { null } ?: "unknown")
     }
 
     // https://nodejs.org/api/os.html#osplatform
@@ -99,14 +98,14 @@ public actual class OSInfo private constructor(
     private fun isLinuxMusl(): Boolean {
         var fileCount = 0
 
-        if (existsSync(pathMapFiles)) {
+        if (fs_existsSync(pathMapFiles)) {
             try {
-                readdirSync(pathMapFiles, OptionsReadDir(recursive = false)).forEach { entry ->
+                fs_readdirSync(pathMapFiles, Options.ReadDir(recursive = false)).forEach { entry ->
                     fileCount++
 
-                    var path = normalize(resolve(pathMapFiles, entry))
-                    if (lstatSync(path).isSymbolicLink()) {
-                        path = readlinkSync(path)
+                    var path = path_normalize(path_resolve(pathMapFiles, entry))
+                    if (fs_lstatSync(path).isSymbolicLink()) {
+                        path = fs_readlinkSync(path)
                     }
 
                     if (path.contains("musl")) {
@@ -123,7 +122,7 @@ public actual class OSInfo private constructor(
             // it's an older kernel which may not have map_files
             // directory.
             try {
-                readFileSync(pathOSRelease, OptionsReadFileUtf8()).let { buffer ->
+                fs_readFileSync(pathOSRelease, Options.ReadUtf8()).let { buffer ->
                     // Should only be like, 500 bytes. This is a simple
                     // check to ensure an OOM exception doesn't occur.
                     if (buffer.length.toLong() > 4096) return false
