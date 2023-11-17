@@ -32,6 +32,7 @@
 
 package io.matthewnelson.kmp.tor.binary.util
 
+import io.matthewnelson.kmp.tor.binary.internal.*
 import io.matthewnelson.kmp.tor.binary.internal.ARCH_MAP
 import io.matthewnelson.kmp.tor.binary.internal.DefaultProcessRunner
 import io.matthewnelson.kmp.tor.binary.internal.PATH_MAP_FILES
@@ -50,6 +51,7 @@ public actual class OSInfo private constructor(
     private val process: ProcessRunner,
     private val pathMapFiles: String,
     private val pathOSRelease: String,
+    private val osName: () -> String?,
 ) {
 
     public actual companion object {
@@ -63,12 +65,13 @@ public actual class OSInfo private constructor(
             process: ProcessRunner = DefaultProcessRunner,
             pathMapFiles: String = PATH_MAP_FILES,
             pathOSRelease: String = PATH_OS_RELEASE,
-        ): OSInfo = OSInfo(process, pathMapFiles, pathOSRelease)
+            osName: () -> String? = { System.getProperty("os.name") }
+        ): OSInfo = OSInfo(process, pathMapFiles, pathOSRelease, osName)
     }
 
     @get:JvmName("osHost")
     public actual val osHost: OSHost by lazy {
-        osHost(System.getProperty("os.name")?.ifBlank { null } ?: "unknown")
+        osHost(osName()?.ifBlank { null } ?: "unknown")
     }
 
     @get:JvmName("osArch")
@@ -85,13 +88,12 @@ public actual class OSInfo private constructor(
             lName.contains("mac") -> OSHost.MacOS
             lName.contains("darwin") -> OSHost.MacOS
             lName.contains("freebsd") -> OSHost.FreeBSD
-            isAndroidRuntime() -> OSHost.Linux.Android
-            isAndroidTermux() -> OSHost.Linux.Android
             lName.contains("linux") -> {
-                if (isLinuxMusl()) {
-                    OSHost.Linux.Musl
-                } else {
-                    OSHost.Linux.Libc
+                when {
+                    isAndroidRuntime() -> OSHost.Linux.Android
+                    isAndroidTermux() -> OSHost.Linux.Android
+                    isLinuxMusl() -> OSHost.Linux.Musl
+                    else -> OSHost.Linux.Libc
                 }
             }
             else -> OSHost.Unknown(
@@ -151,8 +153,6 @@ public actual class OSInfo private constructor(
                         // be resolved which canonicalPath will do for us.
                         val canonicalPath = file.canonicalPath
 
-//                        println("${file.path} >> $canonicalPath")
-
                         if (canonicalPath.lowercase().contains("musl")) {
                             return true
                         }
@@ -174,13 +174,12 @@ public actual class OSInfo private constructor(
                         while (true) {
                             val line = reader.readLine()
 
-//                            println(line)
-
                             // ID and ID_LIKE arguments
-                            if (line.startsWith("ID")) {
-                                if (line.contains("alpine", ignoreCase = true)) {
-                                    return true
-                                }
+                            if (
+                                line.startsWith("ID")
+                                && line.contains("alpine", ignoreCase = true)
+                            ) {
+                                return true
                             }
                         }
                     }
@@ -202,7 +201,7 @@ public actual class OSInfo private constructor(
 
         // aarch64, armv5t, armv5te, armv5tej, armv5tejl, armv6, armv7, armv7l
         val machineHardwareName = try {
-            process.runAndWait(listOf("uname", "-m"))
+            process.runAndWait(listOf("uname", "-m")).lowercase()
         } catch (_: Throwable) {
             return null
         }

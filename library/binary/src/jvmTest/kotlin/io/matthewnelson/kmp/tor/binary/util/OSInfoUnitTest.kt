@@ -43,18 +43,18 @@ class OSInfoUnitTest {
 
         // Termux
         var count = 0
-        OSInfo.get(process = object : ProcessRunner {
-            override fun runAndWait(commands: List<String>): String = runAndWait(commands, 1.seconds)
-            override fun runAndWait(commands: List<String>, timeout: Duration): String {
-                return if (commands == listOf("uname", "-o")) {
+        OSInfo.get(
+            process = { commands, _ ->
+                if (commands == listOf("uname", "-o")) {
                     count++
                     "Linux Android"
                 } else {
                     throw AssertionError("")
                 }
-            }
-        }).let { osInfo ->
-            assertTrue(osInfo.osHost("asdfasdf") is OSHost.Linux.Android)
+            },
+            osName = { "Linux" }
+        ).let { osInfo ->
+            assertTrue(osInfo.osHost is OSHost.Linux.Android)
             assertEquals(1, count)
         }
 
@@ -77,8 +77,9 @@ class OSInfoUnitTest {
                 .resolve("map_files")
                 .toString(),
             pathOSRelease = OS_RELEASE_NOT_MUSL.toString(),
+            osName = { "Linux" }
         ).let { osInfo ->
-            assertTrue(osInfo.osHost("Linux") is OSHost.Linux.Musl)
+            assertTrue(osInfo.osHost is OSHost.Linux.Musl)
         }
 
         // Linux-Musl w/o map_files directory
@@ -92,8 +93,9 @@ class OSInfoUnitTest {
                 .resolve("msl")
                 .resolve("os-release") // alpine linux
                 .toString(),
+            osName = { "Linux" }
         ).let { osInfo ->
-            assertTrue(osInfo.osHost("Linux") is OSHost.Linux.Musl)
+            assertTrue(osInfo.osHost is OSHost.Linux.Musl)
         }
     }
 

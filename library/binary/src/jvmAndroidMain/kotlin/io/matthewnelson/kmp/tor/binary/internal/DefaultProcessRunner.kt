@@ -25,10 +25,6 @@ internal object DefaultProcessRunner: ProcessRunner {
 
     @JvmSynthetic
     @Throws(IOException::class, InterruptedException::class)
-    override fun runAndWait(commands: List<String>): String = runAndWait(commands, 250.milliseconds)
-
-    @JvmSynthetic
-    @Throws(IOException::class, InterruptedException::class)
     override fun runAndWait(commands: List<String>, timeout: Duration): String {
         val p = Runtime.getRuntime().exec(commands.toTypedArray())
         p.waitFor(timeout)

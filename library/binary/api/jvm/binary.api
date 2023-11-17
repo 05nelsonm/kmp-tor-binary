@@ -82,8 +82,8 @@ public final class io/matthewnelson/kmp/tor/binary/util/OSHost$Windows : io/matt
 public final class io/matthewnelson/kmp/tor/binary/util/OSInfo {
 	public static final field Companion Lio/matthewnelson/kmp/tor/binary/util/OSInfo$Companion;
 	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/util/OSInfo;
-	public synthetic fun <init> (Lio/matthewnelson/kmp/tor/binary/internal/ProcessRunner;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public static final synthetic fun get$binary (Lio/matthewnelson/kmp/tor/binary/internal/ProcessRunner;Ljava/lang/String;Ljava/lang/String;)Lio/matthewnelson/kmp/tor/binary/util/OSInfo;
+	public synthetic fun <init> (Lio/matthewnelson/kmp/tor/binary/internal/ProcessRunner;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;Lkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public static final synthetic fun get$binary (Lio/matthewnelson/kmp/tor/binary/internal/ProcessRunner;Ljava/lang/String;Ljava/lang/String;Lkotlin/jvm/functions/Function0;)Lio/matthewnelson/kmp/tor/binary/util/OSInfo;
 	public final fun osArch ()Lio/matthewnelson/kmp/tor/binary/util/OSArch;
 	public final fun osHost ()Lio/matthewnelson/kmp/tor/binary/util/OSHost;
 }

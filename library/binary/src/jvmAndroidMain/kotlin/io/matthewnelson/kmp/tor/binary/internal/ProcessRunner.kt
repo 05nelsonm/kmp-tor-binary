@@ -16,12 +16,15 @@
 package io.matthewnelson.kmp.tor.binary.internal
 
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
-internal interface ProcessRunner {
-
-    @Throws(Exception::class)
-    fun runAndWait(commands: List<String>): String
+internal fun interface ProcessRunner {
 
     @Throws(Exception::class)
     fun runAndWait(commands: List<String>, timeout: Duration): String
 }
+
+@Throws(Exception::class)
+internal fun ProcessRunner.runAndWait(
+    commands: List<String>
+): String = runAndWait(commands, 250.milliseconds)
