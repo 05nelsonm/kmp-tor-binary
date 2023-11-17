@@ -13,23 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+package io.matthewnelson.kmp.tor.binary.internal
 
-package io.matthewnelson.kmp.tor.binary.util
+import java.io.IOException
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmName
+internal fun interface ProcessRunner {
 
-public expect class OSInfo {
-
-    @get:JvmName("osHost")
-    public val osHost: OSHost
-    @get:JvmName("osArch")
-    public val osArch: OSArch
-
-    public companion object {
-
-        @JvmField
-        public val INSTANCE: OSInfo
-    }
+    @Throws(IOException::class, InterruptedException::class)
+    fun runAndWait(commands: List<String>, timeout: Duration): String
 }
+
+@Suppress("NOTHING_TO_INLINE")
+@Throws(IOException::class, InterruptedException::class)
+internal inline fun ProcessRunner.runAndWait(
+    commands: List<String>
+): String = runAndWait(commands, 250.milliseconds)

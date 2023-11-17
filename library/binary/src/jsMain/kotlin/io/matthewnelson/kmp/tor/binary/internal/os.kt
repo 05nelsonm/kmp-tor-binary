@@ -13,23 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@file:JsModule("os")
+@file:JsNonModule
+package io.matthewnelson.kmp.tor.binary.internal
 
-package io.matthewnelson.kmp.tor.binary.util
+internal external fun arch(): String?
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmName
+internal external fun machine(): String?
 
-public expect class OSInfo {
-
-    @get:JvmName("osHost")
-    public val osHost: OSHost
-    @get:JvmName("osArch")
-    public val osArch: OSArch
-
-    public companion object {
-
-        @JvmField
-        public val INSTANCE: OSInfo
-    }
-}
+internal external fun platform(): String?

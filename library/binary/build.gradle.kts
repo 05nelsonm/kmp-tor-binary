@@ -64,12 +64,19 @@ kmpConfiguration {
                     implementation(npm("kmp-tor-binary-resources", "$version"))
                 }
             }
+
+            sourceSetTest {
+                dependencies {
+                    implementation(libs.okio.node)
+                }
+            }
         }
 
         common {
             sourceSetTest {
                 dependencies {
                     implementation(kotlin("test"))
+                    implementation(libs.okio.okio)
                 }
             }
         }

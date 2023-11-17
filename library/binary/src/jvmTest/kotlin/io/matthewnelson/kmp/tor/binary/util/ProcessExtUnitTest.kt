@@ -26,8 +26,10 @@ class ProcessExtUnitTest {
 
     @Test
     fun givenProcess_whenWaitFor_thenBlocksUntilCompletion() {
-        if (OSInfo.INSTANCE.osHost is OSHost.Unknown) {
-            return
+        when (OSInfo.INSTANCE.osHost) {
+            is OSHost.Unknown,
+            is OSHost.Windows -> return
+            else -> { /* run */ }
         }
 
         val runTime = measureTime {

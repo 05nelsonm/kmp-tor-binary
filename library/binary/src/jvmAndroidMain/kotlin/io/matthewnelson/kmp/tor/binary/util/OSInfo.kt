@@ -32,6 +32,8 @@
 
 package io.matthewnelson.kmp.tor.binary.util
 
+import io.matthewnelson.kmp.tor.binary.internal.*
+import io.matthewnelson.kmp.tor.binary.internal.ARCH_MAP
 import io.matthewnelson.kmp.tor.binary.internal.DefaultProcessRunner
 import io.matthewnelson.kmp.tor.binary.internal.PATH_MAP_FILES
 import io.matthewnelson.kmp.tor.binary.internal.PATH_OS_RELEASE
@@ -45,10 +47,11 @@ import kotlin.time.Duration.Companion.milliseconds
  *
  * [sqlite-jdbc](https://github.com/xerial/sqlite-jdbc/blob/master/src/main/java/org/sqlite/util/OSInfo.java)
  * */
-public actual class OSInfo private actual constructor(
+public actual class OSInfo private constructor(
     private val process: ProcessRunner,
     private val pathMapFiles: String,
     private val pathOSRelease: String,
+    private val osName: () -> String?,
 ) {
 
     public actual companion object {
@@ -60,38 +63,25 @@ public actual class OSInfo private actual constructor(
         @JvmSynthetic
         internal fun get(
             process: ProcessRunner = DefaultProcessRunner,
-            pathMapFile: String = PATH_MAP_FILES,
+            pathMapFiles: String = PATH_MAP_FILES,
             pathOSRelease: String = PATH_OS_RELEASE,
-        ): OSInfo = OSInfo(process, pathMapFile, pathOSRelease)
+            osName: () -> String? = { System.getProperty("os.name") }
+        ): OSInfo = OSInfo(
+            process = process,
+            pathMapFiles = pathMapFiles,
+            pathOSRelease = pathOSRelease,
+            osName = osName,
+        )
     }
 
     @get:JvmName("osHost")
     public actual val osHost: OSHost by lazy {
-        osHost(System.getProperty("os.name")?.ifBlank { null } ?: "unknown")
+        osHost(osName()?.ifBlank { null } ?: "unknown")
     }
 
     @get:JvmName("osArch")
     public actual val osArch: OSArch by lazy {
         osArch(System.getProperty("os.arch")?.ifBlank { null } ?: "unknown")
-    }
-
-    private val archMap: Map<String, OSArch> by lazy {
-        mutableMapOf<String, OSArch>().apply {
-            put("x86", OSArch.X86)
-            put("i386", OSArch.X86)
-            put("i486", OSArch.X86)
-            put("i586", OSArch.X86)
-            put("i686", OSArch.X86)
-            put("pentium", OSArch.X86)
-
-            put("x86_64", OSArch.X86_64)
-            put("amd64", OSArch.X86_64)
-            put("em64t", OSArch.X86_64)
-            put("universal", OSArch.X86_64) // openjdk7 Mac
-
-            put("aarch64", OSArch.Aarch64)
-            put("arm64", OSArch.Aarch64)
-        }
     }
 
     @JvmSynthetic
@@ -103,10 +93,14 @@ public actual class OSInfo private actual constructor(
             lName.contains("mac") -> OSHost.MacOS
             lName.contains("darwin") -> OSHost.MacOS
             lName.contains("freebsd") -> OSHost.FreeBSD
-            isAndroidRuntime() -> OSHost.Linux.Android
-            isAndroidTermux() -> OSHost.Linux.Android
-            isLinuxMusl() -> OSHost.Linux.Musl
-            lName.contains("linux") -> OSHost.Linux.Libc
+            lName.contains("linux") -> {
+                when {
+                    isAndroidRuntime() -> OSHost.Linux.Android
+                    isAndroidTermux() -> OSHost.Linux.Android
+                    isLinuxMusl() -> OSHost.Linux.Musl
+                    else -> OSHost.Linux.Libc
+                }
+            }
             else -> OSHost.Unknown(
                 name.replace("\\W", "")
                     .lowercase(Locale.US)
@@ -118,7 +112,7 @@ public actual class OSInfo private actual constructor(
     internal fun osArch(name: String): OSArch {
         val lArch = name.lowercase(Locale.US)
 
-        val mapped = archMap[lArch]
+        val mapped = ARCH_MAP[lArch]
 
         return when {
             mapped != null -> mapped
@@ -164,9 +158,7 @@ public actual class OSInfo private actual constructor(
                         // be resolved which canonicalPath will do for us.
                         val canonicalPath = file.canonicalPath
 
-//                        println("${file.path} >> $canonicalPath")
-
-                        if (canonicalPath.lowercase().contains("musl")) {
+                        if (canonicalPath.contains("musl")) {
                             return true
                         }
                     }
@@ -187,11 +179,12 @@ public actual class OSInfo private actual constructor(
                         while (true) {
                             val line = reader.readLine()
 
-//                            println(line)
-
                             // ID and ID_LIKE arguments
-                            if (line.startsWith("ID")) {
-                                if (line.contains("alpine")) return true
+                            if (
+                                line.startsWith("ID")
+                                && line.contains("alpine", ignoreCase = true)
+                            ) {
+                                return true
                             }
                         }
                     }
@@ -213,7 +206,7 @@ public actual class OSInfo private actual constructor(
 
         // aarch64, armv5t, armv5te, armv5tej, armv5tejl, armv6, armv7, armv7l
         val machineHardwareName = try {
-            process.runAndWait(listOf("uname", "-m"))
+            process.runAndWait(listOf("uname", "-m")).lowercase()
         } catch (_: Throwable) {
             return null
         }
