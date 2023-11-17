@@ -50,17 +50,20 @@ plugins.withType<YarnPlugin> {
 
 @Suppress("LocalVariableName")
 apiValidation {
+    val KMP_TARGETS = findProperty("KMP_TARGETS") as? String
     val KMP_TARGETS_ALL = System.getProperty("KMP_TARGETS_ALL") != null
-    val KMP_TARGETS = (findProperty("KMP_TARGETS") as? String)
-        ?.split(',')
+    val TARGETS = KMP_TARGETS?.split(',')
 
     if (CHECK_PUBLICATION != null) {
         ignoredProjects.add("check-publication")
     } else {
         nonPublicMarkers.add("io.matthewnelson.diff.core.internal.InternalDiffApi")
 
+        val JVM = TARGETS?.contains("JVM") != false
+        val ANDROID = TARGETS?.contains("ANDROID") != false
+
         // Don't check these projects when building JVM only or Android only
-        if (!KMP_TARGETS_ALL && KMP_TARGETS?.containsAll(setOf("ANDROID", "JVM")) != false) {
+        if (!KMP_TARGETS_ALL && ((!ANDROID && JVM) || (ANDROID && !JVM))) {
             ignoredProjects.add("binary")
             ignoredProjects.add("binary-util")
         }
