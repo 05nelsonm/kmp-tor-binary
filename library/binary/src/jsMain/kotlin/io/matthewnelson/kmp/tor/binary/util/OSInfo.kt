@@ -24,6 +24,7 @@ import io.matthewnelson.kmp.tor.binary.internal.PATH_MAP_FILES
 public actual class OSInfo private constructor(
     private val pathMapFiles: String,
     private val pathOSRelease: String,
+    private val machineName: () -> String?,
     private val osName: () -> String?,
 ) {
 
@@ -34,8 +35,14 @@ public actual class OSInfo private constructor(
         internal fun get(
             pathMapFiles: String = PATH_MAP_FILES,
             pathOSRelease: String = PATH_OS_RELEASE,
+            machineName: () -> String? = ::machine,
             osName: () -> String? = ::platform,
-        ): OSInfo = OSInfo(pathMapFiles, pathOSRelease, osName)
+        ): OSInfo = OSInfo(
+            pathMapFiles = pathMapFiles,
+            pathOSRelease = pathOSRelease,
+            machineName = machineName,
+            osName = osName,
+        )
     }
 
     public actual val osHost: OSHost by lazy {
@@ -125,7 +132,38 @@ public actual class OSInfo private constructor(
     }
 
     private fun resolveMachineArch(): OSArch? {
-        // TODO
+        val machineHardwareName = try {
+            machineName()?.lowercase() ?: return null
+        } catch (_: Throwable) {
+            return null
+        }
+
+        // Should resolve any possible x86/x86_64 values
+        ARCH_MAP[machineHardwareName]?.let { return it }
+
+        // Should never be the case because it's in archMap which
+        // is always checked before calling this function.
+        if (
+            machineHardwareName.startsWith("aarch64")
+            || machineHardwareName.startsWith("arm64")
+        ) {
+            return OSArch.Aarch64
+        }
+
+        // If android and NOT aarch64, return the only other
+        // supported arm architecture.
+        if (
+            machineHardwareName.startsWith("arm")
+            && osHost is OSHost.Linux.Android
+        ) {
+            return OSArch.Armv7
+        }
+
+        if (machineHardwareName.startsWith("armv7")) {
+            return OSArch.Armv7
+        }
+
+        // Unsupported
         return null
     }
 }

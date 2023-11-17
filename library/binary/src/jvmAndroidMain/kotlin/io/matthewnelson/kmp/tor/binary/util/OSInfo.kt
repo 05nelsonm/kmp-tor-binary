@@ -66,7 +66,12 @@ public actual class OSInfo private constructor(
             pathMapFiles: String = PATH_MAP_FILES,
             pathOSRelease: String = PATH_OS_RELEASE,
             osName: () -> String? = { System.getProperty("os.name") }
-        ): OSInfo = OSInfo(process, pathMapFiles, pathOSRelease, osName)
+        ): OSInfo = OSInfo(
+            process = process,
+            pathMapFiles = pathMapFiles,
+            pathOSRelease = pathOSRelease,
+            osName = osName,
+        )
     }
 
     @get:JvmName("osHost")

@@ -24,26 +24,48 @@ import kotlin.test.assertTrue
 class OSInfoUnitTest {
 
     @Test
-    fun givenOSInfo_whenOSName_thenOSHostIsAsExpected() {
+    fun givenOSNameWindows_whenOSHost_thenIsWindows() {
         println("OS_HOST: ${OSInfo.INSTANCE.osHost}")
         println("OS_ARCH: ${OSInfo.INSTANCE.osArch}")
 
         assertTrue(OSInfo.INSTANCE.osHost("win32") is OSHost.Windows)
-        assertTrue(OSInfo.INSTANCE.osHost("darwin") is OSHost.MacOS)
-        assertTrue(OSInfo.INSTANCE.osHost("freebsd") is OSHost.FreeBSD)
-        assertTrue(OSInfo.INSTANCE.osHost("android") is OSHost.Linux.Android)
+    }
 
+    @Test
+    fun givenOSNameDarwin_whenOSHost_thenIsMacOS() {
+        assertTrue(OSInfo.INSTANCE.osHost("darwin") is OSHost.MacOS)
+    }
+
+    @Test
+    fun givenOSNameFreeBSD_whenOSHost_thenIsFreeBSD() {
+        assertTrue(OSInfo.INSTANCE.osHost("freebsd") is OSHost.FreeBSD)
+    }
+
+    @Test
+    fun givenOSNameAndroid_whenOSHost_thenIsAndroid() {
+        assertTrue(OSInfo.INSTANCE.osHost("android") is OSHost.Linux.Android)
+    }
+
+    @Test
+    fun givenOSNameLinux_whenOSHost_thenIsLinuxLibc() {
         OSInfo.get(
             pathMapFiles = MAP_FILES_NOT_MUSL.toString(),
             pathOSRelease = OS_RELEASE_NOT_MUSL.toString(),
-            osName = { "linux" }
+            osName = { "linux" },
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Libc)
         }
+    }
 
-        // Remaining linux tests cannot be run on windows host machine
+    @Test
+    fun givenOSNameLinux_whenMapFilesMusl_thenIsLinuxMusl() {
+        // Linux tests cannot be run on windows host machine
         // because symbolic links are not a thing.
-        if (OSInfo.INSTANCE.osHost is OSHost.Windows) return
+        when (OSInfo.INSTANCE.osHost) {
+            is OSHost.Unknown,
+            is OSHost.Windows -> return
+            else -> { /* run */ }
+        }
 
         // Linux-Musl WITH map_files directory
         OSInfo.get(
@@ -52,11 +74,14 @@ class OSInfoUnitTest {
                 .resolve("map_files")
                 .toString(),
             pathOSRelease = OS_RELEASE_NOT_MUSL.toString(),
-            osName = { "linux" }
+            osName = { "linux" },
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Musl)
         }
+    }
 
+    @Test
+    fun givenOSNameLinux_whenMapFilesNoExistAndOSReleaseAlpine_thenIsLinuxMusl() {
         // Linux-Musl w/o map_files directory
         // Will check os-release to see if it's alpine
         OSInfo.get(
@@ -68,9 +93,12 @@ class OSInfoUnitTest {
                 .resolve("msl")
                 .resolve("os-release")
                 .toString(),
-            osName = { "linux" }
+            osName = { "linux" },
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Musl)
         }
     }
+
+    // TODO: architecture tests
+
 }

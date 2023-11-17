@@ -18,29 +18,35 @@ package io.matthewnelson.kmp.tor.binary.util
 import io.matthewnelson.kmp.tor.binary.MAP_FILES_NOT_MUSL
 import io.matthewnelson.kmp.tor.binary.OS_RELEASE_NOT_MUSL
 import io.matthewnelson.kmp.tor.binary.TEST_SUPPORT_DIR
-import io.matthewnelson.kmp.tor.binary.internal.ProcessRunner
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 
 class OSInfoUnitTest {
 
     @Test
-    fun givenOSInfo_whenOSName_thenOSHostIsAsExpected() {
+    fun givenOSNameWindows_whenOSHost_thenIsWindows() {
         // Name only based checks
         assertTrue(OSInfo.INSTANCE.osHost("Windows XP") is OSHost.Windows)
         assertTrue(OSInfo.INSTANCE.osHost("Windows 2000") is OSHost.Windows)
         assertTrue(OSInfo.INSTANCE.osHost("Windows Vista") is OSHost.Windows)
         assertTrue(OSInfo.INSTANCE.osHost("Windows 98") is OSHost.Windows)
         assertTrue(OSInfo.INSTANCE.osHost("Windows 95") is OSHost.Windows)
+    }
 
+    @Test
+    fun givenOSNameMac_whenOSHost_thenIsMacOS() {
         assertTrue(OSInfo.INSTANCE.osHost("Mac OS") is OSHost.MacOS)
         assertTrue(OSInfo.INSTANCE.osHost("Mac OS X") is OSHost.MacOS)
+    }
 
+    @Test
+    fun givenOSNameFreeBSD_whenOSHost_thenIsFreeBSD() {
         assertTrue(OSInfo.INSTANCE.osHost("FreeBSD") is OSHost.FreeBSD)
+    }
 
+    @Test
+    fun givenOSNameLinux_whenUnameOAndroid_thenIsLinuxAndroid() {
         // Termux
         var count = 0
         OSInfo.get(
@@ -55,9 +61,13 @@ class OSInfoUnitTest {
             osName = { "Linux" }
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Android)
+            // Ensure isAndroidTermux executed uname -o
             assertEquals(1, count)
         }
+    }
 
+    @Test
+    fun givenOSNameLinux_whenOSName_thenIsLinuxLibc() {
         OSInfo.get(
             pathMapFiles = MAP_FILES_NOT_MUSL.toString(),
             pathOSRelease = OS_RELEASE_NOT_MUSL.toString(),
@@ -65,10 +75,17 @@ class OSInfoUnitTest {
             assertTrue(osInfo.osHost("Linux") is OSHost.Linux.Libc)
             assertTrue(osInfo.osHost("GNU/Linux") is OSHost.Linux.Libc)
         }
+    }
 
-        // Remaining linux tests cannot be run on windows host machine
+    @Test
+    fun givenOSInfo_whenMapFilesMusl_thenIsLinuxMusl() {
+        // Linux tests cannot be run on windows host machine
         // because symbolic links are not a thing.
-        if (OSInfo.INSTANCE.osHost is OSHost.Windows) return
+        when (OSInfo.INSTANCE.osHost) {
+            is OSHost.Unknown,
+            is OSHost.Windows -> return
+            else -> { /* run */ }
+        }
 
         // Linux-Musl WITH map_files directory
         OSInfo.get(
@@ -81,7 +98,10 @@ class OSInfoUnitTest {
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Musl)
         }
+    }
 
+    @Test
+    fun givenOSNameLinux_whenMapFilesNoExistAndOSReleaseAlpine_thenIsLinuxMusl() {
         // Linux-Musl w/o map_files directory
         // Will check os-release to see if it's alpine
         OSInfo.get(
@@ -100,4 +120,5 @@ class OSInfoUnitTest {
     }
 
     // TODO: architecture tests
+
 }
