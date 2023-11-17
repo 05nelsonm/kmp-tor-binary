@@ -23,6 +23,8 @@ import io.matthewnelson.kmp.tor.binary.internal.PATH_MAP_FILES
 
 public actual class OSInfo private constructor(
     private val pathMapFiles: String,
+    private val pathOSRelease: String,
+    private val osName: () -> String?,
 ) {
 
     public actual companion object {
@@ -31,11 +33,13 @@ public actual class OSInfo private constructor(
 
         internal fun get(
             pathMapFiles: String = PATH_MAP_FILES,
-        ): OSInfo = OSInfo(pathMapFiles)
+            pathOSRelease: String = PATH_OS_RELEASE,
+            osName: () -> String? = ::platform,
+        ): OSInfo = OSInfo(pathMapFiles, pathOSRelease, osName)
     }
 
     public actual val osHost: OSHost by lazy {
-        osHost(platform()?.ifBlank { null } ?: "unknown")
+        osHost(osName()?.ifBlank { null } ?: "unknown")
     }
 
     public actual val osArch: OSArch by lazy {
@@ -50,10 +54,9 @@ public actual class OSInfo private constructor(
             "freebsd" -> OSHost.FreeBSD
             "android" -> OSHost.Linux.Android
             "linux" -> {
-                if (isLinuxMusl()) {
-                    OSHost.Linux.Musl
-                } else {
-                    OSHost.Linux.Libc
+                when {
+                    isLinuxMusl() -> OSHost.Linux.Musl
+                    else -> OSHost.Linux.Libc
                 }
             }
             else -> OSHost.Unknown(lName)
@@ -68,33 +71,60 @@ public actual class OSInfo private constructor(
 
         return when {
             mapped != null -> mapped
-            lArch.startsWith("arm") -> resolveArmArchType()
-            else -> null
+            // If wasn't resolved by using os.arch,
+            // try obtaining it via os.machine
+            else -> resolveMachineArch()
         } ?: OSArch.Unsupported(lArch)
     }
 
     private fun isLinuxMusl(): Boolean {
-        if (!existsSync(pathMapFiles)) return false
+        var fileCount = 0
 
-        try {
-            readdirSync(pathMapFiles, OptionsReadDir()).forEach { entry ->
-                var path = normalize(resolve(pathMapFiles, entry))
-                if (lstatSync(path).isSymbolicLink()) {
-                    path = readlinkSync(path)
+        if (existsSync(pathMapFiles)) {
+            try {
+                readdirSync(pathMapFiles, OptionsReadDir(recursive = false)).forEach { entry ->
+                    fileCount++
+
+                    var path = normalize(resolve(pathMapFiles, entry))
+                    if (lstatSync(path).isSymbolicLink()) {
+                        path = readlinkSync(path)
+                    }
+
+                    if (path.contains("musl")) {
+                        return true
+                    }
                 }
-
-//                println(path)
-
-                if (path.lowercase().contains("musl")) {
-                    return true
-                }
+            } catch (_: Throwable) {
+                fileCount = 0
             }
-        } catch (_: Throwable) {}
+        }
+
+        if (fileCount < 1) {
+            // Fallback to checking for Alpine Linux in the event
+            // it's an older kernel which may not have map_files
+            // directory.
+            try {
+                readFileSync(pathOSRelease, OptionsReadFileUtf8()).let { buffer ->
+                    // Should only be like, 500 bytes. This is a simple
+                    // check to ensure an OOM exception doesn't occur.
+                    if (buffer.length.toLong() > 4096) return false
+
+                    buffer.toString("utf8", 0, buffer.length)
+                }.lines().forEach { line ->
+                    if (
+                        line.startsWith("ID")
+                        && line.contains("alpine", ignoreCase = true)
+                    ) {
+                        return true
+                    }
+                }
+            } catch (_: Throwable) {}
+        }
 
         return false
     }
 
-    private fun resolveArmArchType(): OSArch? {
+    private fun resolveMachineArch(): OSArch? {
         // TODO
         return null
     }

@@ -153,7 +153,7 @@ public actual class OSInfo private constructor(
                         // be resolved which canonicalPath will do for us.
                         val canonicalPath = file.canonicalPath
 
-                        if (canonicalPath.lowercase().contains("musl")) {
+                        if (canonicalPath.contains("musl")) {
                             return true
                         }
                     }

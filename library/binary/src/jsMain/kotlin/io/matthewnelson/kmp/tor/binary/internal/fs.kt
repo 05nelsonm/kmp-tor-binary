@@ -21,11 +21,9 @@ internal external fun mkdirSync(path: String): String?
 
 internal external fun readdirSync(path: String, options: OptionsReadDir): Array<String>
 
-// Can potentially return a Buffer if ReadFileOptions.encoding is null...
-internal external fun readFileSync(path: String, options: OptionsReadFile): Any
+internal external fun readFileSync(path: String, options: OptionsReadFileUtf8): Buffer
 
-// Returns a Buffer
-internal external fun readFileSync(path: String): Any
+internal external fun readFileSync(path: String): Buffer
 
 // data can be a String or a Buffer
 internal external fun writeFileSync(path: String, data: Any)
@@ -45,10 +43,4 @@ internal open external class Stats {
     fun isFile(): Boolean
     fun isDirectory(): Boolean
     fun isSymbolicLink(): Boolean
-}
-
-internal open external class Dirent {
-    fun isSymbolicLink(): Boolean
-    open var name: String
-    open var path: String
 }

@@ -15,20 +15,22 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
-@Suppress("unused")
-internal class OptionsReadFile(
-    val encoding: String? = "utf8",
-)
+internal class OptionsReadFileUtf8 private constructor(
+    val encoding: String?,
+    val flag: String,
+) {
+    internal constructor(): this("utf8", "r")
+}
 
 internal class OptionsReadDir private constructor(
     val encoding: String?,
     val withFileTypes: Boolean,
     val recursive: Boolean,
 ) {
-    internal constructor(recursive: Boolean = false): this("utf8", false, recursive)
+    // will force readdir to return an array of strings
+    internal constructor(recursive: Boolean): this("utf8", false, recursive)
 }
 
-@Suppress("unused")
 internal class OptionsRm(
     val force: Boolean = true,
     val recursive: Boolean = true,
