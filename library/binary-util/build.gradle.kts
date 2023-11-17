@@ -19,50 +19,51 @@ plugins {
 
 kmpConfiguration {
     configureShared(
-        androidNamespace = "io.matthewnelson.kmp.tor.binary",
+        androidNamespace = "io.matthewnelson.kmp.tor.binary.util",
         publish = true,
     ) {
         androidLibrary {
             android {
                 defaultConfig {
-                    ndk {
-                        abiFilters.add("arm64-v8a")
-                        abiFilters.add("armeabi-v7a")
-                        abiFilters.add("x86")
-                        abiFilters.add("x86_64")
-                    }
-
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                }
-
-                sourceSets.getByName("main") {
-                    jniLibs.srcDir("src/androidMain/jniLibs")
-
-                    // geoip/geoip6 files
-                    resources.srcDirs("src/jvmAndroidMain/resources")
                 }
             }
 
-            sourceSetTest {
+            sourceSetTestInstrumented {
                 dependencies {
-                    implementation(project(":library:binary-android-unit-test"))
+                    implementation(libs.androidx.test.core)
+                    implementation(libs.androidx.test.runner)
                 }
             }
         }
 
         js {
-            sourceSetMain {
+            sourceSetTest {
                 dependencies {
-                    // resources
-                    implementation(npm("kmp-tor-binary-resources", "$version"))
+                    implementation(libs.okio.node)
                 }
             }
         }
 
         common {
-            sourceSetMain {
+            sourceSetTest {
                 dependencies {
-                    implementation(project(":library:binary-util"))
+                    implementation(kotlin("test"))
+                    implementation(libs.okio.okio)
+                }
+            }
+        }
+
+        kotlin {
+            with(sourceSets) {
+                val jvmAndroidMain = findByName("jvmAndroidMain")
+                val jsMain = findByName("jsMain")
+
+                if (jvmAndroidMain != null || jsMain != null) {
+                    val nonNativeMain = maybeCreate("nonNativeMain")
+
+                    jvmAndroidMain?.apply { dependsOn(nonNativeMain) }
+                    jsMain?.apply { dependsOn(nonNativeMain) }
                 }
             }
         }
