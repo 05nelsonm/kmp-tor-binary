@@ -15,16 +15,18 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
+import java.io.IOException
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 internal fun interface ProcessRunner {
 
-    @Throws(Exception::class)
+    @Throws(IOException::class, InterruptedException::class)
     fun runAndWait(commands: List<String>, timeout: Duration): String
 }
 
-@Throws(Exception::class)
-internal fun ProcessRunner.runAndWait(
+@Suppress("NOTHING_TO_INLINE")
+@Throws(IOException::class, InterruptedException::class)
+internal inline fun ProcessRunner.runAndWait(
     commands: List<String>
 ): String = runAndWait(commands, 250.milliseconds)
