@@ -61,7 +61,7 @@ kmpConfiguration {
 
                 if (jvmAndroidMain != null || jsMain != null) {
                     val nonNativeMain = maybeCreate("nonNativeMain")
-
+                    nonNativeMain.dependsOn(getByName("commonMain"))
                     jvmAndroidMain?.apply { dependsOn(nonNativeMain) }
                     jsMain?.apply { dependsOn(nonNativeMain) }
                 }

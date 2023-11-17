@@ -16,6 +16,5 @@
 package io.matthewnelson.kmp.tor.binary.util.internal
 
 @JvmSynthetic
-@PublishedApi
 @Suppress("NOTHING_TO_INLINE", "KotlinRedundantDiagnosticSuppress")
 internal expect inline fun Process.forciblyDestroyInternal(): Process

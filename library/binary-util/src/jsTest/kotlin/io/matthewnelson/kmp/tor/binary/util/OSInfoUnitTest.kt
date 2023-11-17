@@ -18,6 +18,7 @@ package io.matthewnelson.kmp.tor.binary.util
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
+@OptIn(InternalKmpTorBinaryApi::class)
 class OSInfoUnitTest {
 
     @Test

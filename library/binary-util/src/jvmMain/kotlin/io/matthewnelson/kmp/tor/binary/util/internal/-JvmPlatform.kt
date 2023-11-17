@@ -15,7 +15,9 @@
  **/
 package io.matthewnelson.kmp.tor.binary.util.internal
 
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+
 @JvmSynthetic
-@PublishedApi
+@InternalKmpTorBinaryApi
 @Suppress("NewApi", "NOTHING_TO_INLINE")
 internal actual inline fun Process.forciblyDestroyInternal(): Process = destroyForcibly()

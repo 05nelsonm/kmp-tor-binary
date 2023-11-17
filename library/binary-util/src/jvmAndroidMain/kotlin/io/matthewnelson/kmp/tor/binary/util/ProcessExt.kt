@@ -35,6 +35,7 @@ import kotlin.time.Duration
  *   event that [timeout] is exceeded without process completion.
  * @return true if the process has completed, false if it has not.
  * */
+@InternalKmpTorBinaryApi
 public fun Process.waitFor(timeout: Duration, destroyOnTimeout: Boolean = true): Boolean {
     val startTime = System.nanoTime()
     var remaining = timeout.inWholeNanoseconds
@@ -69,5 +70,5 @@ public fun Process.waitFor(timeout: Duration, destroyOnTimeout: Boolean = true):
  * check if the call is available (API 26+). If unavailable, falls
  * back to calling [Process.destroy].
  * */
-@Suppress("NOTHING_TO_INLINE")
-public inline fun Process.forciblyDestroy(): Process = forciblyDestroyInternal()
+@InternalKmpTorBinaryApi
+public fun Process.forciblyDestroy(): Process = forciblyDestroyInternal()

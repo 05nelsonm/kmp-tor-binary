@@ -20,6 +20,7 @@ package io.matthewnelson.kmp.tor.binary.util
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmName
 
+@InternalKmpTorBinaryApi
 public expect class OSInfo {
 
     @get:JvmName("osHost")

@@ -57,6 +57,7 @@ apiValidation {
         ignoredProjects.add("check-publication")
     } else {
         nonPublicMarkers.add("io.matthewnelson.diff.core.internal.InternalDiffApi")
+        nonPublicMarkers.add("io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi")
 
         // Don't check these projects when building JVM only or Android only
         if (!KMP_TARGETS_ALL && KMP_TARGETS?.containsAll(setOf("ANDROID", "JVM")) == false) {

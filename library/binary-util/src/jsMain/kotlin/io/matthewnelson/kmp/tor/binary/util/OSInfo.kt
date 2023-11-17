@@ -32,6 +32,7 @@ import io.matthewnelson.kmp.tor.binary.util.internal.os_platform
 import io.matthewnelson.kmp.tor.binary.util.internal.path_normalize
 import io.matthewnelson.kmp.tor.binary.util.internal.path_resolve
 
+@InternalKmpTorBinaryApi
 public actual class OSInfo private constructor(
     private val pathMapFiles: String,
     private val pathOSRelease: String,

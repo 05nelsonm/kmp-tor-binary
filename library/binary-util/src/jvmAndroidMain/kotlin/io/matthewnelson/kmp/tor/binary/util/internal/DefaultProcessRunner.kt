@@ -15,11 +15,11 @@
  **/
 package io.matthewnelson.kmp.tor.binary.util.internal
 
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.util.waitFor
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.milliseconds
 
 internal object DefaultProcessRunner: ProcessRunner {
 
@@ -27,6 +27,7 @@ internal object DefaultProcessRunner: ProcessRunner {
     @Throws(IOException::class, InterruptedException::class)
     override fun runAndWait(commands: List<String>, timeout: Duration): String {
         val p = Runtime.getRuntime().exec(commands.toTypedArray())
+        @OptIn(InternalKmpTorBinaryApi::class)
         p.waitFor(timeout)
 
         return p.inputStream.use { iStream ->
