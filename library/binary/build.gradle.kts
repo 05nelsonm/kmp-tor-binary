@@ -48,6 +48,13 @@ kmpConfiguration {
                     implementation(project(":library:binary-android-unit-test"))
                 }
             }
+
+            sourceSetTestInstrumented {
+                dependencies {
+                    implementation(libs.androidx.test.core)
+                    implementation(libs.androidx.test.runner)
+                }
+            }
         }
 
         js {

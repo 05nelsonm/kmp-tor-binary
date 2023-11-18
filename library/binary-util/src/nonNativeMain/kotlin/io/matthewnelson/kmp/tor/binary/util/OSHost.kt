@@ -26,6 +26,7 @@ import kotlin.jvm.JvmField
  * [arches] are the supported architectures for the
  * given [OSHost].
  * */
+@InternalKmpTorBinaryApi
 public sealed class OSHost private constructor(
     @JvmField
     public val path: String,
@@ -33,38 +34,46 @@ public sealed class OSHost private constructor(
     public val arches: Set<OSArch>,
 ) {
 
+    @InternalKmpTorBinaryApi
     public object FreeBSD: OSHost("freebsd", emptySet())
 
+    @InternalKmpTorBinaryApi
     public sealed class Linux private constructor(
         subtype: String,
         arches: Set<OSArch>,
     ): OSHost("linux-$subtype", arches) {
 
+        @InternalKmpTorBinaryApi
         public object Android: Linux("android", setOf(
             OSArch.Aarch64,
             OSArch.Armv7,
             OSArch.X86,
             OSArch.X86_64,
         ))
+        @InternalKmpTorBinaryApi
         public object Libc: Linux("libc", setOf(
             OSArch.Aarch64,
             OSArch.Armv7,
             OSArch.X86,
             OSArch.X86_64,
         ))
+        @InternalKmpTorBinaryApi
         public object Musl: Linux("musl", emptySet())
 
     }
 
+    @InternalKmpTorBinaryApi
     public object MacOS: OSHost("macos", setOf(
         OSArch.Aarch64,
         OSArch.X86_64,
     ))
+    @InternalKmpTorBinaryApi
     public object Windows: OSHost("mingw", setOf(
         OSArch.X86,
         OSArch.X86_64,
     ))
 
+    @InternalKmpTorBinaryApi
     public class Unknown(
         @JvmField
         public val name: String

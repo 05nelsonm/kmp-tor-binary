@@ -13,24 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+package io.matthewnelson.kmp.tor.binary
 
-package io.matthewnelson.kmp.tor.binary.util
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.util.OSHost
+import io.matthewnelson.kmp.tor.binary.util.OSInfo
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmName
+@OptIn(InternalKmpTorBinaryApi::class)
+class OSInfoUnitTest {
 
-@InternalKmpTorBinaryApi
-public expect class OSInfo {
-
-    @get:JvmName("osHost")
-    public val osHost: OSHost
-    @get:JvmName("osArch")
-    public val osArch: OSArch
-
-    public companion object {
-
-        @JvmField
-        public val INSTANCE: OSInfo
+    @Test
+    fun givenOSInfo_whenAndroidEmulator_thenHostIsLinuxAndroid() {
+        // Should register as android as it's running in the emulator
+        assertTrue(OSInfo.INSTANCE.osHost is OSHost.Linux.Android)
     }
 }

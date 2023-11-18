@@ -25,16 +25,22 @@ import kotlin.jvm.JvmField
  * [path] is directly correlated to the resource
  * path in which tor will be located.
  * */
+@InternalKmpTorBinaryApi
 public sealed class OSArch private constructor(
     @JvmField
     public val path: String
 ) {
 
+    @InternalKmpTorBinaryApi
     public object Aarch64: OSArch("aarch64")
+    @InternalKmpTorBinaryApi
     public object Armv7: OSArch("armv7")
+    @InternalKmpTorBinaryApi
     public object X86: OSArch("x86")
+    @InternalKmpTorBinaryApi
     public object X86_64: OSArch("x86_64")
 
+    @InternalKmpTorBinaryApi
     public class Unsupported(
         @JvmField
         public val arch: String

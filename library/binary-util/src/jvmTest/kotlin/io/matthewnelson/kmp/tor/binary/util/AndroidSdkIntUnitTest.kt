@@ -13,24 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-
 package io.matthewnelson.kmp.tor.binary.util
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmName
+import kotlin.test.Test
+import kotlin.test.assertNull
 
-@InternalKmpTorBinaryApi
-public expect class OSInfo {
+@OptIn(InternalKmpTorBinaryApi::class)
+class AndroidSdkIntUnitTest {
 
-    @get:JvmName("osHost")
-    public val osHost: OSHost
-    @get:JvmName("osArch")
-    public val osArch: OSArch
-
-    public companion object {
-
-        @JvmField
-        public val INSTANCE: OSInfo
+    @Test
+    fun givenAndroidSdkIntJava_whenNotAndroidRuntime_thenIsNull() {
+        assertNull(ANDROID_SDK_INT)
     }
 }

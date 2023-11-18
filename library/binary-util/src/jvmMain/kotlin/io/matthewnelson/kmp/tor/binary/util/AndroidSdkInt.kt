@@ -13,24 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-
 package io.matthewnelson.kmp.tor.binary.util
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmName
-
 @InternalKmpTorBinaryApi
-public expect class OSInfo {
+public val ANDROID_SDK_INT: Int? by lazy {
 
-    @get:JvmName("osHost")
-    public val osHost: OSHost
-    @get:JvmName("osArch")
-    public val osArch: OSArch
+    if (
+        System.getProperty("java.runtime.name")
+            ?.contains("android", ignoreCase = true) != true
+    ) {
+        // Not Android runtime
+        return@lazy null
+    }
 
-    public companion object {
+    try {
+        val clazz = Class.forName("android.os.Build\$VERSION")
 
-        @JvmField
-        public val INSTANCE: OSInfo
+        try {
+            clazz?.getField("SDK_INT")?.getInt(null)
+        } catch (_: Throwable) {
+            clazz?.getField("SDK")?.get(null)?.toString()?.toIntOrNull()
+        }
+    } catch (_: Throwable) {
+        null
     }
 }

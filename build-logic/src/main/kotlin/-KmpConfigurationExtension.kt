@@ -25,18 +25,20 @@ import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 fun KmpConfigurationExtension.configureShared(
-    androidNamespace: String,
+    androidNamespace: String? = null,
     publish: Boolean = false,
     action: Action<KmpConfigurationContainerDsl>
 ) {
-    require(androidNamespace.isNotBlank()) { "androidNamespace cannot be blank" }
-
     configure {
-        androidLibrary(namespace = androidNamespace) {
-            if (publish) target { publishLibraryVariants("release") }
+        if (androidNamespace != null) {
+            androidLibrary(namespace = androidNamespace) {
+                if (publish) target { publishLibraryVariants("release") }
+            }
         }
 
         jvm {
+            if (androidNamespace == null) target { withJava() }
+
             kotlinJvmTarget = JavaVersion.VERSION_1_8
             compileSourceCompatibility = JavaVersion.VERSION_1_8
             compileTargetCompatibility = JavaVersion.VERSION_1_8
@@ -52,7 +54,15 @@ fun KmpConfigurationExtension.configureShared(
             }
         }
 
-        if (publish) common { pluginIds("publication") }
+        common {
+            if (publish) pluginIds("publication")
+
+            sourceSetTest {
+                dependencies {
+                    implementation(kotlin("test"))
+                }
+            }
+        }
 
         kotlin { explicitApi() }
 

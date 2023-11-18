@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2023 Matthew Nelson
+ * Copyright (c) 2022 Matthew Nelson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *         https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,24 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@file:JsModule("path")
+@file:JsNonModule
+@file:Suppress("FunctionName")
 
-package io.matthewnelson.kmp.tor.binary.util
+package io.matthewnelson.kmp.tor.binary.util.internal
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmName
+@JsName("sep")
+internal external val path_sep: String
 
-@InternalKmpTorBinaryApi
-public expect class OSInfo {
+@JsName("normalize")
+internal external fun path_normalize(path: String): String
 
-    @get:JvmName("osHost")
-    public val osHost: OSHost
-    @get:JvmName("osArch")
-    public val osArch: OSArch
-
-    public companion object {
-
-        @JvmField
-        public val INSTANCE: OSInfo
-    }
-}
+@JsName("resolve")
+internal external fun path_resolve(vararg path: String): String

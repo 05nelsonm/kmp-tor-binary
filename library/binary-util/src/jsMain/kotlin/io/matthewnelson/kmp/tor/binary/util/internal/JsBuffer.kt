@@ -13,24 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+@file:JsModule("buffer")
+@file:JsNonModule
+@file:Suppress("ClassName")
 
-package io.matthewnelson.kmp.tor.binary.util
+package io.matthewnelson.kmp.tor.binary.util.internal
 
-import kotlin.jvm.JvmField
-import kotlin.jvm.JvmName
-
-@InternalKmpTorBinaryApi
-public expect class OSInfo {
-
-    @get:JvmName("osHost")
-    public val osHost: OSHost
-    @get:JvmName("osArch")
-    public val osArch: OSArch
-
-    public companion object {
-
-        @JvmField
-        public val INSTANCE: OSInfo
-    }
+@JsName("Buffer")
+internal external class buffer_Buffer {
+    val length: Number
+    fun toString(encoding: String, start: Number, end: Number): String
 }
