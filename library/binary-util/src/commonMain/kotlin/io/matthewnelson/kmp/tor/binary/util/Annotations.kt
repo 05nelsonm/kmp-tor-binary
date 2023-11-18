@@ -38,7 +38,19 @@ package io.matthewnelson.kmp.tor.binary.util
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY_GETTER,
     AnnotationTarget.PROPERTY_SETTER,
-    AnnotationTarget.TYPEALIAS
+    AnnotationTarget.TYPEALIAS,
 )
 @Retention(AnnotationRetention.BINARY)
 public annotation class InternalKmpTorBinaryApi
+
+/**
+ * A marker annotations for DSLs.
+ */
+@DslMarker
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS,
+    AnnotationTarget.TYPE,
+)
+public annotation class KmpTorBinaryDsl

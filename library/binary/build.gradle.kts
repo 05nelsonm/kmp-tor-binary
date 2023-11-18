@@ -73,5 +73,24 @@ kmpConfiguration {
                 }
             }
         }
+
+        kotlin {
+            with(sourceSets) {
+                val jsMain = findByName("jsMain")
+                val jvmAndroidMain = findByName("jvmAndroidMain")
+
+                if (jsMain != null || jvmAndroidMain != null) {
+                    val nonNativeMain = maybeCreate("nonNativeMain")
+                    nonNativeMain.dependsOn(getByName("commonMain"))
+                    jvmAndroidMain?.apply { dependsOn(nonNativeMain) }
+                    jsMain?.apply { dependsOn(nonNativeMain) }
+
+                    val nonNativeTest = maybeCreate("nonNativeTest")
+                    nonNativeTest.dependsOn(getByName("commonTest"))
+                    findByName("jvmAndroidTest")?.apply { dependsOn(nonNativeTest) }
+                    findByName("jsTest")?.apply { dependsOn(nonNativeTest) }
+                }
+            }
+        }
     }
 }

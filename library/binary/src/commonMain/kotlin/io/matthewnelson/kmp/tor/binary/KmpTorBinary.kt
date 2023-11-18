@@ -13,22 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+
 package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.util.OSHost
-import io.matthewnelson.kmp.tor.binary.util.OSInfo
-import kotlin.test.Test
-import kotlin.test.assertFalse
+import io.matthewnelson.kmp.tor.binary.util.Resource
+import kotlin.jvm.JvmField
+import kotlin.jvm.JvmStatic
+import kotlin.jvm.JvmSynthetic
 
-@OptIn(InternalKmpTorBinaryApi::class)
-class OSInfoUnitTest {
+public const val ALIAS_TOR: String = "tor"
+public const val ALIAS_GEOIP: String = "geoip"
+public const val ALIAS_GEOIP6: String = "geoip6"
 
-    @Test
-    fun givenOSInfo_whenAndroidUnitTestNotEmulator_thenHostIsNotLinuxAndroid() {
-        // Should register as the host machine running unit tests, not android
-        // This will fail if test being executed via Termux, but willing to take
-        // that chance..........
-        assertFalse(OSInfo.INSTANCE.osHost is OSHost.Linux.Android)
+public expect class KmpTorBinary(installationDir: String) {
+
+    @JvmField
+    public val installationDir: String
+
+    @Throws(Exception::class)
+    public fun install(): Map<String, String>
+
+    internal companion object {
+
+        @get:JvmSynthetic
+        @OptIn(InternalKmpTorBinaryApi::class)
+        internal val Config: Resource.Config
     }
 }

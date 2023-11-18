@@ -15,5 +15,16 @@
  **/
 package io.matthewnelson.kmp.tor.binary
 
-// TODO: Remove
-internal fun stub() { /* no-op */ }
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+import kotlin.test.Test
+import kotlin.test.assertEquals
+
+@OptIn(InternalKmpTorBinaryApi::class)
+class KmpTorBinaryResourceInstrumentTest {
+
+    @Test
+    fun givenResourceConfig_whenAndroidEmulator_thenConfigLoadsOnlyGeoips() {
+        assertEquals(0, KmpTorBinary.Config.errors.size)
+        assertEquals(2, KmpTorBinary.Config.resources.size)
+    }
+}
