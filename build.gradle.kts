@@ -62,7 +62,6 @@ apiValidation {
         // Don't check these projects when building JVM only or Android only
         if (!KMP_TARGETS_ALL && KMP_TARGETS?.containsAll(setOf("ANDROID", "JVM")) == false) {
             ignoredProjects.add("binary")
-            ignoredProjects.add("binary-util")
         }
     }
 }

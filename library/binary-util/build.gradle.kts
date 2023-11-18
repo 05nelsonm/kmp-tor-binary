@@ -18,24 +18,7 @@ plugins {
 }
 
 kmpConfiguration {
-    configureShared(
-        androidNamespace = "io.matthewnelson.kmp.tor.binary.util",
-        publish = true,
-    ) {
-        androidLibrary {
-            android {
-                defaultConfig {
-                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                }
-            }
-
-            sourceSetTestInstrumented {
-                dependencies {
-                    implementation(libs.androidx.test.core)
-                    implementation(libs.androidx.test.runner)
-                }
-            }
-        }
+    configureShared(publish = true) {
 
         js {
             sourceSetTest {
@@ -56,13 +39,13 @@ kmpConfiguration {
 
         kotlin {
             with(sourceSets) {
-                val jvmAndroidMain = findByName("jvmAndroidMain")
                 val jsMain = findByName("jsMain")
+                val jvmMain = findByName("jvmMain")
 
-                if (jvmAndroidMain != null || jsMain != null) {
+                if (jsMain != null || jvmMain != null) {
                     val nonNativeMain = maybeCreate("nonNativeMain")
                     nonNativeMain.dependsOn(getByName("commonMain"))
-                    jvmAndroidMain?.apply { dependsOn(nonNativeMain) }
+                    jvmMain?.apply { dependsOn(nonNativeMain) }
                     jsMain?.apply { dependsOn(nonNativeMain) }
                 }
             }
