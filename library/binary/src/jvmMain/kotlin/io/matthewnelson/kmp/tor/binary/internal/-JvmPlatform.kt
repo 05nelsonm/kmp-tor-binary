@@ -16,10 +16,7 @@
 package io.matthewnelson.kmp.tor.binary.internal
 
 import io.matthewnelson.kmp.tor.binary.KmpTorBinary
-import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.util.OSHost
-import io.matthewnelson.kmp.tor.binary.util.OSInfo
-import io.matthewnelson.kmp.tor.binary.util.Resource
+import io.matthewnelson.kmp.tor.binary.util.*
 
 @JvmSynthetic
 @OptIn(InternalKmpTorBinaryApi::class)
@@ -47,7 +44,7 @@ internal actual fun Resource.Config.Builder.configure() {
 
     val arch = OSInfo.INSTANCE.osArch
 
-    val torResourcePath = host.toTorResourcePath(arch)
+    val torResourcePath = host.toTorResourcePathOrNull(arch)
 
     if (torResourcePath == null) {
         error("Unsupported architecutre[$arch] for host[$host]")
@@ -64,4 +61,5 @@ internal actual fun Resource.Config.Builder.configure() {
 // Jvm is a no-op
 @JvmSynthetic
 @Throws(IllegalStateException::class)
-internal actual fun Map<String, String>.findLibTor(): Map<String, String> = this
+@OptIn(InternalKmpTorBinaryApi::class)
+internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> = this

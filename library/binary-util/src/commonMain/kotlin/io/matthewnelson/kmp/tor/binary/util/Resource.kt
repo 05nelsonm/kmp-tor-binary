@@ -40,7 +40,7 @@ public expect class Resource {
         public val resources: Set<Resource>
 
         @Throws(Exception::class)
-        public fun extractTo(destinationDir: String): Map<String, String>
+        public fun extractTo(destinationDir: String): ImmutableMap<String, String>
 
         @InternalKmpTorBinaryApi
         public companion object {

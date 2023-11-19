@@ -46,7 +46,7 @@ internal actual fun Resource.Config.Builder.configure() {
 
     val arch = OSInfo.INSTANCE.osArch
 
-    val torResourcePath = host.toTorResourcePath(arch)
+    val torResourcePath = host.toTorResourcePathOrNull(arch)
 
     if (torResourcePath == null) {
         error("Unsupported architecutre[$arch] for host[$host]")

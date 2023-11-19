@@ -31,9 +31,8 @@ internal external fun fs_readFileSync(path: String, options: Options.ReadUtf8): 
 @JsName("readFileSync")
 internal external fun fs_readFileSync(path: String): buffer_Buffer
 
-// data can be a String or a Buffer
 @JsName("writeFileSync")
-internal external fun fs_writeFileSync(path: String, data: Any)
+internal external fun fs_writeFileSync(path: String, data: buffer_Buffer)
 
 @JsName("readlinkSync")
 internal external fun fs_readlinkSync(path: String): String

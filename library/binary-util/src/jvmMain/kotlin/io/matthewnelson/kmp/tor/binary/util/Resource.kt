@@ -17,10 +17,15 @@
 
 package io.matthewnelson.kmp.tor.binary.util
 
+import io.matthewnelson.kmp.tor.binary.util.ImmutableMap.Companion.toImmutableMap
 import io.matthewnelson.kmp.tor.binary.util.ImmutableSet.Companion.toImmutableSet
+import io.matthewnelson.kmp.tor.binary.util.internal.throwIfError
 import io.matthewnelson.kmp.tor.binary.util.internal.commonEquals
 import io.matthewnelson.kmp.tor.binary.util.internal.commonHashCode
 import io.matthewnelson.kmp.tor.binary.util.internal.commonToString
+import java.io.File
+import java.io.IOException
+import java.util.zip.GZIPInputStream
 
 @InternalKmpTorBinaryApi
 public actual class Resource private constructor(
@@ -43,9 +48,74 @@ public actual class Resource private constructor(
     ) {
 
         @Throws(Exception::class)
-        public actual fun extractTo(destinationDir: String): Map<String, String> {
-            // TODO
-            return emptyMap()
+        public actual fun extractTo(destinationDir: String): ImmutableMap<String, String> {
+            // Check if any errors have been set for this config and
+            // throw them if that is the case before extracting anything.
+            throwIfError()
+
+            val dir = File(destinationDir).canonicalFile
+
+            if (!dir.exists() && !dir.mkdirs()) {
+                throw IOException("Failed to create destinationDir[$dir]")
+            }
+
+            val map = LinkedHashMap<String, String>(resources.size, 1.0f)
+
+            try {
+                resources.forEach { resource ->
+                    val file = resource.extractTo(dir)
+                    map[resource.alias] = file.absolutePath
+                    if (resource.isExecutable) {
+                        file.setExecutable(true)
+                    }
+                }
+            } catch (e: Exception) {
+                map.forEach { entry ->
+                    try {
+                        File(entry.value).delete()
+                    } catch (_: Throwable) {}
+                }
+                throw e
+            }
+
+            return map.toImmutableMap()
+        }
+
+        private fun Resource.extractTo(destinationDir: File): File {
+            var fileName = resourcePath.substringAfterLast('/')
+            val isGzipped = if (fileName.endsWith(".gz")) {
+                fileName = fileName.substringBeforeLast(".gz")
+                true
+            } else {
+                false
+            }
+
+            val destination = destinationDir.resolve(fileName)
+
+            if (destination.exists() && !destination.delete()) {
+                throw IOException("Failed to delete $destination")
+            }
+
+            var resourceStream = resourceClass.getResourceAsStream(resourcePath)
+                ?: throw IOException("Failed to get resource input stream for $resourcePath")
+
+            if (isGzipped) {
+                resourceStream = GZIPInputStream(resourceStream)
+            }
+
+            resourceStream.use { iStream ->
+                destination.outputStream().use { oStream ->
+                    val buf = ByteArray(4096)
+
+                    while (true) {
+                        val read = iStream.read(buf)
+                        if (read == -1) break
+                        oStream.write(buf, 0, read)
+                    }
+                }
+            }
+
+            return destination
         }
 
         @InternalKmpTorBinaryApi
@@ -116,7 +186,11 @@ public actual class Resource private constructor(
 
         internal fun build(): Resource? {
             val clazz = resourceClass ?: return null
-            val path = resourcePath.ifBlank { return null }
+            var path = resourcePath.ifBlank { return null }
+
+            if (path.first() != '/') {
+                path = "/$path"
+            }
 
             return Resource(
                 alias,

@@ -17,6 +17,7 @@ package io.matthewnelson.kmp.tor.binary.util.internal
 
 import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.util.OSArch
+import io.matthewnelson.kmp.tor.binary.util.Resource
 import kotlin.jvm.JvmSynthetic
 
 @JvmSynthetic
