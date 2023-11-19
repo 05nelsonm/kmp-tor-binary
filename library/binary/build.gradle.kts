@@ -24,6 +24,10 @@ kmpConfiguration {
     ) {
         androidLibrary {
             android {
+                packaging {
+                    jniLibs.useLegacyPackaging = true
+                }
+
                 defaultConfig {
                     ndk {
                         abiFilters.add("arm64-v8a")
@@ -40,6 +44,12 @@ kmpConfiguration {
 
                     // geoip/geoip6 files
                     resources.srcDirs("src/jvmAndroidMain/resources")
+                }
+            }
+
+            sourceSetMain {
+                dependencies {
+                    implementation(project(":library:binary-initializer"))
                 }
             }
 

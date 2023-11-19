@@ -18,6 +18,7 @@
 package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.internal.configure
+import io.matthewnelson.kmp.tor.binary.internal.findLibTor
 import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.util.Resource
 import java.io.File
@@ -42,13 +43,8 @@ public actual constructor(
         return map ?: synchronized(this) {
             @OptIn(InternalKmpTorBinaryApi::class)
             map ?: run {
-                // TODO: Maybe for android could have a separate
-                //  module that uses androidx-setup to find the
-                //  native library to return the ALIAS_TOR path
-                //  here? That module could also be used for
-                //  pluggable transports, too.
-
                 Config.extractTo(installationDir)
+                    .findLibTor()
                     .also { map = it }
             }
         }
