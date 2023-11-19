@@ -49,7 +49,22 @@ public actual class Resource private constructor(
             val dir = path_normalize(destinationDir)
 
             if (!fs_existsSync(dir)) {
-                fs_mkdirSync(dir)
+                // There is no concept of mkdirs, so have
+                // to check parent directories and build
+                // it up.
+                val dirs = mutableListOf(dir)
+                var exists = false
+
+                while (!exists) {
+                    val parentDir = path_dirname(dirs.first())
+                    exists = fs_existsSync(parentDir)
+                    if (!exists) {
+                        dirs.add(0, parentDir)
+                    }
+                }
+
+                dirs.forEach { path -> fs_mkdirSync(path) }
+
                 check(fs_existsSync(dir)) { "Failed to create destinationDir[$dir]" }
             }
 

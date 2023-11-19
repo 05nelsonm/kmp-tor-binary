@@ -17,13 +17,6 @@ package io.matthewnelson.kmp.tor.binary.util.internal
 
 public sealed class Options {
 
-    public class ReadUtf8 private constructor(
-        public val encoding: String?,
-        public val flag: String?,
-    ): Options() {
-        public constructor(): this("utf8", "r")
-    }
-
     public class ReadDir private constructor(
         public val encoding: String?,
         public val withFileTypes: Boolean,
@@ -31,6 +24,13 @@ public sealed class Options {
     ): Options() {
         // will force readdir to return an array of strings
         public constructor(recursive: Boolean): this("utf8", false, recursive)
+    }
+
+    public class ReadUtf8 private constructor(
+        public val encoding: String?,
+        public val flag: String?,
+    ): Options() {
+        public constructor(): this("utf8", "r")
     }
 
     public class Remove(

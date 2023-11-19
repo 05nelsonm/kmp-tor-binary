@@ -25,6 +25,10 @@ import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
 @InternalKmpTorBinaryApi
 public external val path_sep: String
 
+@JsName("dirname")
+@InternalKmpTorBinaryApi
+public external fun path_dirname(path: String): String
+
 @JsName("normalize")
 @InternalKmpTorBinaryApi
 public external fun path_normalize(path: String): String

@@ -20,19 +20,22 @@ import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import okio.FileSystem
 import okio.Path.Companion.toPath
 import kotlin.random.Random
-import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 abstract class KmpTorBinaryBaseUnitTest {
 
     open val tempDir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY
     open val isWindows: Boolean = false
+    private val testDir by lazy {
+        tempDir.resolve("kmp_tor_test")
+    }
 
     @Test
     open fun givenKmpTorBinaryResources_whenInstalled_thenIsSuccessful() {
         val random = Random.Default.nextBytes(8).encodeToString(Base16)
-        val workDir = tempDir.resolve("kmp_tor_test").resolve(random)
+
+        // Will check extraction uses mkdirs instead of mkdir (which would fail)
+        val workDir = testDir.resolve(random)
 
         try {
             val paths = KmpTorBinary(workDir.toString()).install()
@@ -53,7 +56,7 @@ abstract class KmpTorBinaryBaseUnitTest {
             }
         } finally {
             try {
-                filesystem().deleteRecursively(workDir.parent!!)
+                filesystem().deleteRecursively(testDir)
             } catch (t: Throwable) {
                 t.printStackTrace()
             }
