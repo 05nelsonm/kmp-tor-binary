@@ -31,11 +31,12 @@ abstract class KmpTorBinaryBaseUnitTest {
 
     @Test
     open fun givenKmpTorBinaryResources_whenInstalled_thenIsSuccessful() {
-        val name = Random.Default.nextBytes(8).encodeToString(Base16)
-        val path = tempDir.resolve("kmp_tor_$name")
+        val random = Random.Default.nextBytes(8).encodeToString(Base16)
+        val workDir = tempDir.resolve("kmp_tor_test").resolve(random)
 
         try {
-            val paths = KmpTorBinary(path.toString()).install()
+            val paths = KmpTorBinary(workDir.toString()).install()
+            println(paths)
 
             val geoip = paths.geoip.toPath()
             val geoip6 = paths.geoip6.toPath()
@@ -52,7 +53,7 @@ abstract class KmpTorBinaryBaseUnitTest {
             }
         } finally {
             try {
-                filesystem().deleteRecursively(path)
+                filesystem().deleteRecursively(workDir.parent!!)
             } catch (t: Throwable) {
                 t.printStackTrace()
             }
