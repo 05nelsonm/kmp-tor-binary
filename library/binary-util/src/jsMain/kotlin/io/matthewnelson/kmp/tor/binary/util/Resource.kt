@@ -60,7 +60,10 @@ public actual class Resource private constructor(
                     val file = resource.extractTo(dir)
                     map[resource.alias] = file
                     if (resource.isExecutable) {
-                        fs_chmodSync(file, 0xf100)
+                        // These are the same executable permissions
+                        // that are set for jvm upon resource file
+                        // extraction.
+                        fs_chmodSync(file, "764")
                     }
                 }
             } catch (e: Exception) {

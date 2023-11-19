@@ -60,11 +60,12 @@ public external fun fs_existsSync(path: String): Boolean
 // https://nodejs.org/api/fs.html#file-modes
 @JsName("chmodSync")
 @InternalKmpTorBinaryApi
-public external fun fs_chmodSync(path: String, mode: Int)
+public external fun fs_chmodSync(path: String, mode: String)
 
 @JsName("Stats")
 @InternalKmpTorBinaryApi
 public external class fs_Stats {
+    public val mode: Number
     public fun isFile(): Boolean
     public fun isDirectory(): Boolean
     public fun isSymbolicLink(): Boolean
