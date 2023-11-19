@@ -15,8 +15,12 @@
  **/
 package io.matthewnelson.kmp.tor.binary.util.internal
 
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+
+@InternalKmpTorBinaryApi
 public sealed class Options {
 
+    @InternalKmpTorBinaryApi
     public class ReadDir private constructor(
         public val encoding: String?,
         public val withFileTypes: Boolean,
@@ -26,6 +30,7 @@ public sealed class Options {
         public constructor(recursive: Boolean): this("utf8", false, recursive)
     }
 
+    @InternalKmpTorBinaryApi
     public class ReadUtf8 private constructor(
         public val encoding: String?,
         public val flag: String?,
@@ -33,6 +38,7 @@ public sealed class Options {
         public constructor(): this("utf8", "r")
     }
 
+    @InternalKmpTorBinaryApi
     public class Remove(
         public val force: Boolean = true,
         public val recursive: Boolean = true,
