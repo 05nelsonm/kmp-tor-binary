@@ -19,7 +19,9 @@ import io.matthewnelson.kmp.tor.binary.ALIAS_GEOIP
 import io.matthewnelson.kmp.tor.binary.ALIAS_GEOIP6
 import io.matthewnelson.kmp.tor.binary.ALIAS_TOR
 import io.matthewnelson.kmp.tor.binary.KmpTorBinary
+import io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializer
 import io.matthewnelson.kmp.tor.binary.util.*
+import io.matthewnelson.kmp.tor.binary.util.ImmutableMap.Companion.toImmutableMap
 
 @JvmSynthetic
 @OptIn(InternalKmpTorBinaryApi::class)
@@ -38,13 +40,26 @@ internal actual fun Resource.Config.Builder.configure() {
         resourcePath = PATH_RESOURCE_GEOIP6
     }
 
-    // Is Android Runtime.
-    //
-    // Binaries are extracted on application install
-    // to the nativeLib directory. This is required as
-    // android does not allow execution from the app dir
-    // (cannot download executables and run them).
-    if (ANDROID_SDK_INT != null) return
+    if (ANDROID_SDK_INT != null) {
+        // Is Android Runtime.
+        //
+        // Binaries are extracted on application install
+        // to the nativeLib directory. This is required as
+        // android does not allow execution from the app dir
+        // (cannot download executables and run them).
+        if (KmpTorBinaryInitializer.INSTANCE.findLib("libtor.so") != null) {
+            return
+        }
+
+        error("""
+            Faild to find libtor.so within nativeLibraryDir
+            
+            Ensure the following are set correctly:
+            build.gradle(.kts): 'android.packaging.jniLibs.useLegacyPackaging' set to true
+            gradle.properties:  'android.bundle.enableUncompressedNativeLibs' set to false
+        """.trimIndent())
+        return
+    }
 
     // Android Unit Test. Check for support via binary-android-unit-test
     val host = OSInfo.INSTANCE.osHost
@@ -84,5 +99,28 @@ internal actual fun Resource.Config.Builder.configure() {
         isExecutable = true
         resourceClass = loaderClass
         resourcePath = torResourcePath
+    }
+}
+
+@JvmSynthetic
+@Throws(IllegalStateException::class)
+internal actual fun Map<String, String>.findLibTor(): Map<String, String> {
+    if (contains(ALIAS_TOR)) return this
+
+    KmpTorBinaryInitializer.INSTANCE.findLib("libtor.so")?.let { file ->
+        @OptIn(InternalKmpTorBinaryApi::class)
+        return toMutableMap().apply {
+            put(ALIAS_TOR, file.path)
+        }.toImmutableMap()
+    }
+
+    // Should never make it here b/c configure should pop
+    // the error and inhibit resource extraction before this
+    // ever gets called. This is, however a fallback
+    @OptIn(InternalKmpTorBinaryApi::class)
+    return if (ANDROID_SDK_INT == null) {
+        this
+    } else {
+        throw IllegalStateException("Failed to find libtor.so")
     }
 }

@@ -1,13 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
 /*
- * Copyright (c) 2021 Matthew Nelson
+ * Copyright (c) 2023 Matthew Nelson
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *         https://www.apache.org/licenses/LICENSE-2.0
+ *     https://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,12 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
--->
-<manifest xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+package io.matthewnelson.kmp.tor.binary.internal
 
-    <application
-        android:extractNativeLibs="true"
-        tools:targetApi="m"/>
-
-</manifest>
+// For Android to parse nativeLibraryDir
+@JvmSynthetic
+@Throws(IllegalStateException::class)
+internal expect fun Map<String, String>.findLibTor(): Map<String, String>

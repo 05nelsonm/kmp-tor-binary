@@ -41,6 +41,8 @@ kmpConfiguration {
                 dependencies {
                     // Should be a SEPARATE publication and not use binary-jvm
                     implementation("$group:binary-android:$version")
+
+                    implementation("$group:binary-initializer:$version")
                 }
             }
             sourceSetTest {

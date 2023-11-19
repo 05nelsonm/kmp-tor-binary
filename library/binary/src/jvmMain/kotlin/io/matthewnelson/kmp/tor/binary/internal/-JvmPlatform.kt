@@ -63,3 +63,8 @@ internal actual fun Resource.Config.Builder.configure() {
         resourcePath = torResourcePath
     }
 }
+
+// Jvm is a no-op
+@JvmSynthetic
+@Throws(IllegalStateException::class)
+internal actual fun Map<String, String>.findLibTor(): Map<String, String> = this

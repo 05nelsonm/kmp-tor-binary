@@ -19,6 +19,7 @@ if (CHECK_PUBLICATION != null) {
     listOf(
         "binary",
         "binary-android-unit-test",
+        "binary-initializer",
         "binary-util",
         "npmjs",
     ).forEach { module ->
