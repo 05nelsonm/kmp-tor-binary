@@ -15,8 +15,8 @@
  **/
 package io.matthewnelson.kmp.tor.binary
 
-import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.util.ANDROID_SDK_INT
+import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.core.ANDROID_SDK_INT
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 

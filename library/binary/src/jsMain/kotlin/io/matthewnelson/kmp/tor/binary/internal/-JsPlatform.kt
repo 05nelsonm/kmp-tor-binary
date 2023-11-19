@@ -15,10 +15,10 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
-import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.util.OSHost
-import io.matthewnelson.kmp.tor.binary.util.OSInfo
-import io.matthewnelson.kmp.tor.binary.util.Resource
+import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.core.OSHost
+import io.matthewnelson.kmp.tor.binary.core.OSInfo
+import io.matthewnelson.kmp.tor.binary.core.Resource
 
 @OptIn(InternalKmpTorBinaryApi::class)
 @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")

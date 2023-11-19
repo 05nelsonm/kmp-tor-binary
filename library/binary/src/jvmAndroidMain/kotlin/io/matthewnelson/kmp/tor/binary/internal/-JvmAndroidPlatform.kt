@@ -15,8 +15,8 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
-import io.matthewnelson.kmp.tor.binary.util.ImmutableMap
-import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.core.ImmutableMap
+import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
 // For Android to parse nativeLibraryDir
 @JvmSynthetic

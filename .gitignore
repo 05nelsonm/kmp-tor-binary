@@ -3,6 +3,3 @@ build/
 *.iml
 .idea/
 local.properties
-
-# TODO: Remove
-library/kmp-tor-binary-extract/

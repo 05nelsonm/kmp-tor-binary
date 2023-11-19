@@ -64,7 +64,7 @@ kmpConfiguration {
             sourceSetMain {
                 dependencies {
                     implementation("$group:binary:$version")
-                    implementation("$group:binary-util:$version")
+                    implementation("$group:binary-core:$version")
                 }
             }
         }
