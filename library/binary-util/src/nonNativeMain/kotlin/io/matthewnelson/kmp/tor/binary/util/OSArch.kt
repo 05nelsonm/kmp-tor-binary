@@ -31,6 +31,8 @@ public sealed class OSArch private constructor(
     public val path: String
 ) {
 
+    public fun isSupportedBy(osHost: OSHost): Boolean = osHost.arches.contains(this)
+
     @InternalKmpTorBinaryApi
     public object Aarch64: OSArch("aarch64")
     @InternalKmpTorBinaryApi

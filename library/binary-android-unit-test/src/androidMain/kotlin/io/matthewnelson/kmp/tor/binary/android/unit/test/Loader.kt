@@ -15,5 +15,9 @@
  **/
 package io.matthewnelson.kmp.tor.binary.android.unit.test
 
+/**
+ * Found via reflection in order to access
+ * resources that this module provides.
+ * */
 @Suppress("unused")
 private class Loader
