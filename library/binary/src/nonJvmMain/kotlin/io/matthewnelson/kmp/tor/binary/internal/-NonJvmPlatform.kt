@@ -13,19 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.kmp.tor.binary
+package io.matthewnelson.kmp.tor.binary.internal
 
+import io.matthewnelson.kmp.tor.binary.core.ImmutableMap
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.internal.RESOURCE_CONFIG
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
+// no-op
 @OptIn(InternalKmpTorBinaryApi::class)
-class KmpTorBinaryResourceInstrumentTest: KmpTorBinaryBaseUnitTest() {
-
-    @Test
-    fun givenResourceConfig_whenAndroidEmulator_thenConfigLoadsOnlyGeoips() {
-        assertEquals(0, RESOURCE_CONFIG.errors.size)
-        assertEquals(2, RESOURCE_CONFIG.resources.size)
-    }
-}
+@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
+internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> = this

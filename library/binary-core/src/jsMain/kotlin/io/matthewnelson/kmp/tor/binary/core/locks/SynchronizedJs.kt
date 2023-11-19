@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.kmp.tor.binary.internal
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 
-import io.matthewnelson.kmp.tor.binary.core.ImmutableMap
+package io.matthewnelson.kmp.tor.binary.core.locks
+
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
-// For Android to parse nativeLibraryDir
-@JvmSynthetic
-@Throws(IllegalStateException::class)
+@InternalKmpTorBinaryApi
+public actual typealias SynchronizedObject = Any
+
+@PublishedApi
 @OptIn(InternalKmpTorBinaryApi::class)
-internal expect fun ImmutableMap<String, String>.findLibTor(): Map<String, String>
+internal actual inline fun <T: Any?> synchronizedImpl(
+    lock: SynchronizedObject,
+    block: () -> T,
+): T = block()

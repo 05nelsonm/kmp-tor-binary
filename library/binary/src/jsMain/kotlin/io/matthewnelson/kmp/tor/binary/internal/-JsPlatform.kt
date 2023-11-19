@@ -20,42 +20,44 @@ import io.matthewnelson.kmp.tor.binary.core.OSHost
 import io.matthewnelson.kmp.tor.binary.core.OSInfo
 import io.matthewnelson.kmp.tor.binary.core.Resource
 
+// JS
 @OptIn(InternalKmpTorBinaryApi::class)
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
-internal actual fun Resource.Config.Builder.configure() {
-    val module = "kmp-tor-binary-resources"
+internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
+    Resource.Config.create {
+        val module = "kmp-tor-binary-resources"
 
-    resource(ALIAS_GEOIP) {
-        isExecutable = false
-        moduleName = module
-        resourcePath = PATH_RESOURCE_GEOIP
-    }
+        resource(ALIAS_GEOIP) {
+            isExecutable = false
+            moduleName = module
+            resourcePath = PATH_RESOURCE_GEOIP
+        }
 
-    resource(ALIAS_GEOIP6) {
-        isExecutable = false
-        moduleName = module
-        resourcePath = PATH_RESOURCE_GEOIP6
-    }
+        resource(ALIAS_GEOIP6) {
+            isExecutable = false
+            moduleName = module
+            resourcePath = PATH_RESOURCE_GEOIP6
+        }
 
-    val host = OSInfo.INSTANCE.osHost
+        val host = OSInfo.INSTANCE.osHost
 
-    if (host is OSHost.Unknown) {
-        error("Unknown host[$host]")
-        return
-    }
+        if (host is OSHost.Unknown) {
+            error("Unknown host[$host]")
+            return@create
+        }
 
-    val arch = OSInfo.INSTANCE.osArch
+        val arch = OSInfo.INSTANCE.osArch
 
-    val torResourcePath = host.toTorResourcePathOrNull(arch)
+        val torResourcePath = host.toTorResourcePathOrNull(arch)
 
-    if (torResourcePath == null) {
-        error("Unsupported architecutre[$arch] for host[$host]")
-        return
-    }
+        if (torResourcePath == null) {
+            error("Unsupported architecutre[$arch] for host[$host]")
+            return@create
+        }
 
-    resource(ALIAS_TOR) {
-        isExecutable = true
-        moduleName = module
-        resourcePath = torResourcePath
+        resource(ALIAS_TOR) {
+            isExecutable = true
+            moduleName = module
+            resourcePath = torResourcePath
+        }
     }
 }
