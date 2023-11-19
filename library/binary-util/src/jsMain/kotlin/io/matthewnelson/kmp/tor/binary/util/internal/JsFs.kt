@@ -49,6 +49,10 @@ public external fun fs_readlinkSync(path: String): String
 @InternalKmpTorBinaryApi
 public external fun fs_rmSync(path: String, options: Options.Remove)
 
+@JsName("statSync")
+@InternalKmpTorBinaryApi
+public external fun fs_statSync(path: String): fs_Stats
+
 @JsName("lstatSync")
 @InternalKmpTorBinaryApi
 public external fun fs_lstatSync(path: String): fs_Stats

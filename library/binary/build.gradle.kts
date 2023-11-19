@@ -74,12 +74,25 @@ kmpConfiguration {
                     implementation(npm("kmp-tor-binary-resources", "$version"))
                 }
             }
+
+            sourceSetTest {
+                dependencies {
+                    implementation(libs.okio.node)
+                }
+            }
         }
 
         common {
             sourceSetMain {
                 dependencies {
                     implementation(project(":library:binary-util"))
+                }
+            }
+
+            sourceSetTest {
+                dependencies {
+                    implementation(libs.okio.okio)
+                    implementation(libs.encoding.base16)
                 }
             }
         }

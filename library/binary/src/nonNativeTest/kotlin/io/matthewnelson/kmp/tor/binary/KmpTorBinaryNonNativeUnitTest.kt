@@ -21,7 +21,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(InternalKmpTorBinaryApi::class)
-class KmpTorBinaryResourceUnitTest {
+class KmpTorBinaryNonNativeUnitTest: KmpTorBinaryBaseUnitTest() {
 
     @Test
     fun givenTorBinaryResources_whenConfigured_thenIsExpectedForHostMachine() {
