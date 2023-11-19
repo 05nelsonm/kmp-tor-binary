@@ -85,7 +85,7 @@ kmpConfiguration {
         common {
             sourceSetMain {
                 dependencies {
-                    implementation(project(":library:binary-util"))
+                    implementation(project(":library:binary-core"))
                 }
             }
 

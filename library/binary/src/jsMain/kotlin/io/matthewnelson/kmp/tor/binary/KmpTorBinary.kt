@@ -21,8 +21,8 @@ import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP
 import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP6
 import io.matthewnelson.kmp.tor.binary.internal.ALIAS_TOR
 import io.matthewnelson.kmp.tor.binary.internal.configure
-import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.util.Resource
+import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.core.Resource
 
 public actual class KmpTorBinary
 public actual constructor(

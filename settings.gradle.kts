@@ -19,8 +19,8 @@ if (CHECK_PUBLICATION != null) {
     listOf(
         "binary",
         "binary-android-unit-test",
+        "binary-core",
         "binary-initializer",
-        "binary-util",
         "npmjs",
     ).forEach { module ->
         include(":library:$module")
