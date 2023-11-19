@@ -49,6 +49,12 @@ abstract class KmpTorBinaryBaseUnitTest {
             assertTrue((filesystem().metadata(geoip6).size ?: 0) > 0)
             assertTrue((filesystem().metadata(tor).size ?: 0) > 0)
 
+            // Resource files were gzipped. Check to see if the .gz
+            // extension was removed.
+            assertFalse(geoip.name.endsWith(".gz"))
+            assertFalse(geoip6.name.endsWith(".gz"))
+            assertFalse(tor.name.endsWith(".gz"))
+
             if (!isWindows) {
                 assertFalse(geoip.canExecute())
                 assertFalse(geoip6.canExecute())
