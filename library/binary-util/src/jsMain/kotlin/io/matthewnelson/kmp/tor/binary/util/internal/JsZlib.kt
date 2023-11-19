@@ -19,5 +19,8 @@
 
 package io.matthewnelson.kmp.tor.binary.util.internal
 
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+
 @JsName("gunzipSync")
+@InternalKmpTorBinaryApi
 internal external fun zlib_gunzipSync(data: buffer_Buffer): buffer_Buffer

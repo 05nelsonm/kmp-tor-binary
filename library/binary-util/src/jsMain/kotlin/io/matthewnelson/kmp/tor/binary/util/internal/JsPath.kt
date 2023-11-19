@@ -19,11 +19,16 @@
 
 package io.matthewnelson.kmp.tor.binary.util.internal
 
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+
 @JsName("sep")
-internal external val path_sep: String
+@InternalKmpTorBinaryApi
+public external val path_sep: String
 
 @JsName("normalize")
-internal external fun path_normalize(path: String): String
+@InternalKmpTorBinaryApi
+public external fun path_normalize(path: String): String
 
 @JsName("resolve")
-internal external fun path_resolve(vararg path: String): String
+@InternalKmpTorBinaryApi
+public external fun path_resolve(vararg path: String): String
