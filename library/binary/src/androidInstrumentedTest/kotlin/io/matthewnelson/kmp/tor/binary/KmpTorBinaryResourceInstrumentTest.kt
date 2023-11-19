@@ -20,7 +20,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(InternalKmpTorBinaryApi::class)
-class KmpTorBinaryResourceInstrumentTest {
+class KmpTorBinaryResourceInstrumentTest: KmpTorBinaryBaseUnitTest() {
 
     @Test
     fun givenResourceConfig_whenAndroidEmulator_thenConfigLoadsOnlyGeoips() {
