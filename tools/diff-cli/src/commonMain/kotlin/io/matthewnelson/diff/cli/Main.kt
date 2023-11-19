@@ -49,11 +49,7 @@ public fun main(args: Array<String>) {
         }
     }
 
-    try {
-        parser.parse(helpOrArgs)
-    } catch (t: Throwable) {
-        t.printStackTrace()
-    }
+    parser.parse(helpOrArgs)
 }
 
 private fun printHeader() {
