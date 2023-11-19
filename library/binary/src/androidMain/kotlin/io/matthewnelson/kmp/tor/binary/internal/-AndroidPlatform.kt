@@ -50,13 +50,13 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
             }
 
             error("""
-            Faild to find libtor.so within nativeLibraryDir
-
-            Ensure the following are set correctly:
-            build.gradle(.kts):  'android.packaging.jniLibs.useLegacyPackaging' is set to 'true'
-            AndroidManifest.xml: 'android:extractNativeLibs' is set to 'true'
-            gradle.properties:   'android.bundle.enableUncompressedNativeLibs' is set to 'false'
-        """.trimIndent())
+                Faild to find libtor.so within nativeLibraryDir
+    
+                Ensure the following are set correctly:
+                build.gradle(.kts):  'android.packaging.jniLibs.useLegacyPackaging' is set to 'true'
+                AndroidManifest.xml: 'android:extractNativeLibs' is set to 'true'
+                gradle.properties:   'android.bundle.enableUncompressedNativeLibs' is set to 'false'
+            """.trimIndent())
             return@create
         }
 
