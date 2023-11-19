@@ -17,6 +17,9 @@
 
 package io.matthewnelson.kmp.tor.binary
 
+import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP
+import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP6
+import io.matthewnelson.kmp.tor.binary.internal.ALIAS_TOR
 import io.matthewnelson.kmp.tor.binary.internal.configure
 import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.util.Resource
@@ -26,14 +29,21 @@ public actual constructor(
     public actual val installationDir: String
 ) {
 
-    private var map: Map<String, String>? = null
+    private var paths: KmpTorBinaryPaths? = null
 
     @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
-    public actual fun install(): Map<String, String> {
+    public actual fun install(): KmpTorBinaryPaths {
         // TODO: synchronized
         @OptIn(InternalKmpTorBinaryApi::class)
-        return map ?: Config.extractTo(installationDir)
-            .also { map = it }
+        return paths ?: Config.extractTo(installationDir).let { map ->
+            // if extractTo did not throw exception, map will be
+            // populated with all resource aliases.
+            KmpTorBinaryPaths(
+                map[ALIAS_GEOIP]!!,
+                map[ALIAS_GEOIP6]!!,
+                map[ALIAS_TOR]!!,
+            )
+        }.also { paths = it }
     }
 
     internal actual companion object {

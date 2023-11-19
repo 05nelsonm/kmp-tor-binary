@@ -3,12 +3,16 @@ public final class io/matthewnelson/kmp/tor/binary/KmpTorBinary {
 	public fun <init> (Ljava/io/File;)V
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/nio/file/Path;)V
-	public final fun install ()Ljava/util/Map;
+	public final fun install ()Lio/matthewnelson/kmp/tor/binary/KmpTorBinaryPaths;
 }
 
-public final class io/matthewnelson/kmp/tor/binary/KmpTorBinaryKt {
-	public static final field ALIAS_GEOIP Ljava/lang/String;
-	public static final field ALIAS_GEOIP6 Ljava/lang/String;
-	public static final field ALIAS_TOR Ljava/lang/String;
+public final class io/matthewnelson/kmp/tor/binary/KmpTorBinaryPaths {
+	public final field geoip Ljava/lang/String;
+	public final field geoip6 Ljava/lang/String;
+	public final field tor Ljava/lang/String;
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
 }
 

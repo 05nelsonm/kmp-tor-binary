@@ -15,9 +15,6 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
-import io.matthewnelson.kmp.tor.binary.ALIAS_GEOIP
-import io.matthewnelson.kmp.tor.binary.ALIAS_GEOIP6
-import io.matthewnelson.kmp.tor.binary.ALIAS_TOR
 import io.matthewnelson.kmp.tor.binary.KmpTorBinary
 import io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializer
 import io.matthewnelson.kmp.tor.binary.util.*

@@ -17,6 +17,10 @@
 
 package io.matthewnelson.kmp.tor.binary
 
+import io.matthewnelson.kmp.tor.binary.internal.*
+import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP
+import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP6
+import io.matthewnelson.kmp.tor.binary.internal.ALIAS_TOR
 import io.matthewnelson.kmp.tor.binary.internal.configure
 import io.matthewnelson.kmp.tor.binary.internal.findLibTor
 import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
@@ -36,17 +40,21 @@ public actual constructor(
     public constructor(installationDir: Path): this(installationDir.absolutePathString())
 
     @Volatile
-    private var map: Map<String, String>? = null
+    private var paths: KmpTorBinaryPaths? = null
 
     @Throws(Exception::class)
-    public actual fun install(): Map<String, String> {
-        return map ?: synchronized(this) {
+    public actual fun install(): KmpTorBinaryPaths {
+        return paths ?: synchronized(this) {
             @OptIn(InternalKmpTorBinaryApi::class)
-            map ?: run {
-                Config.extractTo(installationDir)
-                    .findLibTor()
-                    .also { map = it }
-            }
+            paths ?: Config.extractTo(installationDir).findLibTor().let { map ->
+                // if extractTo did not throw exception, map will be
+                // populated with all resource aliases.
+                KmpTorBinaryPaths(
+                    geoip = map[ALIAS_GEOIP]!!,
+                    geoip6 = map[ALIAS_GEOIP6]!!,
+                    tor = map[ALIAS_TOR]!!,
+                )
+            }.also { paths = it }
         }
     }
 
