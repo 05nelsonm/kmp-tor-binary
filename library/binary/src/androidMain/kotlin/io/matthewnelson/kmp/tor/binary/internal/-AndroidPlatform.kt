@@ -19,35 +19,37 @@ import io.matthewnelson.kmp.tor.binary.KmpTorBinary
 import io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializer
 import io.matthewnelson.kmp.tor.binary.core.*
 
-@JvmSynthetic
+// Android
+@get:JvmSynthetic
 @OptIn(InternalKmpTorBinaryApi::class)
-internal actual fun Resource.Config.Builder.configure() {
-    val clazz = KmpTorBinary::class.java
+internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
+    Resource.Config.create {
+        val clazz = KmpTorBinary::class.java
 
-    resource(ALIAS_GEOIP) {
-        isExecutable = false
-        resourceClass = clazz
-        resourcePath = PATH_RESOURCE_GEOIP
-    }
-
-    resource(ALIAS_GEOIP6) {
-        isExecutable = false
-        resourceClass = clazz
-        resourcePath = PATH_RESOURCE_GEOIP6
-    }
-
-    if (ANDROID_SDK_INT != null) {
-        // Is Android Runtime.
-        //
-        // Binaries are extracted on application install
-        // to the nativeLib directory. This is required as
-        // android does not allow execution from the app dir
-        // (cannot download executables and run them).
-        if (KmpTorBinaryInitializer.INSTANCE.findLib("libtor.so") != null) {
-            return
+        resource(ALIAS_GEOIP) {
+            isExecutable = false
+            resourceClass = clazz
+            resourcePath = PATH_RESOURCE_GEOIP
         }
 
-        error("""
+        resource(ALIAS_GEOIP6) {
+            isExecutable = false
+            resourceClass = clazz
+            resourcePath = PATH_RESOURCE_GEOIP6
+        }
+
+        if (ANDROID_SDK_INT != null) {
+            // Is Android Runtime.
+            //
+            // Binaries are extracted on application install
+            // to the nativeLib directory. This is required as
+            // android does not allow execution from the app dir
+            // (cannot download executables and run them).
+            if (KmpTorBinaryInitializer.INSTANCE.findLib("libtor.so") != null) {
+                return@create
+            }
+
+            error("""
             Faild to find libtor.so within nativeLibraryDir
 
             Ensure the following are set correctly:
@@ -55,47 +57,48 @@ internal actual fun Resource.Config.Builder.configure() {
             AndroidManifest.xml: 'android:extractNativeLibs' is set to 'true'
             gradle.properties:   'android.bundle.enableUncompressedNativeLibs' is set to 'false'
         """.trimIndent())
-        return
-    }
+            return@create
+        }
 
-    // Android Unit Test. Check for support via binary-android-unit-test
-    val host = OSInfo.INSTANCE.osHost
+        // Android Unit Test. Check for support via binary-android-unit-test
+        val host = OSInfo.INSTANCE.osHost
 
-    if (host is OSHost.Unknown) {
-        error("Unknown host[$host]")
-        return
-    }
+        if (host is OSHost.Unknown) {
+            error("Unknown host[$host]")
+            return@create
+        }
 
-    val arch = OSInfo.INSTANCE.osArch
+        val arch = OSInfo.INSTANCE.osArch
 
-    val torResourcePath = host.toTorResourcePathOrNull(arch)
+        val torResourcePath = host.toTorResourcePathOrNull(arch)
 
-    if (torResourcePath == null) {
-        error("Unsupported architecutre[$arch] for host[$host]")
-        return
-    }
+        if (torResourcePath == null) {
+            error("Unsupported architecutre[$arch] for host[$host]")
+            return@create
+        }
 
-    val loader = "io.matthewnelson.kmp.tor.binary.android.unit.test.Loader"
+        val loader = "io.matthewnelson.kmp.tor.binary.android.unit.test.Loader"
 
-    val loaderClass = try {
-        Class
-            .forName(loader)
-            ?: throw ClassNotFoundException("Failed to find class $loader")
-    } catch (t: Throwable) {
-        error("""
+        val loaderClass = try {
+            Class
+                .forName(loader)
+                ?: throw ClassNotFoundException("Failed to find class $loader")
+        } catch (t: Throwable) {
+            error("""
             Failed to find class $loader
             Missing dependency for Android Unit Tests?
 
             Try adding the 'binary-android-unit-test' dependency
             via testImplementation
         """.trimIndent())
-        return
-    }
+            return@create
+        }
 
-    resource(ALIAS_TOR) {
-        isExecutable = true
-        resourceClass = loaderClass
-        resourcePath = torResourcePath
+        resource(ALIAS_TOR) {
+            isExecutable = true
+            resourceClass = loaderClass
+            resourcePath = torResourcePath
+        }
     }
 }
 

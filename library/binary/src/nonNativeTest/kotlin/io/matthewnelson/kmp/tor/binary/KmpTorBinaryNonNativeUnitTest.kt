@@ -18,6 +18,7 @@ package io.matthewnelson.kmp.tor.binary
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.OSHost
 import io.matthewnelson.kmp.tor.binary.core.OSInfo
+import io.matthewnelson.kmp.tor.binary.internal.RESOURCE_CONFIG
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -32,16 +33,16 @@ class KmpTorBinaryNonNativeUnitTest: KmpTorBinaryBaseUnitTest() {
             // If host machine running this test is not supported, the
             // tor binaries will not be configured and an error will
             // be added instead.
-            assertEquals(1, KmpTorBinary.Config.errors.size)
-            assertEquals(2, KmpTorBinary.Config.resources.size)
+            assertEquals(1, RESOURCE_CONFIG.errors.size)
+            assertEquals(2, RESOURCE_CONFIG.resources.size)
         } else {
             // Specifically for Android, this should obtain the Loader
             // class from module :binary-android-unit-test and have
             // the appropriate resources to load for the host machine.
-            assertEquals(0, KmpTorBinary.Config.errors.size)
-            assertEquals(3, KmpTorBinary.Config.resources.size)
+            assertEquals(0, RESOURCE_CONFIG.errors.size)
+            assertEquals(3, RESOURCE_CONFIG.resources.size)
         }
 
-        println(KmpTorBinary.Config)
+        println(RESOURCE_CONFIG)
     }
 }

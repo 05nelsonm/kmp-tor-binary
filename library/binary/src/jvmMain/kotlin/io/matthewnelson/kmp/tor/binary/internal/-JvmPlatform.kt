@@ -18,48 +18,51 @@ package io.matthewnelson.kmp.tor.binary.internal
 import io.matthewnelson.kmp.tor.binary.KmpTorBinary
 import io.matthewnelson.kmp.tor.binary.core.*
 
-@JvmSynthetic
+// Jvm
+@get:JvmSynthetic
 @OptIn(InternalKmpTorBinaryApi::class)
-internal actual fun Resource.Config.Builder.configure() {
-    val clazz = KmpTorBinary::class.java
+internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
+    Resource.Config.create {
+        val clazz = KmpTorBinary::class.java
 
-    resource(ALIAS_GEOIP) {
-        isExecutable = false
-        resourceClass = clazz
-        resourcePath = PATH_RESOURCE_GEOIP
-    }
+        resource(ALIAS_GEOIP) {
+            isExecutable = false
+            resourceClass = clazz
+            resourcePath = PATH_RESOURCE_GEOIP
+        }
 
-    resource(ALIAS_GEOIP6) {
-        isExecutable = false
-        resourceClass = clazz
-        resourcePath = PATH_RESOURCE_GEOIP6
-    }
+        resource(ALIAS_GEOIP6) {
+            isExecutable = false
+            resourceClass = clazz
+            resourcePath = PATH_RESOURCE_GEOIP6
+        }
 
-    val host = OSInfo.INSTANCE.osHost
+        val host = OSInfo.INSTANCE.osHost
 
-    if (host is OSHost.Unknown) {
-        error("Unknown host[$host]")
-        return
-    }
+        if (host is OSHost.Unknown) {
+            error("Unknown host[$host]")
+            return@create
+        }
 
-    val arch = OSInfo.INSTANCE.osArch
+        val arch = OSInfo.INSTANCE.osArch
 
-    val torResourcePath = host.toTorResourcePathOrNull(arch)
+        val torResourcePath = host.toTorResourcePathOrNull(arch)
 
-    if (torResourcePath == null) {
-        error("Unsupported architecutre[$arch] for host[$host]")
-        return
-    }
+        if (torResourcePath == null) {
+            error("Unsupported architecutre[$arch] for host[$host]")
+            return@create
+        }
 
-    resource(ALIAS_TOR) {
-        isExecutable = true
-        resourceClass = clazz
-        resourcePath = torResourcePath
+        resource(ALIAS_TOR) {
+            isExecutable = true
+            resourceClass = clazz
+            resourcePath = torResourcePath
+        }
     }
 }
 
-// Jvm is a no-op
+// no-op
 @JvmSynthetic
-@Throws(IllegalStateException::class)
 @OptIn(InternalKmpTorBinaryApi::class)
+@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
 internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> = this

@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.kmp.tor.binary
+@file:JvmName("SynchronizedJvm")
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
+
+package io.matthewnelson.kmp.tor.binary.core.locks
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.internal.RESOURCE_CONFIG
-import kotlin.test.Test
-import kotlin.test.assertEquals
 
+@InternalKmpTorBinaryApi
+public actual typealias SynchronizedObject = Any
+
+@PublishedApi
 @OptIn(InternalKmpTorBinaryApi::class)
-class KmpTorBinaryResourceInstrumentTest: KmpTorBinaryBaseUnitTest() {
-
-    @Test
-    fun givenResourceConfig_whenAndroidEmulator_thenConfigLoadsOnlyGeoips() {
-        assertEquals(0, RESOURCE_CONFIG.errors.size)
-        assertEquals(2, RESOURCE_CONFIG.resources.size)
-    }
-}
+internal actual inline fun <T: Any?> synchronizedImpl(
+    lock: SynchronizedObject,
+    block: () -> T
+): T = kotlin.synchronized(lock, block)

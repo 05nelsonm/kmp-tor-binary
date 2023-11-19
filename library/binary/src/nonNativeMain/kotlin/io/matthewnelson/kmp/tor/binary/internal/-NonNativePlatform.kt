@@ -20,17 +20,12 @@ package io.matthewnelson.kmp.tor.binary.internal
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.OSArch
 import io.matthewnelson.kmp.tor.binary.core.OSHost
-import io.matthewnelson.kmp.tor.binary.core.Resource
 import kotlin.jvm.JvmSynthetic
 
 @JvmSynthetic
 internal const val PATH_RESOURCE_GEOIP = "/io/matthewnelson/kmp/tor/binary/geoip.gz"
 @JvmSynthetic
 internal const val PATH_RESOURCE_GEOIP6 = "/io/matthewnelson/kmp/tor/binary/geoip6.gz"
-
-@JvmSynthetic
-@OptIn(InternalKmpTorBinaryApi::class)
-internal expect fun Resource.Config.Builder.configure()
 
 @JvmSynthetic
 @Suppress("NOTHING_TO_INLINE")
