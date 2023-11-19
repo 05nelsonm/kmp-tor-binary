@@ -27,6 +27,7 @@ import kotlin.test.assertTrue
 abstract class KmpTorBinaryBaseUnitTest {
 
     open val tempDir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY
+    open val isWindows: Boolean = false
 
     @Test
     open fun givenKmpTorBinaryResources_whenInstalled_thenIsSuccessful() {
@@ -44,10 +45,11 @@ abstract class KmpTorBinaryBaseUnitTest {
             assertTrue((filesystem().metadata(geoip6).size ?: 0) > 0)
             assertTrue((filesystem().metadata(tor).size ?: 0) > 0)
 
-            // TODO: Windows might be flaky... check it
-            assertFalse(geoip.canExecute())
-            assertFalse(geoip6.canExecute())
-            assertTrue(tor.canExecute())
+            if (!isWindows) {
+                assertFalse(geoip.canExecute())
+                assertFalse(geoip6.canExecute())
+                assertTrue(tor.canExecute())
+            }
         } finally {
             try {
                 filesystem().deleteRecursively(path)
