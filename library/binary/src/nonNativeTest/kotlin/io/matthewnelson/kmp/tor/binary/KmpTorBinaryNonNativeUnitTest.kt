@@ -16,12 +16,15 @@
 package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.util.OSHost
 import io.matthewnelson.kmp.tor.binary.util.OSInfo
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(InternalKmpTorBinaryApi::class)
-class KmpTorBinaryResourceUnitTest {
+class KmpTorBinaryNonNativeUnitTest: KmpTorBinaryBaseUnitTest() {
+
+    override val isWindows: Boolean = OSInfo.INSTANCE.osHost is OSHost.Windows
 
     @Test
     fun givenTorBinaryResources_whenConfigured_thenIsExpectedForHostMachine() {

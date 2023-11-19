@@ -19,41 +19,58 @@
 
 package io.matthewnelson.kmp.tor.binary.util.internal
 
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+
 @JsName("mkdirSync")
-internal external fun fs_mkdirSync(path: String): String?
+@InternalKmpTorBinaryApi
+public external fun fs_mkdirSync(path: String): String?
 
 @JsName("readdirSync")
-internal external fun fs_readdirSync(path: String, options: Options.ReadDir): Array<String>
+@InternalKmpTorBinaryApi
+public external fun fs_readdirSync(path: String, options: Options.ReadDir): Array<String>
 
 @JsName("readFileSync")
-internal external fun fs_readFileSync(path: String, options: Options.ReadUtf8): buffer_Buffer
+@InternalKmpTorBinaryApi
+public external fun fs_readFileSync(path: String, options: Options.ReadUtf8): buffer_Buffer
 
 @JsName("readFileSync")
-internal external fun fs_readFileSync(path: String): buffer_Buffer
+@InternalKmpTorBinaryApi
+public external fun fs_readFileSync(path: String): buffer_Buffer
 
-// data can be a String or a Buffer
 @JsName("writeFileSync")
-internal external fun fs_writeFileSync(path: String, data: Any)
+@InternalKmpTorBinaryApi
+public external fun fs_writeFileSync(path: String, data: buffer_Buffer)
 
 @JsName("readlinkSync")
-internal external fun fs_readlinkSync(path: String): String
+@InternalKmpTorBinaryApi
+public external fun fs_readlinkSync(path: String): String
 
 @JsName("rmSync")
-internal external fun fs_rmSync(path: String, options: Options.Remove)
+@InternalKmpTorBinaryApi
+public external fun fs_rmSync(path: String, options: Options.Remove)
+
+@JsName("statSync")
+@InternalKmpTorBinaryApi
+public external fun fs_statSync(path: String): fs_Stats
 
 @JsName("lstatSync")
-internal external fun fs_lstatSync(path: String): fs_Stats
+@InternalKmpTorBinaryApi
+public external fun fs_lstatSync(path: String): fs_Stats
 
 @JsName("existsSync")
-internal external fun fs_existsSync(path: String): Boolean
+@InternalKmpTorBinaryApi
+public external fun fs_existsSync(path: String): Boolean
 
 // https://nodejs.org/api/fs.html#file-modes
 @JsName("chmodSync")
-internal external fun fs_chmodSync(path: String, mode: Int)
+@InternalKmpTorBinaryApi
+public external fun fs_chmodSync(path: String, mode: String)
 
 @JsName("Stats")
-internal external class fs_Stats {
-    fun isFile(): Boolean
-    fun isDirectory(): Boolean
-    fun isSymbolicLink(): Boolean
+@InternalKmpTorBinaryApi
+public external class fs_Stats {
+    public val mode: Number
+    public fun isFile(): Boolean
+    public fun isDirectory(): Boolean
+    public fun isSymbolicLink(): Boolean
 }

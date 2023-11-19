@@ -15,9 +15,6 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
-import io.matthewnelson.kmp.tor.binary.ALIAS_GEOIP
-import io.matthewnelson.kmp.tor.binary.ALIAS_GEOIP6
-import io.matthewnelson.kmp.tor.binary.ALIAS_TOR
 import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.util.OSHost
 import io.matthewnelson.kmp.tor.binary.util.OSInfo
@@ -49,7 +46,7 @@ internal actual fun Resource.Config.Builder.configure() {
 
     val arch = OSInfo.INSTANCE.osArch
 
-    val torResourcePath = host.toTorResourcePath(arch)
+    val torResourcePath = host.toTorResourcePathOrNull(arch)
 
     if (torResourcePath == null) {
         error("Unsupported architecutre[$arch] for host[$host]")

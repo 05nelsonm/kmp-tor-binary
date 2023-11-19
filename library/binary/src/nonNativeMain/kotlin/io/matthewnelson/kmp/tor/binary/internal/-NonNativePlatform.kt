@@ -35,7 +35,7 @@ internal expect fun Resource.Config.Builder.configure()
 @JvmSynthetic
 @Suppress("NOTHING_TO_INLINE")
 @OptIn(InternalKmpTorBinaryApi::class)
-internal inline fun OSHost.toTorResourcePath(osArch: OSArch): String? {
+internal inline fun OSHost.toTorResourcePathOrNull(osArch: OSArch): String? {
     if (!osArch.isSupportedBy(this)) return null
 
     val name = when (this) {

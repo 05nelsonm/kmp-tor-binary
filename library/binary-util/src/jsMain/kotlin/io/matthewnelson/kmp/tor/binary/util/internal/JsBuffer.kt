@@ -19,8 +19,11 @@
 
 package io.matthewnelson.kmp.tor.binary.util.internal
 
+import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+
 @JsName("Buffer")
-internal external class buffer_Buffer {
-    val length: Number
-    fun toString(encoding: String, start: Number, end: Number): String
+@InternalKmpTorBinaryApi
+public external class buffer_Buffer {
+    public val length: Number
+    public fun toString(encoding: String, start: Number, end: Number): String
 }

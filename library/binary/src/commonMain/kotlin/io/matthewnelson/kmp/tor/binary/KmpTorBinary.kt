@@ -20,12 +20,7 @@ package io.matthewnelson.kmp.tor.binary
 import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.util.Resource
 import kotlin.jvm.JvmField
-import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
-
-public const val ALIAS_TOR: String = "tor"
-public const val ALIAS_GEOIP: String = "geoip"
-public const val ALIAS_GEOIP6: String = "geoip6"
 
 public expect class KmpTorBinary(installationDir: String) {
 
@@ -33,7 +28,7 @@ public expect class KmpTorBinary(installationDir: String) {
     public val installationDir: String
 
     @Throws(Exception::class)
-    public fun install(): Map<String, String>
+    public fun install(): KmpTorBinaryPaths
 
     internal companion object {
 

@@ -113,3 +113,16 @@ internal inline fun StringBuilder.appendIndent(
     value: Any,
     indent: String = "    "
 ): StringBuilder = append(indent).append(value)
+
+@InternalKmpTorBinaryApi
+@Suppress("NOTHING_TO_INLINE")
+@Throws(IllegalStateException::class)
+internal inline fun Resource.Config.throwIfError() {
+    check(errors.isEmpty()) {
+        buildString {
+            errors.forEach { error ->
+                appendLine(error)
+            }
+        }
+    }
+}

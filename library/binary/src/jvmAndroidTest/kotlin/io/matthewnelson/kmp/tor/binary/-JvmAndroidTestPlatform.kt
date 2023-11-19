@@ -13,13 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.kmp.tor.binary.internal
+package io.matthewnelson.kmp.tor.binary
 
-import io.matthewnelson.kmp.tor.binary.util.ImmutableMap
-import io.matthewnelson.kmp.tor.binary.util.InternalKmpTorBinaryApi
+import okio.FileSystem
+import okio.Path
 
-// For Android to parse nativeLibraryDir
-@JvmSynthetic
-@Throws(IllegalStateException::class)
-@OptIn(InternalKmpTorBinaryApi::class)
-internal expect fun ImmutableMap<String, String>.findLibTor(): Map<String, String>
+actual fun filesystem(): FileSystem = FileSystem.SYSTEM
+
+actual fun Path.canExecute(): Boolean = toFile().canExecute()
