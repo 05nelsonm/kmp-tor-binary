@@ -14,6 +14,9 @@
 
 Tor binary resource distribution for the [kmp-tor][url-kmp-tor] project  
 
+**NOTE:** This branch is for [kmp-tor][url-kmp-tor] `1.x.x` support and is feature frozen. 
+See [master](https://github.com/05nelsonm/kmp-tor-binary/tree/master) branch for the latest and greatest.
+
 ## Getting Started (Configuration)
 
 <details>
