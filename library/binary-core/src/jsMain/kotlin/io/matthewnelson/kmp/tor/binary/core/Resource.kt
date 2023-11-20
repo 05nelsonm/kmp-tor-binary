@@ -103,6 +103,7 @@ public actual class Resource private constructor(
             }
 
             val destination = path_resolve(destinationDir, fileName)
+            val moduleResource = resolveResource(moduleName + resourcePath)
 
             if (fs_existsSync(destination)) {
                 fs_rmSync(destination, Options.Remove())
@@ -112,7 +113,7 @@ public actual class Resource private constructor(
                 }
             }
 
-            var buffer = fs_readFileSync(resolveResource(moduleName + resourcePath))
+            var buffer = fs_readFileSync(moduleResource)
 
             if (isGzipped) {
                 buffer = zlib_gunzipSync(buffer)
