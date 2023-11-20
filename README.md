@@ -1,6 +1,6 @@
 # kmp-tor-binary
 [![badge-license]][url-license]
-[![badge-latest-release]][url-latest-release]
+<!-- [![badge-latest-release]][url-latest-release] -->
 
 [![badge-kotlin]][url-kotlin]
 
