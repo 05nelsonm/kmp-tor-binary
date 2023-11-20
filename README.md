@@ -10,7 +10,7 @@
 ![badge-support-js-ir]
 
 This project is focused on the compilation, packaging, distribution and installation of `tor`
-resources for Kotlin-Multiplatform, primarily to be consumed as a dependency by the 
+resources for Kotlin Multiplatform, primarily to be consumed as a dependency by the 
 [kmp-tor][url-kmp-tor] project.
 
 **NOTE:** Support for [kmp-tor][url-kmp-tor] version `1.x.x` is 
@@ -45,15 +45,15 @@ their designated gradle module resource directories (e.g. `library/binary/src/jv
  - `geoip`, `geoip6`, and `tor` binaries for each platform/architecture are then published to `Npmjs`
    via the `library/npmjs` module (See https://www.npmjs.com/package/kmp-tor-binary-resources). The 
    `library/binary` module then consumes that `npm` dependency in order to access them from Kotlin 
-   Multi-Platform.
+   Multiplatform.
 
 **iOS/macOS/tvOS/watchOS:**
- - Supporting darwin targets for Kotlin-Multiplatform is a work in progress. See Issue 
+ - Supporting darwin targets for Kotlin Multiplatform is a work in progress. See Issue 
    [[#120]](https://github.com/05nelsonm/kmp-tor-binary/issues/120)
 
 ### Distribution
 
-New releases will be published to Maven Central and can be consumed as a Kotlin Multi-Platform 
+New releases will be published to Maven Central and can be consumed as a Kotlin Multiplatform 
 dependency.
 
 ### Installation
