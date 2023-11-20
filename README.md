@@ -6,25 +6,91 @@
 
 ![badge-platform-android]
 ![badge-platform-jvm]
-
-<!-- TODO: Add Node.js badge
 ![badge-platform-js-node]
 ![badge-support-js-ir]
--->
 
-Tor binary resource distribution for the [kmp-tor][url-kmp-tor] project  
+This project is focused on the compilation, packaging, distribution and installation of `tor`
+resources for Kotlin-Multiplatform, primarily to be consumed as a dependency by the 
+[kmp-tor][url-kmp-tor] project.
 
-## Getting Started (Configuration)
+**NOTE:** Support for [kmp-tor][url-kmp-tor] version `1.x.x` is 
+maintained [HERE](https://github.com/05nelsonm/kmp-tor-binary/tree/1.x.x)
 
-<details>
-    <summary>Android</summary>
+### Compilation
 
-Tor binaries for `Android` **are automatically imported** with the [kmp-tor][url-kmp-tor] 
-dependency, so you do **not** need to add the `kmp-tor-binary-android` dependency 
-**if** you are using [kmp-tor][url-kmp-tor]. **CONFIGURATION BELOW IS STILL NEEDED THOUGH.**  
+`tor` is compiled via the `external/task.sh` script using `Docker` (for Android/Jvm/Node.js) in order
+to maintain reproducability. The maintainer then creates detached signatures for apple/windows targets
+which are checked into `git`; this is so others wishing to verify reproducability of the `tor` binaries 
+they are running (or providing to their users) can do so. More on that later.
 
-`Android` requires some configuration so binaries will be appropriately extracted to your 
-app's `nativeLibraryDir` upon application installation.  
+You can view the `help` output of `task.sh` by running `./external/task.sh` from the project's root directory.
+
+```
+# clone repository
+$ cd kmp-tor-binary
+$ ./external/task.sh
+```
+
+### Packaging
+
+The compiled output is "packaged" for the given platforms (currently Android/Jvm/Node.js) and moved to
+their designated gradle module resource directories (e.g. `library/binary/src/jvmMain/resources`).
+
+**Android/Jvm/Node.js:**
+ - Android `tor` binaries (`libtor.so` files) are moved to the `src/androidMain/jniLibs/{ABI}` directory
+ - `geoip` & `geoip6` files are `gzipped` and moved to the `src/jvmAndroidMain/resources` directory
+ - Detached code signatures for macOS and Windows are applied to the compilied `tor` binaries
+ - `tor` is `gzipped` and moved to the `src/jvmMain/resources`
+   directory for their respective platform and architecture.
+ - `geoip`, `geoip6`, and `tor` binaries for each platform/architecture are then published to `Npmjs`
+   via the `library/npmjs` module (See https://www.npmjs.com/package/kmp-tor-binary-resources). The 
+   `library/binary` module then consumes that `npm` dependency in order to access them from Kotlin 
+   Multi-Platform.
+
+**iOS/macOS/tvOS/watchOS:**
+ - Supporting darwin targets for Kotlin-Multiplatform is a work in progress. See Issue 
+   [[#120]](https://github.com/05nelsonm/kmp-tor-binary/issues/120)
+
+### Distribution
+
+New releases will be published to Maven Central and can be consumed as a Kotlin Multi-Platform 
+dependency.
+
+### Installation
+
+The [kmp-tor][url-kmp-tor] project will handle all of this behind the scenes. 
+If you are not using that, simply call:
+
+```kotlin
+val paths = KmpTorBinary(destinationDir = "/path/to/my/tor/dir").install()
+```
+
+It will either throw an exception or extract the resources to the specified directory
+ - Note that for Android it will depend on a few things
+     - Android Runtime (Emulators or devices) it will search for `libtor.so` within the 
+       application's `nativeLibraryDir`
+         - See the `library/binary-initializer` module for more details on how it does that
+     - Unit Tests you can add the `binary-android-unit-test` dependency and things will just 
+       magically work 
+         - Use `testImplementation` when adding the dependency!!! Do **NOT** ship your app with 
+           that, lol.
+
+```kotlin
+println(paths)
+
+// KmpTorBinary.Paths: [
+//     geoip: /path/to/my/tor/dir/geoip
+//     geoip6: /path/to/my/tor/dir/geoip6
+//     tor: /path/to/my/tor/dir/tor
+// ]
+```
+
+See [HERE](https://github.com/05nelsonm/kmp-tor-binary/issues/85#issuecomment-1819747564) for 
+more details.
+
+<!--
+
+TODO: gradle configuration for android
 
  - Ensure `JavaVersion` is greater than or equal to 11:
    ```kotlin
@@ -107,163 +173,9 @@ app's `nativeLibraryDir` upon application installation.
 
      - You can also verify (prior to pushing your release to Google Play)
        if the bundled apk extracts binaries on install correctly by using
-       the [bundletool][url-bundletool].  
+       the [bundletool][url-bundletool].
 
-### That's it, you should be good to go for your `Android` project!
-
-</details>
-
-<details>
-    <summary>Java</summary>
-
-Tor binaries for `Java` are **not** automatically imported with the [kmp-tor][url-kmp-tor] 
-dependency. You need to add the dependencies for the platform(s) you wish to support.
-
-<!-- TAG_VERSION -->
-
- - Add dependencies:
-   ```kotlin
-   // build.gradle.kts
-
-   dependencies {
-       val vTor = "4.8.6-0"
-       val vKmpTor = "1.4.4" // <-- see kmp-tor repo for latest version
-       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
-
-       // Linux x86_64
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx64:$vTor")
-       // Linux i686
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-linuxx86:$vTor")
-       // macOS aarch64
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosarm64:$vTor")
-       // macOS x86_64
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-macosx64:$vTor")
-       // Windows x86_64
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-mingwx64:$vTor")
-       // Windows i686
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-mingwx86:$vTor")
-   }
-   ```
- - If a specific platform or architecture is not currently supported by `kmp-tor-binary`, you can package 
-   your own and provide them to [kmp-tor][url-kmp-tor] at runtime for extraction and execution.
-   ```kotlin
-   // Add the additional 'extract' dependency
-   dependencies {
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-extract:$vTor")
-   }
-   ```
-     - See [TorBinaryResource][url-tor-binary-resource] documentation for packaging requirements and details.
-     - Load them via `kmp-tor`'s [PlatformInstaller][url-kmp-tor-platform-installer] (available since v`4.7.13-1-1.4.0`)
-       ```kotlin
-       val installer = PlatformInstaller.custom(
-           option = InstallOption.CleanInstallIfMissing,
-           resource = TorBinaryResource.from(
-               os = TorBinaryResource.OS.Linux,
-               arch = "arm64",
-               loadPathPrefix = "com.example",
-               sha256sum = "abcdefg123...",
-               resourceManifest = listOf(
-                   "directory/file1.gz",
-                   "directory/file2.gz",
-                   "file3.gz",
-                   "tor.gz",
-               )
-           )
-       )
-       ```
-     - Then in the module that contains your custom binary resources
-       ```kotlin
-       // pacakge ${loadPathPrefix}.<lowercase os name>.<arch>
-       package com.example.linux.arm64
-       
-       // Must be named "Loader"
-       private class Loader
-       ```
-         - In the event finding your custom resources fails using the standard method, extraction will 
-           fall back to attempting to retrieve the `com.example.linux.arm64.Loader` via reflection and
-           use its `ClassLoader` to retrieve the resources located in that module/jar. This is often the 
-           case for projects that are utilizing the Java 9 `Module` system (such as JavaFX).
-
-### That's it, you should be good to go for your `Java` project!
-
-</details>
-
-<!-- TODO: Uncomment + comment out TAG_VERSION declarations (when kmp-tor is ready for nodejs)
-<details>
-    <summary>Node.js</summary>
-
-Tor binaries for `Node.js` are **not** automatically imported with the [kmp-tor][url-kmp-tor]
-dependency. You need to add the dependencies for the platform(s) you wish to support, which 
-are distributed via `npmjs` as `node` modules (available since `4.7.10-1`).
-
-TODO: Comment out
-TAG_VERSION
-
-- Add dependencies:
-  ```kotlin
-  // build.gradle.kts
-
-  dependencies {
-      val vTor = "4.8.6-0"
-      val vKmpTor = "1.4.4" // <-- see kmp-tor repo for latest version
-      implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
-
-      // Linux x86_64
-      implementation(npm("kmp-tor-binary-linuxx64", vTor))
-      // Linux i686
-      implementation(npm("kmp-tor-binary-linuxx86", vTor))
-      // macOS aarch64
-      implementation(npm("kmp-tor-binary-macosarm64", vTor))
-      // macOS x86_64
-      implementation(npm("kmp-tor-binary-macosx64", vTor))
-      // Windows x86_64
-      implementation(npm("kmp-tor-binary-mingwx64", vTor))
-      // Windows i686
-      implementation(npm("kmp-tor-binary-mingwx86", vTor))
-  }
-  ```
- - If a specific platform or architecture is not currently supported by `kmp-tor-binary`, you can package 
-   your own and provide them to [kmp-tor][url-kmp-tor] at runtime for extraction and execution.
-   ```kotlin
-   // Add the additional `extract` dependency
-   dependencies {
-       implementation("io.matthewnelson.kotlin-components:kmp-tor-binary-extract:$vTor")
-   }
-   ```
-     - See [TorBinaryResource][url-tor-binary-resource] documentation for packaging requirements and details.
-     - Load them via `kmp-tor`'s [PlatformInstaller][url-kmp-tor-platform-installer] (available since v`4.7.13-1-1.4.0`)
-       ```kotlin
-       val installer = PlatformInstaller.custom(
-           option = InstallOption.CleanInstallIfMissing,
-           resource = TorBinaryResource.from(
-               os = TorBinaryResource.OS.Linux,
-               arch = "arm64",
-
-               // This will look for your binary assets listed below
-               // in module "com-example-linuxarm64".
-               loadPathPrefix = "com-example",
-
-               sha256sum = "abcdefg123...",
-               resourceManifest = listOf(
-                   "directory/file1.gz",
-                   "directory/file2.gz",
-                   "file3.gz",
-                   "tor.gz",
-               )
-           )
-       )
-       ```
-
-### That's it, you should be good to go for your `Node.js` project!
-
-</details>
 -->
-
-## Where do the binaries come from?
-
-Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-browser-build]
-
-You can verify the reproducability of published binaries by following the [BUILD.md](BUILD.md) guide.
 
 <!-- TAG_VERSION -->
 [badge-latest-release]: https://img.shields.io/badge/latest--release-4.8.6--0-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
