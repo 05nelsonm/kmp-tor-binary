@@ -32,7 +32,8 @@ NPMJS_AUTH_TOKEN=<auth token>
 
 - Publish assets to `Npmjs`
 ```bash
-./gradlew publishBinaryResourcesPackageToNpmjsRegistry
+./gradlew publishBinaryResourcesReleasePackageToNpmjsRegistry \
+  publishBinaryResourcesSnapshotPackageToNpmjsRegistry
 ```
 
 - Update `.kotlin-js-store/yarn.lock`
@@ -208,6 +209,11 @@ git merge --no-ff -S release_"$VERSION_NAME"
 ```
 
 - Update `VERSION_NAME` (add `-SNAPSHOT`) and `VERSION_CODE` in root project's `gradle.properties` file
+
+- Update `.kotlin-js-store/yarn.lock`
+```bash
+./gradlew kotlinUpgradeYarnLock -DKMP_TARGETS_ALL
+```
 
 - Commit changes
 ```bash

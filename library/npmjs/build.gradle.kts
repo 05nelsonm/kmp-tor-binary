@@ -14,6 +14,7 @@
  * limitations under the License.
  **/
 import dev.petuska.npm.publish.extension.domain.NpmPackage
+import dev.petuska.npm.publish.extension.domain.NpmPackages
 
 plugins {
     id("base")
@@ -37,26 +38,67 @@ npmPublish {
     }
 
     packages {
-        register("binary-resources") {
-            packageName.set("${rootProject.name}-resources")
-            version.set("${project.version}")
+        val snapshotVersion = properties["NPMJS_SNAPSHOT_VERSION"]!!
+            .toString()
+            .toInt()
 
-            main.set("index.js")
-            readme.set(projectDir.resolve("README.md"))
+        check(snapshotVersion >= 0) {
+            "NPMJS_SNAPSHOT_VERSION cannot be negative"
+        }
 
-            files {
-                val binarySrc = projectDir
-                    .resolveSibling("binary")
-                    .resolve("src")
+        val vProject = "${project.version}"
+        if (vProject.endsWith("-SNAPSHOT")) {
 
-                // geoip resources
-                from(binarySrc.resolve("jvmAndroidMain").resolve("resources"))
-                // tor binary resources
-                from(binarySrc.resolve("jvmMain").resolve("resources"))
+            // Only register snapshot task when project version is -SNAPSHOT
+            registerBinaryResources("$vProject.$snapshotVersion")
+        } else {
+            check(snapshotVersion == 0) {
+                "NPMJS_SNAPSHOT_VERSION must be 0 for releases"
             }
 
-            packageInfoJson()
+            // Release will be X.X.X-#
+            // Increment the # for the next SNAPSHOT version
+            val increment = vProject.last().toString().toInt() + 1
+            val nextVersion = vProject
+                .substringBefore('-') +
+                "-$increment"
+
+            // Register both snapshot and release tasks when project
+            // version indicates a release so after maven publication
+            // and git tagging, updating VERSION_NAME with -SNAPSHOT
+            // there will be a "next release" waiting
+            registerBinaryResources(vProject)
+            registerBinaryResources("$nextVersion-SNAPSHOT.0")
         }
+    }
+}
+
+fun NpmPackages.registerBinaryResources(releaseVersion: String) {
+    val name = if (releaseVersion.contains("SNAPSHOT")) {
+        "binary-resources-snapshot"
+    } else {
+        "binary-resources-release"
+    }
+
+    register(name) {
+        packageName.set("${rootProject.name}-resources")
+        version.set(releaseVersion)
+
+        main.set("index.js")
+        readme.set(projectDir.resolve("README.md"))
+
+        files {
+            val binarySrc = projectDir
+                .resolveSibling("binary")
+                .resolve("src")
+
+            // geoip resources
+            from(binarySrc.resolve("jvmAndroidMain").resolve("resources"))
+            // tor binary resources
+            from(binarySrc.resolve("jvmMain").resolve("resources"))
+        }
+
+        packageInfoJson()
     }
 }
 
