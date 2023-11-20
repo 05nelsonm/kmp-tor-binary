@@ -13,10 +13,10 @@ public final class io/matthewnelson/kmp/tor/binary/core/OSInfo$Companion {
 public final class io/matthewnelson/kmp/tor/binary/core/ProcessExt {
 }
 
-public final class io/matthewnelson/kmp/tor/binary/core/locks/SynchronizedCommon {
+public final class io/matthewnelson/kmp/tor/binary/core/SynchronizedCommon {
 }
 
-public final class io/matthewnelson/kmp/tor/binary/core/locks/SynchronizedJvm {
+public final class io/matthewnelson/kmp/tor/binary/core/SynchronizedJvm {
 	public static final fun synchronizedImpl (Ljava/lang/Object;Lkotlin/jvm/functions/Function0;)Ljava/lang/Object;
 }
 

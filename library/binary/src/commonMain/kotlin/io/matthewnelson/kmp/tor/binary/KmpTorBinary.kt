@@ -16,8 +16,8 @@
 package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.core.locks.SynchronizedObject
-import io.matthewnelson.kmp.tor.binary.core.locks.synchronized
+import io.matthewnelson.kmp.tor.binary.core.SynchronizedObject
+import io.matthewnelson.kmp.tor.binary.core.synchronized
 import io.matthewnelson.kmp.tor.binary.internal.*
 import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP
 import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP6

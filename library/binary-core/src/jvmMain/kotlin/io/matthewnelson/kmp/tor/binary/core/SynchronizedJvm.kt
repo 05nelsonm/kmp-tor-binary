@@ -16,9 +16,7 @@
 @file:JvmName("SynchronizedJvm")
 @file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 
-package io.matthewnelson.kmp.tor.binary.core.locks
-
-import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+package io.matthewnelson.kmp.tor.binary.core
 
 @InternalKmpTorBinaryApi
 public actual typealias SynchronizedObject = Any
