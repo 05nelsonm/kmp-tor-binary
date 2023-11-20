@@ -18,8 +18,8 @@ maintained [HERE](https://github.com/05nelsonm/kmp-tor-binary/tree/1.x.x)
 
 ### Compilation
 
-`tor` is compiled via the `external/task.sh` script using `Docker` (for Android/Jvm/Node.js) in order
-to maintain reproducability. The maintainer then creates detached signatures for apple/windows targets
+`tor` is compiled via the `external/task.sh` script using `Docker` (for Android/Jvm/Node.js) in order 
+to maintain reproducability. The maintainer then creates detached code signatures for Apple/Windows targets 
 which are checked into `git`; this is so others wishing to verify reproducability of the `tor` binaries 
 they are running (or providing to their users) can do so. More on that later.
 
@@ -33,19 +33,21 @@ $ ./external/task.sh
 
 ### Packaging
 
-The compiled output is "packaged" for the given platforms (currently Android/Jvm/Node.js) and moved to
+The compiled output is "packaged" for the given platforms (currently Android/Jvm/Node.js) and moved to 
 their designated gradle module resource directories (e.g. `library/binary/src/jvmMain/resources`).
+
+Running `./external/task.sh package` after a build will do the following.
 
 **Android/Jvm/Node.js:**
  - Android `tor` binaries (`libtor.so` files) are moved to the `src/androidMain/jniLibs/{ABI}` directory
  - `geoip` & `geoip6` files are `gzipped` and moved to the `src/jvmAndroidMain/resources` directory
  - Detached code signatures for macOS and Windows are applied to the compilied `tor` binaries
- - `tor` is `gzipped` and moved to the `src/jvmMain/resources`
-   directory for their respective platform and architecture.
- - `geoip`, `geoip6`, and `tor` binaries for each platform/architecture are then published to `Npmjs`
+ - `tor` is `gzipped` and moved to the `src/jvmMain/resources` directory for their respective host and 
+   architecture.
+ - `geoip`, `geoip6`, and `tor` files for each host/architecture are then published to `Npmjs`
    via the `library/npmjs` module (See https://www.npmjs.com/package/kmp-tor-binary-resources). The 
-   `library/binary` module then consumes that `npm` dependency in order to access them from Kotlin 
-   Multiplatform.
+   `library/binary` module then consumes that `npm` dependency in order to access the resources from 
+   Kotlin Multiplatform.
 
 **iOS/macOS/tvOS/watchOS:**
  - Supporting darwin targets for Kotlin Multiplatform is a work in progress. See Issue 
@@ -73,7 +75,7 @@ It will either throw an exception or extract the resources to the specified dire
      - Unit Tests you can add the `binary-android-unit-test` dependency and things will just 
        magically work 
          - Use `testImplementation` when adding the dependency!!! Do **NOT** ship your app with 
-           that, lol.
+           that.
 
 ```kotlin
 println(paths)
