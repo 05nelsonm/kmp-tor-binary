@@ -70,8 +70,21 @@ kmpConfiguration {
         js {
             sourceSetMain {
                 dependencies {
-                    // resources
-                    implementation(npm("kmp-tor-binary-resources", "$version"))
+                    val npmVersion = if ("$version".endsWith("-SNAPSHOT")) {
+                        val snapshotVersion = properties["NPMJS_SNAPSHOT_VERSION"]!!
+                            .toString()
+                            .toInt()
+
+                        "$version.$snapshotVersion"
+                    } else {
+                        // If project version is not SNAPSHOT, this
+                        // will inhibit releasing to MavenCentral w/o
+                        // firsting making a release publication to
+                        // Npmjs of the resources.
+                        "$version"
+                    }
+
+                    implementation(npm("kmp-tor-binary-resources", npmVersion))
                 }
             }
 
