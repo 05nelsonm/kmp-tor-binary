@@ -3,15 +3,6 @@ public final class io/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs {
 	public final field nativeLibrary Ljava/io/File;
 	public final field noBackupFiles Ljava/io/File;
 	public fun <init> (Landroid/content/Context;)V
-	public fun <init> (Ljava/io/File;Ljava/io/File;Ljava/io/File;)V
-	public final fun component1 ()Ljava/io/File;
-	public final fun component2 ()Ljava/io/File;
-	public final fun component3 ()Ljava/io/File;
-	public final fun copy (Ljava/io/File;Ljava/io/File;Ljava/io/File;)Lio/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs;
-	public static synthetic fun copy$default (Lio/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs;Ljava/io/File;Ljava/io/File;Ljava/io/File;ILjava/lang/Object;)Lio/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
 }
 
 public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer : androidx/startup/Initializer {

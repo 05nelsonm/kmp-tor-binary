@@ -18,13 +18,13 @@ package io.matthewnelson.kmp.tor.binary.initializer
 import android.content.Context
 import java.io.File
 
-public data class ApplicationDirs(
+public class ApplicationDirs private constructor(
     @JvmField
     public val cache: File,
     @JvmField
     public val nativeLibrary: File,
     @JvmField
-    val noBackupFiles: File,
+    public val noBackupFiles: File,
 ) {
     public constructor(context: Context): this(
         cache = context.cacheDir,
