@@ -42,6 +42,10 @@ public class KmpTorBinaryInitializer private constructor() {
         return null
     }
 
+    @Throws(IllegalStateException::class)
+    public fun requireLib(name: String): File = findLib(name)
+        ?: throw IllegalStateException("Failed to find lib[$name]")
+
     public companion object {
 
         @JvmField
