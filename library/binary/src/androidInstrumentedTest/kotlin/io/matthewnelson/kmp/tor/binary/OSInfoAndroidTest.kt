@@ -16,16 +16,17 @@
 package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.internal.RESOURCE_CONFIG
+import io.matthewnelson.kmp.tor.binary.core.OSHost
+import io.matthewnelson.kmp.tor.binary.core.OSInfo
 import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 @OptIn(InternalKmpTorBinaryApi::class)
-class KmpTorBinaryResourceInstrumentTest: KmpTorBinaryBaseUnitTest() {
+class OSInfoAndroidTest {
 
     @Test
-    fun givenResourceConfig_whenAndroidEmulator_thenConfigLoadsOnlyGeoips() {
-        assertEquals(0, RESOURCE_CONFIG.errors.size)
-        assertEquals(2, RESOURCE_CONFIG.resources.size)
+    fun givenOSInfo_whenAndroidEmulator_thenHostIsLinuxAndroid() {
+        // Should register as android as it's running in the emulator
+        assertTrue(OSInfo.INSTANCE.osHost is OSHost.Linux.Android)
     }
 }

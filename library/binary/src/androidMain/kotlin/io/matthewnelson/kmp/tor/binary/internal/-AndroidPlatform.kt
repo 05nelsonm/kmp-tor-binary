@@ -16,8 +16,8 @@
 package io.matthewnelson.kmp.tor.binary.internal
 
 import io.matthewnelson.kmp.tor.binary.KmpTorBinary
-import io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializer
 import io.matthewnelson.kmp.tor.binary.core.*
+import io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializer
 
 // Android
 @get:JvmSynthetic
@@ -45,22 +45,46 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
             // to the nativeLib directory. This is required as
             // android does not allow execution from the app dir
             // (cannot download executables and run them).
-            if (KmpTorBinaryInitializer.INSTANCE.findLib("libtor.so") != null) {
+            if (KmpTorBinaryInitializer.Impl.INSTANCE.findLib("libtor.so") != null) {
                 return@create
             }
 
-            error("""
-                Faild to find libtor.so within nativeLibraryDir
-    
-                Ensure the following are set correctly:
-                build.gradle(.kts):  'android.packaging.jniLibs.useLegacyPackaging' is set to 'true'
-                AndroidManifest.xml: 'android:extractNativeLibs' is set to 'true'
-                gradle.properties:   'android.bundle.enableUncompressedNativeLibs' is set to 'false'
-            """.trimIndent())
+            if (KmpTorBinaryInitializer.Impl.INSTANCE.isInitialized) {
+                error("""
+                    Faild to find libtor.so within nativeLibraryDir
+        
+                    Ensure the following are set correctly:
+                    build.gradle(.kts):  'android.packaging.jniLibs.useLegacyPackaging' is set to 'true'
+                    AndroidManifest.xml: 'android:extractNativeLibs' is set to 'true'
+                    gradle.properties:   'android.bundle.enableUncompressedNativeLibs' is set to 'false'
+                """.trimIndent())
+            } else {
+                error(KmpTorBinaryInitializer.errorMsg())
+            }
+
             return@create
         }
 
         // Android Unit Test. Check for support via binary-android-unit-test
+        val loader = "io.matthewnelson.kmp.tor.binary.android.unit.test.Loader"
+
+        val loaderClass = try {
+            Class.forName(loader)
+        } catch (_: Throwable) {
+            null
+        }
+
+        if (loaderClass == null) {
+            error("""
+                Failed to find class $loader
+                Missing dependency for Android Unit Tests?
+    
+                Try adding the 'binary-android-unit-test' dependency
+                as testImplementation
+            """.trimIndent())
+            return@create
+        }
+
         val host = OSInfo.INSTANCE.osHost
 
         if (host is OSHost.Unknown) {
@@ -74,23 +98,6 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 
         if (torResourcePath == null) {
             error("Unsupported architecutre[$arch] for host[$host]")
-            return@create
-        }
-
-        val loader = "io.matthewnelson.kmp.tor.binary.android.unit.test.Loader"
-
-        val loaderClass = try {
-            Class
-                .forName(loader)
-                ?: throw ClassNotFoundException("Failed to find class $loader")
-        } catch (t: Throwable) {
-            error("""
-            Failed to find class $loader
-            Missing dependency for Android Unit Tests?
-
-            Try adding the 'binary-android-unit-test' dependency
-            via testImplementation
-        """.trimIndent())
             return@create
         }
 
@@ -108,6 +115,6 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> {
     if (contains(ALIAS_TOR)) return this
 
-    val lib = KmpTorBinaryInitializer.INSTANCE.requireLib("libtor.so")
+    val lib = KmpTorBinaryInitializer.Impl.INSTANCE.requireLib("libtor.so")
     return toMutableMap().apply { put(ALIAS_TOR, lib.path) }
 }

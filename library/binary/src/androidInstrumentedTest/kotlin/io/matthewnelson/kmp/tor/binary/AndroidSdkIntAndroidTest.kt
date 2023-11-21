@@ -16,17 +16,15 @@
 package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.core.OSHost
-import io.matthewnelson.kmp.tor.binary.core.OSInfo
+import io.matthewnelson.kmp.tor.binary.core.ANDROID_SDK_INT
 import kotlin.test.Test
-import kotlin.test.assertTrue
+import kotlin.test.assertNotNull
 
 @OptIn(InternalKmpTorBinaryApi::class)
-class OSInfoUnitTest {
+class AndroidSdkIntAndroidTest {
 
     @Test
-    fun givenOSInfo_whenAndroidEmulator_thenHostIsLinuxAndroid() {
-        // Should register as android as it's running in the emulator
-        assertTrue(OSInfo.INSTANCE.osHost is OSHost.Linux.Android)
+    fun givenAndroidSdkIntJava_whenAndroidRuntime_thenIsNotNull() {
+        assertNotNull(ANDROID_SDK_INT)
     }
 }

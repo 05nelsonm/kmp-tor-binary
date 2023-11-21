@@ -13,18 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.kmp.tor.binary
+package io.matthewnelson.kmp.tor.binary.initializer
 
-import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.core.ANDROID_SDK_INT
-import kotlin.test.Test
-import kotlin.test.assertNotNull
+import android.content.Context
+import java.io.File
 
-@OptIn(InternalKmpTorBinaryApi::class)
-class AndroidSdkIntInstrumentTest {
-
-    @Test
-    fun givenAndroidSdkIntJava_whenAndroidRuntime_thenIsNotNull() {
-        assertNotNull(ANDROID_SDK_INT)
-    }
+public class ApplicationDirs private constructor(
+    @JvmField
+    public val cache: File,
+    @JvmField
+    public val nativeLibrary: File,
+    @JvmField
+    public val noBackupFiles: File,
+) {
+    public constructor(context: Context): this(
+        cache = context.cacheDir,
+        nativeLibrary = File(context.applicationInfo.nativeLibraryDir),
+        noBackupFiles = context.noBackupFilesDir
+    )
 }
