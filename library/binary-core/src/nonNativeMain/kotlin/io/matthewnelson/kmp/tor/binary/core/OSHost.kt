@@ -79,7 +79,7 @@ public sealed class OSHost private constructor(
         public val name: String
     ): OSHost("", emptySet()) {
         override fun equals(other: Any?): Boolean = other is Unknown && other.name == name
-        override fun hashCode(): Int = 17 * 31 + name.hashCode()
+        override fun hashCode(): Int = 16 * 31 + name.hashCode()
         override fun toString(): String = name
     }
 
