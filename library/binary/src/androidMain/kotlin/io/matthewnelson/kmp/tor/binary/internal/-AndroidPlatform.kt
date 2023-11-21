@@ -66,6 +66,25 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
         }
 
         // Android Unit Test. Check for support via binary-android-unit-test
+        val loader = "io.matthewnelson.kmp.tor.binary.android.unit.test.Loader"
+
+        val loaderClass = try {
+            Class.forName(loader)
+        } catch (_: Throwable) {
+            null
+        }
+
+        if (loaderClass == null) {
+            error("""
+                Failed to find class $loader
+                Missing dependency for Android Unit Tests?
+    
+                Try adding the 'binary-android-unit-test' dependency
+                as testImplementation
+            """.trimIndent())
+            return@create
+        }
+
         val host = OSInfo.INSTANCE.osHost
 
         if (host is OSHost.Unknown) {
@@ -79,23 +98,6 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 
         if (torResourcePath == null) {
             error("Unsupported architecutre[$arch] for host[$host]")
-            return@create
-        }
-
-        val loader = "io.matthewnelson.kmp.tor.binary.android.unit.test.Loader"
-
-        val loaderClass = try {
-            Class
-                .forName(loader)
-                ?: throw ClassNotFoundException("Failed to find class $loader")
-        } catch (t: Throwable) {
-            error("""
-            Failed to find class $loader
-            Missing dependency for Android Unit Tests?
-
-            Try adding the 'binary-android-unit-test' dependency
-            via testImplementation
-        """.trimIndent())
             return@create
         }
 
