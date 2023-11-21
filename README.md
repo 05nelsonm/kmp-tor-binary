@@ -28,35 +28,44 @@ You can view the `help` output of `task.sh` by running `./external/task.sh` from
 ```
 # clone repository
 $ cd kmp-tor-binary
+$ git checkout master
+$ git pull
 $ ./external/task.sh
 ```
 
 ### Packaging
 
-The compiled output is "packaged" for the given platforms (currently Android/Jvm/Node.js) and moved to 
-their designated gradle module resource directories (e.g. `library/binary/src/jvmMain/resources`).
+The compiled output from `task.sh`'s `build` tasks are "packaged" for the given platforms (currently 
+only Android/Jvm/Node.js) and moved to their designated gradle module resource directories 
+(e.g. `library/binary/src/jvmMain/resources`).
 
-Running `./external/task.sh package` after a build will do the following.
+Running `./external/task.sh package` after a `build` task will do the following.
 
 **Android/Jvm/Node.js:**
  - Android `tor` binaries (`libtor.so` files) are moved to the `src/androidMain/jniLibs/{ABI}` directory
  - `geoip` & `geoip6` files are `gzipped` and moved to the `src/jvmAndroidMain/resources` directory
- - Detached code signatures for macOS and Windows are applied to the compilied `tor` binaries
- - `tor` is `gzipped` and moved to the `src/jvmMain/resources` directory for their respective host and 
-   architecture.
- - `geoip`, `geoip6`, and `tor` files for each host/architecture are then published to `Npmjs`
-   via the `library/npmjs` module (See https://www.npmjs.com/package/kmp-tor-binary-resources). The 
-   `library/binary` module then consumes that `npm` dependency in order to access the resources from 
-   Kotlin Multiplatform.
+ - Detached code signatures for macOS and Windows are applied to the compilied `tor` binaries (if needed)
+ - `tor` binaries are `gzipped` and moved to the `src/jvmMain/resources` directory for their respective 
+   host and architecture.
 
 **iOS/macOS/tvOS/watchOS:**
  - Supporting darwin targets for Kotlin Multiplatform is a work in progress. See Issue 
    [[#120]](https://github.com/05nelsonm/kmp-tor-binary/issues/120)
 
+After "packaging" all resources, an additional step for Node.js is performed.
+ - `geoip`, `geoip6`, and all `tor` files are published to `Npmjs` via the
+   `library/npmjs` module (See https://www.npmjs.com/package/kmp-tor-binary-resources).
+ - The `library/binary` module then uses that `npm` dependency in order to provide 
+   the resources via Kotlin Multiplatform.
+
 ### Distribution
 
 New releases will be published to Maven Central and can be consumed as a Kotlin Multiplatform 
 dependency.
+
+Currently, there are no Release or `SNAPSHOT` publications of the `2.0.0` build. The plan is to 
+publish a `SNAPSHOT` in order to work on [kmp-tor][url-kmp-tor] `2.0.0`. Once that work is complete,
+a Release will be made for `kmp-tor-binary`.
 
 ### Installation
 
@@ -69,13 +78,15 @@ val paths = KmpTorBinary(destinationDir = "/path/to/my/tor/dir").install()
 
 It will either throw an exception or extract the resources to the specified directory
  - Note that for Android it will depend on a few things
-     - Android Runtime (Emulators or devices) it will search for `libtor.so` within the 
-       application's `nativeLibraryDir`
+     - **Android Runtime (Emulators and Devices):**
+         - It will search for `libtor.so` within the application's `nativeLibraryDir` and return that path
+         - All of this happens automatically and no configuration is needed.
          - See the `library/binary-initializer` module for more details on how it does that
-     - Unit Tests you can add the `binary-android-unit-test` dependency and things will just 
-       magically work 
-         - Use `testImplementation` when adding the dependency!!! Do **NOT** ship your app with 
-           that.
+     - **Android Unit Tests:**
+         - You can add the `binary-android-unit-test` dependency and reflection will be used to
+           source the correct `tor` binary resource for the given host/architecture that the tests 
+           are running on (the exact same way Jvm does it).
+         - Use `testImplementation` when adding the dependency!!! Do **NOT** ship your app with that
 
 ```kotlin
 println(paths)
