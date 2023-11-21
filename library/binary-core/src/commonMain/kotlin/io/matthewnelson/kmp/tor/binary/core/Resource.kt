@@ -30,14 +30,14 @@ public expect class Resource {
 
     @InternalKmpTorBinaryApi
     public class Config private constructor(
-        errors: Set<String>,
-        resources: Set<Resource>,
+        errors: ImmutableSet<String>,
+        resources: ImmutableSet<Resource>,
     ) {
 
         @JvmField
-        public val errors: Set<String>
+        public val errors: ImmutableSet<String>
         @JvmField
-        public val resources: Set<Resource>
+        public val resources: ImmutableSet<Resource>
 
         @Throws(Exception::class)
         public fun extractTo(destinationDir: String): ImmutableMap<String, String>
@@ -46,19 +46,21 @@ public expect class Resource {
         public companion object {
 
             @JvmStatic
+            @KmpTorBinaryCoreDsl
             public fun create(block: Builder.() -> Unit): Config
         }
 
-        @KmpTorBinaryDsl
+        @KmpTorBinaryCoreDsl
         @InternalKmpTorBinaryApi
         public class Builder internal constructor() {
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public fun error(message: String): Builder
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public fun resource(
                 alias: String,
+                require: Boolean = true,
                 block: Resource.Builder.() -> Unit
             ): Builder
         }
@@ -68,7 +70,7 @@ public expect class Resource {
         public override fun toString(): String
     }
 
-    @KmpTorBinaryDsl
+    @KmpTorBinaryCoreDsl
     @InternalKmpTorBinaryApi
     public class Builder internal constructor(alias: String) {
 

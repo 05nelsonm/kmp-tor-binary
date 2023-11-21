@@ -36,8 +36,8 @@ public actual class Resource private constructor(
 
     @InternalKmpTorBinaryApi
     public actual class Config private actual constructor(
-        public actual val errors: Set<String>,
-        public actual val resources: Set<Resource>,
+        public actual val errors: ImmutableSet<String>,
+        public actual val resources: ImmutableSet<Resource>,
     ) {
 
         @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
@@ -130,18 +130,19 @@ public actual class Resource private constructor(
             @Suppress("UNUSED_PARAMETER")
             private fun resolveResource(path: String): String = js("require.resolve(path)") as String
 
+            @KmpTorBinaryCoreDsl
             @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
             public actual fun create(block: Builder.() -> Unit): Config = Builder().apply(block).build()
         }
 
-        @KmpTorBinaryDsl
+        @KmpTorBinaryCoreDsl
         @InternalKmpTorBinaryApi
         public actual class Builder internal actual constructor() {
 
             private val errors = mutableSetOf<String>()
             private val resources = mutableSetOf<Resource>()
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public actual fun error(
                 message: String
             ): Builder {
@@ -151,16 +152,19 @@ public actual class Resource private constructor(
                 return this
             }
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public actual fun resource(
                 alias: String,
+                require: Boolean,
                 block: Resource.Builder.() -> Unit
             ): Builder {
                 if (alias.isBlank()) return this
 
-                val res = Builder(alias).apply(block).build()
-                if (res != null) {
-                    resources.add(res)
+                val resource = Builder(alias).apply(block).build()
+                if (resource != null) {
+                    resources.add(resource)
+                } else if (require) {
+                    error("Resource[$alias] was malconfigured")
                 }
                 return this
             }
@@ -176,7 +180,7 @@ public actual class Resource private constructor(
         public actual override fun toString(): String = commonToString()
     }
 
-    @KmpTorBinaryDsl
+    @KmpTorBinaryCoreDsl
     @InternalKmpTorBinaryApi
     public actual class Builder internal actual constructor(
         public actual val alias: String

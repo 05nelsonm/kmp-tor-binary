@@ -19,9 +19,8 @@ import kotlin.jvm.JvmStatic
 
 @InternalKmpTorBinaryApi
 public class ImmutableSet<T> private constructor(
-    delegate: MutableSet<T>
+    private val delegate: Set<T>
 ): Set<T> {
-    private val delegate = delegate.toSet()
 
     override val size: Int get() = delegate.size
     override fun isEmpty(): Boolean = delegate.isEmpty()
@@ -33,15 +32,17 @@ public class ImmutableSet<T> private constructor(
     public companion object {
 
         @JvmStatic
-        public fun <T> MutableSet<T>.toImmutableSet(): ImmutableSet<T> = ImmutableSet(this)
+        public fun <T> MutableSet<T>.toImmutableSet(): ImmutableSet<T> = ImmutableSet(this.toSet())
+
+        @JvmStatic
+        public fun <T> of(vararg elements: T): ImmutableSet<T> = ImmutableSet(elements.toSet())
     }
 }
 
 @InternalKmpTorBinaryApi
 public class ImmutableMap<K, V> private constructor(
-    delegate: MutableMap<K, V>
+    private val delegate: Map<K, V>
 ): Map<K, V> {
-    private val delegate = delegate.toMap()
 
     override val entries: Set<Map.Entry<K, V>> get() = delegate.entries
     override val keys: Set<K> get() = delegate.keys
@@ -56,6 +57,9 @@ public class ImmutableMap<K, V> private constructor(
     public companion object {
 
         @JvmStatic
-        public fun <K, V> MutableMap<K, V>.toImmutableMap(): ImmutableMap<K, V> = ImmutableMap(this)
+        public fun <K, V> MutableMap<K, V>.toImmutableMap(): ImmutableMap<K, V> = ImmutableMap(this.toMap())
+
+        @JvmStatic
+        public fun <K, V> of(vararg pairs: Pair<K, V>): ImmutableMap<K, V> = ImmutableMap(pairs.toMap())
     }
 }

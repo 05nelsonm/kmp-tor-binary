@@ -42,9 +42,9 @@ public actual class Resource private constructor(
     @InternalKmpTorBinaryApi
     public actual class Config private actual constructor(
         @JvmField
-        public actual val errors: Set<String>,
+        public actual val errors: ImmutableSet<String>,
         @JvmField
-        public actual val resources: Set<Resource>,
+        public actual val resources: ImmutableSet<Resource>,
     ) {
 
         @Throws(Exception::class)
@@ -92,12 +92,15 @@ public actual class Resource private constructor(
 
             val destination = destinationDir.resolve(fileName)
 
-            if (destination.exists() && !destination.delete()) {
-                throw IOException("Failed to delete $destination")
-            }
-
             var resourceStream = resourceClass.getResourceAsStream(resourcePath)
                 ?: throw IOException("Failed to get resource input stream for $resourcePath")
+
+            if (destination.exists() && !destination.delete()) {
+                try {
+                    resourceStream.close()
+                } catch (_: Throwable) {}
+                throw IOException("Failed to delete $destination")
+            }
 
             if (isGzipped) {
                 resourceStream = GZIPInputStream(resourceStream)
@@ -122,17 +125,18 @@ public actual class Resource private constructor(
         public actual companion object {
 
             @JvmStatic
+            @KmpTorBinaryCoreDsl
             public actual fun create(block: Builder.() -> Unit): Config = Builder().apply(block).build()
         }
 
-        @KmpTorBinaryDsl
+        @KmpTorBinaryCoreDsl
         @InternalKmpTorBinaryApi
         public actual class Builder internal actual constructor() {
 
             private val errors = mutableSetOf<String>()
             private val resources = mutableSetOf<Resource>()
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public actual fun error(
                 message: String
             ): Builder {
@@ -142,9 +146,10 @@ public actual class Resource private constructor(
                 return this
             }
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public actual fun resource(
                 alias: String,
+                require: Boolean,
                 block: Resource.Builder.() -> Unit
             ): Builder {
                 if (alias.isBlank()) return this
@@ -152,6 +157,8 @@ public actual class Resource private constructor(
                 val resource = Builder(alias).apply(block).build()
                 if (resource != null) {
                     resources.add(resource)
+                } else if (require) {
+                    error("Resource[$alias] was malconfigured")
                 }
                 return this
             }
@@ -167,7 +174,7 @@ public actual class Resource private constructor(
         public actual override fun toString(): String = commonToString()
     }
 
-    @KmpTorBinaryDsl
+    @KmpTorBinaryCoreDsl
     @InternalKmpTorBinaryApi
     public actual class Builder internal actual constructor(
         @JvmField

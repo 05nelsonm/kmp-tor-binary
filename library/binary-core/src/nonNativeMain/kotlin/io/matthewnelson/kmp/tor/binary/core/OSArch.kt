@@ -48,7 +48,7 @@ public sealed class OSArch private constructor(
         public val arch: String
     ): OSArch("") {
         override fun equals(other: Any?): Boolean = other is Unsupported && other.arch == arch
-        override fun hashCode(): Int = 17 * 31 + arch.hashCode()
+        override fun hashCode(): Int = 16 * 31 + arch.hashCode()
         override fun toString(): String = arch
     }
 

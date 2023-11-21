@@ -44,14 +44,14 @@ public sealed class OSHost private constructor(
     ): OSHost("linux-$subtype", arches) {
 
         @InternalKmpTorBinaryApi
-        public object Android: Linux("android", setOf(
+        public object Android: Linux("android", ImmutableSet.of(
             OSArch.Aarch64,
             OSArch.Armv7,
             OSArch.X86,
             OSArch.X86_64,
         ))
         @InternalKmpTorBinaryApi
-        public object Libc: Linux("libc", setOf(
+        public object Libc: Linux("libc", ImmutableSet.of(
             OSArch.Aarch64,
             OSArch.Armv7,
             OSArch.X86,
@@ -63,12 +63,12 @@ public sealed class OSHost private constructor(
     }
 
     @InternalKmpTorBinaryApi
-    public object MacOS: OSHost("macos", setOf(
+    public object MacOS: OSHost("macos", ImmutableSet.of(
         OSArch.Aarch64,
         OSArch.X86_64,
     ))
     @InternalKmpTorBinaryApi
-    public object Windows: OSHost("mingw", setOf(
+    public object Windows: OSHost("mingw", ImmutableSet.of(
         OSArch.X86,
         OSArch.X86_64,
     ))
@@ -79,7 +79,7 @@ public sealed class OSHost private constructor(
         public val name: String
     ): OSHost("", emptySet()) {
         override fun equals(other: Any?): Boolean = other is Unknown && other.name == name
-        override fun hashCode(): Int = 17 * 31 + name.hashCode()
+        override fun hashCode(): Int = 16 * 31 + name.hashCode()
         override fun toString(): String = name
     }
 

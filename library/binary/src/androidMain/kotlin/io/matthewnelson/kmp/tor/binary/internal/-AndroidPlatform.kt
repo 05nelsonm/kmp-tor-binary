@@ -108,12 +108,6 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> {
     if (contains(ALIAS_TOR)) return this
 
-    KmpTorBinaryInitializer.INSTANCE.findLib("libtor.so")?.let { file ->
-        return toMutableMap().apply { put(ALIAS_TOR, file.path) }
-    }
-
-    // Should never make it here b/c configure should pop
-    // the error and inhibit resource extraction before this
-    // ever gets called. This is, however a fallback
-    throw IllegalStateException("Failed to find libtor.so")
+    val lib = KmpTorBinaryInitializer.INSTANCE.requireLib("libtor.so")
+    return toMutableMap().apply { put(ALIAS_TOR, lib.path) }
 }

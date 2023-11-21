@@ -6,6 +6,7 @@ public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryIniti
 	public static final synthetic fun init$binary_initializer_release (Landroid/content/Context;)V
 	public final fun nativeLibraryDir ()Ljava/io/File;
 	public final fun noBackupFilesDir ()Ljava/io/File;
+	public final fun requireLib (Ljava/lang/String;)Ljava/io/File;
 }
 
 public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Companion {
