@@ -16,8 +16,8 @@
 package io.matthewnelson.kmp.tor.binary.internal
 
 import io.matthewnelson.kmp.tor.binary.KmpTorBinary
-import io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializer
 import io.matthewnelson.kmp.tor.binary.core.*
+import io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializer
 
 // Android
 @get:JvmSynthetic
@@ -45,18 +45,23 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
             // to the nativeLib directory. This is required as
             // android does not allow execution from the app dir
             // (cannot download executables and run them).
-            if (KmpTorBinaryInitializer.INSTANCE.findLib("libtor.so") != null) {
+            if (KmpTorBinaryInitializer.Impl.INSTANCE.findLib("libtor.so") != null) {
                 return@create
             }
 
-            error("""
-                Faild to find libtor.so within nativeLibraryDir
-    
-                Ensure the following are set correctly:
-                build.gradle(.kts):  'android.packaging.jniLibs.useLegacyPackaging' is set to 'true'
-                AndroidManifest.xml: 'android:extractNativeLibs' is set to 'true'
-                gradle.properties:   'android.bundle.enableUncompressedNativeLibs' is set to 'false'
-            """.trimIndent())
+            if (KmpTorBinaryInitializer.Impl.INSTANCE.isInitialized) {
+                error("""
+                    Faild to find libtor.so within nativeLibraryDir
+        
+                    Ensure the following are set correctly:
+                    build.gradle(.kts):  'android.packaging.jniLibs.useLegacyPackaging' is set to 'true'
+                    AndroidManifest.xml: 'android:extractNativeLibs' is set to 'true'
+                    gradle.properties:   'android.bundle.enableUncompressedNativeLibs' is set to 'false'
+                """.trimIndent())
+            } else {
+                error(KmpTorBinaryInitializer.errorMsg())
+            }
+
             return@create
         }
 
@@ -108,6 +113,6 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> {
     if (contains(ALIAS_TOR)) return this
 
-    val lib = KmpTorBinaryInitializer.INSTANCE.requireLib("libtor.so")
+    val lib = KmpTorBinaryInitializer.Impl.INSTANCE.requireLib("libtor.so")
     return toMutableMap().apply { put(ALIAS_TOR, lib.path) }
 }

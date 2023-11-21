@@ -1,14 +1,4 @@
-public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer {
-	public static final field Companion Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Companion;
-	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer;
-	public final fun applicationDirs ()Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$ApplicationDirs;
-	public final fun findLib (Ljava/lang/String;)Ljava/io/File;
-	public static final synthetic fun init$binary_initializer_release (Landroid/content/Context;)V
-	public final fun isInitialized ()Z
-	public final fun requireLib (Ljava/lang/String;)Ljava/io/File;
-}
-
-public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$ApplicationDirs {
+public final class io/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs {
 	public final field cache Ljava/io/File;
 	public final field nativeLibrary Ljava/io/File;
 	public final field noBackupFiles Ljava/io/File;
@@ -17,25 +7,35 @@ public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryIniti
 	public final fun component1 ()Ljava/io/File;
 	public final fun component2 ()Ljava/io/File;
 	public final fun component3 ()Ljava/io/File;
-	public final fun copy (Ljava/io/File;Ljava/io/File;Ljava/io/File;)Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$ApplicationDirs;
-	public static synthetic fun copy$default (Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$ApplicationDirs;Ljava/io/File;Ljava/io/File;Ljava/io/File;ILjava/lang/Object;)Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$ApplicationDirs;
+	public final fun copy (Ljava/io/File;Ljava/io/File;Ljava/io/File;)Lio/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs;
+	public static synthetic fun copy$default (Lio/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs;Ljava/io/File;Ljava/io/File;Ljava/io/File;ILjava/lang/Object;)Lio/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Companion {
-}
-
-public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializerImpl : androidx/startup/Initializer {
-	public static final field Companion Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializerImpl$Companion;
+public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer : androidx/startup/Initializer {
+	public static final field Companion Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Companion;
 	public fun <init> ()V
-	public fun create (Landroid/content/Context;)Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer;
+	public fun create (Landroid/content/Context;)Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Impl;
 	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
 	public fun dependencies ()Ljava/util/List;
+	public static final fun errorMsg ()Ljava/lang/String;
 }
 
-public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializerImpl$Companion {
+public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Companion {
 	public final fun errorMsg ()Ljava/lang/String;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Impl {
+	public static final field Companion Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Impl$Companion;
+	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Impl;
+	public final fun applicationDirs ()Lio/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs;
+	public final fun findLib (Ljava/lang/String;)Ljava/io/File;
+	public final fun isInitialized ()Z
+	public final fun requireLib (Ljava/lang/String;)Ljava/io/File;
+}
+
+public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Impl$Companion {
 }
 
