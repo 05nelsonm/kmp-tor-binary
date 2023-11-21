@@ -16,51 +16,34 @@
 package io.matthewnelson.kmp.tor.binary.initializer
 
 import android.content.Context
-import java.io.File
+import androidx.startup.AppInitializer
+import androidx.startup.Initializer
 
-public class KmpTorBinaryInitializer private constructor() {
-
-    @get:JvmName("cacheDir")
-    public var cacheDir: File? = null
-        private set
-    @get:JvmName("nativeLibraryDir")
-    public var nativeLibraryDir: File? = null
-        private set
-    @get:JvmName("noBackupFilesDir")
-    public var noBackupFilesDir: File? = null
-        private set
-
-    public fun findLib(name: String): File? {
-        nativeLibraryDir?.walkTopDown()
-            ?.iterator()
-            ?.forEach { file ->
-                if (file.isFile && file.name == name) {
-                    return file
-                }
-            }
-
-        return null
+public class KmpTorBinaryInitializerImpl: Initializer<KmpTorBinaryInitializer> {
+    override fun create(context: Context): KmpTorBinaryInitializer {
+        val appInitializer = AppInitializer.getInstance(context)
+        check(appInitializer.isEagerlyInitialized(javaClass)) {
+            errorMsg()
+        }
+        KmpTorBinaryInitializer.init(context)
+        return KmpTorBinaryInitializer.INSTANCE
     }
 
-    @Throws(IllegalStateException::class)
-    public fun requireLib(name: String): File = findLib(name)
-        ?: throw IllegalStateException("Failed to find lib[$name]")
+    override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()
 
     public companion object {
 
-        @JvmField
-        public val INSTANCE: KmpTorBinaryInitializer = KmpTorBinaryInitializer()
+        @Suppress("NOTHING_TO_INLINE")
+        public inline fun errorMsg(): String = ERROR_MSG.trimIndent()
 
-        @JvmStatic
-        @JvmSynthetic
-        internal fun init(context: Context) {
-            INSTANCE.initialize(context)
-        }
-    }
-
-    private fun initialize(context: Context) {
-        cacheDir = context.cacheDir
-        nativeLibraryDir = File(context.applicationInfo.nativeLibraryDir)
-        noBackupFilesDir = context.noBackupFilesDir
+        @PublishedApi
+        internal const val ERROR_MSG: String = """
+            KmpTorBinaryInitializerImpl cannot be initialized lazily.
+            Please ensure that you have:
+            <meta-data
+                android:name='io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializerImpl'
+                android:value='androidx.startup' />
+            under InitializationProvider in your AndroidManifest.xml
+        """
     }
 }

@@ -31,13 +31,13 @@ public class KmpTorBinary(
     public val installationDir: String
 ) {
 
-    private val synchronous = Synchronous()
+    private val installer = Installer()
 
     @Throws(Exception::class)
-    public fun install(): Paths = synchronous.install()
+    public fun install(): Paths = installer.install()
 
     @OptIn(InternalKmpTorBinaryApi::class)
-    private inner class Synchronous: SynchronizedObject() {
+    private inner class Installer: SynchronizedObject() {
 
         @Volatile
         private var paths: Paths? = null
