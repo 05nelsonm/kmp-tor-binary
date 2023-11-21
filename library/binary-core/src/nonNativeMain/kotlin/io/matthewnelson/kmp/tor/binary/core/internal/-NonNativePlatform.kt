@@ -15,6 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.core.internal
 
+import io.matthewnelson.kmp.tor.binary.core.ImmutableMap
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.OSArch
 import kotlin.jvm.JvmSynthetic
@@ -26,22 +27,22 @@ internal const val PATH_OS_RELEASE = "/etc/os-release"
 
 @get:JvmSynthetic
 @InternalKmpTorBinaryApi
-internal val ARCH_MAP: Map<String, OSArch> by lazy {
-    mutableMapOf<String, OSArch>().apply {
-        put("x86", OSArch.X86)
-        put("i386", OSArch.X86)
-        put("i486", OSArch.X86)
-        put("i586", OSArch.X86)
-        put("i686", OSArch.X86)
-        put("pentium", OSArch.X86)
+internal val ARCH_MAP: ImmutableMap<String, OSArch> by lazy {
+    ImmutableMap.of(
+        Pair("x86", OSArch.X86),
+        Pair("i386", OSArch.X86),
+        Pair("i486", OSArch.X86),
+        Pair("i586", OSArch.X86),
+        Pair("i686", OSArch.X86),
+        Pair("pentium", OSArch.X86),
 
-        put("x64", OSArch.X86_64)
-        put("x86_64", OSArch.X86_64)
-        put("amd64", OSArch.X86_64)
-        put("em64t", OSArch.X86_64)
-        put("universal", OSArch.X86_64)
+        Pair("x64", OSArch.X86_64),
+        Pair("x86_64", OSArch.X86_64),
+        Pair("amd64", OSArch.X86_64),
+        Pair("em64t", OSArch.X86_64),
+        Pair("universal", OSArch.X86_64),
 
-        put("aarch64", OSArch.Aarch64)
-        put("arm64", OSArch.Aarch64)
-    }
+        Pair("aarch64", OSArch.Aarch64),
+        Pair("arm64", OSArch.Aarch64),
+    )
 }
