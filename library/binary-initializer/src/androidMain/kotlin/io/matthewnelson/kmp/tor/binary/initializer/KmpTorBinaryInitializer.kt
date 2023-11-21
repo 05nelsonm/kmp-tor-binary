@@ -74,8 +74,7 @@ public class KmpTorBinaryInitializer: Initializer<KmpTorBinaryInitializer.Impl> 
         @JvmStatic
         public fun errorMsg(): String = ERROR_MSG.trimIndent()
 
-        @PublishedApi
-        internal const val ERROR_MSG: String = """
+        private const val ERROR_MSG: String = """
             KmpTorBinaryInitializer cannot be initialized lazily.
             Please ensure that you have:
             <meta-data
