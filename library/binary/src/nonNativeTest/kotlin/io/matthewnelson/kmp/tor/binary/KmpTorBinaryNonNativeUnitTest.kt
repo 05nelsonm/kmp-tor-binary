@@ -23,7 +23,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 @OptIn(InternalKmpTorBinaryApi::class)
-class KmpTorBinaryNonNativeUnitTest: KmpTorBinaryBaseUnitTest() {
+class KmpTorBinaryNonNativeUnitTest: KmpTorBinaryBaseTest() {
 
     override val isWindows: Boolean = OSInfo.INSTANCE.osHost is OSHost.Windows
 

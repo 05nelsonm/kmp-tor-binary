@@ -22,7 +22,7 @@ import okio.Path.Companion.toPath
 import kotlin.random.Random
 import kotlin.test.*
 
-abstract class KmpTorBinaryBaseUnitTest {
+abstract class KmpTorBinaryBaseTest {
 
     open val tempDir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY
     open val isWindows: Boolean = false

@@ -16,15 +16,16 @@
 package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.core.ANDROID_SDK_INT
+import io.matthewnelson.kmp.tor.binary.internal.RESOURCE_CONFIG
 import kotlin.test.Test
-import kotlin.test.assertNotNull
+import kotlin.test.assertEquals
 
 @OptIn(InternalKmpTorBinaryApi::class)
-class AndroidSdkIntInstrumentTest {
+class KmpTorBinaryAndroidTest: KmpTorBinaryBaseTest() {
 
     @Test
-    fun givenAndroidSdkIntJava_whenAndroidRuntime_thenIsNotNull() {
-        assertNotNull(ANDROID_SDK_INT)
+    fun givenResourceConfig_whenAndroidEmulator_thenConfigLoadsOnlyGeoips() {
+        assertEquals(0, RESOURCE_CONFIG.errors.size)
+        assertEquals(2, RESOURCE_CONFIG.resources.size)
     }
 }
