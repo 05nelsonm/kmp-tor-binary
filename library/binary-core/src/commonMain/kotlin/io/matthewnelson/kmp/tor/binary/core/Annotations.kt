@@ -53,4 +53,4 @@ public annotation class InternalKmpTorBinaryApi
     AnnotationTarget.TYPEALIAS,
     AnnotationTarget.TYPE,
 )
-public annotation class KmpTorBinaryDsl
+public annotation class KmpTorBinaryCoreDsl

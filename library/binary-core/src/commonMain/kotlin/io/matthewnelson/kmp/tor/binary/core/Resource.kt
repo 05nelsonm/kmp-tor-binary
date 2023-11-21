@@ -46,18 +46,18 @@ public expect class Resource {
         public companion object {
 
             @JvmStatic
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public fun create(block: Builder.() -> Unit): Config
         }
 
-        @KmpTorBinaryDsl
+        @KmpTorBinaryCoreDsl
         @InternalKmpTorBinaryApi
         public class Builder internal constructor() {
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public fun error(message: String): Builder
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public fun resource(
                 alias: String,
                 require: Boolean = true,
@@ -70,7 +70,7 @@ public expect class Resource {
         public override fun toString(): String
     }
 
-    @KmpTorBinaryDsl
+    @KmpTorBinaryCoreDsl
     @InternalKmpTorBinaryApi
     public class Builder internal constructor(alias: String) {
 

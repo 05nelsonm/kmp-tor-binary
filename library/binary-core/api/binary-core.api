@@ -4,7 +4,7 @@ public final class io/matthewnelson/kmp/tor/binary/core/AndroidSdkIntKt {
 public abstract interface annotation class io/matthewnelson/kmp/tor/binary/core/InternalKmpTorBinaryApi : java/lang/annotation/Annotation {
 }
 
-public abstract interface annotation class io/matthewnelson/kmp/tor/binary/core/KmpTorBinaryDsl : java/lang/annotation/Annotation {
+public abstract interface annotation class io/matthewnelson/kmp/tor/binary/core/KmpTorBinaryCoreDsl : java/lang/annotation/Annotation {
 }
 
 public final class io/matthewnelson/kmp/tor/binary/core/OSInfo$Companion {

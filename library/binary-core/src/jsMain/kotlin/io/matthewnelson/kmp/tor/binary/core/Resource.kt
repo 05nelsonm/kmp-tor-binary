@@ -130,19 +130,19 @@ public actual class Resource private constructor(
             @Suppress("UNUSED_PARAMETER")
             private fun resolveResource(path: String): String = js("require.resolve(path)") as String
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
             public actual fun create(block: Builder.() -> Unit): Config = Builder().apply(block).build()
         }
 
-        @KmpTorBinaryDsl
+        @KmpTorBinaryCoreDsl
         @InternalKmpTorBinaryApi
         public actual class Builder internal actual constructor() {
 
             private val errors = mutableSetOf<String>()
             private val resources = mutableSetOf<Resource>()
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public actual fun error(
                 message: String
             ): Builder {
@@ -152,7 +152,7 @@ public actual class Resource private constructor(
                 return this
             }
 
-            @KmpTorBinaryDsl
+            @KmpTorBinaryCoreDsl
             public actual fun resource(
                 alias: String,
                 require: Boolean,
@@ -180,7 +180,7 @@ public actual class Resource private constructor(
         public actual override fun toString(): String = commonToString()
     }
 
-    @KmpTorBinaryDsl
+    @KmpTorBinaryCoreDsl
     @InternalKmpTorBinaryApi
     public actual class Builder internal actual constructor(
         public actual val alias: String
