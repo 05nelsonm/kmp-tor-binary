@@ -29,15 +29,15 @@ public class KmpTorBinaryInitializer: Initializer<KmpTorBinaryInitializer.Impl> 
             public val INSTANCE: Impl = Impl()
         }
 
-        @get:JvmName("applicationDirs")
-        public var applicationDirs: ApplicationDirs? = null
+        @get:JvmName("nativeLibraryDir")
+        public var nativeLibraryDir: File? = null
             private set
 
         @get:JvmName("isInitialized")
-        public val isInitialized: Boolean get() = applicationDirs != null
+        public val isInitialized: Boolean get() = nativeLibraryDir != null
 
         public fun findLib(name: String): File? {
-            applicationDirs?.nativeLibrary?.walkTopDown()
+            nativeLibraryDir?.walkTopDown()
                 ?.iterator()
                 ?.forEach { file ->
                     if (file.isFile && file.name == name) {
@@ -54,7 +54,7 @@ public class KmpTorBinaryInitializer: Initializer<KmpTorBinaryInitializer.Impl> 
 
         @JvmSynthetic
         internal fun init(context: Context) {
-            applicationDirs = ApplicationDirs(context)
+            nativeLibraryDir = File(context.applicationInfo.nativeLibraryDir)
         }
     }
 

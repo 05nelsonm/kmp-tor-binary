@@ -1,10 +1,3 @@
-public final class io/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs {
-	public final field cache Ljava/io/File;
-	public final field nativeLibrary Ljava/io/File;
-	public final field noBackupFiles Ljava/io/File;
-	public fun <init> (Landroid/content/Context;)V
-}
-
 public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer : androidx/startup/Initializer {
 	public static final field Companion Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Companion;
 	public fun <init> ()V
@@ -21,9 +14,9 @@ public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryIniti
 public final class io/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Impl {
 	public static final field Companion Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Impl$Companion;
 	public static final field INSTANCE Lio/matthewnelson/kmp/tor/binary/initializer/KmpTorBinaryInitializer$Impl;
-	public final fun applicationDirs ()Lio/matthewnelson/kmp/tor/binary/initializer/ApplicationDirs;
 	public final fun findLib (Ljava/lang/String;)Ljava/io/File;
 	public final fun isInitialized ()Z
+	public final fun nativeLibraryDir ()Ljava/io/File;
 	public final fun requireLib (Ljava/lang/String;)Ljava/io/File;
 }
 

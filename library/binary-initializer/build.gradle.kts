@@ -24,7 +24,7 @@ kmpConfiguration {
 
             sourceSetMain {
                 dependencies {
-                    api(libs.androidx.startup.runtime)
+                    implementation(libs.androidx.startup.runtime)
                 }
             }
         }
