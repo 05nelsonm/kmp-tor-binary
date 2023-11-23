@@ -42,14 +42,6 @@ public expect class Resource {
         @Throws(Exception::class)
         public fun extractTo(destinationDir: String): ImmutableMap<String, String>
 
-        @InternalKmpTorBinaryApi
-        public companion object {
-
-            @JvmStatic
-            @KmpTorBinaryCoreDsl
-            public fun create(block: Builder.() -> Unit): Config
-        }
-
         @KmpTorBinaryCoreDsl
         @InternalKmpTorBinaryApi
         public class Builder internal constructor() {

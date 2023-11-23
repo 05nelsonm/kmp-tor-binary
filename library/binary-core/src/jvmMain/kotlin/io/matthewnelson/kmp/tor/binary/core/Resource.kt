@@ -122,11 +122,11 @@ public actual class Resource private constructor(
         }
 
         @InternalKmpTorBinaryApi
-        public actual companion object {
+        public companion object {
 
             @JvmStatic
             @KmpTorBinaryCoreDsl
-            public actual fun create(block: Builder.() -> Unit): Config = Builder().apply(block).build()
+            public fun create(block: Builder.() -> Unit): Config = Builder().apply(block).build()
         }
 
         @KmpTorBinaryCoreDsl

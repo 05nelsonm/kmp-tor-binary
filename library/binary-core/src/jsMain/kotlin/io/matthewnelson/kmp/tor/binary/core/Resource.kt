@@ -125,14 +125,13 @@ public actual class Resource private constructor(
         }
 
         @InternalKmpTorBinaryApi
-        public actual companion object {
+        public companion object {
 
             @Suppress("UNUSED_PARAMETER")
             private fun resolveResource(path: String): String = js("require.resolve(path)") as String
 
             @KmpTorBinaryCoreDsl
-            @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
-            public actual fun create(block: Builder.() -> Unit): Config = Builder().apply(block).build()
+            public fun create(block: Builder.() -> Unit): Config = Builder().apply(block).build()
         }
 
         @KmpTorBinaryCoreDsl
