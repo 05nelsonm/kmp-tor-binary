@@ -73,7 +73,7 @@ The [kmp-tor][url-kmp-tor] project will handle all of this behind the scenes.
 If you are not using that, simply call:
 
 ```kotlin
-val paths = KmpTorBinary(destinationDir = "/path/to/my/tor/dir").install()
+val paths = KmpTorBinary(installationDir = "/path/to/my/tor/dir").install()
 ```
 
 It will either throw an exception or extract the resources to the specified directory
