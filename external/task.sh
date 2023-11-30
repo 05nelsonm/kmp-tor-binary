@@ -990,13 +990,9 @@ function __package {
   cp -a "$DIR_TASK/$1/$3" "$DIR_STAGING"
 
   if [ -n "$detached_sig" ]; then
-    cd "$DIR_TASK/.."
-
-    ./toolingJvm diff-cli apply \
+    ../tooling diff-cli apply \
       "$DIR_TASK/codesign/$detached_sig/$3.signature" \
       "$DIR_STAGING/$3"
-
-    cd "$DIR_TASK"
   fi
 
   # Need to apply permissions after detached signature
@@ -1069,16 +1065,14 @@ function __signature:generate:apple {
   rm -rf "$DIR_TASK/codesign/$3/tor.signature"
 
   echo ""
-  cd "$DIR_TASK/.."
 
-  ./toolingJvm diff-cli create \
+  ../tooling diff-cli create \
     --diff-ext-name ".signature" \
     "$DIR_TASK/build/$3/tor" \
     "$dir_bundle_libs/tor" \
     "$DIR_TASK/codesign/$3"
 
   echo ""
-  cd "$DIR_TASK"
 
   local dir_tmp="$DIR_TMP"
   unset DIR_TMP
@@ -1114,16 +1108,14 @@ function __signature:generate:mingw {
   rm -rf "$DIR_TASK/codesign/$3/tor.exe.signature"
 
   echo ""
-  cd "$DIR_TASK/.."
 
-  ./toolingJvm diff-cli create \
+  ../tooling diff-cli create \
     --diff-ext-name ".signature" \
     "$DIR_TASK/build/$3/tor.exe" \
     "$DIR_TMP/tor.exe" \
     "$DIR_TASK/codesign/$3"
 
   echo ""
-  cd "$DIR_TASK"
 
   local dir_tmp="$DIR_TMP"
   unset DIR_TMP
