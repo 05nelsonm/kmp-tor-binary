@@ -22,6 +22,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaApplication
 import org.gradle.kotlin.dsl.the
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 fun KmpConfigurationExtension.configureShared(
@@ -113,9 +114,14 @@ fun KmpConfigurationExtension.configureTool(
 
     configure {
         jvm {
-            pluginIds("application")
+            target {
+                withJava()
 
-            target { withJava() }
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                mainRun {
+                    mainClass.set(entryJvm)
+                }
+            }
 
             kotlinJvmTarget = JavaVersion.VERSION_1_8
             compileSourceCompatibility = JavaVersion.VERSION_1_8
@@ -125,21 +131,49 @@ fun KmpConfigurationExtension.configureTool(
         if (enableNative) {
             fun KotlinNativeTarget.setup() { binaries { executable { entryPoint = entryNative } } }
 
-            // TODO: This needs fixing
-            //  See https://github.com/05nelsonm/encoding/blob/master/sample/build.gradle.kts
-            val osName = System.getProperty("os.name")
+            val X86 = "x86"
+            val X64 = "x64"
+            val ARM64 = "arm64"
+
+            val arch = when (System.getProperty("os.arch")) {
+                X86 -> X86
+                "i386" -> X86
+                "i486" -> X86
+                "i586" -> X86
+                "i686" -> X86
+                "pentium" -> X86
+
+                X64 -> X64
+                "x86_64" -> X64
+                "amd64" -> X64
+                "em64t" -> X64
+                "universal" -> X64
+
+                ARM64 -> ARM64
+                "aarch64" -> ARM64
+                else -> null
+            }
+
+            val os = org.gradle.internal.os.OperatingSystem.current()
+            val targetName = project.name
+
             when {
-                osName.startsWith("Windows", true) -> {
-                    mingwX64(project.name) { target { setup() } }
+                os.isLinux -> {
+                    when (arch) {
+                        ARM64 -> linuxArm64(targetName) { target { setup() } }
+                        X64 -> linuxX64(targetName) { target { setup() } }
+                    }
                 }
-                osName == "Mac OS X" -> {
-                    macosX64(project.name) { target { setup() } }
+                os.isMacOsX -> {
+                    when (arch) {
+                        ARM64 -> macosArm64(targetName) { target { setup() } }
+                        X64 -> macosX64(targetName) { target { setup() } }
+                    }
                 }
-                osName.contains("Mac", true) -> {
-                    macosArm64(project.name) { target { setup() } }
-                }
-                osName.startsWith("Linux", true) -> {
-                    linuxX64(project.name) { target { setup() } }
+                os.isWindows -> {
+                    when (arch) {
+                        X64 -> mingwX64(targetName) { target { setup() } }
+                    }
                 }
             }
         }
@@ -160,17 +194,7 @@ fun KmpConfigurationExtension.configureTool(
             }
         }
 
-        kotlin {
-            explicitApi()
-
-            with(sourceSets) {
-                findByName("jvmMain")?.run {
-                    project.extensions.configure<JavaApplication>("application") {
-                        mainClass.set(entryJvm)
-                    }
-                }
-            }
-        }
+        kotlin { explicitApi() }
 
         action.execute(this)
     }

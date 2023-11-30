@@ -14,9 +14,16 @@
 # limitations under the License.
 TOOL="$1"; shift 1
 
-if [ -z "${TOOL}" ] || [ ! -d "tools/${TOOL}" ]; then
+readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
+
+if [ -z "${TOOL}" ] || [ ! -d "$DIR_SCRIPT/tools/${TOOL}" ]; then
   echo "Unknown tool: '${TOOL}'"
   exit 1
 fi
 
-./gradlew --quiet ":tools:${TOOL}:build" && "./tools/${TOOL}/build/bin/${TOOL}/releaseExecutable/${TOOL}.kexe" "$@"
+args="$*"
+args="${args%"${args##*[![:space:]]}"}"
+
+cd "$DIR_SCRIPT" || exit 3
+
+./gradlew --quiet ":tools:${TOOL}:jvmRun" --args="$args"
