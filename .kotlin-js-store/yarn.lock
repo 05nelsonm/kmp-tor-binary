@@ -293,10 +293,10 @@ js-yaml@4.1.0:
   dependencies:
     argparse "^2.0.1"
 
-kmp-tor-binary-resources@4.8.7-2-SNAPSHOT.0:
-  version "4.8.7-2-SNAPSHOT.0"
-  resolved "https://registry.yarnpkg.com/kmp-tor-binary-resources/-/kmp-tor-binary-resources-4.8.7-2-SNAPSHOT.0.tgz#73d162fa3eb67bf75926f1ee54d5da58df892fd7"
-  integrity sha512-NbLdVAOrt9l7SPQ4wgY9lsVrAc4+l3bdeo+187FjM2SULhponAXCQXySkCI6I5xFzfGLP90/sWULkN4jdeoE/w==
+kmp-tor-binary-resources@4.8.7-2-SNAPSHOT.1:
+  version "4.8.7-2-SNAPSHOT.1"
+  resolved "https://registry.yarnpkg.com/kmp-tor-binary-resources/-/kmp-tor-binary-resources-4.8.7-2-SNAPSHOT.1.tgz#ccf6ad85749d2c3179218e295fa3d3cbad79fdb9"
+  integrity sha512-xgqVq1Y9r0V8UDG6XLg0VAcSmvt0P8NwgMByPeuolzAvztLqobLU1/tgIUGmx+kpMH+JxeLyGxMCP/GAItfYrA==
 
 locate-path@^6.0.0:
   version "6.0.0"
