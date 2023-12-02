@@ -16,12 +16,9 @@
 import io.matthewnelson.kmp.configuration.extension.KmpConfigurationExtension
 import io.matthewnelson.kmp.configuration.extension.container.target.KmpConfigurationContainerDsl
 import io.matthewnelson.kmp.configuration.extension.container.target.TargetAndroidContainer
-import org.gradle.accessors.dm.LibrariesForLibs
 import org.gradle.api.Action
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaApplication
-import org.gradle.kotlin.dsl.the
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
@@ -48,6 +45,7 @@ fun KmpConfigurationExtension.configureShared(
         js {
             target {
                 nodejs {
+                    @Suppress("RedundantSamConstructor")
                     testTask(Action {
                         useMocha { timeout = "30s" }
                     })
@@ -160,7 +158,6 @@ fun KmpConfigurationExtension.configureTool(
             when {
                 os.isLinux -> {
                     when (arch) {
-                        ARM64 -> linuxArm64(targetName) { target { setup() } }
                         X64 -> linuxX64(targetName) { target { setup() } }
                     }
                 }
@@ -180,10 +177,8 @@ fun KmpConfigurationExtension.configureTool(
 
         common {
             sourceSetMain {
-                val libs = project.the<LibrariesForLibs>()
-
                 dependencies {
-                    implementation(libs.kotlinx.cli)
+                    implementation(project(":tools:cli-core"))
                 }
             }
 

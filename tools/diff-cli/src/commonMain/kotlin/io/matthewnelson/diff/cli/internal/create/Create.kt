@@ -18,9 +18,9 @@ package io.matthewnelson.diff.cli.internal.create
 import io.matthewnelson.diff.cli.internal.*
 import io.matthewnelson.diff.cli.internal.ArgDiffDir.Companion.diffDirArgument
 import io.matthewnelson.diff.cli.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
-import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
+import io.matthewnelson.cli.core.OptQuiet.Companion.quietOption
 import io.matthewnelson.diff.cli.internal.OptStaticTime.Companion.staticTimeOption
-import io.matthewnelson.diff.cli.internal.Subcommand
+import io.matthewnelson.cli.core.Subcommand
 import io.matthewnelson.diff.core.Diff
 import io.matthewnelson.diff.core.NoDiffException
 import io.matthewnelson.diff.core.Options

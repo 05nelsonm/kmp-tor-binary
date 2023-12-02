@@ -19,8 +19,8 @@ import io.matthewnelson.diff.cli.internal.ArgDiffDir
 import io.matthewnelson.diff.cli.internal.ArgDiffDir.Companion.diffDirArgument
 import io.matthewnelson.diff.cli.internal.OptDiffFileExtName
 import io.matthewnelson.diff.cli.internal.OptDiffFileExtName.Companion.diffFileExtNameOption
-import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
-import io.matthewnelson.diff.cli.internal.Subcommand
+import io.matthewnelson.cli.core.OptQuiet.Companion.quietOption
+import io.matthewnelson.cli.core.Subcommand
 import io.matthewnelson.diff.cli.internal.create.DirCreate
 import kotlinx.cli.ArgType
 

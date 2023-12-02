@@ -17,7 +17,7 @@ package io.matthewnelson.diff.cli.internal.header
 
 import io.matthewnelson.diff.cli.internal.ArgDiffFile
 import io.matthewnelson.diff.cli.internal.ArgDiffFile.Companion.diffFileArgument
-import io.matthewnelson.diff.cli.internal.Subcommand
+import io.matthewnelson.cli.core.Subcommand
 import io.matthewnelson.diff.core.Diff
 
 internal class PrintHeader: Subcommand(

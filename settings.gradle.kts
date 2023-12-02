@@ -27,8 +27,10 @@ if (CHECK_PUBLICATION != null) {
     }
 
     listOf(
+        "cli-core",
         "diff-cli",
         "diff-cli:core",
+        "gzip-cli",
     ).forEach { module ->
         include(":tools:$module")
     }

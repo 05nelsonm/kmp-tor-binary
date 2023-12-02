@@ -17,8 +17,8 @@ package io.matthewnelson.diff.cli.internal.apply
 
 import io.matthewnelson.diff.cli.internal.ArgDiffFile
 import io.matthewnelson.diff.cli.internal.ArgDiffFile.Companion.diffFileArgument
-import io.matthewnelson.diff.cli.internal.OptQuiet.Companion.quietOption
-import io.matthewnelson.diff.cli.internal.Subcommand
+import io.matthewnelson.cli.core.OptQuiet.Companion.quietOption
+import io.matthewnelson.cli.core.Subcommand
 import io.matthewnelson.diff.core.Diff
 import io.matthewnelson.diff.core.Options
 import kotlinx.cli.ArgType
