@@ -16,7 +16,7 @@ TOOL="$1"; shift 1
 
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 
-if [ -z "${TOOL}" ] || [ ! -d "$DIR_SCRIPT/tools/${TOOL}" ]; then
+if [ -z "${TOOL}" ] || [ "${TOOL}" = "cli-core" ] || [ ! -d "$DIR_SCRIPT/tools/${TOOL}" ]; then
   echo "Unknown tool: '${TOOL}'"
   exit 1
 fi

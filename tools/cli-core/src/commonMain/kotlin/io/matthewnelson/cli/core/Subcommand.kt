@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.diff.cli.internal
+package io.matthewnelson.cli.core
 
 import kotlinx.cli.ExperimentalCli
 
 @OptIn(ExperimentalCli::class)
-internal abstract class Subcommand(
+public abstract class Subcommand(
     name: String,
     description: String,
     additionalIndent: Int = 0,
@@ -29,8 +29,8 @@ internal abstract class Subcommand(
 
     protected fun settings(): Settings = Settings(quiet = quietOpt)
 
-    internal data class Settings(val quiet: Boolean) {
-        fun println(output: Any?) {
+    public data class Settings(val quiet: Boolean) {
+        public fun println(output: Any?) {
             if (quiet) return
             kotlin.io.println(output)
         }

@@ -52,19 +52,3 @@ internal interface OptStaticTime {
         }
     }
 }
-
-internal interface OptQuiet {
-    val quietOpt: Boolean
-
-    companion object {
-        internal const val NAME_OPT = "quiet"
-
-        internal fun ArgParser.quietOption(): SingleOption<Boolean, DefaultRequiredType.Default> {
-            return option(
-                type = ArgType.Boolean,
-                fullName = NAME_OPT,
-                description = "Silences the terminal output"
-            ).default(false)
-        }
-    }
-}

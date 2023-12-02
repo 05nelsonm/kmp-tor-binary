@@ -15,16 +15,15 @@
  **/
 package io.matthewnelson.diff.cli
 
+import io.matthewnelson.cli.core.CLIRuntime
 import io.matthewnelson.diff.cli.internal.apply.Apply
 import io.matthewnelson.diff.cli.internal.create.Create
 import io.matthewnelson.diff.cli.internal.header.PrintHeader
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 
-private const val PROGRAM_NAME = "Diff-CLI"
-
 public fun main(args: Array<String>) {
-    val parser = ArgParser(programName = PROGRAM_NAME.lowercase().replace(' ', '-'))
+    val runtime = DiffCLIRuntime()
 
     // TODO: Change Create/Apply indents when enabling DirCreate and DirApply
     val create = Create()
@@ -34,40 +33,32 @@ public fun main(args: Array<String>) {
     val printHeader = PrintHeader()
 
     @OptIn(ExperimentalCli::class)
-    parser.subcommands(create, /*dirCreate,*/ apply, /*dirApply,*/ printHeader)
-
-    val helpOrArgs = when {
-        args.isEmpty() -> {
-            printHeader()
-            arrayOf("-h")
-        }
-        else -> {
-            when (args.first()) {
-                "-h", "--help" -> printHeader()
-            }
-            args
-        }
-    }
-
-    parser.parse(helpOrArgs)
+    runtime.parser.subcommands(create, /*dirCreate,*/ apply, /*dirApply,*/ printHeader)
+    runtime.run(args)
 }
 
-private fun printHeader() {
-    // TODO: BuildConfig https://github.com/gmazzo/gradle-buildconfig-plugin
-    val versionName = "0.1.0"
-    val url = "https://github.com/05nelsonm/kmp-tor-binary/tree/master/tools/diff-cli"
+private class DiffCLIRuntime: CLIRuntime(parser = ArgParser(PROGRAM_NAME.lowercase())) {
 
-    println("""
-        $PROGRAM_NAME v$versionName
-        Copyright (C) 2023 Matthew Nelson
-        Apache License, Version 2.0
-        
-        Compares files byte for byte and creates diffs
-        which can be applied at a later date and time.
-        Was created primarily for applying code signatures
-        to reproducibly built software.
-        
-        Project: $url
+    private companion object {
+        private const val PROGRAM_NAME = "Diff-CLI"
+    }
 
-    """.trimIndent())
+    override fun printHeader() {
+        val versionName = "0.1.0"
+        val url = "https://github.com/05nelsonm/kmp-tor-binary/tree/master/tools/diff-cli"
+
+        println("""
+            $PROGRAM_NAME v$versionName
+            Copyright (C) 2023 Matthew Nelson
+            Apache License, Version 2.0
+
+            Compares files byte for byte and creates diffs
+            which can be applied at a later date and time.
+            Was created primarily for applying code signatures
+            to reproducibly built software.
+
+            Project: $url
+
+        """.trimIndent())
+    }
 }
