@@ -27,7 +27,6 @@ readonly TAG_DOCKER_BUILD_ENV="0.1.0"
 # Programs
 readonly DOCKER=$(which docker)
 readonly GIT=$(which git)
-readonly GZIP=$(which gzip)
 readonly OSSLSIGNCODE=$(which osslsigncode)
 readonly RCODESIGN=$(which rcodesign)
 readonly XCRUN=$(which xcrun)
@@ -293,8 +292,6 @@ $(
 }
 
 function package { ## Packages build dir output
-  __require:cmd "$GZIP" "gzip"
-
   DIR_STAGING="$(mktemp -d)"
   trap 'rm -rf "$DIR_STAGING"' SIGINT ERR
 
@@ -995,16 +992,16 @@ function __package {
       "$DIR_STAGING/$3"
   fi
 
-  # Need to apply permissions after detached signature
-  # because the tool strips that as the file is atomically
-  # moved instead of being modified in place (see Issue #77).
-  chmod "$permissions" "$DIR_STAGING/$3"
-
   local file_ext=""
   if [ -n "$gzip" ]; then
-    ${GZIP} --no-name "$DIR_STAGING/$3"
+    ../tooling gzip-cli "$DIR_STAGING/$3"
     file_ext=".gz"
   fi
+
+  # Need to apply permissions after tooling
+  # because it strips that as the file is atomically
+  # moved instead of being modified in place (see Issue #77).
+  chmod "$permissions" "$DIR_STAGING/$3$file_ext"
 
   local dir_module="$DIR_TASK/../library/binary/src/$2"
   mkdir -p "$dir_module"
