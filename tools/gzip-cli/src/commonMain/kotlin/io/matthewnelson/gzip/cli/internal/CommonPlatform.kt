@@ -16,4 +16,4 @@
 package io.matthewnelson.gzip.cli.internal
 
 @Throws(RuntimeException::class)
-internal expect fun gzip(path: String, quiet: Boolean)
+internal expect fun gzip(path: String): String

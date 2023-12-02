@@ -16,9 +16,37 @@
 package io.matthewnelson.gzip.cli.internal
 
 import java.io.File
+import java.util.zip.GZIPOutputStream
 
 @Throws(RuntimeException::class)
-internal actual fun gzip(path: String, quiet: Boolean) {
-    println("file:  ${File(path).absolutePath}")
-    println("quiet: $quiet")
+internal actual fun gzip(path: String): String {
+    val fileInput = File(path).canonicalFile
+    check(fileInput.exists()) { "file[$fileInput] does not exist" }
+    check(fileInput.isFile) { "file[$fileInput] is not a file" }
+    check(!fileInput.name.endsWith(".gz")) { "${fileInput.name} ends with .gz. Is it already gzipped?" }
+
+    val fileOutput = File(fileInput.path + ".gz")
+    fileOutput.delete()
+
+    try {
+        fileInput.inputStream().use { iStream ->
+            GZIPOutputStream(fileOutput.outputStream()).use { oStream ->
+                val buf = ByteArray(4096)
+
+                while (true) {
+                    val read = iStream.read(buf)
+                    if (read == -1) break
+                    oStream.write(buf, 0, read)
+                }
+            }
+        }
+    } catch (t: Throwable) {
+        fileOutput.delete()
+        if (t is RuntimeException) throw t
+        throw RuntimeException("Failed to gzip file[$fileInput]")
+    }
+
+    fileInput.delete()
+
+    return fileOutput.path
 }
