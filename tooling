@@ -26,4 +26,8 @@ args="${args%"${args##*[![:space:]]}"}"
 
 cd "$DIR_SCRIPT" || exit 3
 
-./gradlew --quiet ":tools:${TOOL}:jvmRun" --args="$args"
+if [ -z "$args" ]; then
+  ./gradlew --quiet ":tools:${TOOL}:jvmRun"
+else
+  ./gradlew --quiet ":tools:${TOOL}:jvmRun" --args="$args"
+fi
