@@ -16,6 +16,7 @@
 package io.matthewnelson.cli.core
 
 import kotlinx.cli.ArgParser
+import kotlinx.cli.ArgParserResult
 import kotlin.jvm.JvmField
 
 public abstract class CLIRuntime(
@@ -25,7 +26,7 @@ public abstract class CLIRuntime(
 
     protected abstract fun printHeader()
 
-    public fun run(args: Array<String>) {
+    public fun run(args: Array<String>): ArgParserResult {
         val helpOrArgs = when {
             args.isEmpty() -> {
                 printHeader()
@@ -39,6 +40,6 @@ public abstract class CLIRuntime(
             }
         }
 
-        parser.parse(helpOrArgs)
+        return parser.parse(helpOrArgs)
     }
 }

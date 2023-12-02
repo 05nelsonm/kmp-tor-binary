@@ -2,7 +2,7 @@ public abstract class io/matthewnelson/cli/core/CLIRuntime {
 	public final field parser Lkotlinx/cli/ArgParser;
 	public fun <init> (Lkotlinx/cli/ArgParser;)V
 	protected abstract fun printHeader ()V
-	public final fun run ([Ljava/lang/String;)V
+	public final fun run ([Ljava/lang/String;)Lkotlinx/cli/ArgParserResult;
 }
 
 public abstract interface class io/matthewnelson/cli/core/OptQuiet {
