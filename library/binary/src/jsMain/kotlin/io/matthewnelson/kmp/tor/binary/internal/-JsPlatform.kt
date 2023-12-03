@@ -59,6 +59,7 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
     }
 }
 
+// no-op
 @OptIn(InternalKmpTorBinaryApi::class)
 @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
 internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> = this

@@ -15,6 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.core
 
+import okio.Path.Companion.toPath
 import kotlin.test.Test
 
 class ResourceCLIJvmUnitTest {
@@ -27,11 +28,11 @@ class ResourceCLIJvmUnitTest {
         // 2) The generated resource file is reproducable (no git diffs, unless something changed)
         io.matthewnelson.resource.cli.main(arrayOf(
             /* packageName:   */ "io.matthewnelson.kmp.tor.binary.core",
-            /* pathSourceSet: */ TEST_SUPPORT_DIR
-                .parent
-                ?.resolve("src")
-                ?.resolve("nativeTest")
-                ?.toString()!!,
+            /* pathSourceSet: */ PROJECT_DIR_PATH
+                .toPath()
+                .resolve("src")
+                .resolve("nativeTest")
+                .toString(),
             /* pathFile       */ TEST_SUPPORT_DIR
                 .resolve("lorem_ipsum.txt")
                 .toString(),

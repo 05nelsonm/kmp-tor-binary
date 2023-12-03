@@ -37,6 +37,37 @@ kmpConfiguration {
 
         common {
             sourceSetTest {
+
+                val testConfig = layout
+                    .buildDirectory
+                    .get()
+                    .asFile
+                    .resolve("generated")
+                    .resolve("sources")
+                    .resolve("testConfig")
+                    .resolve("commonTest")
+                    .resolve("kotlin")
+                    .also { kotlin.srcDir(it) }
+                    .resolve("io")
+                    .resolve("matthewnelson")
+                    .resolve("kmp")
+                    .resolve("tor")
+                    .resolve("binary")
+                    .resolve("core")
+                    .resolve("TestConfig.kt")
+
+                testConfig.parentFile?.mkdirs()
+
+                testConfig.outputStream().writer().use { oStream ->
+                    buildString {
+                        appendLine("""
+                            package io.matthewnelson.kmp.tor.binary.core
+
+                            internal const val PROJECT_DIR_PATH: String = "${projectDir.canonicalPath}"
+                        """.trimIndent())
+                    }.let { oStream.write(it) }
+                }
+
                 dependencies {
                     implementation(kotlin("test"))
                     implementation(libs.okio.okio)
