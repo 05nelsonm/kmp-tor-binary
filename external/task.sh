@@ -943,6 +943,12 @@ function __exec:docker:run {
 function __package:geoip {
   local permissions="664"
   local gzip="yes"
+
+  # Do native_resource first b/c jvm will move the file
+  local native_resource="io.matthewnelson.kmp.tor.binary.internal"
+  __package "tor/src/config" "nativeMain" "$1"
+
+  native_resource=""
   __package "tor/src/config" "jvmAndroidMain/resources/io/matthewnelson/kmp/tor/binary" "$1"
 }
 
@@ -979,6 +985,7 @@ function __package {
     Detached Signature:   $detached_sig
     gzip:                 $gzip
     permissions:          $permissions
+    NativeResource:       $native_resource
     Module Src Dir:       kmp-tor-binary/library/binary/src/$2
     "
     return 0
@@ -1004,8 +1011,17 @@ function __package {
   chmod "$permissions" "$DIR_STAGING/$3$file_ext"
 
   local dir_module="$DIR_TASK/../library/binary/src/$2"
-  mkdir -p "$dir_module"
-  mv -v "$DIR_STAGING/$3$file_ext" "$dir_module"
+
+  if [ -z "$native_resource" ]; then
+    mkdir -p "$dir_module"
+    mv -v "$DIR_STAGING/$3$file_ext" "$dir_module"
+  else
+    ../tooling resource-cli \
+      "$native_resource" \
+      "$dir_module" \
+      "$DIR_STAGING/$3$file_ext"
+  fi
+
 }
 
 function __signature:generate:apple {
