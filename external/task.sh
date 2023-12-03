@@ -944,12 +944,10 @@ function __package:geoip {
   local permissions="664"
   local gzip="yes"
 
-  # Do native_resource first b/c jvm will move the file
+  __package "tor/src/config" "jvmAndroidMain/resources/io/matthewnelson/kmp/tor/binary" "$1"
+
   local native_resource="io.matthewnelson.kmp.tor.binary.internal"
   __package "tor/src/config" "nativeMain" "$1"
-
-  native_resource=""
-  __package "tor/src/config" "jvmAndroidMain/resources/io/matthewnelson/kmp/tor/binary" "$1"
 }
 
 function __package:android {
@@ -1020,6 +1018,9 @@ function __package {
       "$native_resource" \
       "$dir_module" \
       "$DIR_STAGING/$3$file_ext"
+
+    # shellcheck disable=SC2115
+    rm -rf "$DIR_STAGING/$3$file_ext"
   fi
 
 }
