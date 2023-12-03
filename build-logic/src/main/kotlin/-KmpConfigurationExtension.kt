@@ -158,6 +158,7 @@ fun KmpConfigurationExtension.configureTool(
             when {
                 os.isLinux -> {
                     when (arch) {
+                        ARM64 -> linuxArm64(targetName) { target { setup() } }
                         X64 -> linuxX64(targetName) { target { setup() } }
                     }
                 }

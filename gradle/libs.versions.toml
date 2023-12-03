@@ -16,7 +16,7 @@ kotlincrypto-hash = "0.4.0"
 kotlinx-datetime = "0.4.1"
 kotlinx-cli = "0.3.6"
 
-okio = "3.5.0"
+okio = "3.6.0"
 
 [libraries]
 androidx-startup-runtime = { module = "androidx.startup:startup-runtime", version.ref = "androidx-startup" }

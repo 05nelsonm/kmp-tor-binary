@@ -28,7 +28,10 @@ kmpConfiguration {
         }
 
         js {
-            target { nodejs { testTask(Action { useMocha { timeout = "30s" } }) } }
+            target { nodejs {
+                @Suppress("RedundantSamConstructor")
+                testTask(Action { useMocha { timeout = "30s" } })
+            } }
 
             sourceSetMain {
                 dependencies {
@@ -37,21 +40,19 @@ kmpConfiguration {
             }
         }
 
-        iosArm64()
-        iosSimulatorArm64()
-        iosX64()
-        tvosArm64()
-        tvosX64()
-        tvosSimulatorArm64()
+        iosAll()
+        linuxAll()
+        macosAll()
+        mingwAll()
+        tvosAll()
+
         watchosArm32()
         watchosArm64()
+        // Not supported by Okio
+        // See https://github.com/square/okio/issues/1381
+//        watchosDeviceArm64()
         watchosX64()
         watchosSimulatorArm64()
-
-        linuxX64()
-        macosArm64()
-        macosX64()
-        mingwX64()
 
         common {
             sourceSetMain {

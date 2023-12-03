@@ -22,25 +22,17 @@ import io.matthewnelson.diff.cli.internal.header.PrintHeader
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ExperimentalCli
 
-public fun main(args: Array<String>) {
-    val runtime = DiffCLIRuntime()
-
-    // TODO: Change Create/Apply indents when enabling DirCreate and DirApply
-    val create = Create()
-//    val dirCreate = DirCreate()
-    val apply = Apply()
-//    val dirApply = DirApply()
-    val printHeader = PrintHeader()
-
-    @OptIn(ExperimentalCli::class)
-    runtime.parser.subcommands(create, /*dirCreate,*/ apply, /*dirApply,*/ printHeader)
-    runtime.run(args)
-}
+public fun main(args: Array<String>) { DiffCLIRuntime().run(args) }
 
 private class DiffCLIRuntime: CLIRuntime(parser = ArgParser(PROGRAM_NAME.lowercase())) {
 
     private companion object {
         private const val PROGRAM_NAME = "Diff-CLI"
+    }
+
+    init {
+        @OptIn(ExperimentalCli::class)
+        parser.subcommands(Create(), Apply(), PrintHeader())
     }
 
     override fun printHeader() {
