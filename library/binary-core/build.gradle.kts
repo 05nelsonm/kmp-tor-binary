@@ -19,6 +19,13 @@ plugins {
 
 kmpConfiguration {
     configureShared(publish = true) {
+        jvm {
+            sourceSetTest {
+                dependencies {
+                    implementation(project(":tools:resource-cli"))
+                }
+            }
+        }
 
         js {
             sourceSetTest {
@@ -68,6 +75,10 @@ kmpConfiguration {
                         implementation(libs.kotlincrypto.hash.sha2)
                     }
                 }
+
+                // TODO: If jvm enabled, native tests depend on jvmTest
+                //  running which will write the test_support/lorem_ipsum.txt
+                //  resource to nativeTest
             }
         }
     }
