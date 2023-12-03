@@ -28,6 +28,18 @@ kmpConfiguration {
             }
         }
 
+        iosAll()
+//        linuxAll()
+        macosAll()
+        tvosAll()
+        watchosArm32()
+        watchosArm64()
+        // Not supported by Okio (used for tests)
+        // See https://github.com/square/okio/issues/1381
+//        watchosDeviceArm64()
+        watchosX64()
+        watchosSimulatorArm64()
+
         common {
             sourceSetTest {
                 dependencies {
@@ -47,6 +59,14 @@ kmpConfiguration {
                     nonNativeMain.dependsOn(getByName("commonMain"))
                     jvmMain?.apply { dependsOn(nonNativeMain) }
                     jsMain?.apply { dependsOn(nonNativeMain) }
+                }
+
+                findByName("nativeMain")?.apply {
+                    dependencies {
+                        implementation(libs.encoding.base16)
+                        implementation(libs.encoding.base64)
+                        implementation(libs.kotlincrypto.hash.sha2)
+                    }
                 }
             }
         }
