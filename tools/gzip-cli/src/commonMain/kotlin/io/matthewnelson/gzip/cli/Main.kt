@@ -25,10 +25,10 @@ import kotlinx.cli.ArgType
 public fun main(args: Array<String>) {
     val runtime = GzipCLIRuntime()
     runtime.run(args)
-    val gzippedPath = gzip(runtime.filePath)
+    val gzippedPath = gzip(runtime.pathFile)
 
     if (runtime.quietOpt) return
-    println("gzipped '${runtime.filePath}' >> '$gzippedPath'")
+    println("gzipped '${runtime.pathFile}' >> '$gzippedPath'")
 }
 
 private class GzipCLIRuntime: CLIRuntime(parser = ArgParser(PROGRAM_NAME.lowercase())), OptQuiet {
@@ -37,9 +37,9 @@ private class GzipCLIRuntime: CLIRuntime(parser = ArgParser(PROGRAM_NAME.lowerca
         private const val PROGRAM_NAME = "Gzip-CLI"
     }
 
-    val filePath by parser.argument(
+    val pathFile by parser.argument(
         type = ArgType.String,
-        fullName = "file-path",
+        fullName = "path-file",
         description = "The absolute path of the file to gzip"
     )
 
