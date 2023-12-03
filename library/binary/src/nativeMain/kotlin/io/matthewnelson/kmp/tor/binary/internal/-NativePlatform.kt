@@ -37,9 +37,9 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
     }
 }
 
+// TODO: Move back to nonJvmMain (and delete jsMain impl) as no-op
 @OptIn(InternalKmpTorBinaryApi::class)
 @Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
 internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> {
-    // TODO: no-op
     return toMutableMap().apply { put(ALIAS_TOR, "TODO") }
 }

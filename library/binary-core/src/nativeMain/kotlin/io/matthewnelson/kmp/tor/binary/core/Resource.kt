@@ -17,6 +17,7 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
+import io.matthewnelson.kmp.tor.binary.core.ImmutableMap.Companion.toImmutableMap
 import io.matthewnelson.kmp.tor.binary.core.ImmutableSet.Companion.toImmutableSet
 import io.matthewnelson.kmp.tor.binary.core.internal.*
 import io.matthewnelson.kmp.tor.binary.core.internal.commonEquals
@@ -43,8 +44,67 @@ public actual class Resource private constructor(
             // throw them if that is the case before extracting anything.
             throwIfError()
 
-            // TODO
-            return ImmutableMap.of()
+            // TODO: normalize
+            val dir = destinationDir
+
+            // TODO:
+            //  if (!exists(dir) && !mkdirs(dir)) {
+            //      throw RuntimeException("Failed to create destinationDir[$dir]")
+            //  }
+
+            val map = LinkedHashMap<String, String>(resources.size, 1.0f)
+
+            try {
+                resources.forEach { resource ->
+                    val file = resource.extractTo(dir)
+                    map[resource.alias] = file
+                    // TODO:
+                    //  if (resource.isExecutable) {
+                    //      chmod(file, "764")
+                    //  }
+                }
+            } catch (e: Exception) {
+                map.forEach { entry ->
+                    try {
+                        // TODO: delete(entry.value)
+                    } catch (_: Throwable) {}
+                }
+                throw e
+            }
+
+            return map.toImmutableMap()
+        }
+
+        private fun Resource.extractTo(destinationDir: String): String {
+            var fileName = nativeResource.name
+            val isGzipped = if (fileName.endsWith(".gz")) {
+                // TODO: Check platform support for gzip
+                fileName = fileName.substringBeforeLast(".gz")
+                true
+            } else {
+                false
+            }
+
+            // TODO: val destination = resolve(destinationDir, fileName)
+
+            // TODO: if (exists(destination) && !delete(destination)) throw RuntimeException("")
+
+            // TODO:
+            //  outputStream(destination).use { oStream ->
+            //      val out = if (isGzipped) {
+            //          gunzipStream { buf, len ->
+            //              oStream.write(buf, 0, len)
+            //          }
+            //      } else {
+            //          oStream
+            //      }
+            //      //
+            //      nativeResource.read { buffer, len ->
+            //          out.write(buffer, 0, len)
+            //      }
+            //  }
+
+            TODO("return destination")
         }
 
         @InternalKmpTorBinaryApi

@@ -68,7 +68,7 @@ public actual class Resource private constructor(
                 check(fs_existsSync(dir)) { "Failed to create destinationDir[$dir]" }
             }
 
-            val map = mutableMapOf<String, String>()
+            val map = LinkedHashMap<String, String>(resources.size, 1.0f)
 
             try {
                 resources.forEach { resource ->
