@@ -24,6 +24,10 @@ import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 @JsName("sep")
 internal external val path_sep: String
 
+@JsName("isAbsolute")
+@InternalKmpTorBinaryApi
+public external fun path_isAbsolute(path: String): Boolean
+
 @JsName("dirname")
 @InternalKmpTorBinaryApi
 public external fun path_dirname(path: String): String
