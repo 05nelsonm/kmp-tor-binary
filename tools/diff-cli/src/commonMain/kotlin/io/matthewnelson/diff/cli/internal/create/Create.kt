@@ -84,7 +84,7 @@ internal class Create: Subcommand(
                 }
             }
 
-            println("Diff created for [$file1Arg] located at [$path]")
+            println("created diff '$path' for '$file1Arg'")
         }
     }
 

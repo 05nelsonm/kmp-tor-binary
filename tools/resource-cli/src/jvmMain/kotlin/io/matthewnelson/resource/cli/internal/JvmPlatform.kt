@@ -106,6 +106,7 @@ internal actual fun ResourceWriter.write(): String {
                     }
                     feed.flush()
                     out.reset()
+
                     sb.appendLine("\"\"\"")
                     sb.appendLine()
 
@@ -113,8 +114,7 @@ internal actual fun ResourceWriter.write(): String {
                     sb.clear()
                 }
 
-                sb.append('}')
-                sb.appendLine()
+                sb.appendLine('}')
                 oStream.write(sb.toString())
             } finally {
                 feed.close()

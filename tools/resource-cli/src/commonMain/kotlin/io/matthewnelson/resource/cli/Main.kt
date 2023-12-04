@@ -34,7 +34,7 @@ public fun main(args: Array<String>) {
     ).write()
 
     if (runtime.quietOpt) return
-    println("transformed '${runtime.pathFile}' >> '$resourcePath'")
+    println("transformed '${runtime.pathFile}' -> '$resourcePath'")
 }
 
 private class KMPResourceCLIRuntime: CLIRuntime(parser = ArgParser(PROGRAM_NAME.lowercase())), OptQuiet {

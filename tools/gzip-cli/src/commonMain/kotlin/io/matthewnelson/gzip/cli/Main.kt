@@ -28,7 +28,7 @@ public fun main(args: Array<String>) {
     val gzippedPath = gzip(runtime.pathFile)
 
     if (runtime.quietOpt) return
-    println("gzipped '${runtime.pathFile}' >> '$gzippedPath'")
+    println("gzipped '${runtime.pathFile}' -> '$gzippedPath'")
 }
 
 private class GzipCLIRuntime: CLIRuntime(parser = ArgParser(PROGRAM_NAME.lowercase())), OptQuiet {
