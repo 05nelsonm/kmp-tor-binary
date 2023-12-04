@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("KotlinRedundantDiagnosticSuppress")
+
 package io.matthewnelson.kmp.tor.binary.core.internal
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
