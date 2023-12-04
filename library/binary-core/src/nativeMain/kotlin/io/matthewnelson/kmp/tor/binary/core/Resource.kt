@@ -44,13 +44,11 @@ public actual class Resource private constructor(
             // throw them if that is the case before extracting anything.
             throwIfError()
 
-            // TODO: normalize
-            val dir = destinationDir
+            val dir = fs_canonicalize(destinationDir)
 
-            // TODO:
-            //  if (!exists(dir) && !mkdirs(dir)) {
-            //      throw RuntimeException("Failed to create destinationDir[$dir]")
-            //  }
+            if (!fs_exists(dir) && !fs_mkdirs(dir)) {
+                throw RuntimeException("Failed to create destinationDir[$dir]")
+            }
 
             val map = LinkedHashMap<String, String>(resources.size, 1.0f)
 
@@ -58,15 +56,14 @@ public actual class Resource private constructor(
                 resources.forEach { resource ->
                     val file = resource.extractTo(dir)
                     map[resource.alias] = file
-                    // TODO:
-                    //  if (resource.isExecutable) {
-                    //      chmod(file, "764")
-                    //  }
+                    if (resource.isExecutable) {
+                        fs_chmod(file, "764")
+                    }
                 }
             } catch (e: Exception) {
                 map.forEach { entry ->
                     try {
-                        // TODO: delete(entry.value)
+                        fs_rm(entry.value)
                     } catch (_: Throwable) {}
                 }
                 throw e
@@ -78,33 +75,36 @@ public actual class Resource private constructor(
         private fun Resource.extractTo(destinationDir: String): String {
             var fileName = nativeResource.name
             val isGzipped = if (fileName.endsWith(".gz")) {
-                // TODO: Check platform support for gzip
                 fileName = fileName.substringBeforeLast(".gz")
                 true
             } else {
                 false
             }
 
-            // TODO: val destination = resolve(destinationDir, fileName)
+            val destination = path_resolve(destinationDir, fileName)
 
-            // TODO: if (exists(destination) && !delete(destination)) throw RuntimeException("")
+            if (fs_exists(destination) && !fs_rm(destination)) {
+                throw RuntimeException("Failed to delete $destination")
+            }
 
-            // TODO:
-            //  outputStream(destination).use { oStream ->
-            //      val out = if (isGzipped) {
-            //          gunzipStream { buf, len ->
-            //              oStream.write(buf, 0, len)
-            //          }
-            //      } else {
-            //          oStream
-            //      }
-            //      //
-            //      nativeResource.read { buffer, len ->
-            //          out.write(buffer, 0, len)
-            //      }
-            //  }
+            TODO("""
+                outputStream(destination).use { oStream ->
+                  val out = if (isGzipped) {
+                      gunzipStream { buf, len ->
+                          oStream.write(buf, 0, len)
+                      }
+                  } else {
+                      oStream
+                  }
+                  //
+                  nativeResource.read { buffer, len ->
+                      out.write(buffer, 0, len)
+                  }
+                }
+            """.trimIndent())
 
-            TODO("return destination")
+
+            return destination
         }
 
         @InternalKmpTorBinaryApi
