@@ -38,7 +38,7 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
             resourcePath = PATH_RESOURCE_GEOIP6
         }
 
-        if (ANDROID_SDK_INT != null) {
+        if (OSInfo.INSTANCE.isAndroidRuntime()) {
             // Is Android Runtime.
             //
             // Binaries are extracted on application install
