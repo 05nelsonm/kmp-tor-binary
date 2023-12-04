@@ -21,6 +21,21 @@ import io.matthewnelson.encoding.core.Decoder.Companion.decodeToByteArray
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import org.kotlincrypto.hash.sha2.SHA256
 
+/**
+ * Runtime abstraction for resources that have been transformed for
+ * Kotlin Multi-Platform native
+ *
+ * See [resource-cli](https://github.com/05nelsonm/kmp-tor-binary/tree/master/tools/resource-cli)
+ *
+ * @param [version] A number that mitigates breaking things for
+ *   resources that have already been transformed.
+ * @param [name] The original file name of the transformed resource (e.g. test.txt)
+ * @param [size] The byte size
+ * @param [sha256] The pre-computed sha256 value of the transformed resource
+ * @param [chunks] The number of [Chunk]s that the transformed resource has
+ * @see [get]
+ * @see [read]
+ * */
 @InternalKmpTorBinaryApi
 public abstract class NativeResource protected constructor(
     public val version: Int,
@@ -31,7 +46,7 @@ public abstract class NativeResource protected constructor(
 ) {
 
     /**
-     * Representation of a chunk of 4096 bytes for the given [NativeResource].
+     * Representation of a chunk of 4096 bytes (max) for the given [NativeResource].
      *
      * [data] must be base64 encoded with a line break interval of 64 characters.
      *
@@ -57,6 +72,7 @@ public abstract class NativeResource protected constructor(
      *     }
      *
      * @see [toChunk]
+     * @see [decode]
      * */
     public value class Chunk
     @Throws(IllegalStateException::class)
@@ -69,6 +85,11 @@ public abstract class NativeResource protected constructor(
             }
         }
 
+        /**
+         * Decodes the base64 encoded chunk of [data]
+         *
+         * @throws [RuntimeException] if there was a decoding error
+         * */
         @Throws(RuntimeException::class)
         public fun decode(): ByteArray = data.decodeToByteArray(Base64.Default)
     }
@@ -79,9 +100,37 @@ public abstract class NativeResource protected constructor(
         protected fun String.toChunk(): Chunk = Chunk(this)
     }
 
+    /**
+     * Returns a [Chunk] at the provided [index]
+     *
+     * @see [Chunk]
+     * @throws [IllegalStateException] if the data provided to [Chunk] is
+     *   improperly formatted
+     * @throws [IndexOutOfBoundsException] if [index] is negative or exceeds [chunks]
+     * */
     @Throws(IllegalStateException::class, IndexOutOfBoundsException::class)
     public abstract operator fun get(index: Long): Chunk
 
+    /**
+     * Reads the entire [NativeResource] with validation of the [size]
+     * and [sha256] values upon completion.
+     *
+     * e.g.
+     *
+     *     myFile.outputStream().use { oStream ->
+     *         resource_test_txt.read { buffer, len ->
+     *             oStream.write(buffer, 0, len)
+     *         }
+     *     }
+     *
+     * @param [block] a firehose of bytes to redirect how you wish.
+     * @throws [RuntimeException] if:
+     *   - [version] is unknown
+     *   - [Chunk.data] was improperly formatted
+     *   - A decoding failure occured
+     *   - [size] did not match the number of decoded bytes
+     *   - [sha256] did not match the decoded output
+     * */
     @Throws(RuntimeException::class)
     public fun read(block: (buffer: ByteArray, len: Int) -> Unit) {
         // TODO: Implement version handling (after bumping to 2)
@@ -119,6 +168,7 @@ public abstract class NativeResource protected constructor(
                 "decodedSha256[${decodedSha256.lowercase()}] did not match sha256[${sha256.lowercase()}]"
             }
         } finally {
+            buf.fill(0)
             feed.close()
         }
     }
