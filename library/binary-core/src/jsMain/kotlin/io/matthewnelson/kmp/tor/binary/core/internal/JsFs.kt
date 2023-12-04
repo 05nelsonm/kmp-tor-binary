@@ -45,6 +45,9 @@ public external fun fs_writeFileSync(path: String, data: buffer_Buffer)
 @InternalKmpTorBinaryApi
 public external fun fs_readlinkSync(path: String): String
 
+@JsName("realpathSync")
+internal external fun fs_realpathSync(path: String): String
+
 @JsName("rmSync")
 @InternalKmpTorBinaryApi
 public external fun fs_rmSync(path: String, options: Options.Remove)

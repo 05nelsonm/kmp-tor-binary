@@ -22,14 +22,12 @@ import io.matthewnelson.kmp.tor.binary.core.internal.Options
 import io.matthewnelson.kmp.tor.binary.core.internal.PATH_MAP_FILES
 import io.matthewnelson.kmp.tor.binary.core.internal.PATH_OS_RELEASE
 import io.matthewnelson.kmp.tor.binary.core.internal.fs_existsSync
-import io.matthewnelson.kmp.tor.binary.core.internal.fs_lstatSync
 import io.matthewnelson.kmp.tor.binary.core.internal.fs_readFileSync
 import io.matthewnelson.kmp.tor.binary.core.internal.fs_readdirSync
-import io.matthewnelson.kmp.tor.binary.core.internal.fs_readlinkSync
 import io.matthewnelson.kmp.tor.binary.core.internal.os_arch
 import io.matthewnelson.kmp.tor.binary.core.internal.os_machine
 import io.matthewnelson.kmp.tor.binary.core.internal.os_platform
-import io.matthewnelson.kmp.tor.binary.core.internal.path_normalize
+import io.matthewnelson.kmp.tor.binary.core.internal.fs_canonicalize
 import io.matthewnelson.kmp.tor.binary.core.internal.path_resolve
 
 @InternalKmpTorBinaryApi
@@ -104,12 +102,9 @@ public actual class OSInfo private constructor(
                 fs_readdirSync(pathMapFiles, Options.ReadDir(recursive = false)).forEach { entry ->
                     fileCount++
 
-                    var path = path_normalize(path_resolve(pathMapFiles, entry))
-                    if (fs_lstatSync(path).isSymbolicLink()) {
-                        path = fs_readlinkSync(path)
-                    }
+                    val canonical = fs_canonicalize(path_resolve(pathMapFiles, entry))
 
-                    if (path.contains("musl")) {
+                    if (canonical.contains("musl")) {
                         return true
                     }
                 }

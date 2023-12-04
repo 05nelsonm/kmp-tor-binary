@@ -23,7 +23,6 @@ import io.matthewnelson.kmp.tor.binary.core.internal.*
 import io.matthewnelson.kmp.tor.binary.core.internal.commonEquals
 import io.matthewnelson.kmp.tor.binary.core.internal.commonHashCode
 import io.matthewnelson.kmp.tor.binary.core.internal.commonToString
-import io.matthewnelson.kmp.tor.binary.core.internal.path_normalize
 import io.matthewnelson.kmp.tor.binary.core.internal.throwIfError
 
 @InternalKmpTorBinaryApi
@@ -46,26 +45,10 @@ public actual class Resource private constructor(
             // throw them if that is the case before extracting anything.
             throwIfError()
 
-            val dir = path_normalize(destinationDir)
+            val dir = fs_canonicalize(destinationDir)
 
-            if (!fs_existsSync(dir)) {
-                // There is no concept of mkdirs, so have
-                // to check parent directories and build
-                // it up.
-                val dirs = mutableListOf(dir)
-                var exists = false
-
-                while (!exists) {
-                    val parentDir = path_dirname(dirs.first())
-                    exists = fs_existsSync(parentDir)
-                    if (!exists) {
-                        dirs.add(0, parentDir)
-                    }
-                }
-
-                dirs.forEach { path -> fs_mkdirSync(path) }
-
-                check(fs_existsSync(dir)) { "Failed to create destinationDir[$dir]" }
+            if (!fs_existsSync(dir) && !fs_mkdirs(dir)) {
+                throw RuntimeException("Failed to create destinationDir[$dir]")
             }
 
             val map = LinkedHashMap<String, String>(resources.size, 1.0f)

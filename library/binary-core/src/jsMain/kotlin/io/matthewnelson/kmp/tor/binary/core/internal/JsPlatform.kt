@@ -33,3 +33,54 @@ public val path_separator: Char by lazy {
         }
     }
 }
+
+@InternalKmpTorBinaryApi
+public fun fs_canonicalize(path: String): String {
+    val resolved = path_resolve(path)
+
+    var existingPath = resolved
+
+    while (true) {
+        if (fs_existsSync(existingPath)) break
+        val parent = path_dirname(existingPath)
+
+        // Check for root
+        if (parent.isBlank() || parent == existingPath) break
+
+        existingPath = parent
+    }
+
+    return resolved.replaceFirst(existingPath, fs_realpathSync(existingPath))
+}
+
+@InternalKmpTorBinaryApi
+public fun fs_mkdirs(dirPath: String): Boolean {
+    if (fs_existsSync(dirPath)) return false
+
+    try {
+        fs_mkdirSync(dirPath)
+        return true
+    } catch (_: Throwable) {}
+
+    // Need to make parent directories
+    val dirsToMake = mutableListOf(fs_canonicalize(dirPath))
+
+    var exists = false
+    while (!exists) {
+        val parent = path_dirname(dirsToMake.first())
+
+        // Check for root
+        if (parent.isBlank() || parent == dirsToMake.first()) break
+
+        exists = fs_existsSync(parent)
+        if (!exists) {
+            // Bump to front of list until we find
+            // a parent that exists.
+            dirsToMake.add(0, parent)
+        }
+    }
+
+    dirsToMake.forEach { path -> fs_mkdirSync(path) }
+
+    return fs_existsSync(dirPath)
+}

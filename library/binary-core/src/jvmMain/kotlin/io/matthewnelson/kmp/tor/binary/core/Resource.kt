@@ -53,7 +53,7 @@ public actual class Resource private constructor(
             // throw them if that is the case before extracting anything.
             throwIfError()
 
-            val dir = File(destinationDir).normalize()
+            val dir = File(destinationDir).canonicalFile
 
             if (!dir.exists() && !dir.mkdirs()) {
                 throw IOException("Failed to create destinationDir[$dir]")
