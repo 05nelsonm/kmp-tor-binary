@@ -20,26 +20,19 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
 @InternalKmpTorBinaryApi
-public actual fun path_basename(path: String): String {
-    TODO()
-}
+public expect val path_separator: Char
 
 @InternalKmpTorBinaryApi
-public actual fun path_isAbsolute(path: String): Boolean {
-    TODO()
-}
+public expect fun path_basename(path: String): String
 
 @InternalKmpTorBinaryApi
-public actual fun path_parent(path: String): String? {
-    TODO()
-}
+public expect fun path_isAbsolute(path: String): Boolean
 
 @InternalKmpTorBinaryApi
-public actual fun path_normalize(path: String): String {
-    TODO()
-}
+public expect fun path_parent(path: String): String?
 
 @InternalKmpTorBinaryApi
-public actual fun path_resolve(vararg paths: String): String {
-    TODO()
-}
+public expect fun path_normalize(path: String): String
+
+@InternalKmpTorBinaryApi
+public expect fun path_resolve(vararg paths: String): String

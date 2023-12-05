@@ -45,6 +45,16 @@ public fun fs_mkdirs(path: String): Boolean {
 }
 
 @InternalKmpTorBinaryApi
+public fun fs_readFileBytes(path: String): ByteArray {
+    TODO()
+}
+
+@InternalKmpTorBinaryApi
+public fun fs_readFileUtf8(path: String): String {
+    TODO()
+}
+
+@InternalKmpTorBinaryApi
 public fun fs_rm(
     path: String,
     recursively: Boolean = true,

@@ -13,33 +13,5 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("FunctionName")
-
 package io.matthewnelson.kmp.tor.binary.core.internal
 
-import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-
-@InternalKmpTorBinaryApi
-public actual fun path_basename(path: String): String {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
-public actual fun path_isAbsolute(path: String): Boolean {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
-public actual fun path_parent(path: String): String? {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
-public actual fun path_normalize(path: String): String {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
-public actual fun path_resolve(vararg paths: String): String {
-    TODO()
-}

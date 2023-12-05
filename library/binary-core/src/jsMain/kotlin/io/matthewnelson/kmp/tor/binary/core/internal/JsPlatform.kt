@@ -22,7 +22,7 @@ import io.matthewnelson.kmp.tor.binary.core.OSHost
 import io.matthewnelson.kmp.tor.binary.core.OSInfo
 
 @InternalKmpTorBinaryApi
-public val path_separator: Char by lazy {
+public actual val path_separator: Char by lazy {
     try {
         path_sep.first()
     } catch (_: Throwable) {
@@ -32,6 +32,13 @@ public val path_separator: Char by lazy {
             '/'
         }
     }
+}
+
+@InternalKmpTorBinaryApi
+public actual fun path_parent(path: String): String? {
+    val parent = path_dirname(path)
+    if (parent == path) return null
+    return parent
 }
 
 @InternalKmpTorBinaryApi
