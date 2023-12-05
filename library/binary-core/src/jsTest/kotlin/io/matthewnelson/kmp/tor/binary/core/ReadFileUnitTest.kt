@@ -22,6 +22,7 @@ import kotlin.test.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 
+// TODO: Move to nonJvmTest
 @OptIn(InternalKmpTorBinaryApi::class)
 class ReadFileUnitTest {
 
@@ -29,7 +30,7 @@ class ReadFileUnitTest {
     fun givenFile_whenReadBytes_thenIsAsExpected() {
         // Using a large-ish file to ensure all bytes are read
         val torPath = PROJECT_DIR_PATH.toPath()
-            .resolve("..")
+            .parent!!
             .resolve("binary")
             .resolve("src")
             .resolve("jvmMain")

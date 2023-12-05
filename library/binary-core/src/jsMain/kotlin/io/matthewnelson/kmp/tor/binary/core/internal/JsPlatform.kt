@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
@@ -42,58 +42,19 @@ public actual fun path_parent(path: String): String? {
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_canonicalize(path: String): String {
-    val resolved = path_resolve(path)
+public actual fun fs_mkdir(path: String): Boolean {
+    if (fs_exists(path)) return false
 
-    var existingPath = resolved
-
-    while (true) {
-        if (fs_existsSync(existingPath)) break
-        val parent = path_dirname(existingPath)
-
-        // Check for root
-        if (parent.isBlank() || parent == existingPath) break
-
-        existingPath = parent
+    return try {
+        fs_mkdirSync(path)
+        true
+    } catch (_: Throwable) {
+        false
     }
-
-    return resolved.replaceFirst(existingPath, fs_realpathSync(existingPath))
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_mkdirs(dirPath: String): Boolean {
-    if (fs_existsSync(dirPath)) return false
-
-    try {
-        fs_mkdirSync(dirPath)
-        return true
-    } catch (_: Throwable) {}
-
-    // Need to make parent directories
-    val dirsToMake = mutableListOf(fs_canonicalize(dirPath))
-
-    var exists = false
-    while (!exists) {
-        val parent = path_dirname(dirsToMake.first())
-
-        // Check for root
-        if (parent.isBlank() || parent == dirsToMake.first()) break
-
-        exists = fs_existsSync(parent)
-        if (!exists) {
-            // Bump to front of list until we find
-            // a parent that exists.
-            dirsToMake.add(0, parent)
-        }
-    }
-
-    dirsToMake.forEach { path -> fs_mkdirSync(path) }
-
-    return fs_existsSync(dirPath)
-}
-
-@InternalKmpTorBinaryApi
-public fun fs_readFileBytes(path: String): ByteArray {
+public actual fun fs_readFileBytes(path: String): ByteArray {
     val buffer = fs_readFileSync(path)
     val bytes = ByteArray(buffer.length.toInt())
     for (i in bytes.indices) {
@@ -104,7 +65,7 @@ public fun fs_readFileBytes(path: String): ByteArray {
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_readFileUtf8(path: String): String {
+public actual fun fs_readFileUtf8(path: String): String {
     return fs_readFileSync(path).let { buffer ->
         buffer.toString("utf8", 0, buffer.length)
             .also { buffer.fill() }
@@ -112,12 +73,12 @@ public fun fs_readFileUtf8(path: String): String {
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_rm(
+public actual fun fs_rm(
     path: String,
-    recursively: Boolean = true,
-    force: Boolean = true,
+    recursively: Boolean,
+    force: Boolean,
 ): Boolean {
-    if (!fs_existsSync(path)) return false
+    if (!fs_exists(path)) return false
     fs_rmSync(path, Options.Remove(force = force, recursive = recursively))
-    return fs_existsSync(path)
+    return fs_exists(path)
 }

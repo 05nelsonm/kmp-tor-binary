@@ -86,7 +86,7 @@ public actual class OSInfo private constructor(
     private fun isLinuxMusl(): Boolean {
         var fileCount = 0
 
-        if (fs_existsSync(pathMapFiles)) {
+        if (fs_exists(pathMapFiles)) {
             try {
                 fs_readdirSync(pathMapFiles, Options.ReadDir(recursive = false)).forEach { entry ->
                     fileCount++

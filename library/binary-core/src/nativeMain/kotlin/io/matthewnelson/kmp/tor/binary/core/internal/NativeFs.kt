@@ -20,45 +20,44 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
 @InternalKmpTorBinaryApi
-public fun fs_canonicalize(path: String): String {
+@Throws(Exception::class)
+public actual fun fs_chmod(path: String, mode: String) {
     TODO()
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_chmod(path: String, mode: String) {
+public actual fun fs_exists(path: String): Boolean {
     TODO()
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_exists(path: String): Boolean {
+public actual fun fs_mkdir(path: String): Boolean {
     TODO()
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_mkdir(path: String): Boolean {
+@Throws(Exception::class)
+public actual fun fs_readFileBytes(path: String): ByteArray {
     TODO()
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_mkdirs(path: String): Boolean {
+@Throws(Exception::class)
+public actual fun fs_readFileUtf8(path: String): String {
+    TODO()
+}
+
+@Throws(Exception::class)
+internal actual fun fs_realpath(path: String): String {
     TODO()
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_readFileBytes(path: String): ByteArray {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
-public fun fs_readFileUtf8(path: String): String {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
-public fun fs_rm(
+@Throws(Exception::class)
+public actual fun fs_rm(
     path: String,
-    recursively: Boolean = true,
-    force: Boolean = true
+    recursively: Boolean,
+    force: Boolean,
 ): Boolean {
     TODO()
 }

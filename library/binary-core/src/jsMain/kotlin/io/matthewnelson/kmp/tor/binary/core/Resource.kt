@@ -47,7 +47,7 @@ public actual class Resource private constructor(
 
             val dir = fs_canonicalize(destinationDir)
 
-            if (!fs_existsSync(dir) && !fs_mkdirs(dir)) {
+            if (!fs_exists(dir) && !fs_mkdirs(dir)) {
                 throw RuntimeException("Failed to create destinationDir[$dir]")
             }
 
@@ -61,7 +61,7 @@ public actual class Resource private constructor(
                         // These are the same executable permissions
                         // that are set for jvm upon resource file
                         // extraction.
-                        fs_chmodSync(file, "764")
+                        fs_chmod(file, "764")
                     }
                 }
             } catch (e: Exception) {
@@ -88,7 +88,7 @@ public actual class Resource private constructor(
             val destination = path_resolve(destinationDir, fileName)
             val moduleResource = resolveResource(moduleName + resourcePath)
 
-            if (fs_existsSync(destination) && !fs_rm(destination)) {
+            if (fs_exists(destination) && !fs_rm(destination)) {
                 throw IllegalStateException("Failed to delete $destination")
             }
 

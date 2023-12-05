@@ -15,7 +15,7 @@
  **/
 @file:JsModule("fs")
 @file:JsNonModule
-@file:Suppress("FunctionName", "ClassName")
+@file:Suppress("FunctionName", "ClassName", "ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
@@ -24,17 +24,16 @@ import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 /** [docs](https://nodejs.org/api/fs.html#fschmodsyncpath-mode) */
 @JsName("chmodSync")
 @InternalKmpTorBinaryApi
-public external fun fs_chmodSync(path: String, mode: String)
+public actual external fun fs_chmod(path: String, mode: String)
 
 /** [docs](https://nodejs.org/api/fs.html#fsexistssyncpath) */
 @JsName("existsSync")
 @InternalKmpTorBinaryApi
-public external fun fs_existsSync(path: String): Boolean
+public actual external fun fs_exists(path: String): Boolean
 
 /** [docs](https://nodejs.org/api/fs.html#fsmkdirsyncpath-options) */
 @JsName("mkdirSync")
-@InternalKmpTorBinaryApi
-public external fun fs_mkdirSync(path: String): String?
+internal external fun fs_mkdirSync(path: String): String?
 
 /** [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) */
 @JsName("readdirSync")
@@ -44,14 +43,9 @@ internal external fun fs_readdirSync(path: String, options: Options.ReadDir): Ar
 @JsName("readFileSync")
 internal external fun fs_readFileSync(path: String): buffer_Buffer
 
-/** [docs](https://nodejs.org/api/fs.html#fsreadlinksyncpath-options) */
-@JsName("readlinkSync")
-@InternalKmpTorBinaryApi
-public external fun fs_readlinkSync(path: String): String
-
 /** [docs](https://nodejs.org/api/fs.html#fsrealpathsyncpath-options) */
 @JsName("realpathSync")
-internal external fun fs_realpathSync(path: String): String
+internal actual external fun fs_realpath(path: String): String
 
 /** [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) */
 @JsName("rmSync")
