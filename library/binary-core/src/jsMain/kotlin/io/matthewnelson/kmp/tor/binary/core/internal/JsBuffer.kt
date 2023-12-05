@@ -23,5 +23,7 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 @JsName("Buffer")
 internal external class buffer_Buffer {
     val length: Number
+    fun fill()
+    fun readInt8(offset: Number): Number
     fun toString(encoding: String, start: Number, end: Number): String
 }

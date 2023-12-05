@@ -28,13 +28,6 @@ internal sealed class Options {
         internal constructor(recursive: Boolean): this("utf8", false, recursive)
     }
 
-    internal class ReadUtf8 private constructor(
-        internal val encoding: String?,
-        internal val flag: String?,
-    ): Options() {
-        internal constructor(): this("utf8", "r")
-    }
-
     internal class Remove internal constructor(
         internal val force: Boolean = true,
         internal val recursive: Boolean = true,

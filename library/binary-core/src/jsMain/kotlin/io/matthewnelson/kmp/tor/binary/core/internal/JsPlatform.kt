@@ -86,9 +86,21 @@ public fun fs_mkdirs(dirPath: String): Boolean {
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_readFile(path: String): String {
-    return fs_readFileSync(path, Options.ReadUtf8()).let { buffer ->
+public fun fs_readFileBytes(path: String): ByteArray {
+    val buffer = fs_readFileSync(path)
+    val bytes = ByteArray(buffer.length.toInt())
+    for (i in bytes.indices) {
+        bytes[i] = buffer.readInt8(i) as Byte
+    }
+    buffer.fill()
+    return bytes
+}
+
+@InternalKmpTorBinaryApi
+public fun fs_readFileUtf8(path: String): String {
+    return fs_readFileSync(path).let { buffer ->
         buffer.toString("utf8", 0, buffer.length)
+            .also { buffer.fill() }
     }
 }
 

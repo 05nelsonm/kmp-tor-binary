@@ -42,10 +42,6 @@ internal external fun fs_readdirSync(path: String, options: Options.ReadDir): Ar
 
 /** [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) */
 @JsName("readFileSync")
-internal external fun fs_readFileSync(path: String, options: Options.ReadUtf8): buffer_Buffer
-
-/** [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) */
-@JsName("readFileSync")
 internal external fun fs_readFileSync(path: String): buffer_Buffer
 
 /** [docs](https://nodejs.org/api/fs.html#fsreadlinksyncpath-options) */

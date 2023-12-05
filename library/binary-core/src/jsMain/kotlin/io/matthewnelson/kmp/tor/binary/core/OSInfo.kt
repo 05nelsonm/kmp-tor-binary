@@ -107,7 +107,7 @@ public actual class OSInfo private constructor(
             // it's an older kernel which may not have map_files
             // directory.
             try {
-                fs_readFile(pathOSRelease).lines().forEach { line ->
+                fs_readFileUtf8(pathOSRelease).lines().forEach { line ->
                     if (
                         line.startsWith("ID")
                         && line.contains("alpine", ignoreCase = true)
