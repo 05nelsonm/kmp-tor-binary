@@ -17,18 +17,7 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
-import io.matthewnelson.kmp.tor.binary.core.internal.ARCH_MAP
-import io.matthewnelson.kmp.tor.binary.core.internal.Options
-import io.matthewnelson.kmp.tor.binary.core.internal.PATH_MAP_FILES
-import io.matthewnelson.kmp.tor.binary.core.internal.PATH_OS_RELEASE
-import io.matthewnelson.kmp.tor.binary.core.internal.fs_existsSync
-import io.matthewnelson.kmp.tor.binary.core.internal.fs_readFileSync
-import io.matthewnelson.kmp.tor.binary.core.internal.fs_readdirSync
-import io.matthewnelson.kmp.tor.binary.core.internal.os_arch
-import io.matthewnelson.kmp.tor.binary.core.internal.os_machine
-import io.matthewnelson.kmp.tor.binary.core.internal.os_platform
-import io.matthewnelson.kmp.tor.binary.core.internal.fs_canonicalize
-import io.matthewnelson.kmp.tor.binary.core.internal.path_resolve
+import io.matthewnelson.kmp.tor.binary.core.internal.*
 
 @InternalKmpTorBinaryApi
 public actual class OSInfo private constructor(
@@ -102,7 +91,7 @@ public actual class OSInfo private constructor(
                 fs_readdirSync(pathMapFiles, Options.ReadDir(recursive = false)).forEach { entry ->
                     fileCount++
 
-                    val canonical = fs_canonicalize(path_resolve(pathMapFiles, entry))
+                    val canonical = fs_canonicalize(path_join(pathMapFiles, entry))
 
                     if (canonical.contains("musl")) {
                         return true
@@ -118,13 +107,7 @@ public actual class OSInfo private constructor(
             // it's an older kernel which may not have map_files
             // directory.
             try {
-                fs_readFileSync(pathOSRelease, Options.ReadUtf8()).let { buffer ->
-                    // Should only be like, 500 bytes. This is a simple
-                    // check to ensure an OOM exception doesn't occur.
-                    if (buffer.length.toLong() > 4096) return false
-
-                    buffer.toString("utf8", 0, buffer.length)
-                }.lines().forEach { line ->
+                fs_readFile(pathOSRelease).lines().forEach { line ->
                     if (
                         line.startsWith("ID")
                         && line.contains("alpine", ignoreCase = true)

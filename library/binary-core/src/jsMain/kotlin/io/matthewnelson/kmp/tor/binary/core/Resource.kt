@@ -67,7 +67,7 @@ public actual class Resource private constructor(
             } catch (e: Exception) {
                 map.forEach { entry ->
                     try {
-                        fs_rmSync(entry.value, Options.Remove())
+                        fs_rm(entry.value)
                     } catch (_: Throwable) {}
                 }
                 throw e
@@ -88,12 +88,8 @@ public actual class Resource private constructor(
             val destination = path_resolve(destinationDir, fileName)
             val moduleResource = resolveResource(moduleName + resourcePath)
 
-            if (fs_existsSync(destination)) {
-                fs_rmSync(destination, Options.Remove())
-
-                if (fs_existsSync(destination)) {
-                    throw IllegalStateException("Failed to delete $destination")
-                }
+            if (fs_existsSync(destination) && !fs_rm(destination)) {
+                throw IllegalStateException("Failed to delete $destination")
             }
 
             var buffer = fs_readFileSync(moduleResource)

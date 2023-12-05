@@ -13,34 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
+@file:Suppress("unused")
+
 package io.matthewnelson.kmp.tor.binary.core.internal
 
-import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+internal sealed class Options {
 
-@InternalKmpTorBinaryApi
-public sealed class Options {
-
-    @InternalKmpTorBinaryApi
-    public class ReadDir private constructor(
-        public val encoding: String?,
-        public val withFileTypes: Boolean,
-        public val recursive: Boolean,
+    internal class ReadDir private constructor(
+        internal val encoding: String?,
+        internal val withFileTypes: Boolean,
+        internal val recursive: Boolean,
     ): Options() {
         // will force readdir to return an array of strings
-        public constructor(recursive: Boolean): this("utf8", false, recursive)
+        internal constructor(recursive: Boolean): this("utf8", false, recursive)
     }
 
-    @InternalKmpTorBinaryApi
-    public class ReadUtf8 private constructor(
-        public val encoding: String?,
-        public val flag: String?,
+    internal class ReadUtf8 private constructor(
+        internal val encoding: String?,
+        internal val flag: String?,
     ): Options() {
-        public constructor(): this("utf8", "r")
+        internal constructor(): this("utf8", "r")
     }
 
-    @InternalKmpTorBinaryApi
-    public class Remove(
-        public val force: Boolean = true,
-        public val recursive: Boolean = true,
+    internal class Remove internal constructor(
+        internal val force: Boolean = true,
+        internal val recursive: Boolean = true,
     ): Options()
 }

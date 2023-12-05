@@ -38,18 +38,15 @@ public external fun fs_mkdirSync(path: String): String?
 
 /** [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) */
 @JsName("readdirSync")
-@InternalKmpTorBinaryApi
-public external fun fs_readdirSync(path: String, options: Options.ReadDir): Array<String>
+internal external fun fs_readdirSync(path: String, options: Options.ReadDir): Array<String>
 
 /** [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) */
 @JsName("readFileSync")
-@InternalKmpTorBinaryApi
-public external fun fs_readFileSync(path: String, options: Options.ReadUtf8): buffer_Buffer
+internal external fun fs_readFileSync(path: String, options: Options.ReadUtf8): buffer_Buffer
 
 /** [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) */
 @JsName("readFileSync")
-@InternalKmpTorBinaryApi
-public external fun fs_readFileSync(path: String): buffer_Buffer
+internal external fun fs_readFileSync(path: String): buffer_Buffer
 
 /** [docs](https://nodejs.org/api/fs.html#fsreadlinksyncpath-options) */
 @JsName("readlinkSync")
@@ -62,13 +59,11 @@ internal external fun fs_realpathSync(path: String): String
 
 /** [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) */
 @JsName("rmSync")
-@InternalKmpTorBinaryApi
-public external fun fs_rmSync(path: String, options: Options.Remove)
+internal external fun fs_rmSync(path: String, options: Options.Remove)
 
 /** [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) */
 @JsName("writeFileSync")
-@InternalKmpTorBinaryApi
-public external fun fs_writeFileSync(path: String, data: buffer_Buffer)
+internal external fun fs_writeFileSync(path: String, data: buffer_Buffer)
 
 /** [docs](https://nodejs.org/api/fs.html#fslstatsyncpath-options) */
 @JsName("lstatSync")

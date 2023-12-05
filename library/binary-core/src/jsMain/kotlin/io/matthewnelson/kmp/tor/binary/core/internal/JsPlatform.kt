@@ -84,3 +84,21 @@ public fun fs_mkdirs(dirPath: String): Boolean {
 
     return fs_existsSync(dirPath)
 }
+
+@InternalKmpTorBinaryApi
+public fun fs_readFile(path: String): String {
+    return fs_readFileSync(path, Options.ReadUtf8()).let { buffer ->
+        buffer.toString("utf8", 0, buffer.length)
+    }
+}
+
+@InternalKmpTorBinaryApi
+public fun fs_rm(
+    path: String,
+    recursively: Boolean = true,
+    force: Boolean = true,
+): Boolean {
+    if (!fs_existsSync(path)) return false
+    fs_rmSync(path, Options.Remove(force = force, recursive = recursively))
+    return fs_existsSync(path)
+}
