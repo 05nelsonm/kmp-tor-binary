@@ -29,6 +29,9 @@ public expect fun path_basename(path: String): String
 public expect fun path_isAbsolute(path: String): Boolean
 
 @InternalKmpTorBinaryApi
+public expect fun path_join(vararg paths: String): String
+
+@InternalKmpTorBinaryApi
 public expect fun path_parent(path: String): String?
 
 @InternalKmpTorBinaryApi

@@ -81,7 +81,7 @@ public actual class Resource private constructor(
                 false
             }
 
-            val destination = path_resolve(destinationDir, fileName)
+            val destination = path_join(destinationDir, fileName)
 
             if (fs_exists(destination) && !fs_rm(destination)) {
                 throw RuntimeException("Failed to delete $destination")

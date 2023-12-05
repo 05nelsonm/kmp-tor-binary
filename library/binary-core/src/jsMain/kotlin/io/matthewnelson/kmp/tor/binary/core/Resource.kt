@@ -85,7 +85,7 @@ public actual class Resource private constructor(
                 false
             }
 
-            val destination = path_resolve(destinationDir, fileName)
+            val destination = path_join(destinationDir, fileName)
             val moduleResource = resolveResource(moduleName + resourcePath)
 
             if (fs_exists(destination) && !fs_rm(destination)) {

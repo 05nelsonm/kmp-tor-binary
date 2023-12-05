@@ -30,6 +30,11 @@ public actual fun path_isAbsolute(path: String): Boolean {
 }
 
 @InternalKmpTorBinaryApi
+public actual fun path_join(vararg paths: String): String {
+    TODO()
+}
+
+@InternalKmpTorBinaryApi
 public actual fun path_parent(path: String): String? {
     TODO()
 }

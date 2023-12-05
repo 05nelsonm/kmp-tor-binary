@@ -41,7 +41,8 @@ public actual external fun path_isAbsolute(path: String): Boolean
 
 /** [docs](https://nodejs.org/api/path.html#pathjoinpaths) **/
 @JsName("join")
-internal external fun path_join(vararg paths: String): String
+@InternalKmpTorBinaryApi
+public actual external fun path_join(vararg paths: String): String
 
 /** [docs](https://nodejs.org/api/path.html#pathnormalizepath) **/
 @JsName("normalize")
