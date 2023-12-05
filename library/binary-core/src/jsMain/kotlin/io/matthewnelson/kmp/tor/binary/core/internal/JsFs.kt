@@ -21,54 +21,66 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
-@JsName("mkdirSync")
-@InternalKmpTorBinaryApi
-public external fun fs_mkdirSync(path: String): String?
-
-@JsName("readdirSync")
-@InternalKmpTorBinaryApi
-public external fun fs_readdirSync(path: String, options: Options.ReadDir): Array<String>
-
-@JsName("readFileSync")
-@InternalKmpTorBinaryApi
-public external fun fs_readFileSync(path: String, options: Options.ReadUtf8): buffer_Buffer
-
-@JsName("readFileSync")
-@InternalKmpTorBinaryApi
-public external fun fs_readFileSync(path: String): buffer_Buffer
-
-@JsName("writeFileSync")
-@InternalKmpTorBinaryApi
-public external fun fs_writeFileSync(path: String, data: buffer_Buffer)
-
-@JsName("readlinkSync")
-@InternalKmpTorBinaryApi
-public external fun fs_readlinkSync(path: String): String
-
-@JsName("realpathSync")
-internal external fun fs_realpathSync(path: String): String
-
-@JsName("rmSync")
-@InternalKmpTorBinaryApi
-public external fun fs_rmSync(path: String, options: Options.Remove)
-
-@JsName("statSync")
-@InternalKmpTorBinaryApi
-public external fun fs_statSync(path: String): fs_Stats
-
-@JsName("lstatSync")
-@InternalKmpTorBinaryApi
-public external fun fs_lstatSync(path: String): fs_Stats
-
-@JsName("existsSync")
-@InternalKmpTorBinaryApi
-public external fun fs_existsSync(path: String): Boolean
-
-// https://nodejs.org/api/fs.html#file-modes
+/** [docs](https://nodejs.org/api/fs.html#fschmodsyncpath-mode) */
 @JsName("chmodSync")
 @InternalKmpTorBinaryApi
 public external fun fs_chmodSync(path: String, mode: String)
 
+/** [docs](https://nodejs.org/api/fs.html#fsexistssyncpath) */
+@JsName("existsSync")
+@InternalKmpTorBinaryApi
+public external fun fs_existsSync(path: String): Boolean
+
+/** [docs](https://nodejs.org/api/fs.html#fsmkdirsyncpath-options) */
+@JsName("mkdirSync")
+@InternalKmpTorBinaryApi
+public external fun fs_mkdirSync(path: String): String?
+
+/** [docs](https://nodejs.org/api/fs.html#fsreaddirsyncpath-options) */
+@JsName("readdirSync")
+@InternalKmpTorBinaryApi
+public external fun fs_readdirSync(path: String, options: Options.ReadDir): Array<String>
+
+/** [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) */
+@JsName("readFileSync")
+@InternalKmpTorBinaryApi
+public external fun fs_readFileSync(path: String, options: Options.ReadUtf8): buffer_Buffer
+
+/** [docs](https://nodejs.org/api/fs.html#fsreadfilesyncpath-options) */
+@JsName("readFileSync")
+@InternalKmpTorBinaryApi
+public external fun fs_readFileSync(path: String): buffer_Buffer
+
+/** [docs](https://nodejs.org/api/fs.html#fsreadlinksyncpath-options) */
+@JsName("readlinkSync")
+@InternalKmpTorBinaryApi
+public external fun fs_readlinkSync(path: String): String
+
+/** [docs](https://nodejs.org/api/fs.html#fsrealpathsyncpath-options) */
+@JsName("realpathSync")
+internal external fun fs_realpathSync(path: String): String
+
+/** [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) */
+@JsName("rmSync")
+@InternalKmpTorBinaryApi
+public external fun fs_rmSync(path: String, options: Options.Remove)
+
+/** [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) */
+@JsName("writeFileSync")
+@InternalKmpTorBinaryApi
+public external fun fs_writeFileSync(path: String, data: buffer_Buffer)
+
+/** [docs](https://nodejs.org/api/fs.html#fslstatsyncpath-options) */
+@JsName("lstatSync")
+@InternalKmpTorBinaryApi
+public external fun fs_lstatSync(path: String): fs_Stats
+
+/** [docs](https://nodejs.org/api/fs.html#fsstatsyncpath-options) */
+@JsName("statSync")
+@InternalKmpTorBinaryApi
+public external fun fs_statSync(path: String): fs_Stats
+
+/** [docs](https://nodejs.org/api/fs.html#class-fsstats) */
 @JsName("Stats")
 @InternalKmpTorBinaryApi
 public external class fs_Stats {

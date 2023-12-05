@@ -21,6 +21,7 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
+/** [docs](https://nodejs.org/api/buffer.html#class-buffer) */
 @JsName("Buffer")
 @InternalKmpTorBinaryApi
 public external class buffer_Buffer {

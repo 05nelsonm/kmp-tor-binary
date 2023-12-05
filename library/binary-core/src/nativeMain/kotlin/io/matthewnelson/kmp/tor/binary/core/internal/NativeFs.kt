@@ -20,21 +20,12 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
 @InternalKmpTorBinaryApi
-public fun fs_chmod(path: String, mode: String) {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
 public fun fs_canonicalize(path: String): String {
     TODO()
 }
 
 @InternalKmpTorBinaryApi
-public fun fs_rm(
-    path: String,
-    recursively: Boolean = true,
-    force: Boolean = true
-): Boolean {
+public fun fs_chmod(path: String, mode: String) {
     TODO()
 }
 
@@ -50,5 +41,14 @@ public fun fs_mkdir(path: String): Boolean {
 
 @InternalKmpTorBinaryApi
 public fun fs_mkdirs(path: String): Boolean {
+    TODO()
+}
+
+@InternalKmpTorBinaryApi
+public fun fs_rm(
+    path: String,
+    recursively: Boolean = true,
+    force: Boolean = true
+): Boolean {
     TODO()
 }

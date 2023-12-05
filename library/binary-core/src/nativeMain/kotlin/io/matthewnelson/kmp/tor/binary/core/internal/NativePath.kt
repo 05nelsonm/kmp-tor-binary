@@ -41,8 +41,3 @@ public fun path_normalize(path: String): String {
 public fun path_resolve(path: String, child: String): String {
     TODO()
 }
-
-@InternalKmpTorBinaryApi
-public fun path_resolveSibling(path: String, sibling: String): String {
-    TODO()
-}

@@ -21,21 +21,36 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
+/** [docs](https://nodejs.org/api/path.html#pathsep) */
 @JsName("sep")
 internal external val path_sep: String
 
-@JsName("isAbsolute")
+/** [docs](https://nodejs.org/api/path.html#pathbasenamepath-suffix) **/
+@JsName("basename")
 @InternalKmpTorBinaryApi
-public external fun path_isAbsolute(path: String): Boolean
+public external fun path_basename(path: String): String
 
+/** [docs](https://nodejs.org/api/path.html#pathdirnamepath) **/
 @JsName("dirname")
 @InternalKmpTorBinaryApi
 public external fun path_dirname(path: String): String
 
+/** [docs](https://nodejs.org/api/path.html#pathisabsolutepath) **/
+@JsName("isAbsolute")
+@InternalKmpTorBinaryApi
+public external fun path_isAbsolute(path: String): Boolean
+
+/** [docs](https://nodejs.org/api/path.html#pathjoinpaths) **/
+@JsName("join")
+@InternalKmpTorBinaryApi
+public external fun path_join(vararg paths: String): String
+
+/** [docs](https://nodejs.org/api/path.html#pathnormalizepath) **/
 @JsName("normalize")
 @InternalKmpTorBinaryApi
 public external fun path_normalize(path: String): String
 
+/** [docs](https://nodejs.org/api/path.html#pathresolvepaths) **/
 @JsName("resolve")
 @InternalKmpTorBinaryApi
-public external fun path_resolve(vararg path: String): String
+public external fun path_resolve(vararg paths: String): String
