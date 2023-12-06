@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "KotlinRedundantDiagnosticSuppress")
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
 import io.matthewnelson.kmp.tor.binary.core.FileNotFoundException
 import io.matthewnelson.kmp.tor.binary.core.IOException
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+import kotlinx.cinterop.ByteVar
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.toKStringFromUtf8
 import platform.posix.*
@@ -35,15 +37,6 @@ public actual fun fs_mkdir(path: String): Boolean {
     if (fs_exists(path)) return false
     mkdir(path)
     return fs_exists(path)
-}
-
-@InternalKmpTorBinaryApi
-@Throws(IOException::class)
-public actual fun fs_readFileBytes(path: String): ByteArray {
-    @OptIn(ExperimentalForeignApi::class)
-    return fs_withFile(path, flags = "rb") { file ->
-        TODO()
-    }
 }
 
 @Throws(IOException::class)
@@ -73,3 +66,12 @@ public actual fun fs_rm(
 ): Boolean {
     TODO()
 }
+
+@Suppress("NOTHING_TO_INLINE")
+@OptIn(ExperimentalForeignApi::class)
+internal actual inline fun native_read(
+    file: CPointer<FILE>,
+    buf: CPointer<ByteVar>,
+    size: Int,
+    offset: Long,
+): Int = TODO()

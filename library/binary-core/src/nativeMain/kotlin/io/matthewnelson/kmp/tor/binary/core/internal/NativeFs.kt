@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "KotlinRedundantDiagnosticSuppress")
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
@@ -32,6 +32,43 @@ public actual fun fs_exists(path: String): Boolean {
         false
     } else {
         result == 0
+    }
+}
+
+@InternalKmpTorBinaryApi
+@Throws(IOException::class)
+public actual fun fs_readFileBytes(path: String): ByteArray {
+    @OptIn(ExperimentalForeignApi::class)
+    return fs_withFile(path, flags = "rb") { file ->
+        val listBytes = mutableListOf<ByteArray>()
+        val buffer = ByteArray(8192)
+
+        var offset = 0L
+        while (true) {
+            val read = buffer.usePinned { pinned ->
+                native_read(file, pinned.addressOf(0), buffer.size, offset)
+            }
+
+            if (read == 0) break
+            offset += read
+            listBytes.add(buffer.copyOf(read))
+            if (offset >= Int.MAX_VALUE) {
+                throw IOException("File size exceeds limit of ${Int.MAX_VALUE}")
+            }
+        }
+
+        buffer.fill(0)
+        val final = ByteArray(offset.toInt())
+
+        var finalOffset = 0
+        while (listBytes.isNotEmpty()) {
+            val b = listBytes.removeAt(0)
+            b.copyInto(final, finalOffset)
+            finalOffset += b.size
+            b.fill(0)
+        }
+
+        final
     }
 }
 
@@ -63,3 +100,12 @@ internal inline fun <T: Any?> fs_withFile(
 
     return result
 }
+
+@Suppress("NOTHING_TO_INLINE")
+@OptIn(ExperimentalForeignApi::class)
+internal expect inline fun native_read(
+    file: CPointer<FILE>,
+    buf: CPointer<ByteVar>,
+    size: Int,
+    offset: Long,
+): Int

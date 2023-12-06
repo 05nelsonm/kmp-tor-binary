@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "KotlinRedundantDiagnosticSuppress")
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
@@ -31,9 +31,9 @@ public actual fun fs_chmod(path: String, mode: String) {
         throw IOException(e)
     }
 
-    val result = chmod(path, modeT)
+    val result = unix_chmod(path, modeT)
     if (result != 0) {
-        throw errnoToIOException(result)
+        throw errnoToIOException(errno)
     }
 }
 
@@ -41,8 +41,7 @@ public actual fun fs_chmod(path: String, mode: String) {
 public actual fun fs_mkdir(path: String): Boolean {
     if (fs_exists(path)) return false
     // TODO: use "775".toModeT()
-    @OptIn(ExperimentalForeignApi::class)
-    mkdir(path, 0b111111111u.convert() /* 777 */)
+    unix_mkdir(path, 0b111111111u /* 777 */)
     return fs_exists(path)
 }
 
@@ -62,43 +61,6 @@ internal actual fun fs_realpath(path: String): String {
 
 @InternalKmpTorBinaryApi
 @Throws(IOException::class)
-public actual fun fs_readFileBytes(path: String): ByteArray {
-    @OptIn(ExperimentalForeignApi::class)
-    return fs_withFile(path, flags = "rb") { file ->
-        val listBytes = mutableListOf<ByteArray>()
-        val buffer = ByteArray(8192)
-
-        var offset = 0L
-        while (true) {
-            val read = buffer.usePinned<ByteArray, Int> { pinned ->
-                pread(fileno(file), pinned.addressOf(0), buffer.size.convert(), offset).convert()
-            }
-
-            if (read == 0) break
-            offset += read
-            listBytes.add(buffer.copyOf(read))
-            if (offset >= Int.MAX_VALUE) {
-                throw IOException("File size exceeds limit of ${Int.MAX_VALUE}")
-            }
-        }
-
-        buffer.fill(0)
-        val final = ByteArray(offset.toInt())
-
-        var finalOffset = 0
-        while (listBytes.isNotEmpty()) {
-            val b = listBytes.removeAt(0)
-            b.copyInto(final, finalOffset)
-            finalOffset += b.size
-            b.fill(0)
-        }
-
-        final
-    }
-}
-
-@InternalKmpTorBinaryApi
-@Throws(IOException::class)
 public actual fun fs_rm(
     path: String,
     recursively: Boolean,
@@ -108,9 +70,21 @@ public actual fun fs_rm(
 }
 
 @Throws(IllegalArgumentException::class)
-private fun String.toModeT(): __mode_t {
+private fun String.toModeT(): UInt {
     if (length != 3) throw IllegalArgumentException("Invalid chmod argument (e.g. 764)")
     if (toShortOrNull() == null) throw IllegalArgumentException("Invalid chmod argument (e.g. 764)")
 
     TODO()
 }
+
+@Suppress("NOTHING_TO_INLINE")
+internal expect inline fun unix_chmod(
+    path: String,
+    mode: UInt,
+): Int
+
+@Suppress("NOTHING_TO_INLINE")
+internal expect inline fun unix_mkdir(
+    path: String,
+    mode: UInt,
+): Int
