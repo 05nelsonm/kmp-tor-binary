@@ -34,7 +34,7 @@ class ResourceCLIJvmUnitTest {
                 .resolve("nativeTest")
                 .toString(),
             /* pathFile       */ TEST_SUPPORT_DIR
-                .resolve("lorem_ipsum.txt")
+                .resolve("lorem_ipsum")
                 .toString(),
             "--quiet"
         ))
