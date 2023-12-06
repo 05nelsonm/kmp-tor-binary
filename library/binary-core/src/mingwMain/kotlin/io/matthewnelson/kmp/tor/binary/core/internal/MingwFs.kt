@@ -20,10 +20,7 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 import io.matthewnelson.kmp.tor.binary.core.FileNotFoundException
 import io.matthewnelson.kmp.tor.binary.core.IOException
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import kotlinx.cinterop.ByteVar
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.cinterop.toKStringFromUtf8
+import kotlinx.cinterop.*
 import platform.posix.*
 
 @InternalKmpTorBinaryApi
@@ -74,4 +71,4 @@ internal actual inline fun fs_platform_read(
     buf: CPointer<ByteVar>,
     size: Int,
     offset: Long,
-): Int = TODO()
+): Int = fread(buf, 1u, size.convert(), file).convert()
