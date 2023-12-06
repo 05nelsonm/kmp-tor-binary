@@ -21,25 +21,9 @@ import okio.Path.Companion.toPath
 expect fun filesystem(): FileSystem
 
 val TEST_SUPPORT_DIR by lazy {
-    val dir = filesystem()
-        .canonicalize(".".toPath())
-        .toString()
-
-    if (
-        dir.contains("js")
-        && dir.contains("packages")
-        && dir.contains("kmp-tor-binary-library-binary-core-test")
-    ) {
-        dir.toPath()
-            .parent  // remove: kmp-tor-binary-library-binary-core-test
-            ?.parent // remove: packages
-            ?.parent // remove: js
-            ?.parent // remove: build
-            ?.resolve("library")
-            ?.resolve("binary-core")!!
-    } else {
-        dir.toPath()
-    }.resolve("test_support")
+    PROJECT_DIR_PATH
+        .toPath()
+        .resolve("test_support")
 }
 
 val MAP_FILES_NOT_MUSL by lazy {

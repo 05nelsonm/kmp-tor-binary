@@ -23,7 +23,6 @@ import io.matthewnelson.kmp.tor.binary.core.internal.*
 import io.matthewnelson.kmp.tor.binary.core.internal.commonEquals
 import io.matthewnelson.kmp.tor.binary.core.internal.commonHashCode
 import io.matthewnelson.kmp.tor.binary.core.internal.commonToString
-import io.matthewnelson.kmp.tor.binary.core.internal.path_normalize
 import io.matthewnelson.kmp.tor.binary.core.internal.throwIfError
 
 @InternalKmpTorBinaryApi
@@ -46,29 +45,13 @@ public actual class Resource private constructor(
             // throw them if that is the case before extracting anything.
             throwIfError()
 
-            val dir = path_normalize(destinationDir)
+            val dir = fs_canonicalize(destinationDir)
 
-            if (!fs_existsSync(dir)) {
-                // There is no concept of mkdirs, so have
-                // to check parent directories and build
-                // it up.
-                val dirs = mutableListOf(dir)
-                var exists = false
-
-                while (!exists) {
-                    val parentDir = path_dirname(dirs.first())
-                    exists = fs_existsSync(parentDir)
-                    if (!exists) {
-                        dirs.add(0, parentDir)
-                    }
-                }
-
-                dirs.forEach { path -> fs_mkdirSync(path) }
-
-                check(fs_existsSync(dir)) { "Failed to create destinationDir[$dir]" }
+            if (!fs_exists(dir) && !fs_mkdirs(dir)) {
+                throw RuntimeException("Failed to create destinationDir[$dir]")
             }
 
-            val map = mutableMapOf<String, String>()
+            val map = LinkedHashMap<String, String>(resources.size, 1.0f)
 
             try {
                 resources.forEach { resource ->
@@ -78,13 +61,13 @@ public actual class Resource private constructor(
                         // These are the same executable permissions
                         // that are set for jvm upon resource file
                         // extraction.
-                        fs_chmodSync(file, "764")
+                        fs_chmod(file, "764")
                     }
                 }
             } catch (e: Exception) {
                 map.forEach { entry ->
                     try {
-                        fs_rmSync(entry.value, Options.Remove())
+                        fs_rm(entry.value)
                     } catch (_: Throwable) {}
                 }
                 throw e
@@ -102,15 +85,11 @@ public actual class Resource private constructor(
                 false
             }
 
-            val destination = path_resolve(destinationDir, fileName)
+            val destination = path_join(destinationDir, fileName)
             val moduleResource = resolveResource(moduleName + resourcePath)
 
-            if (fs_existsSync(destination)) {
-                fs_rmSync(destination, Options.Remove())
-
-                if (fs_existsSync(destination)) {
-                    throw IllegalStateException("Failed to delete $destination")
-                }
+            if (fs_exists(destination) && !fs_rm(destination)) {
+                throw IllegalStateException("Failed to delete $destination")
             }
 
             var buffer = fs_readFileSync(moduleResource)

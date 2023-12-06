@@ -58,10 +58,11 @@ internal class Apply: Subcommand(
         })
 
         with(settings()) {
+            val msg = "applied diff '$diffFileArg' to '$fileArg"
             if (dryRunOpt) {
-                println("Diff applied to [$fileArg.bak]")
+                println("$msg.bak'")
             } else {
-                println("Diff applied to [$fileArg]")
+                println("$msg'")
             }
         }
     }

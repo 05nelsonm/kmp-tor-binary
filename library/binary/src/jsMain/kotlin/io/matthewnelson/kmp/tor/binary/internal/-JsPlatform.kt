@@ -15,10 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
-import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.core.OSHost
-import io.matthewnelson.kmp.tor.binary.core.OSInfo
-import io.matthewnelson.kmp.tor.binary.core.Resource
+import io.matthewnelson.kmp.tor.binary.core.*
 
 // JS
 @OptIn(InternalKmpTorBinaryApi::class)
@@ -61,3 +58,8 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
         }
     }
 }
+
+// no-op
+@OptIn(InternalKmpTorBinaryApi::class)
+@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
+internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> = this

@@ -95,7 +95,7 @@ public actual class OSInfo private constructor(
             lName.contains("freebsd") -> OSHost.FreeBSD
             lName.contains("linux") -> {
                 when {
-                    ANDROID_SDK_INT != null -> OSHost.Linux.Android
+                    isAndroidRuntime() -> OSHost.Linux.Android
                     isAndroidTermux() -> OSHost.Linux.Android
                     isLinuxMusl() -> OSHost.Linux.Musl
                     else -> OSHost.Linux.Libc
@@ -123,6 +123,8 @@ public actual class OSInfo private constructor(
                 .lowercase(Locale.US)
         )
     }
+
+    public fun isAndroidRuntime(): Boolean = ANDROID_SDK_INT != null
 
     private fun isAndroidTermux(): Boolean {
         return try {

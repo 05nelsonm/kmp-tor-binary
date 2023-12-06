@@ -19,11 +19,14 @@
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
+/** [docs](https://nodejs.org/api/os.html#osarch) **/
 @JsName("arch")
 internal external fun os_arch(): String?
 
+/** [docs](https://nodejs.org/api/os.html#osmachine) **/
 @JsName("machine")
 internal external fun os_machine(): String?
 
+/** [docs](https://nodejs.org/api/os.html#osplatform) **/
 @JsName("platform")
 internal external fun os_platform(): String?

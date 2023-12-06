@@ -13,12 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package io.matthewnelson.kmp.tor.binary.internal
+@file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 
-import io.matthewnelson.kmp.tor.binary.core.ImmutableMap
-import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+package io.matthewnelson.kmp.tor.binary.core
 
-// no-op
+// TODO: Implement
+@InternalKmpTorBinaryApi
+public actual typealias SynchronizedObject = Any
+
+// TODO: Implement
+@PublishedApi
 @OptIn(InternalKmpTorBinaryApi::class)
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
-internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> = this
+internal actual inline fun <T: Any?> synchronizedImpl(
+    lock: SynchronizedObject,
+    block: () -> T
+): T = block()

@@ -19,11 +19,11 @@
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
-import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-
+/** [docs](https://nodejs.org/api/buffer.html#class-buffer) */
 @JsName("Buffer")
-@InternalKmpTorBinaryApi
-public external class buffer_Buffer {
-    public val length: Number
-    public fun toString(encoding: String, start: Number, end: Number): String
+internal external class buffer_Buffer {
+    val length: Number
+    fun fill()
+    fun readInt8(offset: Number): Number
+    fun toString(encoding: String, start: Number, end: Number): String
 }
