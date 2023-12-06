@@ -38,7 +38,7 @@ public actual class Resource private constructor(
         public actual val resources: ImmutableSet<Resource>,
     ) {
 
-        @Throws(Exception::class)
+        @Throws(IllegalStateException::class, IOException::class)
         public actual fun extractTo(destinationDir: String): ImmutableMap<String, String> {
             // Check if any errors have been set for this config and
             // throw them if that is the case before extracting anything.
@@ -47,7 +47,7 @@ public actual class Resource private constructor(
             val dir = fs_canonicalize(destinationDir)
 
             if (!fs_exists(dir) && !fs_mkdirs(dir)) {
-                throw RuntimeException("Failed to create destinationDir[$dir]")
+                throw IOException("Failed to create destinationDir[$dir]")
             }
 
             val map = LinkedHashMap<String, String>(resources.size, 1.0f)
@@ -60,13 +60,14 @@ public actual class Resource private constructor(
                         fs_chmod(file, "764")
                     }
                 }
-            } catch (e: Exception) {
+            } catch (t: Throwable) {
                 map.forEach { entry ->
                     try {
                         fs_rm(entry.value)
                     } catch (_: Throwable) {}
                 }
-                throw e
+
+                throw t.wrapIOException { "Failed to extract resources to destinationDir[$dir]" }
             }
 
             return map.toImmutableMap()
@@ -84,7 +85,7 @@ public actual class Resource private constructor(
             val destination = path_join(destinationDir, fileName)
 
             if (fs_exists(destination) && !fs_rm(destination)) {
-                throw RuntimeException("Failed to delete $destination")
+                throw IOException("Failed to delete $destination")
             }
 
             TODO("""

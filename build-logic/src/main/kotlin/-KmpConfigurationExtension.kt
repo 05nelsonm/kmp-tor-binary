@@ -54,7 +54,7 @@ fun KmpConfigurationExtension.configureShared(
         }
 
         iosAll()
-//        linuxAll()
+        linuxAll()
         macosAll()
         tvosAll()
         watchosArm32()

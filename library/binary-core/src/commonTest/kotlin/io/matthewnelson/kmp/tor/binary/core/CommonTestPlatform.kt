@@ -26,13 +26,13 @@ val TEST_SUPPORT_DIR by lazy {
         .resolve("test_support")
 }
 
-val MAP_FILES_NOT_MUSL by lazy {
+val TEST_MAP_FILES_NOT_MUSL by lazy {
     TEST_SUPPORT_DIR
         .resolve("not_msl")
         .resolve("map_files")
 }
 
-val OS_RELEASE_NOT_MUSL by lazy {
+val TEST_OS_RELEASE_NOT_MUSL by lazy {
     TEST_SUPPORT_DIR
         .resolve("not_msl")
         .resolve("os-release")

@@ -17,9 +17,7 @@
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
-import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-import io.matthewnelson.kmp.tor.binary.core.OSHost
-import io.matthewnelson.kmp.tor.binary.core.OSInfo
+import io.matthewnelson.kmp.tor.binary.core.*
 
 @InternalKmpTorBinaryApi
 public actual val path_separator: Char by lazy {
@@ -42,6 +40,15 @@ public actual fun path_parent(path: String): String? {
 }
 
 @InternalKmpTorBinaryApi
+public actual fun fs_chmod(path: String, mode: String) {
+    try {
+        fs_chmodSync(path, mode)
+    } catch (t: Throwable) {
+        throw t.toIOException()
+    }
+}
+
+@InternalKmpTorBinaryApi
 public actual fun fs_mkdir(path: String): Boolean {
     if (fs_exists(path)) return false
 
@@ -55,20 +62,37 @@ public actual fun fs_mkdir(path: String): Boolean {
 
 @InternalKmpTorBinaryApi
 public actual fun fs_readFileBytes(path: String): ByteArray {
-    val buffer = fs_readFileSync(path)
-    val bytes = ByteArray(buffer.length.toInt())
-    for (i in bytes.indices) {
-        bytes[i] = buffer.readInt8(i) as Byte
+    return try {
+        val buffer = fs_readFileSync(path)
+        val bytes = ByteArray(buffer.length.toInt())
+        for (i in bytes.indices) {
+            bytes[i] = buffer.readInt8(i) as Byte
+        }
+        buffer.fill()
+        bytes
+    } catch (t: Throwable) {
+        throw t.toIOException()
     }
-    buffer.fill()
-    return bytes
 }
 
 @InternalKmpTorBinaryApi
 public actual fun fs_readFileUtf8(path: String): String {
-    return fs_readFileSync(path).let { buffer ->
-        buffer.toString("utf8", 0, buffer.length)
-            .also { buffer.fill() }
+    return try {
+        val buffer = fs_readFileSync(path)
+        val text = buffer.toString("utf8", 0, buffer.length)
+        buffer.fill()
+        text
+    } catch (t: Throwable) {
+        throw t.toIOException()
+    }
+}
+
+@InternalKmpTorBinaryApi
+public actual fun fs_platform_realpath(path: String): String {
+    return try {
+        fs_realpathSync(path)
+    } catch (t: Throwable) {
+        throw t.toIOException()
     }
 }
 
@@ -79,6 +103,27 @@ public actual fun fs_rm(
     force: Boolean,
 ): Boolean {
     if (!fs_exists(path)) return false
-    fs_rmSync(path, Options.Remove(force = force, recursive = recursively))
+    try {
+        fs_rmSync(path, Options.Remove(force = force, recursive = recursively))
+    } catch (t: Throwable) {
+        // TODO: if force true, swallow exception???
+        throw t.toIOException()
+    }
     return fs_exists(path)
+}
+
+@InternalKmpTorBinaryApi
+public fun Throwable.toIOException(): IOException {
+    if (this is IOException) return this
+
+    val code = try {
+        asDynamic().code
+    } catch (_: Throwable) {
+        null
+    }
+
+    return when (code) {
+        "ENOENT" -> FileNotFoundException(message)
+        else -> IOException(message)
+    }
 }

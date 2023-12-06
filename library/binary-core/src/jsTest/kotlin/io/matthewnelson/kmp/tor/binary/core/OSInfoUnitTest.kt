@@ -47,8 +47,8 @@ class OSInfoUnitTest {
     @Test
     fun givenOSNameLinux_whenOSHost_thenIsLinuxLibc() {
         OSInfo.get(
-            pathMapFiles = MAP_FILES_NOT_MUSL.toString(),
-            pathOSRelease = OS_RELEASE_NOT_MUSL.toString(),
+            pathMapFiles = TEST_MAP_FILES_NOT_MUSL.toString(),
+            pathOSRelease = TEST_OS_RELEASE_NOT_MUSL.toString(),
             osName = { "linux" },
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Libc)
@@ -71,7 +71,7 @@ class OSInfoUnitTest {
                 .resolve("msl")
                 .resolve("map_files")
                 .toString(),
-            pathOSRelease = OS_RELEASE_NOT_MUSL.toString(),
+            pathOSRelease = TEST_OS_RELEASE_NOT_MUSL.toString(),
             osName = { "linux" },
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Musl)

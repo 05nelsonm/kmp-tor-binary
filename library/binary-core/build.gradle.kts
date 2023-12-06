@@ -37,6 +37,8 @@ kmpConfiguration {
             }
         }
 
+        mingwAll()
+
         common {
             sourceSetTest {
                 kotlin.srcDir(testConfig.testConfigSrcDir)

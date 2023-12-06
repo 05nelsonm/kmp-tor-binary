@@ -1,6 +1,11 @@
 public final class io/matthewnelson/kmp/tor/binary/core/AndroidSdkIntKt {
 }
 
+public final class io/matthewnelson/kmp/tor/binary/core/Exceptions {
+	public static final fun wrapIOException (Ljava/lang/Throwable;)Ljava/io/IOException;
+	public static final fun wrapIOException (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)Ljava/io/IOException;
+}
+
 public abstract interface annotation class io/matthewnelson/kmp/tor/binary/core/InternalKmpTorBinaryApi : java/lang/annotation/Annotation {
 }
 

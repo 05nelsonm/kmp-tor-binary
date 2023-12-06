@@ -37,6 +37,10 @@ class NativeResourceUnitTest {
 
     @Test
     fun givenNativeResource_whenSha256_thenIsSameAsFile() {
+        // Do not run this test for Windows because the actual file
+        // will be read differently b/c it is special (EOL character)
+        if (isWindows) return
+
         val loremIpsumFile = TEST_SUPPORT_DIR.resolve(resource_lorem_ipsum.name)
 
         val sha256 = filesystem().read(loremIpsumFile) {

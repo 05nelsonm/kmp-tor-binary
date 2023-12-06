@@ -39,7 +39,7 @@ public expect class Resource {
         @JvmField
         public val resources: ImmutableSet<Resource>
 
-        @Throws(Exception::class)
+        @Throws(IllegalStateException::class, IOException::class)
         public fun extractTo(destinationDir: String): ImmutableMap<String, String>
 
         @KmpTorBinaryCoreDsl
