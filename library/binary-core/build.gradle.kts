@@ -17,6 +17,8 @@ plugins {
     id("configuration")
 }
 
+private val testConfig = TestConfigInject()
+
 kmpConfiguration {
     configureShared(publish = true) {
         jvm {
@@ -37,36 +39,7 @@ kmpConfiguration {
 
         common {
             sourceSetTest {
-
-                val testConfig = layout
-                    .buildDirectory
-                    .get()
-                    .asFile
-                    .resolve("generated")
-                    .resolve("sources")
-                    .resolve("testConfig")
-                    .resolve("commonTest")
-                    .resolve("kotlin")
-                    .also { kotlin.srcDir(it) }
-                    .resolve("io")
-                    .resolve("matthewnelson")
-                    .resolve("kmp")
-                    .resolve("tor")
-                    .resolve("binary")
-                    .resolve("core")
-                    .resolve("TestConfig.kt")
-
-                testConfig.parentFile?.mkdirs()
-
-                testConfig.outputStream().writer().use { oStream ->
-                    buildString {
-                        appendLine("""
-                            package io.matthewnelson.kmp.tor.binary.core
-
-                            internal const val PROJECT_DIR_PATH: String = "${projectDir.canonicalPath}"
-                        """.trimIndent())
-                    }.let { oStream.write(it) }
-                }
+                kotlin.srcDir(testConfig.testConfigSrcDir)
 
                 dependencies {
                     implementation(kotlin("test"))
@@ -100,5 +73,39 @@ kmpConfiguration {
                 //  resource to nativeTest
             }
         }
+    }
+}
+
+private class TestConfigInject {
+    // Inject project directory path for tests
+    val testConfigSrcDir: File by lazy {
+        val kotlinSrcDir = layout
+            .buildDirectory
+            .get()
+            .asFile
+            .resolve("generated")
+            .resolve("sources")
+            .resolve("testConfig")
+            .resolve("commonTest")
+            .resolve("kotlin")
+
+        val core = kotlinSrcDir
+            .resolve("io")
+            .resolve("matthewnelson")
+            .resolve("kmp")
+            .resolve("tor")
+            .resolve("binary")
+            .resolve("core")
+
+        core.mkdirs()
+
+        core.resolve("TestConfig.kt").writeText(
+"""package io.matthewnelson.kmp.tor.binary.core
+
+internal const val PROJECT_DIR_PATH: String = "${projectDir.canonicalPath.replace("\\", "\\\\")}"
+"""
+        )
+
+        kotlinSrcDir
     }
 }
