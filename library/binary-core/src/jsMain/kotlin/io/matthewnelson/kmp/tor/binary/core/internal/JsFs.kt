@@ -15,7 +15,7 @@
  **/
 @file:JsModule("fs")
 @file:JsNonModule
-@file:Suppress("FunctionName", "ClassName", "ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
+@file:Suppress("FunctionName", "ClassName")
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
@@ -23,8 +23,7 @@ import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
 /** [docs](https://nodejs.org/api/fs.html#fschmodsyncpath-mode) */
 @JsName("chmodSync")
-@InternalKmpTorBinaryApi
-public actual external fun fs_chmod(path: String, mode: String)
+internal external fun fs_chmodSync(path: String, mode: String)
 
 /** [docs](https://nodejs.org/api/fs.html#fsexistssyncpath) */
 @JsName("existsSync")
@@ -45,7 +44,7 @@ internal external fun fs_readFileSync(path: String): buffer_Buffer
 
 /** [docs](https://nodejs.org/api/fs.html#fsrealpathsyncpath-options) */
 @JsName("realpathSync")
-internal actual external fun fs_realpath(path: String): String
+internal external fun fs_realpathSync(path: String): String
 
 /** [docs](https://nodejs.org/api/fs.html#fsrmsyncpath-options) */
 @JsName("rmSync")

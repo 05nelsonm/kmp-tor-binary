@@ -24,7 +24,6 @@ import io.matthewnelson.kmp.tor.binary.core.internal.commonEquals
 import io.matthewnelson.kmp.tor.binary.core.internal.commonHashCode
 import io.matthewnelson.kmp.tor.binary.core.internal.commonToString
 import java.io.File
-import java.io.IOException
 import java.util.zip.GZIPInputStream
 
 @InternalKmpTorBinaryApi
@@ -47,7 +46,7 @@ public actual class Resource private constructor(
         public actual val resources: ImmutableSet<Resource>,
     ) {
 
-        @Throws(Exception::class)
+        @Throws(IllegalStateException::class, IOException::class)
         public actual fun extractTo(destinationDir: String): ImmutableMap<String, String> {
             // Check if any errors have been set for this config and
             // throw them if that is the case before extracting anything.
@@ -69,13 +68,14 @@ public actual class Resource private constructor(
                         file.setExecutable(true)
                     }
                 }
-            } catch (e: Exception) {
+            } catch (t: Throwable) {
                 map.forEach { entry ->
                     try {
                         File(entry.value).delete()
                     } catch (_: Throwable) {}
                 }
-                throw e
+
+                throw t.wrapIOException { "Failed to extract resources to destinationDir[$dir]" }
             }
 
             return map.toImmutableMap()

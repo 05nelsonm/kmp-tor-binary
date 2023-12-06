@@ -17,10 +17,11 @@
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
+import io.matthewnelson.kmp.tor.binary.core.IOException
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 
 @InternalKmpTorBinaryApi
-@Throws(Exception::class)
+@Throws(IOException::class)
 public fun fs_canonicalize(path: String): String {
     val resolved = path_resolve(path)
 
@@ -36,7 +37,7 @@ public fun fs_canonicalize(path: String): String {
 }
 
 @InternalKmpTorBinaryApi
-@Throws(Exception::class)
+@Throws(IOException::class)
 public expect fun fs_chmod(path: String, mode: String)
 
 @InternalKmpTorBinaryApi
@@ -46,6 +47,7 @@ public expect fun fs_exists(path: String): Boolean
 public expect fun fs_mkdir(path: String): Boolean
 
 @InternalKmpTorBinaryApi
+@Throws(IOException::class)
 public fun fs_mkdirs(path: String): Boolean {
     if (fs_exists(path)) return false
     if (fs_mkdir(path)) return true
@@ -61,24 +63,27 @@ public fun fs_mkdirs(path: String): Boolean {
         }
     }
 
-    dirsToMake.forEach { dir -> fs_mkdir(dir) }
+    while (dirsToMake.isNotEmpty()) {
+        val dir = dirsToMake.removeAt(0)
+        if (!fs_mkdir(dir)) return false
+    }
 
     return fs_exists(path)
 }
 
 @InternalKmpTorBinaryApi
-@Throws(Exception::class)
+@Throws(IOException::class)
 public expect fun fs_readFileBytes(path: String): ByteArray
 
 @InternalKmpTorBinaryApi
-@Throws(Exception::class)
+@Throws(IOException::class)
 public expect fun fs_readFileUtf8(path: String): String
 
-@Throws(Exception::class)
+@Throws(IOException::class)
 internal expect fun fs_realpath(path: String): String
 
 @InternalKmpTorBinaryApi
-@Throws(Exception::class)
+@Throws(IOException::class)
 public expect fun fs_rm(
     path: String,
     recursively: Boolean = false,

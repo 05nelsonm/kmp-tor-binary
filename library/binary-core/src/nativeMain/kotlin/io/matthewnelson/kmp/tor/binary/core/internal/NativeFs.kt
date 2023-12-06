@@ -17,47 +17,49 @@
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
+import io.matthewnelson.kmp.tor.binary.core.IOException
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
-
-@InternalKmpTorBinaryApi
-@Throws(Exception::class)
-public actual fun fs_chmod(path: String, mode: String) {
-    TODO()
-}
+import kotlinx.cinterop.*
+import platform.posix.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @InternalKmpTorBinaryApi
 public actual fun fs_exists(path: String): Boolean {
-    TODO()
+    val result = access(path, 0)
+    return if (result != 0 && errno == ENOENT) {
+        false
+    } else {
+        result == 0
+    }
 }
 
 @InternalKmpTorBinaryApi
-public actual fun fs_mkdir(path: String): Boolean {
-    TODO()
-}
+@Throws(IOException::class)
+public actual fun fs_readFileUtf8(path: String): String = fs_readFileBytes(path).decodeToString()
 
-@InternalKmpTorBinaryApi
-@Throws(Exception::class)
-public actual fun fs_readFileBytes(path: String): ByteArray {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
-@Throws(Exception::class)
-public actual fun fs_readFileUtf8(path: String): String {
-    TODO()
-}
-
-@Throws(Exception::class)
-internal actual fun fs_realpath(path: String): String {
-    TODO()
-}
-
-@InternalKmpTorBinaryApi
-@Throws(Exception::class)
-public actual fun fs_rm(
+@Throws(IOException::class)
+@OptIn(ExperimentalContracts::class, ExperimentalForeignApi::class)
+internal inline fun <T: Any?> fs_withFile(
     path: String,
-    recursively: Boolean,
-    force: Boolean,
-): Boolean {
-    TODO()
+    flags: String,
+    block: (CPointer<FILE>) -> T
+): T {
+    contract {
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+    }
+
+    @OptIn(InternalKmpTorBinaryApi::class)
+    val file = fopen(path, flags) ?: throw errnoToIOException(errno)
+
+    val result = try {
+        block(file)
+    } finally {
+        try {
+            fclose(file)
+        } catch (_: Throwable) {}
+    }
+
+    return result
 }

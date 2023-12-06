@@ -48,7 +48,7 @@ public actual class Resource private constructor(
             val dir = fs_canonicalize(destinationDir)
 
             if (!fs_exists(dir) && !fs_mkdirs(dir)) {
-                throw RuntimeException("Failed to create destinationDir[$dir]")
+                throw IOException("Failed to create destinationDir[$dir]")
             }
 
             val map = LinkedHashMap<String, String>(resources.size, 1.0f)
@@ -64,13 +64,14 @@ public actual class Resource private constructor(
                         fs_chmod(file, "764")
                     }
                 }
-            } catch (e: Exception) {
+            } catch (t: Throwable) {
                 map.forEach { entry ->
                     try {
                         fs_rm(entry.value)
                     } catch (_: Throwable) {}
                 }
-                throw e
+
+                throw t.wrapIOException { "Failed to extract resources to destinationDir[$dir]" }
             }
 
             return map.toImmutableMap()
@@ -89,7 +90,7 @@ public actual class Resource private constructor(
             val moduleResource = resolveResource(moduleName + resourcePath)
 
             if (fs_exists(destination) && !fs_rm(destination)) {
-                throw IllegalStateException("Failed to delete $destination")
+                throw IOException("Failed to delete $destination")
             }
 
             var buffer = fs_readFileSync(moduleResource)
