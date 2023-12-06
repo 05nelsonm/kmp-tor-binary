@@ -57,8 +57,8 @@ class FileSystemUnitTest {
 
     @Test
     fun givenFile_whenReadUtf8_thenIsAsExpected() {
-        val expected = filesystem().read(OS_RELEASE_NOT_MUSL) { readUtf8() }
-        val actual = fs_readFileUtf8(OS_RELEASE_NOT_MUSL.toString())
+        val expected = filesystem().read(TEST_OS_RELEASE_NOT_MUSL) { readUtf8() }
+        val actual = fs_readFileUtf8(TEST_OS_RELEASE_NOT_MUSL.toString())
         assertEquals(expected, actual)
     }
 
