@@ -19,9 +19,9 @@ import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.base64.Base64
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.matthewnelson.encoding.core.util.LineBreakOutFeed
+import org.kotlincrypto.hash.sha2.SHA256
 import java.io.File
 import java.io.IOException
-import java.security.MessageDigest
 
 @Throws(Exception::class)
 internal actual fun ResourceWriter.write(): String {
@@ -35,14 +35,11 @@ internal actual fun ResourceWriter.write(): String {
         fileOutput = fileOutput.resolve(split)
     }
 
-    fileOutput = fileOutput
-        .resolve(fileNameToObjectName(fileInput.name) + ".kt")
-
-    fileOutput.parentFile!!.let { parent ->
-        if (!parent.exists() && !parent.mkdirs()) {
-            throw IllegalStateException("Failed to create directory[$parent]")
-        }
+    if (!fileOutput.exists() && !fileOutput.mkdirs()) {
+        throw IllegalStateException("Failed to create directory[$fileOutput]")
     }
+
+    fileOutput = fileOutput.resolve(fileNameToObjectName(fileInput.name) + ".kt")
 
     val buf = ByteArray(4096)
 
@@ -50,7 +47,7 @@ internal actual fun ResourceWriter.write(): String {
     val (size, sha256, chunks) = fileInput.inputStream().use { iStream ->
         var chunks = 0L
         var size = 0L
-        val digest = MessageDigest.getInstance("SHA-256")
+        val digest = SHA256()
 
         while (true) {
             val read = iStream.read(buf)
