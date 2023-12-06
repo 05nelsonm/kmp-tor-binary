@@ -29,20 +29,20 @@ class NativeResourceUnitTest {
         var invocations = 0L
 
         // read will throw if size and sha256 are invalid
-        resource_lorem_ipsum_txt.read { _, _ -> invocations++ }
+        resource_lorem_ipsum.read { _, _ -> invocations++ }
 
         // Ensure that there was something going on
-        assertEquals(resource_lorem_ipsum_txt.chunks, invocations)
+        assertEquals(resource_lorem_ipsum.chunks, invocations)
     }
 
     @Test
     fun givenNativeResource_whenSha256_thenIsSameAsFile() {
-        val loremIpsumFile = TEST_SUPPORT_DIR.resolve(resource_lorem_ipsum_txt.name)
+        val loremIpsumFile = TEST_SUPPORT_DIR.resolve(resource_lorem_ipsum.name)
 
         val sha256 = filesystem().read(loremIpsumFile) {
             SHA256().digest(readByteArray())
         }.encodeToString(Base16 { encodeToLowercase = true })
 
-        assertEquals(resource_lorem_ipsum_txt.sha256, sha256)
+        assertEquals(resource_lorem_ipsum.sha256, sha256)
     }
 }

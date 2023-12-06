@@ -24,9 +24,9 @@ import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.NativeResource
 
 @InternalKmpTorBinaryApi
-internal object resource_lorem_ipsum_txt: NativeResource(
+internal object resource_lorem_ipsum: NativeResource(
     version = 1,
-    name = "lorem_ipsum.txt",
+    name = "lorem_ipsum",
     size = 9879L,
     sha256 = "439664467fd3b26829244d7bb87b20e7873a97e494c6ead836d359d90254b76f",
     chunks = 3L,
