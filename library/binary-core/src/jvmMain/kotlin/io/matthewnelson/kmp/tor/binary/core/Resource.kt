@@ -19,6 +19,8 @@ package io.matthewnelson.kmp.tor.binary.core
 
 import io.matthewnelson.kmp.tor.binary.core.ImmutableMap.Companion.toImmutableMap
 import io.matthewnelson.kmp.tor.binary.core.ImmutableSet.Companion.toImmutableSet
+import io.matthewnelson.kmp.tor.binary.core.api.IOException
+import io.matthewnelson.kmp.tor.binary.core.api.wrapIOException
 import io.matthewnelson.kmp.tor.binary.core.internal.throwIfError
 import io.matthewnelson.kmp.tor.binary.core.internal.commonEquals
 import io.matthewnelson.kmp.tor.binary.core.internal.commonHashCode

@@ -17,7 +17,7 @@
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
-import io.matthewnelson.kmp.tor.binary.core.IOException
+import io.matthewnelson.kmp.tor.binary.core.api.IOException
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import kotlinx.cinterop.*
 import platform.posix.*

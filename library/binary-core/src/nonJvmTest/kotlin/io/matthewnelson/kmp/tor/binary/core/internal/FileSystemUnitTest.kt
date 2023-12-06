@@ -17,6 +17,7 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 
 import io.matthewnelson.kmp.tor.binary.core.*
 import io.matthewnelson.kmp.tor.binary.core.PROJECT_DIR_PATH
+import io.matthewnelson.kmp.tor.binary.core.api.FileNotFoundException
 import okio.ByteString.Companion.toByteString
 import okio.FileSystem
 import okio.Path.Companion.toPath

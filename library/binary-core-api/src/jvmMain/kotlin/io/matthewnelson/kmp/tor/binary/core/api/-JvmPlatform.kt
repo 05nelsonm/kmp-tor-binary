@@ -15,7 +15,7 @@
  **/
 @file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 
-package io.matthewnelson.kmp.tor.binary.core
+package io.matthewnelson.kmp.tor.binary.core.api
 
 public actual typealias IOException = java.io.IOException
 public actual typealias EOFException = java.io.EOFException

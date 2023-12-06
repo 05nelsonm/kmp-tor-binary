@@ -1,0 +1,5 @@
+public final class io/matthewnelson/kmp/tor/binary/core/api/Exceptions {
+	public static final fun wrapIOException (Ljava/lang/Throwable;)Ljava/io/IOException;
+	public static final fun wrapIOException (Ljava/lang/Throwable;Lkotlin/jvm/functions/Function0;)Ljava/io/IOException;
+}
+

@@ -17,8 +17,8 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
+import io.matthewnelson.kmp.tor.binary.core.api.IOException
 import kotlin.jvm.JvmField
-import kotlin.jvm.JvmStatic
 
 @InternalKmpTorBinaryApi
 public expect class Resource {

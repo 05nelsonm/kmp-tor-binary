@@ -17,6 +17,7 @@ package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.SynchronizedObject
+import io.matthewnelson.kmp.tor.binary.core.api.IOException
 import io.matthewnelson.kmp.tor.binary.core.synchronized
 import io.matthewnelson.kmp.tor.binary.internal.*
 import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP
@@ -33,7 +34,7 @@ public class KmpTorBinary(
 
     private val installer = Installer()
 
-    @Throws(Exception::class)
+    @Throws(IllegalStateException::class, IOException::class)
     public fun install(): Paths = installer.install()
 
     @OptIn(InternalKmpTorBinaryApi::class)
