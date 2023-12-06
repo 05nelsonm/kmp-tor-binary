@@ -17,7 +17,6 @@ package io.matthewnelson.kmp.tor.binary.core
 
 import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
-import io.matthewnelson.kmp.tor.binary.core.internal.path_separator
 import org.kotlincrypto.hash.sha2.SHA256
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -40,7 +39,7 @@ class NativeResourceUnitTest {
     fun givenNativeResource_whenSha256_thenIsSameAsFile() {
         // Do not run this test for Windows because the actual file
         // will be read differently b/c it is special (EOL character)
-        if (path_separator == '\\') return
+        if (isWindows) return
 
         val loremIpsumFile = TEST_SUPPORT_DIR.resolve(resource_lorem_ipsum.name)
 
