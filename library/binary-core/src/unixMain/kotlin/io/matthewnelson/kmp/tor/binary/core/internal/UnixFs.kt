@@ -26,7 +26,7 @@ import platform.posix.*
 @Throws(IOException::class)
 public actual fun fs_chmod(path: String, mode: String) {
     val modeT = try {
-        mode.toModeT()
+        Mode(value = mode).toModeT()
     } catch (e: IllegalArgumentException) {
         throw IOException(e)
     }
@@ -40,8 +40,7 @@ public actual fun fs_chmod(path: String, mode: String) {
 @InternalKmpTorBinaryApi
 public actual fun fs_mkdir(path: String): Boolean {
     if (fs_exists(path)) return false
-    // TODO: use "775".toModeT()
-    fs_platform_mkdir(path, 0b111111111u /* 777 */)
+    fs_platform_mkdir(path, Mode(value = "777").toModeT())
     return fs_exists(path)
 }
 
@@ -69,14 +68,6 @@ public actual fun fs_rm(
     TODO()
 }
 
-@Throws(IllegalArgumentException::class)
-private fun String.toModeT(): UInt {
-    if (length != 3) throw IllegalArgumentException("Invalid chmod argument (e.g. 764)")
-    if (toShortOrNull() == null) throw IllegalArgumentException("Invalid chmod argument (e.g. 764)")
-
-    TODO()
-}
-
 @Suppress("NOTHING_TO_INLINE")
 internal expect inline fun fs_platform_chmod(
     path: String,
@@ -88,3 +79,52 @@ internal expect inline fun fs_platform_mkdir(
     path: String,
     mode: UInt,
 ): Int
+
+private value class Mode
+@Throws(IllegalArgumentException::class)
+constructor(private val value: String) {
+
+    init {
+        require(value.length == 3) { "Invalid mode[$value] (e.g. 764)" }
+    }
+
+    @Throws(IllegalArgumentException::class)
+    fun toModeT(): UInt {
+        val mask = (Mask.User.from(value[0]) or
+            Mask.Group.from(value[1]) or
+            Mask.Other.from(value[2]))
+
+        return mask.toUInt()
+    }
+
+    private class Mask private constructor(
+        private val read: Int,
+        private val write: Int,
+        private val execute: Int,
+    ) {
+
+        @Throws(IllegalArgumentException::class)
+        fun from(char: Char): Int {
+            val digit = char.digitToIntOrNull()
+                ?: throw IllegalArgumentException("Unknown mode digit[$char]. Acceptable digits >> 0-7")
+
+            return when (digit) {
+                7 -> read or write or execute
+                6 -> read or write
+                5 -> read or execute
+                4 -> read
+                3 -> write or execute
+                2 -> write
+                1 -> execute
+                0 -> 0
+                else -> throw IllegalArgumentException("Unknown mode digit[$digit]. Acceptable digits >> 0-7")
+            }
+        }
+
+        companion object {
+            val User = Mask(400, 200, 100)
+            val Group = Mask(40, 20, 10)
+            val Other = Mask(4, 2, 1)
+        }
+    }
+}
