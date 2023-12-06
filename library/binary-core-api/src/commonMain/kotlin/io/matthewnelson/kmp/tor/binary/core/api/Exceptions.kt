@@ -16,7 +16,7 @@
 @file:Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @file:JvmName("Exceptions")
 
-package io.matthewnelson.kmp.tor.binary.core
+package io.matthewnelson.kmp.tor.binary.core.api
 
 import kotlin.jvm.JvmName
 

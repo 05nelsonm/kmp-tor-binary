@@ -18,6 +18,8 @@
 package io.matthewnelson.kmp.tor.binary.core.internal
 
 import io.matthewnelson.kmp.tor.binary.core.*
+import io.matthewnelson.kmp.tor.binary.core.api.FileNotFoundException
+import io.matthewnelson.kmp.tor.binary.core.api.IOException
 
 @InternalKmpTorBinaryApi
 public actual val path_separator: Char by lazy {

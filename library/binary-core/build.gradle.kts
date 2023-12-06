@@ -40,6 +40,12 @@ kmpConfiguration {
         mingwAll()
 
         common {
+            sourceSetMain {
+                dependencies {
+                    api(project(":library:binary-core-api"))
+                }
+            }
+
             sourceSetTest {
                 kotlin.srcDir(testConfig.testConfigSrcDir)
 

@@ -99,6 +99,7 @@ kmpConfiguration {
             sourceSetMain {
                 dependencies {
                     implementation(project(":library:binary-core"))
+                    api(project(":library:binary-core-api"))
                 }
             }
 

@@ -17,6 +17,8 @@ package io.matthewnelson.kmp.tor.binary
 
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.SynchronizedObject
+import io.matthewnelson.kmp.tor.binary.core.api.IOException
+import io.matthewnelson.kmp.tor.binary.core.api.Installer
 import io.matthewnelson.kmp.tor.binary.core.synchronized
 import io.matthewnelson.kmp.tor.binary.internal.*
 import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP
@@ -24,25 +26,25 @@ import io.matthewnelson.kmp.tor.binary.internal.ALIAS_GEOIP6
 import io.matthewnelson.kmp.tor.binary.internal.RESOURCE_CONFIG
 import io.matthewnelson.kmp.tor.binary.internal.findLibTor
 import kotlin.concurrent.Volatile
-import kotlin.jvm.JvmField
 
 public class KmpTorBinary(
-    @JvmField
-    public val installationDir: String
+    installationDir: String
+): Installer<Installer.Paths.Tor>(
+    installationDir
 ) {
 
-    private val installer = Installer()
+    private val installer = RealInstaller()
 
-    @Throws(Exception::class)
-    public fun install(): Paths = installer.install()
+    @Throws(IllegalStateException::class, IOException::class)
+    public override fun install(): Paths.Tor = installer.install()
 
     @OptIn(InternalKmpTorBinaryApi::class)
-    private inner class Installer: SynchronizedObject() {
+    private inner class RealInstaller: SynchronizedObject() {
 
         @Volatile
-        private var paths: Paths? = null
+        private var paths: Paths.Tor? = null
 
-        fun install(): Paths {
+        fun install(): Paths.Tor {
             return paths ?: synchronized(this) {
                 paths ?: RESOURCE_CONFIG.extractTo(installationDir)
                     .findLibTor()
@@ -50,54 +52,12 @@ public class KmpTorBinary(
 
                         // If an exception has not been encountered at
                         // this point, the map will contain all 3 paths.
-                        Paths(
+                        Paths.Tor(
                             geoip = map[ALIAS_GEOIP]!!,
                             geoip6 = map[ALIAS_GEOIP6]!!,
                             tor = map[ALIAS_TOR]!!,
                         )
                     }.also { paths = it }
-            }
-        }
-    }
-
-    /**
-     * The absolute file paths of installed resources
-     * via [KmpTorBinary.install].
-     * */
-    public class Paths(
-        @JvmField
-        public val geoip: String,
-        @JvmField
-        public val geoip6: String,
-        @JvmField
-        public val tor: String,
-    ) {
-
-        override fun equals(other: Any?): Boolean {
-            return  other is Paths
-                    && other.geoip == geoip
-                    && other.geoip6 == geoip6
-                    && other.tor == tor
-        }
-
-        override fun hashCode(): Int {
-            var result = 17
-            result = result * 31 + geoip.hashCode()
-            result = result * 31 + geoip6.hashCode()
-            result = result * 31 + tor.hashCode()
-            return result
-        }
-
-        override fun toString(): String {
-            return buildString {
-                appendLine("KmpTorBinary.Paths: [")
-                append("    geoip: ")
-                appendLine(geoip)
-                append("    geoip6: ")
-                appendLine(geoip6)
-                append("    tor: ")
-                appendLine(tor)
-                append(']')
             }
         }
     }
