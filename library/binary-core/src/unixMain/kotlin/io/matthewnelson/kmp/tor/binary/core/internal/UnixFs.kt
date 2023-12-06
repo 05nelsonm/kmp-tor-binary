@@ -31,7 +31,7 @@ public actual fun fs_chmod(path: String, mode: String) {
         throw IOException(e)
     }
 
-    val result = unix_chmod(path, modeT)
+    val result = fs_platform_chmod(path, modeT)
     if (result != 0) {
         throw errnoToIOException(errno)
     }
@@ -41,12 +41,12 @@ public actual fun fs_chmod(path: String, mode: String) {
 public actual fun fs_mkdir(path: String): Boolean {
     if (fs_exists(path)) return false
     // TODO: use "775".toModeT()
-    unix_mkdir(path, 0b111111111u /* 777 */)
+    fs_platform_mkdir(path, 0b111111111u /* 777 */)
     return fs_exists(path)
 }
 
 @Throws(IOException::class)
-internal actual fun fs_realpath(path: String): String {
+internal actual fun fs_platform_realpath(path: String): String {
     @OptIn(ExperimentalForeignApi::class, InternalKmpTorBinaryApi::class)
     val real = realpath(path, null)
         ?: throw errnoToIOException(errno)
@@ -78,13 +78,13 @@ private fun String.toModeT(): UInt {
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal expect inline fun unix_chmod(
+internal expect inline fun fs_platform_chmod(
     path: String,
     mode: UInt,
 ): Int
 
 @Suppress("NOTHING_TO_INLINE")
-internal expect inline fun unix_mkdir(
+internal expect inline fun fs_platform_mkdir(
     path: String,
     mode: UInt,
 ): Int

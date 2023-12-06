@@ -23,7 +23,7 @@ import platform.posix.chmod
 import platform.posix.mkdir
 
 @Suppress("NOTHING_TO_INLINE")
-internal actual inline fun unix_chmod(
+internal actual inline fun fs_platform_chmod(
     path: String,
     mode: UInt
 ): Int {
@@ -32,7 +32,7 @@ internal actual inline fun unix_chmod(
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal actual inline fun unix_mkdir(
+internal actual inline fun fs_platform_mkdir(
     path: String,
     mode: UInt
 ): Int {

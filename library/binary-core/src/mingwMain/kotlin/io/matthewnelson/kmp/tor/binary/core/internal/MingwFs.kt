@@ -40,7 +40,7 @@ public actual fun fs_mkdir(path: String): Boolean {
 }
 
 @Throws(IOException::class)
-internal actual fun fs_realpath(path: String): String {
+internal actual fun fs_platform_realpath(path: String): String {
     @OptIn(ExperimentalForeignApi::class, InternalKmpTorBinaryApi::class)
     val real = _fullpath(null, path, PATH_MAX.toULong())
         ?: throw errnoToIOException(errno)
@@ -69,7 +69,7 @@ public actual fun fs_rm(
 
 @Suppress("NOTHING_TO_INLINE")
 @OptIn(ExperimentalForeignApi::class)
-internal actual inline fun native_read(
+internal actual inline fun fs_platform_read(
     file: CPointer<FILE>,
     buf: CPointer<ByteVar>,
     size: Int,

@@ -46,7 +46,7 @@ public actual fun fs_readFileBytes(path: String): ByteArray {
         var offset = 0L
         while (true) {
             val read = buffer.usePinned { pinned ->
-                native_read(file, pinned.addressOf(0), buffer.size, offset)
+                fs_platform_read(file, pinned.addressOf(0), buffer.size, offset)
             }
 
             if (read == 0) break
@@ -103,7 +103,7 @@ internal inline fun <T: Any?> fs_withFile(
 
 @Suppress("NOTHING_TO_INLINE")
 @OptIn(ExperimentalForeignApi::class)
-internal expect inline fun native_read(
+internal expect inline fun fs_platform_read(
     file: CPointer<FILE>,
     buf: CPointer<ByteVar>,
     size: Int,

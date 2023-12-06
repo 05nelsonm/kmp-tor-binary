@@ -88,7 +88,7 @@ public actual fun fs_readFileUtf8(path: String): String {
 }
 
 @InternalKmpTorBinaryApi
-public actual fun fs_realpath(path: String): String {
+public actual fun fs_platform_realpath(path: String): String {
     return try {
         fs_realpathSync(path)
     } catch (t: Throwable) {

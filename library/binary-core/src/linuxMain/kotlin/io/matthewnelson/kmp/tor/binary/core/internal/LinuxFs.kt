@@ -28,7 +28,7 @@ import platform.posix.pread
 import platform.posix.FILE
 
 @Suppress("NOTHING_TO_INLINE")
-internal actual inline fun unix_chmod(
+internal actual inline fun fs_platform_chmod(
     path: String,
     mode: UInt
 ): Int {
@@ -37,7 +37,7 @@ internal actual inline fun unix_chmod(
 }
 
 @Suppress("NOTHING_TO_INLINE")
-internal actual inline fun unix_mkdir(
+internal actual inline fun fs_platform_mkdir(
     path: String,
     mode: UInt
 ): Int {
@@ -47,7 +47,7 @@ internal actual inline fun unix_mkdir(
 
 @Suppress("NOTHING_TO_INLINE")
 @OptIn(ExperimentalForeignApi::class)
-internal actual inline fun native_read(
+internal actual inline fun fs_platform_read(
     file: CPointer<FILE>,
     buf: CPointer<ByteVar>,
     size: Int,

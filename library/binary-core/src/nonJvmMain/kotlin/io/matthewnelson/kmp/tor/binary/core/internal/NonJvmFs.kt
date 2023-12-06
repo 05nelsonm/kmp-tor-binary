@@ -33,7 +33,7 @@ public fun fs_canonicalize(path: String): String {
         existingPath = parent
     }
 
-    return resolved.replaceFirst(existingPath, fs_realpath(existingPath))
+    return resolved.replaceFirst(existingPath, fs_platform_realpath(existingPath))
 }
 
 @InternalKmpTorBinaryApi
@@ -80,7 +80,7 @@ public expect fun fs_readFileBytes(path: String): ByteArray
 public expect fun fs_readFileUtf8(path: String): String
 
 @Throws(IOException::class)
-internal expect fun fs_realpath(path: String): String
+internal expect fun fs_platform_realpath(path: String): String
 
 @InternalKmpTorBinaryApi
 @Throws(IOException::class)

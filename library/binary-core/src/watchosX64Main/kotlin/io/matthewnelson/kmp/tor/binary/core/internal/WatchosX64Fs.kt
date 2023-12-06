@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("KotlinRedundantDiagnosticSuppress")
+@file:Suppress("FunctionName", "KotlinRedundantDiagnosticSuppress")
 
 package io.matthewnelson.kmp.tor.binary.core.internal
 
@@ -27,7 +27,7 @@ import platform.posix.FILE
 
 @Suppress("NOTHING_TO_INLINE")
 @OptIn(ExperimentalForeignApi::class)
-internal actual inline fun native_read(
+internal actual inline fun fs_platform_read(
     file: CPointer<FILE>,
     buf: CPointer<ByteVar>,
     size: Int,
