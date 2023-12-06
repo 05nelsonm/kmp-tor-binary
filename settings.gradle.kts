@@ -20,6 +20,7 @@ if (CHECK_PUBLICATION != null) {
         "binary",
         "binary-android-unit-test",
         "binary-core",
+        "binary-core-api",
         "binary-initializer",
         "npmjs",
     ).forEach { module ->

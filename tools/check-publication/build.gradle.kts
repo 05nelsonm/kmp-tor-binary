@@ -65,6 +65,7 @@ kmpConfiguration {
                 dependencies {
                     implementation("$group:binary:$version")
                     implementation("$group:binary-core:$version")
+                    implementation("$group:binary-core-api:$version")
                 }
             }
         }
