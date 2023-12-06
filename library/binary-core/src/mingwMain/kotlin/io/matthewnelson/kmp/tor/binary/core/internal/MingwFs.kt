@@ -25,9 +25,7 @@ import platform.posix.*
 
 @InternalKmpTorBinaryApi
 @Throws(IOException::class)
-public actual fun fs_chmod(path: String, mode: String) {
-    TODO()
-}
+public actual fun fs_chmod(path: String, mode: String) { /* no-op */ }
 
 @InternalKmpTorBinaryApi
 public actual fun fs_mkdir(path: String): Boolean {
