@@ -52,20 +52,22 @@ public actual class Resource private constructor(
                 throw IOException("Failed to create destinationDir[$dir]")
             }
 
+            try {
+                fs_chmod(dir, "700")
+            } catch (_: IOException) {}
+
             val map = LinkedHashMap<String, String>(resources.size, 1.0f)
 
             try {
                 resources.forEach { resource ->
                     val file = resource.extractTo(dir)
                     map[resource.alias] = file
-                    if (resource.isExecutable) {
-                        fs_chmod(file, "764")
-                    }
+                    fs_chmod(file, if (resource.isExecutable) "500" else "400")
                 }
             } catch (t: Throwable) {
                 map.forEach { entry ->
                     try {
-                        fs_rm(entry.value)
+                        fs_remove(entry.value)
                     } catch (_: Throwable) {}
                 }
 
@@ -86,7 +88,7 @@ public actual class Resource private constructor(
 
             val destination = path_join(destinationDir, fileName)
 
-            if (fs_exists(destination) && !fs_rm(destination)) {
+            if (fs_exists(destination) && !fs_remove(destination)) {
                 throw IOException("Failed to delete $destination")
             }
 
