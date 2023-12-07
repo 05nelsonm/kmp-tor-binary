@@ -17,14 +17,14 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
-// TODO: Implement
-@InternalKmpTorBinaryApi
-public actual typealias SynchronizedObject = Any
+import kotlinx.atomicfu.locks.withLock as _withLock
 
-// TODO: Implement
+@InternalKmpTorBinaryApi
+public actual typealias SynchronizedObject = kotlinx.atomicfu.locks.SynchronizedObject
+
 @PublishedApi
 @OptIn(InternalKmpTorBinaryApi::class)
 internal actual inline fun <T: Any?> synchronizedImpl(
     lock: SynchronizedObject,
     block: () -> T
-): T = block()
+): T = lock._withLock(block)
