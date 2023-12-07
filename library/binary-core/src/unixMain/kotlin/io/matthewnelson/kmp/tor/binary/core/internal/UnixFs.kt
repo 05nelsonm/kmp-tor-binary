@@ -38,10 +38,14 @@ public actual fun fs_chmod(path: String, mode: String) {
 }
 
 @InternalKmpTorBinaryApi
-public actual fun fs_mkdir(path: String): Boolean {
-    if (fs_exists(path)) return false
-    fs_platform_mkdir(path, Mode(value = "777").toModeT())
-    return fs_exists(path)
+@Throws(IOException::class)
+public actual fun fs_remove(path: String): Boolean {
+    val result = remove(path)
+    if (result != 0) {
+        if (errno == ENOENT) return false
+        throw errnoToIOException(errno)
+    }
+    return true
 }
 
 @Throws(IOException::class)
@@ -58,21 +62,15 @@ internal actual fun fs_platform_realpath(path: String): String {
     }
 }
 
-@InternalKmpTorBinaryApi
-@Throws(IOException::class)
-public actual fun fs_rm(
-    path: String,
-    recursively: Boolean,
-    force: Boolean,
-): Boolean {
-    TODO()
-}
-
 @Suppress("NOTHING_TO_INLINE")
 internal expect inline fun fs_platform_chmod(
     path: String,
     mode: UInt,
 ): Int
+
+internal actual fun fs_platform_mkdir(
+    path: String,
+): Int = fs_platform_mkdir(path, Mode("777").toModeT())
 
 @Suppress("NOTHING_TO_INLINE")
 internal expect inline fun fs_platform_mkdir(
@@ -90,9 +88,10 @@ constructor(private val value: String) {
 
     @Throws(IllegalArgumentException::class)
     fun toModeT(): UInt {
-        val mask = (Mask.User.from(value[0]) or
+        val mask =
+            Mask.Owner.from(value[0]) or
             Mask.Group.from(value[1]) or
-            Mask.Other.from(value[2]))
+            Mask.Other.from(value[2])
 
         return mask.toUInt()
     }
@@ -122,7 +121,7 @@ constructor(private val value: String) {
         }
 
         companion object {
-            val User = Mask(400, 200, 100)
+            val Owner = Mask(400, 200, 100)
             val Group = Mask(40, 20, 10)
             val Other = Mask(4, 2, 1)
         }

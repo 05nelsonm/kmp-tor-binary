@@ -51,9 +51,29 @@ public actual fun fs_chmod(path: String, mode: String) {
 }
 
 @InternalKmpTorBinaryApi
-public actual fun fs_mkdir(path: String): Boolean {
-    if (fs_exists(path)) return false
+public actual fun fs_remove(path: String): Boolean {
+    try {
+        fs_unlinkSync(path)
+        return true
+    } catch (t: Throwable) {
+        if (t.errorCode == "ENOENT") return false
+    }
 
+    return try {
+        fs_rmSync(path, Options.Remove(force = true, recursive = false))
+        true
+    } catch (_: Throwable) {
+        try {
+            fs_rmdirSync(path, Options.Remove(force = true, recursive = false))
+            true
+        } catch (t: Throwable) {
+            throw t.toIOException()
+        }
+    }
+}
+
+@InternalKmpTorBinaryApi
+public actual fun fs_mkdir(path: String): Boolean {
     return try {
         fs_mkdirSync(path)
         true
@@ -90,7 +110,7 @@ public actual fun fs_readFileUtf8(path: String): String {
 }
 
 @InternalKmpTorBinaryApi
-public actual fun fs_platform_realpath(path: String): String {
+internal actual fun fs_platform_realpath(path: String): String {
     return try {
         fs_realpathSync(path)
     } catch (t: Throwable) {
@@ -98,28 +118,14 @@ public actual fun fs_platform_realpath(path: String): String {
     }
 }
 
-@InternalKmpTorBinaryApi
-public actual fun fs_rm(
-    path: String,
-    recursively: Boolean,
-    force: Boolean,
-): Boolean {
-    if (!fs_exists(path)) return false
-    try {
-        fs_rmSync(path, Options.Remove(force = force, recursive = recursively))
-    } catch (t: Throwable) {
-        // TODO: if force true, swallow exception???
-        throw t.toIOException()
-    }
-    return fs_exists(path)
-}
+private val Throwable.errorCode: dynamic get() = asDynamic().code
 
 @InternalKmpTorBinaryApi
 public fun Throwable.toIOException(): IOException {
     if (this is IOException) return this
 
     val code = try {
-        asDynamic().code
+        errorCode
     } catch (_: Throwable) {
         null
     }

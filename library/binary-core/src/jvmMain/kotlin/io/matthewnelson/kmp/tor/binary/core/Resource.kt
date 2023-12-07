@@ -60,14 +60,24 @@ public actual class Resource private constructor(
                 throw IOException("Failed to create destinationDir[$dir]")
             }
 
+            dir.setExecutable(false, false)
+            dir.setWritable(false, false)
+            dir.setReadable(false, false)
+            dir.setExecutable(true, true)
+            dir.setWritable(true, true)
+            dir.setReadable(true, true)
+
             val map = LinkedHashMap<String, String>(resources.size, 1.0f)
 
             try {
                 resources.forEach { resource ->
                     val file = resource.extractTo(dir)
                     map[resource.alias] = file.absolutePath
+                    file.setReadable(false, false)
+                    file.setWritable(false, false)
+                    file.setReadable(true, true)
                     if (resource.isExecutable) {
-                        file.setExecutable(true)
+                        file.setExecutable(true, true)
                     }
                 }
             } catch (t: Throwable) {

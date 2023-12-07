@@ -50,6 +50,14 @@ internal external fun fs_realpathSync(path: String): String
 @JsName("rmSync")
 internal external fun fs_rmSync(path: String, options: Options.Remove)
 
+/** [docs](https://nodejs.org/api/fs.html#fsrmdirsyncpath-options) */
+@JsName("rmdirSync")
+internal external fun fs_rmdirSync(path: String, options: Options.Remove)
+
+/** [docs](https://nodejs.org/api/fs.html#fsunlinksyncpath) */
+@JsName("unlinkSync")
+internal external fun fs_unlinkSync(path: String)
+
 /** [docs](https://nodejs.org/api/fs.html#fswritefilesyncfile-data-options) */
 @JsName("writeFileSync")
 internal external fun fs_writeFileSync(path: String, data: buffer_Buffer)
