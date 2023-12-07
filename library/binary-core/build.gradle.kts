@@ -73,6 +73,7 @@ kmpConfiguration {
                         implementation(libs.encoding.base16)
                         implementation(libs.encoding.base64)
                         implementation(libs.kotlincrypto.hash.sha2)
+                        implementation(libs.kotlinx.atomicfu)
                     }
                 }
 
