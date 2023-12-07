@@ -18,10 +18,9 @@ package io.matthewnelson.kmp.tor.binary.core.internal
 import io.matthewnelson.kmp.tor.binary.core.*
 import io.matthewnelson.kmp.tor.binary.core.PROJECT_DIR_PATH
 import io.matthewnelson.kmp.tor.binary.core.api.FileNotFoundException
-import okio.ByteString.Companion.toByteString
+import io.matthewnelson.kmp.tor.binary.core.api.IOException
 import okio.FileSystem
 import okio.Path.Companion.toPath
-import kotlin.random.Random
 import kotlin.test.*
 
 @OptIn(InternalKmpTorBinaryApi::class)
@@ -93,16 +92,56 @@ class FileSystemUnitTest {
     }
 
     @Test
-    fun givenMkdir_whenAlreadyExists_thenReturnsFalse() {
+    fun givenMkdir_whenExists_thenReturnsFalse() {
         assertFalse(fs_mkdir(PROJECT_DIR_PATH))
     }
 
     @Test
     fun givenMkdir_whenDoesNotExist_thenReturnsTrue() {
-        val name = Random.Default.nextBytes(16).toByteString().hex()
-        val dir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve(name)
+        val dir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve(randomName())
         assertFalse(filesystem().exists(dir))
         assertTrue(fs_mkdir(dir.toString()))
         filesystem().delete(dir, mustExist = true)
+    }
+
+    @Test
+    fun givenRemove_whenFileExists_thenReturnsTrue() {
+        val dir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve(randomName())
+        fs_mkdir(dir.toString())
+        val file = dir.resolve("test")
+        filesystem().write(file) { writeUtf8("test") }
+        try {
+            assertTrue(fs_remove(file.toString()))
+        } finally {
+            filesystem().deleteRecursively(dir)
+        }
+    }
+
+    @Test
+    fun givenRemove_whenEmptyDirExist_thenReturnsTrue() {
+        val dir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve(randomName())
+        fs_mkdir(dir.toString())
+        assertTrue(fs_remove(dir.toString()))
+    }
+
+    @Test
+    fun givenRemove_whenNonEmptyDirExist_thenThrowsIOException() {
+        val dir = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve(randomName())
+        fs_mkdir(dir.toString())
+        filesystem().write(dir.resolve("test")) { writeUtf8("test") }
+        try {
+            fs_remove(dir.toString())
+            fail()
+        } catch (e: IOException) {
+            // pass
+        } finally {
+            filesystem().deleteRecursively(dir)
+        }
+    }
+
+    @Test
+    fun givenRemove_whenDoesNotExist_thenReturnsFalse() {
+        val doesNotExist = FileSystem.SYSTEM_TEMPORARY_DIRECTORY.resolve(randomName())
+        assertFalse(fs_remove(doesNotExist.toString()))
     }
 }

@@ -36,6 +36,11 @@ public actual fun fs_exists(path: String): Boolean {
 }
 
 @InternalKmpTorBinaryApi
+public actual fun fs_mkdir(path: String): Boolean {
+    return fs_platform_mkdir(path) == 0
+}
+
+@InternalKmpTorBinaryApi
 @Throws(IOException::class)
 public actual fun fs_readFileBytes(path: String): ByteArray {
     @OptIn(ExperimentalForeignApi::class)
@@ -100,6 +105,11 @@ internal inline fun <T: Any?> fs_withFile(
 
     return result
 }
+
+@Suppress("NOTHING_TO_INLINE")
+internal expect fun fs_platform_mkdir(
+    path: String,
+): Int
 
 @Suppress("NOTHING_TO_INLINE")
 @OptIn(ExperimentalForeignApi::class)

@@ -49,7 +49,6 @@ public expect fun fs_mkdir(path: String): Boolean
 @InternalKmpTorBinaryApi
 @Throws(IOException::class)
 public fun fs_mkdirs(path: String): Boolean {
-    if (fs_exists(path)) return false
     if (fs_mkdir(path)) return true
 
     val dirsToMake = mutableListOf(fs_canonicalize(path))
@@ -79,13 +78,9 @@ public expect fun fs_readFileBytes(path: String): ByteArray
 @Throws(IOException::class)
 public expect fun fs_readFileUtf8(path: String): String
 
-@Throws(IOException::class)
-internal expect fun fs_platform_realpath(path: String): String
-
 @InternalKmpTorBinaryApi
 @Throws(IOException::class)
-public expect fun fs_rm(
-    path: String,
-    recursively: Boolean = false,
-    force: Boolean = true,
-): Boolean
+public expect fun fs_remove(path: String): Boolean
+
+@Throws(IOException::class)
+internal expect fun fs_platform_realpath(path: String): String

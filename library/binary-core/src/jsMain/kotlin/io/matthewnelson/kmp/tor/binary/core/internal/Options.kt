@@ -29,7 +29,7 @@ internal sealed class Options {
     }
 
     internal class Remove internal constructor(
-        internal val force: Boolean = true,
-        internal val recursive: Boolean = true,
+        internal val force: Boolean,
+        internal val recursive: Boolean,
     ): Options()
 }

@@ -15,8 +15,10 @@
  **/
 package io.matthewnelson.kmp.tor.binary.core
 
+import okio.ByteString.Companion.toByteString
 import okio.FileSystem
 import okio.Path.Companion.toPath
+import kotlin.random.Random
 
 expect fun filesystem(): FileSystem
 
@@ -37,3 +39,9 @@ val TEST_OS_RELEASE_NOT_MUSL by lazy {
         .resolve("not_msl")
         .resolve("os-release")
 }
+
+fun randomName(): String = Random
+    .Default
+    .nextBytes(16)
+    .toByteString()
+    .hex()

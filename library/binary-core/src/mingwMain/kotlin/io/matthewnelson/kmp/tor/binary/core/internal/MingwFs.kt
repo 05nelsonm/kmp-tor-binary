@@ -28,11 +28,20 @@ import platform.posix.*
 public actual fun fs_chmod(path: String, mode: String) { /* no-op */ }
 
 @InternalKmpTorBinaryApi
-public actual fun fs_mkdir(path: String): Boolean {
-    if (fs_exists(path)) return false
-    mkdir(path)
-    return fs_exists(path)
+@Throws(IOException::class)
+public actual fun fs_remove(path: String): Boolean {
+    if (remove(path) == 0) return true
+
+    if (errno == EACCES) {
+        if (rmdir(path) == 0) return true
+    }
+    if (errno == ENOENT) return false
+    throw errnoToIOException(errno)
 }
+
+internal actual fun fs_platform_mkdir(
+    path: String
+): Int = mkdir(path)
 
 @Throws(IOException::class)
 internal actual fun fs_platform_realpath(path: String): String {
@@ -50,16 +59,6 @@ internal actual fun fs_platform_realpath(path: String): String {
     } finally {
         free(real)
     }
-}
-
-@InternalKmpTorBinaryApi
-@Throws(IOException::class)
-public actual fun fs_rm(
-    path: String,
-    recursively: Boolean,
-    force: Boolean,
-): Boolean {
-    TODO()
 }
 
 @Suppress("NOTHING_TO_INLINE")
