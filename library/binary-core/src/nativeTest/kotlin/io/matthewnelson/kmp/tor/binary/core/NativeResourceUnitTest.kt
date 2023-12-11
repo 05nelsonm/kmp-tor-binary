@@ -17,11 +17,9 @@ package io.matthewnelson.kmp.tor.binary.core
 
 import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
-import io.matthewnelson.kmp.file.readBytes
-import io.matthewnelson.kmp.file.resolve
+import io.matthewnelson.kmp.file.*
 import org.kotlincrypto.hash.sha2.SHA256
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 @OptIn(InternalKmpTorBinaryApi::class)
 class NativeResourceUnitTest {
@@ -45,10 +43,34 @@ class NativeResourceUnitTest {
 
         val loremIpsumFile = TEST_SUPPORT_DIR.resolve(resource_lorem_ipsum.name)
 
-        val sha256 = loremIpsumFile.readBytes().let {
-            SHA256().digest(it)
-        }.encodeToString(Base16 { encodeToLowercase = true })
+        assertEquals(resource_lorem_ipsum.sha256, loremIpsumFile.readBytes().sha256())
+    }
 
-        assertEquals(resource_lorem_ipsum.sha256, sha256)
+    @Test
+    fun givenNativeResource_whenGzipped_thenExtractsSuccessfully() {
+        val alias = "gzip_test"
+
+        val config = Resource.Config.create {
+            resource(alias) {
+                isExecutable = false
+                platform { nativeResource = resource_LoremIpsum_gz }
+            }
+        }
+
+        val dir = SysTempDir.resolve(randomName())
+        val file = config.extractTo(dir)[alias]!!
+
+        try {
+            // Check that the gz file was cleaned up
+            assertFalse("${file.path}.gz".toFile().exists())
+
+            val actual = file.readBytes()
+            // There was decompression happening
+            assertTrue(actual.size > resource_LoremIpsum_gz.size)
+            assertEquals(resource_lorem_ipsum.sha256, actual.sha256())
+        } finally {
+            file.delete()
+            dir.delete()
+        }
     }
 }

@@ -20,6 +20,7 @@ import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
 import io.matthewnelson.kmp.file.File
 import io.matthewnelson.kmp.file.resolve
 import io.matthewnelson.kmp.file.toFile
+import org.kotlincrypto.hash.sha2.SHA256
 import kotlin.random.Random
 
 val TEST_SUPPORT_DIR: File by lazy {
@@ -44,3 +45,7 @@ fun randomName(): String = Random
     .Default
     .nextBytes(16)
     .encodeToString(Base16)
+
+fun ByteArray.sha256(): String = SHA256()
+    .digest(this)
+    .encodeToString(Base16 { encodeToLowercase = true })
