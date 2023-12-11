@@ -17,10 +17,9 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
+import io.matthewnelson.kmp.file.*
 import io.matthewnelson.kmp.tor.binary.core.ImmutableMap.Companion.toImmutableMap
 import io.matthewnelson.kmp.tor.binary.core.ImmutableSet.Companion.toImmutableSet
-import io.matthewnelson.kmp.tor.binary.core.api.IOException
-import io.matthewnelson.kmp.tor.binary.core.api.wrapIOException
 import io.matthewnelson.kmp.tor.binary.core.internal.*
 import io.matthewnelson.kmp.tor.binary.core.internal.commonEquals
 import io.matthewnelson.kmp.tor.binary.core.internal.commonHashCode
@@ -41,33 +40,30 @@ public actual class Resource private constructor(
     ) {
 
         @Throws(IllegalStateException::class, IOException::class)
-        public actual fun extractTo(destinationDir: String): ImmutableMap<String, String> {
+        public actual fun extractTo(destinationDir: File): ImmutableMap<String, File> {
             // Check if any errors have been set for this config and
             // throw them if that is the case before extracting anything.
             throwIfError()
 
-            val dir = fs_canonicalize(destinationDir)
+            val dir = destinationDir.canonicalFile()
 
-            if (!fs_exists(dir) && !fs_mkdirs(dir)) {
+            if (!dir.exists() && !dir.mkdirs()) {
                 throw IOException("Failed to create destinationDir[$dir]")
             }
 
-            try {
-                fs_chmod(dir, "700")
-            } catch (_: IOException) {}
-
-            val map = LinkedHashMap<String, String>(resources.size, 1.0f)
+            val map = LinkedHashMap<String, File>(resources.size, 1.0f)
 
             try {
                 resources.forEach { resource ->
                     val file = resource.extractTo(dir)
                     map[resource.alias] = file
-                    fs_chmod(file, if (resource.isExecutable) "500" else "400")
+                    @OptIn(DelicateFileApi::class)
+                    file.chmod(if (resource.isExecutable) "500" else "400")
                 }
             } catch (t: Throwable) {
                 map.forEach { entry ->
                     try {
-                        fs_remove(entry.value)
+                        entry.value.delete()
                     } catch (_: Throwable) {}
                 }
 
@@ -77,7 +73,7 @@ public actual class Resource private constructor(
             return map.toImmutableMap()
         }
 
-        private fun Resource.extractTo(destinationDir: String): String {
+        private fun Resource.extractTo(destinationDir: File): File {
             var fileName = nativeResource.name
             val isGzipped = if (fileName.endsWith(".gz")) {
                 fileName = fileName.substringBeforeLast(".gz")
@@ -86,9 +82,9 @@ public actual class Resource private constructor(
                 false
             }
 
-            val destination = path_join(destinationDir, fileName)
+            val destination = destinationDir.resolve(fileName)
 
-            if (fs_exists(destination) && !fs_remove(destination)) {
+            if (destination.exists() && !destination.delete()) {
                 throw IOException("Failed to delete $destination")
             }
 

@@ -17,6 +17,8 @@ package io.matthewnelson.kmp.tor.binary.core
 
 import io.matthewnelson.encoding.base16.Base16
 import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
+import io.matthewnelson.kmp.file.readBytes
+import io.matthewnelson.kmp.file.resolve
 import org.kotlincrypto.hash.sha2.SHA256
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -43,8 +45,8 @@ class NativeResourceUnitTest {
 
         val loremIpsumFile = TEST_SUPPORT_DIR.resolve(resource_lorem_ipsum.name)
 
-        val sha256 = filesystem().read(loremIpsumFile) {
-            SHA256().digest(readByteArray())
+        val sha256 = loremIpsumFile.readBytes().let {
+            SHA256().digest(it)
         }.encodeToString(Base16 { encodeToLowercase = true })
 
         assertEquals(resource_lorem_ipsum.sha256, sha256)

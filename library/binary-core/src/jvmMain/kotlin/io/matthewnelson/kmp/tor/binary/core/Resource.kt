@@ -17,15 +17,15 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
+import io.matthewnelson.kmp.file.File
+import io.matthewnelson.kmp.file.IOException
+import io.matthewnelson.kmp.file.wrapIOException
 import io.matthewnelson.kmp.tor.binary.core.ImmutableMap.Companion.toImmutableMap
 import io.matthewnelson.kmp.tor.binary.core.ImmutableSet.Companion.toImmutableSet
-import io.matthewnelson.kmp.tor.binary.core.api.IOException
-import io.matthewnelson.kmp.tor.binary.core.api.wrapIOException
 import io.matthewnelson.kmp.tor.binary.core.internal.throwIfError
 import io.matthewnelson.kmp.tor.binary.core.internal.commonEquals
 import io.matthewnelson.kmp.tor.binary.core.internal.commonHashCode
 import io.matthewnelson.kmp.tor.binary.core.internal.commonToString
-import java.io.File
 import java.util.zip.GZIPInputStream
 
 @InternalKmpTorBinaryApi
@@ -49,12 +49,12 @@ public actual class Resource private constructor(
     ) {
 
         @Throws(IllegalStateException::class, IOException::class)
-        public actual fun extractTo(destinationDir: String): ImmutableMap<String, String> {
+        public actual fun extractTo(destinationDir: File): ImmutableMap<String, File> {
             // Check if any errors have been set for this config and
             // throw them if that is the case before extracting anything.
             throwIfError()
 
-            val dir = File(destinationDir).canonicalFile
+            val dir = destinationDir.canonicalFile
 
             if (!dir.exists() && !dir.mkdirs()) {
                 throw IOException("Failed to create destinationDir[$dir]")
@@ -67,12 +67,12 @@ public actual class Resource private constructor(
             dir.setWritable(true, true)
             dir.setReadable(true, true)
 
-            val map = LinkedHashMap<String, String>(resources.size, 1.0f)
+            val map = LinkedHashMap<String, File>(resources.size, 1.0f)
 
             try {
                 resources.forEach { resource ->
                     val file = resource.extractTo(dir)
-                    map[resource.alias] = file.absolutePath
+                    map[resource.alias] = file.absoluteFile
                     file.setReadable(false, false)
                     file.setWritable(false, false)
                     file.setReadable(true, true)
@@ -83,7 +83,7 @@ public actual class Resource private constructor(
             } catch (t: Throwable) {
                 map.forEach { entry ->
                     try {
-                        File(entry.value).delete()
+                        entry.value.delete()
                     } catch (_: Throwable) {}
                 }
 

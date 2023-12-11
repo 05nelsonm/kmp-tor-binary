@@ -1,5 +1,5 @@
 public final class io/matthewnelson/kmp/tor/binary/KmpTorBinary : io/matthewnelson/kmp/tor/binary/core/api/Installer {
-	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/io/File;)V
 	public fun install ()Lio/matthewnelson/kmp/tor/binary/core/api/Installer$Paths$Tor;
 	public synthetic fun install ()Lio/matthewnelson/kmp/tor/binary/core/api/Installer$Paths;
 }

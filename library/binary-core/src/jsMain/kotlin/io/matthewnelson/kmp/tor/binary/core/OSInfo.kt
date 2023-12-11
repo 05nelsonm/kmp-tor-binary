@@ -17,12 +17,13 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
+import io.matthewnelson.kmp.file.*
 import io.matthewnelson.kmp.tor.binary.core.internal.*
 
 @InternalKmpTorBinaryApi
 public actual class OSInfo private constructor(
-    private val pathMapFiles: String,
-    private val pathOSRelease: String,
+    private val pathMapFiles: File,
+    private val pathOSRelease: File,
     private val machineName: () -> String?,
     private val osName: () -> String?,
 ) {
@@ -32,8 +33,8 @@ public actual class OSInfo private constructor(
         public actual val INSTANCE: OSInfo = get()
 
         internal fun get(
-            pathMapFiles: String = PATH_MAP_FILES,
-            pathOSRelease: String = PATH_OS_RELEASE,
+            pathMapFiles: File = PATH_MAP_FILES.toFile(),
+            pathOSRelease: File = PATH_OS_RELEASE.toFile(),
             machineName: () -> String? = ::os_machine,
             osName: () -> String? = ::os_platform,
         ): OSInfo = OSInfo(
@@ -86,12 +87,12 @@ public actual class OSInfo private constructor(
     private fun isLinuxMusl(): Boolean {
         var fileCount = 0
 
-        if (fs_exists(pathMapFiles)) {
+        if (pathMapFiles.exists()) {
             try {
-                fs_readdirSync(pathMapFiles, Options.ReadDir(recursive = false)).forEach { entry ->
+                fs_readdirSync(pathMapFiles.path, Options.ReadDir(recursive = false)).forEach { entry ->
                     fileCount++
 
-                    val canonical = fs_canonicalize(path_join(pathMapFiles, entry))
+                    val canonical = pathMapFiles.resolve(entry).canonicalPath()
 
                     if (canonical.contains("musl")) {
                         return true
@@ -107,7 +108,7 @@ public actual class OSInfo private constructor(
             // it's an older kernel which may not have map_files
             // directory.
             try {
-                fs_readFileUtf8(pathOSRelease).lines().forEach { line ->
+                pathOSRelease.readUtf8().lines().forEach { line ->
                     if (
                         line.startsWith("ID")
                         && line.contains("alpine", ignoreCase = true)

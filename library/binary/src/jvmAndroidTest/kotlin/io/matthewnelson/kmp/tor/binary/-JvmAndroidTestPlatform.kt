@@ -15,9 +15,6 @@
  **/
 package io.matthewnelson.kmp.tor.binary
 
-import okio.FileSystem
-import okio.Path
+import io.matthewnelson.kmp.file.File
 
-actual fun filesystem(): FileSystem = FileSystem.SYSTEM
-
-actual fun Path.canExecute(): Boolean = toFile().canExecute()
+actual fun File.isExecutable(): Boolean = canExecute()

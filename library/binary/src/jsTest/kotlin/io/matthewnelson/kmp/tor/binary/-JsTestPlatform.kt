@@ -15,13 +15,9 @@
  **/
 package io.matthewnelson.kmp.tor.binary
 
-import okio.FileSystem
-import okio.NodeJsFileSystem
-import okio.Path
+import io.matthewnelson.kmp.file.File
 
-actual fun filesystem(): FileSystem = NodeJsFileSystem
-
-actual fun Path.canExecute(): Boolean {
+actual fun File.isExecutable(): Boolean {
     val fs = js("require('fs')")
     val xOk = fs.constants.X_OK
 

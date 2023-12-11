@@ -32,12 +32,13 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
+import io.matthewnelson.kmp.file.File
+import io.matthewnelson.kmp.file.toFile
 import io.matthewnelson.kmp.tor.binary.core.internal.ARCH_MAP
 import io.matthewnelson.kmp.tor.binary.core.internal.PATH_MAP_FILES
 import io.matthewnelson.kmp.tor.binary.core.internal.PATH_OS_RELEASE
 import io.matthewnelson.kmp.tor.binary.core.internal.ProcessRunner
 import io.matthewnelson.kmp.tor.binary.core.internal.ProcessRunner.Companion.runAndWait
-import java.io.File
 import java.util.Locale
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -49,8 +50,8 @@ import kotlin.time.Duration.Companion.milliseconds
 @InternalKmpTorBinaryApi
 public actual class OSInfo private constructor(
     private val process: ProcessRunner,
-    private val pathMapFiles: String,
-    private val pathOSRelease: String,
+    private val pathMapFiles: File,
+    private val pathOSRelease: File,
     private val osName: () -> String?,
 ) {
 
@@ -63,8 +64,8 @@ public actual class OSInfo private constructor(
         @JvmSynthetic
         internal fun get(
             process: ProcessRunner = ProcessRunner.Default,
-            pathMapFiles: String = PATH_MAP_FILES,
-            pathOSRelease: String = PATH_OS_RELEASE,
+            pathMapFiles: File = PATH_MAP_FILES.toFile(),
+            pathOSRelease: File = PATH_OS_RELEASE.toFile(),
             osName: () -> String? = { System.getProperty("os.name") }
         ): OSInfo = OSInfo(
             process = process,
@@ -137,12 +138,11 @@ public actual class OSInfo private constructor(
     }
 
     private fun isLinuxMusl(): Boolean {
-        val mapFilesDir = File(pathMapFiles)
         var fileCount = -1
 
-        if (mapFilesDir.exists()) {
+        if (pathMapFiles.exists()) {
             try {
-                mapFilesDir
+                pathMapFiles
                     .walkTopDown()
                     .maxDepth(1)
                     .iterator()
@@ -169,7 +169,7 @@ public actual class OSInfo private constructor(
             // it's an older kernel which may not have map_files
             // directory.
             try {
-                File(pathOSRelease)
+                pathOSRelease
                     .inputStream()
                     .bufferedReader()
                     .use { reader ->

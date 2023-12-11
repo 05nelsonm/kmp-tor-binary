@@ -15,9 +15,11 @@
  **/
 package io.matthewnelson.kmp.tor.binary
 
+import io.matthewnelson.kmp.file.File
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.SynchronizedObject
-import io.matthewnelson.kmp.tor.binary.core.api.IOException
+import io.matthewnelson.kmp.file.IOException
+import io.matthewnelson.kmp.file.toFile
 import io.matthewnelson.kmp.tor.binary.core.api.Installer
 import io.matthewnelson.kmp.tor.binary.core.synchronized
 import io.matthewnelson.kmp.tor.binary.internal.*
@@ -28,7 +30,7 @@ import io.matthewnelson.kmp.tor.binary.internal.findLibTor
 import kotlin.concurrent.Volatile
 
 public class KmpTorBinary(
-    installationDir: String
+    installationDir: File,
 ): Installer<Installer.Paths.Tor>(
     installationDir
 ) {
