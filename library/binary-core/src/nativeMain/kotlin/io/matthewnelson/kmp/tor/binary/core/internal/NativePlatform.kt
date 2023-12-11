@@ -19,7 +19,17 @@ import io.matthewnelson.kmp.file.*
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.Resource
 import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.usePinned
 import platform.posix.errno
+import platform.zlib.gzFile
+import platform.zlib.gzclose_r
+import platform.zlib.gzopen
+import platform.zlib.gzread
+import platform.zlib.Z_OK
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 @OptIn(DelicateFileApi::class, ExperimentalForeignApi::class, InternalKmpTorBinaryApi::class)
 internal actual fun Resource.extractTo(destinationDir: File): File {
@@ -50,41 +60,72 @@ internal actual fun Resource.extractTo(destinationDir: File): File {
                 }
             }
         }
-
-        if (destFinal == null) dest.chmod(if (isExecutable) "500" else "400")
-    } catch (t: Throwable) {
+    } catch (e: IOException) {
         dest.delete()
-        throw t.wrapIOException()
+        throw e
     }
 
-    if (destFinal == null) return dest
+    val mode = if (isExecutable) "500" else "400"
+
+    if (destFinal == null) {
+        // not gzipped. dest is the final destination
+        try {
+            dest.chmod(mode)
+        } catch (e: IOException) {
+            dest.delete()
+            throw e
+        }
+        return dest
+    }
 
     try {
-        // TODO: Implement gunzip instead of just copying
-        dest.open(flags = "rb") { file1 ->
-            destFinal.open(flags = "wb") { file2 ->
+        dest.gzOpenRead { gzFile ->
+            destFinal.open(flags = "wb") { file ->
                 val buf = ByteArray(4096)
 
                 while (true) {
-                    val read = file1.fRead(buf)
+                    val read = buf.usePinned { pinned ->
+                        gzread(gzFile, pinned.addressOf(0), buf.size.toUInt())
+                    }
+
                     if (read < 0) throw errnoToIOException(errno)
                     if (read == 0) break
-
-                    if (file2.fWrite(buf, len = read) < 0) {
-
-                        throw errnoToIOException(errno)
-                    }
+                    val write = file.fWrite(buf, 0, read)
+                    if (write < 0) throw errnoToIOException(errno)
                 }
             }
         }
 
-        destFinal.chmod(if (isExecutable) "500" else "400")
-    } catch (t: Throwable) {
+        destFinal.chmod(mode)
+    } catch (e: IOException) {
         destFinal.delete()
-        throw t.wrapIOException()
+        throw e
     } finally {
+        // Always clean up and delete the gzipped file
         dest.delete()
     }
 
     return destFinal
+}
+
+@Throws(IOException::class)
+@OptIn(DelicateFileApi::class, ExperimentalContracts::class, ExperimentalForeignApi::class)
+private inline fun <T: Any?> File.gzOpenRead(
+    block: (file: gzFile) -> T,
+): T {
+    contract {
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+    }
+
+    val ptr: gzFile = gzopen(path, "rb") ?: throw errnoToIOException(errno)
+
+    val result = try {
+        block(ptr)
+    } finally {
+        if (gzclose_r(ptr) != Z_OK) {
+            throw errnoToIOException(errno)
+        }
+    }
+
+    return result
 }
