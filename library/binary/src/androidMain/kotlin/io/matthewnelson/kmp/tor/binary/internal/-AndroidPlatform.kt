@@ -29,14 +29,20 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 
         resource(ALIAS_GEOIP) {
             isExecutable = false
-            resourceClass = clazz
-            resourcePath = PATH_RESOURCE_GEOIP
+
+            platform {
+                resourceClass = clazz
+                resourcePath = PATH_RESOURCE_GEOIP
+            }
         }
 
         resource(ALIAS_GEOIP6) {
             isExecutable = false
-            resourceClass = clazz
-            resourcePath = PATH_RESOURCE_GEOIP6
+
+            platform {
+                resourceClass = clazz
+                resourcePath = PATH_RESOURCE_GEOIP6
+            }
         }
 
         if (OSInfo.INSTANCE.isAndroidRuntime()) {
@@ -104,8 +110,11 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 
         resource(ALIAS_TOR) {
             isExecutable = true
-            resourceClass = loaderClass
-            resourcePath = torResourcePath
+
+            platform {
+                resourceClass = loaderClass
+                resourcePath = torResourcePath
+            }
         }
     }
 }

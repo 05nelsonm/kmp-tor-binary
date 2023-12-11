@@ -27,12 +27,18 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
     Resource.Config.create {
         resource(ALIAS_GEOIP) {
             isExecutable = false
-            nativeResource = resource_geoip_gz
+
+            platform {
+                nativeResource = resource_geoip_gz
+            }
         }
 
         resource(ALIAS_GEOIP6) {
             isExecutable = false
-            nativeResource = resource_geoip6_gz
+
+            platform {
+                nativeResource = resource_geoip6_gz
+            }
         }
 
         // TODO: Tor
