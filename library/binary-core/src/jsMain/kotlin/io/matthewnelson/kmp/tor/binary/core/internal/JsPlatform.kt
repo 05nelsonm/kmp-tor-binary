@@ -44,6 +44,7 @@ internal actual fun Resource.extractTo(destinationDir: File): File {
 
     try {
         destination.write(buffer)
+        destination.chmod(if (isExecutable) "500" else "400")
     } catch (t: IOException) {
         destination.delete()
         throw t

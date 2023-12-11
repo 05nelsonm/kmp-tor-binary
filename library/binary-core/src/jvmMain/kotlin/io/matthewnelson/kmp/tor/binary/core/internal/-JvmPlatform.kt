@@ -59,15 +59,14 @@ internal actual fun Resource.extractTo(destinationDir: File): File {
         }
     }
 
-    return destination
-}
-
-@Throws(IOException::class)
-internal actual fun File.setResourcePermissions(isExecutable: Boolean) {
-    setReadable(false, false)
-    setWritable(false, false)
-    setReadable(true, true)
-    if (isExecutable) {
-        setExecutable(true, true)
+    with(destination) {
+        setReadable(false, false)
+        setWritable(false, false)
+        setReadable(true, true)
+        if (isExecutable) {
+            setExecutable(true, true)
+        }
     }
+
+    return destination
 }
