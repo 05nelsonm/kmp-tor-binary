@@ -18,7 +18,6 @@
 package io.matthewnelson.kmp.tor.binary.core.internal
 
 import io.matthewnelson.kmp.file.File
-import io.matthewnelson.kmp.file.IOException
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.Resource
 
@@ -30,6 +29,3 @@ internal inline fun StringBuilder.appendIndent(
 
 @OptIn(InternalKmpTorBinaryApi::class)
 internal expect fun Resource.extractTo(destinationDir: File): File
-
-@Throws(IOException::class)
-internal expect fun File.setResourcePermissions(isExecutable: Boolean)
