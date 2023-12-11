@@ -25,6 +25,7 @@ import io.matthewnelson.kmp.tor.binary.core.ImmutableMap.Companion.toImmutableMa
 import io.matthewnelson.kmp.tor.binary.core.ImmutableSet.Companion.toImmutableSet
 import io.matthewnelson.kmp.tor.binary.core.internal.appendIndent
 import io.matthewnelson.kmp.tor.binary.core.internal.extractTo
+import io.matthewnelson.kmp.tor.binary.core.internal.setResourcePermissions
 import kotlin.jvm.JvmField
 import kotlin.jvm.JvmStatic
 import kotlin.jvm.JvmSynthetic
@@ -79,6 +80,7 @@ public class Resource private constructor(
                 resources.forEach { resource ->
                     val file = resource.extractTo(dir)
                     map[resource.alias] = file
+                    file.setResourcePermissions(resource.isExecutable)
                 }
             } catch (t: Throwable) {
                 map.forEach { entry ->

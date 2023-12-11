@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-@file:Suppress("KotlinRedundantDiagnosticSuppress")
-
 package io.matthewnelson.kmp.tor.binary.internal
 
-import io.matthewnelson.kmp.tor.binary.core.*
+import io.matthewnelson.kmp.file.File
+import io.matthewnelson.kmp.file.toFile
+import io.matthewnelson.kmp.tor.binary.core.ImmutableMap
+import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.core.Resource
 
 // Native
 @OptIn(InternalKmpTorBinaryApi::class)
@@ -39,16 +41,13 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
             }
         }
 
-        resource(ALIAS_TOR) {
-            isExecutable = true
-
-            platform {
-                nativeResource = resourceTor()
-            }
-        }
+        // TODO: Tor
     }
 }
 
-@Suppress("NOTHING_TO_INLINE")
+// TODO: Move back to nonJvmMain (and delete jsMain impl) as no-op
 @OptIn(InternalKmpTorBinaryApi::class)
-internal expect inline fun PlatformResource.Builder.resourceTor(): NativeResource
+@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
+internal actual fun ImmutableMap<String, File>.findLibTor(): Map<String, File> {
+    return toMutableMap().apply { put(ALIAS_TOR, "TODO".toFile()) }
+}
