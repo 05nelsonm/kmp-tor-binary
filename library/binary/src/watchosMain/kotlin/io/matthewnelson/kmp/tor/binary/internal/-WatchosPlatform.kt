@@ -17,38 +17,11 @@
 
 package io.matthewnelson.kmp.tor.binary.internal
 
-import io.matthewnelson.kmp.tor.binary.core.*
+import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.core.NativeResource
+import io.matthewnelson.kmp.tor.binary.core.PlatformResource
 
-// Native
-@OptIn(InternalKmpTorBinaryApi::class)
-internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
-    Resource.Config.create {
-        resource(ALIAS_GEOIP) {
-            isExecutable = false
-
-            platform {
-                nativeResource = resource_geoip_gz
-            }
-        }
-
-        resource(ALIAS_GEOIP6) {
-            isExecutable = false
-
-            platform {
-                nativeResource = resource_geoip6_gz
-            }
-        }
-
-        resource(ALIAS_TOR) {
-            isExecutable = true
-
-            platform {
-                nativeResource = resourceTor()
-            }
-        }
-    }
-}
-
+// TODO
 @Suppress("NOTHING_TO_INLINE")
 @OptIn(InternalKmpTorBinaryApi::class)
-internal expect inline fun PlatformResource.Builder.resourceTor(): NativeResource
+internal actual inline fun PlatformResource.Builder.resourceTor(): NativeResource = resource_geoip_gz
