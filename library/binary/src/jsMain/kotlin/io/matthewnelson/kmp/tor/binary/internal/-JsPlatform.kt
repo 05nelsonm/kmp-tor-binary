@@ -26,14 +26,20 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 
         resource(ALIAS_GEOIP) {
             isExecutable = false
-            moduleName = module
-            resourcePath = PATH_RESOURCE_GEOIP
+
+            platform {
+                moduleName = module
+                resourcePath = PATH_RESOURCE_GEOIP
+            }
         }
 
         resource(ALIAS_GEOIP6) {
             isExecutable = false
-            moduleName = module
-            resourcePath = PATH_RESOURCE_GEOIP6
+
+            platform {
+                moduleName = module
+                resourcePath = PATH_RESOURCE_GEOIP6
+            }
         }
 
         val host = OSInfo.INSTANCE.osHost
@@ -54,8 +60,11 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 
         resource(ALIAS_TOR) {
             isExecutable = true
-            moduleName = module
-            resourcePath = torResourcePath
+
+            platform {
+                moduleName = module
+                resourcePath = torResourcePath
+            }
         }
     }
 }
