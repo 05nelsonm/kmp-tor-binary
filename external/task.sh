@@ -316,6 +316,12 @@ function package { ## Packages build dir output
   __package:jvm:codesigned "mingw/x86" "tor.exe"
   __package:jvm:codesigned "mingw/x86_64" "tor.exe"
 
+  __package:native "linux-libc/aarch64" "tor" "linuxArm64Main"
+  __package:native "linux-libc/x86_64" "tor" "linuxX64Main"
+  __package:native:codesigned "macos/aarch64" "tor" "macosArm64Main"
+  __package:native:codesigned "macos/x86_64" "tor" "macosX64Main"
+  __package:native:codesigned "mingw/x86_64" "tor.exe" "mingwX64Main"
+
   rm -rf "$DIR_STAGING"
   trap - SIGINT ERR
 }
@@ -967,6 +973,18 @@ function __package:jvm:codesigned {
   __package:jvm "$@"
 }
 
+function __package:native {
+  local permissions="755"
+  local gzip="yes"
+  local native_resource="io.matthewnelson.kmp.tor.binary.internal"
+  __package "build/jvm-out/$1" "$3" "$2"
+}
+
+function __package:native:codesigned {
+  local detached_sig="jvm-out/$1"
+  __package:native "$@"
+}
+
 function __package {
   __require:var_set "$1" "Packaging target dir (relative to dir kmp-tor-binary/external)"
   __require:var_set "$2" "Binary module src path (relative to dir kmp-tor-binary/library/binary/src)"
@@ -975,7 +993,10 @@ function __package {
   __require:var_set "$permissions" "permissions"
   __require:var_set "$DIR_STAGING" "DIR_STAGING"
 
-  if [ ! -f "$DIR_TASK/$1/$3" ]; then return 0; fi
+  if [ ! -f "$DIR_TASK/$1/$3" ]; then
+    echo "FileNotFound. SKIPPING >> ARGS - 1[$1] - 2[$2] - 3[$3]"
+    return 0
+  fi
 
   if $DRY_RUN; then
     echo "
