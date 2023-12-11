@@ -34,6 +34,7 @@ abstract class KmpTorBinaryBaseTest {
         val workDir = testDir.resolve(random)
 
         val paths = KmpTorBinary(workDir.toString().toFile()).install()
+        println(paths)
 
         val geoip = paths.geoip
         val geoip6 = paths.geoip6
@@ -50,6 +51,13 @@ abstract class KmpTorBinaryBaseTest {
             assertFalse(geoip.name.endsWith(".gz"))
             assertFalse(geoip6.name.endsWith(".gz"))
             assertFalse(tor.name.endsWith(".gz"))
+
+            // Native will first write gzipped file to system,
+            // then decompress them via zlib to their final destination.
+            // Check to make sure the .gz file was cleaned up
+            assertFalse("${geoip.path}.gz".toFile().exists())
+            assertFalse("${geoip6.path}.gz".toFile().exists())
+            assertFalse("${tor.path}.gz".toFile().exists())
 
             if (!isWindows) {
                 assertFalse(geoip.isExecutable())
