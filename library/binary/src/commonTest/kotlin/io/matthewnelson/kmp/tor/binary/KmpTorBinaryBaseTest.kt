@@ -61,6 +61,7 @@ abstract class KmpTorBinaryBaseTest {
             geoip6.delete()
             tor.delete()
             workDir.delete()
+            testDir.delete()
         }
     }
 }
