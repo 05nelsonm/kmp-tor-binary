@@ -15,6 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
+import io.matthewnelson.kmp.file.File
 import io.matthewnelson.kmp.tor.binary.KmpTorBinary
 import io.matthewnelson.kmp.tor.binary.core.*
 import io.matthewnelson.kmp.tor.binary.initializer.KmpTorBinaryInitializer
@@ -112,9 +113,9 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
 @JvmSynthetic
 @Throws(IllegalStateException::class)
 @OptIn(InternalKmpTorBinaryApi::class)
-internal actual fun ImmutableMap<String, String>.findLibTor(): Map<String, String> {
+internal actual fun ImmutableMap<String, File>.findLibTor(): Map<String, File> {
     if (contains(ALIAS_TOR)) return this
 
     val lib = KmpTorBinaryInitializer.Impl.INSTANCE.requireLib("libtor.so")
-    return toMutableMap().apply { put(ALIAS_TOR, lib.path) }
+    return toMutableMap().apply { put(ALIAS_TOR, lib) }
 }

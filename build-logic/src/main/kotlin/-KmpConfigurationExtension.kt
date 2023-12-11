@@ -56,14 +56,9 @@ fun KmpConfigurationExtension.configureShared(
         iosAll()
         linuxAll()
         macosAll()
+        mingwAll()
         tvosAll()
-        watchosArm32()
-        watchosArm64()
-        // Not supported by Okio (used for tests)
-        // See https://github.com/square/okio/issues/1381
-//        watchosDeviceArm64()
-        watchosX64()
-        watchosSimulatorArm64()
+        watchosAll()
 
         common {
             if (publish) pluginIds("publication")

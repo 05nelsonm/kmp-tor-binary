@@ -15,10 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.core
 
-import io.matthewnelson.kmp.tor.binary.core.internal.path_separator
-import okio.FileSystem
+import kotlin.experimental.ExperimentalNativeApi
 
-actual fun filesystem(): FileSystem = FileSystem.SYSTEM
-
-@OptIn(InternalKmpTorBinaryApi::class)
-val isWindows: Boolean get() = path_separator == '\\'
+@OptIn(ExperimentalNativeApi::class)
+val isWindows: Boolean by lazy  { Platform.osFamily == OsFamily.WINDOWS }

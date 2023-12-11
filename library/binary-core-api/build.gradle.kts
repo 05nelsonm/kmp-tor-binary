@@ -19,7 +19,12 @@ plugins {
 
 kmpConfiguration {
     configureShared(publish = true) {
-        mingwAll()
-        watchosDeviceArm64()
+        common {
+            sourceSetMain {
+                dependencies {
+                    api(libs.kmp.file)
+                }
+            }
+        }
     }
 }

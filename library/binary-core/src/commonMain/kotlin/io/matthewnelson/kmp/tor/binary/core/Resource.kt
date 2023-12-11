@@ -17,7 +17,8 @@
 
 package io.matthewnelson.kmp.tor.binary.core
 
-import io.matthewnelson.kmp.tor.binary.core.api.IOException
+import io.matthewnelson.kmp.file.File
+import io.matthewnelson.kmp.file.IOException
 import kotlin.jvm.JvmField
 
 @InternalKmpTorBinaryApi
@@ -40,7 +41,7 @@ public expect class Resource {
         public val resources: ImmutableSet<Resource>
 
         @Throws(IllegalStateException::class, IOException::class)
-        public fun extractTo(destinationDir: String): ImmutableMap<String, String>
+        public fun extractTo(destinationDir: File): ImmutableMap<String, File>
 
         @KmpTorBinaryCoreDsl
         @InternalKmpTorBinaryApi

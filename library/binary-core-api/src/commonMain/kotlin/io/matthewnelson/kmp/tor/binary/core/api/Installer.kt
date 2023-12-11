@@ -15,6 +15,8 @@
  **/
 package io.matthewnelson.kmp.tor.binary.core.api
 
+import io.matthewnelson.kmp.file.File
+import io.matthewnelson.kmp.file.IOException
 import kotlin.jvm.JvmField
 
 /**
@@ -24,7 +26,7 @@ import kotlin.jvm.JvmField
  * */
 public abstract class Installer<P: Installer.Paths>(
     @JvmField
-    public val installationDir: String,
+    public val installationDir: File,
 ) {
 
     /**
@@ -42,11 +44,11 @@ public abstract class Installer<P: Installer.Paths>(
 
         public class Tor(
             @JvmField
-            public val geoip: String,
+            public val geoip: File,
             @JvmField
-            public val geoip6: String,
+            public val geoip6: File,
             @JvmField
-            public val tor: String,
+            public val tor: File,
         ): Paths() {
 
             override fun equals(other: Any?): Boolean {

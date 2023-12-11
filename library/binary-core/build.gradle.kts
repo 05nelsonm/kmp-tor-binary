@@ -29,20 +29,10 @@ kmpConfiguration {
             }
         }
 
-        js {
-            sourceSetTest {
-                dependencies {
-                    implementation(libs.okio.node)
-                }
-            }
-        }
-
-        mingwAll()
-
         common {
             sourceSetMain {
                 dependencies {
-                    api(project(":library:binary-core-api"))
+                    api(libs.kmp.file)
                 }
             }
 
@@ -51,7 +41,8 @@ kmpConfiguration {
 
                 dependencies {
                     implementation(kotlin("test"))
-                    implementation(libs.okio.okio)
+                    implementation(libs.encoding.base16)
+                    implementation(libs.kotlincrypto.hash.sha2)
                 }
             }
         }

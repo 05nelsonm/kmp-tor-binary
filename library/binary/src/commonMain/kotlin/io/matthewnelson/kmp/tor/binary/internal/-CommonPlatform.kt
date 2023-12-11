@@ -15,6 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
+import io.matthewnelson.kmp.file.File
 import io.matthewnelson.kmp.tor.binary.core.ImmutableMap
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.Resource
@@ -32,4 +33,4 @@ internal expect val RESOURCE_CONFIG: Resource.Config
 @JvmSynthetic
 @Throws(IllegalStateException::class)
 @OptIn(InternalKmpTorBinaryApi::class)
-internal expect fun ImmutableMap<String, String>.findLibTor(): Map<String, String>
+internal expect fun ImmutableMap<String, File>.findLibTor(): Map<String, File>

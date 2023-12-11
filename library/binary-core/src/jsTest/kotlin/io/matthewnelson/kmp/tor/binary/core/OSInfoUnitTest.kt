@@ -15,6 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.core
 
+import io.matthewnelson.kmp.file.resolve
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -47,8 +48,8 @@ class OSInfoUnitTest {
     @Test
     fun givenOSNameLinux_whenOSHost_thenIsLinuxLibc() {
         OSInfo.get(
-            pathMapFiles = TEST_MAP_FILES_NOT_MUSL.toString(),
-            pathOSRelease = TEST_OS_RELEASE_NOT_MUSL.toString(),
+            pathMapFiles = TEST_MAP_FILES_NOT_MUSL,
+            pathOSRelease = TEST_OS_RELEASE_NOT_MUSL,
             osName = { "linux" },
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Libc)
@@ -69,9 +70,8 @@ class OSInfoUnitTest {
         OSInfo.get(
             pathMapFiles = TEST_SUPPORT_DIR
                 .resolve("msl")
-                .resolve("map_files")
-                .toString(),
-            pathOSRelease = TEST_OS_RELEASE_NOT_MUSL.toString(),
+                .resolve("map_files"),
+            pathOSRelease = TEST_OS_RELEASE_NOT_MUSL,
             osName = { "linux" },
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Musl)
@@ -85,12 +85,10 @@ class OSInfoUnitTest {
         OSInfo.get(
             pathMapFiles = TEST_SUPPORT_DIR
                 .resolve("msl")
-                .resolve("does_not_exist")
-                .toString(),
+                .resolve("does_not_exist"),
             pathOSRelease = TEST_SUPPORT_DIR
                 .resolve("msl")
-                .resolve("os-release")
-                .toString(),
+                .resolve("os-release"),
             osName = { "linux" },
         ).let { osInfo ->
             assertTrue(osInfo.osHost is OSHost.Linux.Musl)

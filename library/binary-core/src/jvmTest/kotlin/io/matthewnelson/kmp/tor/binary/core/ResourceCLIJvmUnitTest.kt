@@ -15,7 +15,7 @@
  **/
 package io.matthewnelson.kmp.tor.binary.core
 
-import okio.Path.Companion.toPath
+import io.matthewnelson.kmp.file.toFile
 import kotlin.test.Test
 
 class ResourceCLIJvmUnitTest {
@@ -29,7 +29,7 @@ class ResourceCLIJvmUnitTest {
         io.matthewnelson.resource.cli.main(arrayOf(
             /* packageName:   */ "io.matthewnelson.kmp.tor.binary.core",
             /* pathSourceSet: */ PROJECT_DIR_PATH
-                .toPath()
+                .toFile()
                 .resolve("src")
                 .resolve("nativeTest")
                 .toString(),

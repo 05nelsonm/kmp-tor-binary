@@ -15,26 +15,26 @@
  **/
 package io.matthewnelson.kmp.tor.binary.core
 
-import okio.ByteString.Companion.toByteString
-import okio.FileSystem
-import okio.Path.Companion.toPath
+import io.matthewnelson.encoding.base16.Base16
+import io.matthewnelson.encoding.core.Encoder.Companion.encodeToString
+import io.matthewnelson.kmp.file.File
+import io.matthewnelson.kmp.file.resolve
+import io.matthewnelson.kmp.file.toFile
 import kotlin.random.Random
 
-expect fun filesystem(): FileSystem
-
-val TEST_SUPPORT_DIR by lazy {
+val TEST_SUPPORT_DIR: File by lazy {
     PROJECT_DIR_PATH
-        .toPath()
+        .toFile()
         .resolve("test_support")
 }
 
-val TEST_MAP_FILES_NOT_MUSL by lazy {
+val TEST_MAP_FILES_NOT_MUSL: File by lazy {
     TEST_SUPPORT_DIR
         .resolve("not_msl")
         .resolve("map_files")
 }
 
-val TEST_OS_RELEASE_NOT_MUSL by lazy {
+val TEST_OS_RELEASE_NOT_MUSL: File by lazy {
     TEST_SUPPORT_DIR
         .resolve("not_msl")
         .resolve("os-release")
@@ -43,5 +43,4 @@ val TEST_OS_RELEASE_NOT_MUSL by lazy {
 fun randomName(): String = Random
     .Default
     .nextBytes(16)
-    .toByteString()
-    .hex()
+    .encodeToString(Base16)

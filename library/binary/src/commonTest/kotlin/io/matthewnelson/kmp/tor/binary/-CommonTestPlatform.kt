@@ -15,9 +15,6 @@
  **/
 package io.matthewnelson.kmp.tor.binary
 
-import okio.FileSystem
-import okio.Path
+import io.matthewnelson.kmp.file.File
 
-expect fun filesystem(): FileSystem
-
-expect fun Path.canExecute(): Boolean
+expect fun File.isExecutable(): Boolean

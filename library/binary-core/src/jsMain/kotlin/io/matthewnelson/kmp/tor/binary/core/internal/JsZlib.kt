@@ -24,4 +24,4 @@ import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 /** [docs](https://nodejs.org/api/zlib.html#zlibgunzipsyncbuffer-options) */
 @JsName("gunzipSync")
 @InternalKmpTorBinaryApi
-internal external fun zlib_gunzipSync(data: buffer_Buffer): buffer_Buffer
+internal external fun zlib_gunzipSync(data: dynamic): dynamic

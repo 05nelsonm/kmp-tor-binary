@@ -27,9 +27,4 @@ internal sealed class Options {
         // will force readdir to return an array of strings
         internal constructor(recursive: Boolean): this("utf8", false, recursive)
     }
-
-    internal class Remove internal constructor(
-        internal val force: Boolean,
-        internal val recursive: Boolean,
-    ): Options()
 }
