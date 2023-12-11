@@ -50,6 +50,8 @@ internal actual fun Resource.extractTo(destinationDir: File): File {
                 }
             }
         }
+
+        if (destFinal == null) dest.chmod(if (isExecutable) "500" else "400")
     } catch (t: Throwable) {
         dest.delete()
         throw t.wrapIOException()
@@ -75,6 +77,8 @@ internal actual fun Resource.extractTo(destinationDir: File): File {
                 }
             }
         }
+
+        destFinal.chmod(if (isExecutable) "500" else "400")
     } catch (t: Throwable) {
         destFinal.delete()
         throw t.wrapIOException()
