@@ -1,3 +1,5 @@
+import resources.ResourceValidation.Companion.resourceValidation
+
 /*
  * Copyright (c) 2023 Matthew Nelson
  *
@@ -18,27 +20,27 @@ plugins {
 }
 
 kmpConfiguration {
-    configure {
-        androidLibrary(namespace = "io.matthewnelson.kmp.tor.binary.android.unit.test") {
-            target { publishLibraryVariants("release") }
+    resourceValidation {
+        torResources {
+            configure {
+                androidLibrary(namespace = "io.matthewnelson.kmp.tor.binary.android.unit.test") {
+                    target { publishLibraryVariants("release") }
 
-            android {
-                sourceSets.getByName("main").resources.srcDirs(
-                    // Only want to include binary resources from jvmMain
-                    // and not geoip files which are positioned at
-                    // jvmAndroidMain/resources.
-                    //
-                    // Doing so would cause a conflict for anyone depending
-                    // on both :library:binary and :library:binary-android-unit-test
-                    projectDir
-                        .resolveSibling("binary")
-                        .resolve("src")
-                        .resolve("jvmMain")
-                        .resolve("resources")
-                )
+                    android {
+                        // Only want to include binary resources from jvmMain
+                        // and not geoip files which are positioned at
+                        // jvmAndroidMain/resources.
+                        //
+                        // Doing so would cause a conflict for anyone depending
+                        // on both :library:binary and :library:binary-android-unit-test
+                        sourceSets.getByName("main").resources {
+                            srcDir(jvmTorLibResourcesSrcDir())
+                        }
+                    }
+                }
+
+                common { pluginIds("publication") }
             }
         }
-
-        common { pluginIds("publication") }
     }
 }

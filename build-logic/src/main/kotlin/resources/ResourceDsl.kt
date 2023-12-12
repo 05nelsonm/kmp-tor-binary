@@ -12,18 +12,16 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/
-plugins {
-    `kotlin-dsl`
-}
+ **/package resources
 
-dependencies {
-    implementation(libs.gradle.android)
-    implementation(libs.gradle.kmp.configuration)
-    implementation(libs.gradle.kotlin)
-    implementation(libs.gradle.publish.maven)
-    implementation(libs.encoding.base16)
-
-    // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
-    implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))
-}
+/**
+ * A marker annotations for DSLs.
+ */
+@DslMarker
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS,
+    AnnotationTarget.TYPE,
+)
+annotation class ResourceDsl
