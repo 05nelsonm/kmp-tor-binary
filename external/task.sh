@@ -291,14 +291,11 @@ $(
   "
 }
 
-# TODO: Packaging should be done in separate
-#  build directory not checked into git, then
-#  added as a source set to consume via gradle.
-#  See Issue #156
 function package { ## Packages build dir output
   DIR_STAGING="$(mktemp -d)"
   trap 'rm -rf "$DIR_STAGING"' SIGINT ERR
 
+  local module="binary"
   __package:geoip "geoip"
   __package:geoip "geoip6"
 
@@ -320,11 +317,13 @@ function package { ## Packages build dir output
   __package:jvm:codesigned "mingw/x86" "tor.exe"
   __package:jvm:codesigned "mingw/x86_64" "tor.exe"
 
-#  __package:native "linux-libc/aarch64" "tor" "linuxArm64Main"
-#  __package:native "linux-libc/x86_64" "tor" "linuxX64Main"
+  __package:native "linux-libc/aarch64" "tor" "linuxArm64Main"
+  __package:native "linux-libc/x86_64" "tor" "linuxX64Main"
+  __package:native:codesigned "mingw/x86_64" "tor.exe" "mingwX64Main"
+
+  # TODO: Use lipo tool to combine darwin libs
 #  __package:native:codesigned "macos/aarch64" "tor" "macosArm64Main"
 #  __package:native:codesigned "macos/x86_64" "tor" "macosX64Main"
-#  __package:native:codesigned "mingw/x86_64" "tor.exe" "mingwX64Main"
 
   rm -rf "$DIR_STAGING"
   trap - SIGINT ERR
@@ -993,23 +992,26 @@ function __package {
   __require:var_set "$1" "Packaging target dir (relative to dir kmp-tor-binary/external)"
   __require:var_set "$2" "Binary module src path (relative to dir kmp-tor-binary/library/binary/src)"
   __require:var_set "$3" "File name"
+  __require:var_set "$module" "module"
 
   __require:var_set "$permissions" "permissions"
   __require:var_set "$DIR_STAGING" "DIR_STAGING"
 
-  if [ ! -f "$DIR_TASK/$1/$3" ]; then
-    echo "FileNotFound. SKIPPING >> ARGS - 1[$1] - 2[$2] - 3[$3]"
-    return 0
-  fi
-
   if $DRY_RUN; then
     echo "
-    Packaging Target:     kmp-tor-binary/external/$1/$3
+    Packaging Target:     $1/$3
     Detached Signature:   $detached_sig
     gzip:                 $gzip
     permissions:          $permissions
     NativeResource:       $native_resource
-    Module Src Dir:       kmp-tor-binary/library/binary/src/$2
+    Module Src Dir:       build/package/$module/src/$2
+    "
+    return 0
+  fi
+
+  if [ ! -f "$DIR_TASK/$1/$3" ]; then
+    echo "
+    FileNotFound. SKIPPING >> ARGS - 1[$1] - 2[$2] - 3[$3]
     "
     return 0
   fi
@@ -1033,7 +1035,7 @@ function __package {
   # moved instead of being modified in place (see Issue #77).
   chmod "$permissions" "$DIR_STAGING/$3$file_ext"
 
-  local dir_module="$DIR_TASK/../library/binary/src/$2"
+  local dir_module="$DIR_TASK/build/package/$module/src/$2"
 
   if [ -z "$native_resource" ]; then
     mkdir -p "$dir_module"
