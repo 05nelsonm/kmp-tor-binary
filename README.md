@@ -7,7 +7,10 @@
 ![badge-platform-android]
 ![badge-platform-jvm]
 ![badge-platform-js-node]
+![badge-platform-linux]
+![badge-platform-windows]
 ![badge-support-js-ir]
+![badge-support-linux-arm]
 
 This project is focused on the compilation, packaging, distribution and installation of `tor`
 resources for Kotlin Multiplatform, primarily to be consumed as a dependency by the 
@@ -209,6 +212,7 @@ TODO: gradle configuration for android
 [badge-support-android-native]: http://img.shields.io/badge/support-[AndroidNative]-6EDB8D.svg?style=flat
 [badge-support-apple-silicon]: http://img.shields.io/badge/support-[AppleSilicon]-43BBFF.svg?style=flat
 [badge-support-js-ir]: https://img.shields.io/badge/support-[js--IR]-AAC4E0.svg?style=flat
+[badge-support-linux-arm]: http://img.shields.io/badge/support-[LinuxArm]-2D3F6C.svg?style=flat
 
 [url-bundletool]: https://github.com/google/bundletool
 [url-latest-release]: https://github.com/05nelsonm/kmp-tor-binary/releases/latest
