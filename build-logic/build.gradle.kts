@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.gradle.kmp.configuration)
     implementation(libs.gradle.kotlin)
     implementation(libs.gradle.publish.maven)
+    implementation(libs.encoding.base16)
 
     // https://github.com/gradle/gradle/issues/15383#issuecomment-779893192
     implementation(files(libs.javaClass.superclass.protectionDomain.codeSource.location))

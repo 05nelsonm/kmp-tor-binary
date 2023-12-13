@@ -8,7 +8,7 @@ java --version
 ```
 
 - Set version variable in terminal shell
-```bash
+```
 VERSION_NAME="<version name>"
 ```
 
@@ -28,6 +28,17 @@ git checkout -b release_"$VERSION_NAME"
 - Ensure that credentials for `Npmjs` are set in `~/.gradle/gradle.properties`
 ```
 NPMJS_AUTH_TOKEN=<auth token>
+```
+
+- Clean
+```bash
+./gradlew clean
+```
+
+- Check `resource-validation` error reports for any errors
+```bash
+cat library/npmjs/build/reports/resource-validation/binary/jvm.err
+cat library/npmjs/build/reports/resource-validation/binary/jvm-geoip.err
 ```
 
 - Publish assets to `Npmjs`
@@ -76,15 +87,20 @@ ykman openpgp keys set-touch sig off
 - Perform a clean build
 ```bash
 ./gradlew clean -DKMP_TARGETS_ALL
-./gradlew build -PKMP_TARGETS="ANDROID,JVM,JS"
+./gradlew build -DKMP_TARGETS_ALL
 ```
 
-- Publish
+- Check `resource-validation` error reports for any errors
 ```bash
-./gradlew publishAllPublicationsToMavenCentralRepository --no-daemon --no-parallel -PKMP_TARGETS="ANDROID,JVM,JS"
+cat library/binary-android-unit-test/build/reports/resource-validation/binary/jvm.err
+cat library/binary/build/reports/resource-validation/binary/android.err
+cat library/binary/build/reports/resource-validation/binary/jvm.err
+cat library/binary/build/reports/resource-validation/binary/jvm-geoip.err
+cat library/binary/build/reports/resource-validation/binary/linuxArm64.err
+cat library/binary/build/reports/resource-validation/binary/linuxX64.err
+cat library/binary/build/reports/resource-validation/binary/mingwX64.err
+cat library/binary/build/reports/resource-validation/binary/native.err
 ```
-
-<!-- TODO: Darwin publications
 
 - Publish
 ```bash
@@ -117,7 +133,7 @@ bash
 ```
 
 - Set version variable in terminal shell
-```bash
+```
 VERSION_NAME="<version name>"
 ```
 
@@ -145,9 +161,18 @@ signing.gnupg.keyName=0x61471B8AB3890961
 
 - Perform a clean build
 ```bash
-MACOS_TARGETS="JVM,JS,IOS_ARM32,IOS_ARM64,IOS_X64,IOS_SIMULATOR_ARM64,MACOS_ARM64,MACOS_X64,TVOS_ARM64,TVOS_X64,TVOS_SIMULATOR_ARM64,WATCHOS_ARM32,WATCHOS_ARM64,WATCHOS_DEVICE_ARM64,WATCHOS_X64,WATCHOS_X86,WATCHOS_SIMULATOR_ARM64,WASM,WASM_32"
+MACOS_TARGETS="JVM,JS,IOS_ARM64,IOS_X64,IOS_SIMULATOR_ARM64,MACOS_ARM64,MACOS_X64,TVOS_ARM64,TVOS_X64,TVOS_SIMULATOR_ARM64,WATCHOS_ARM32,WATCHOS_ARM64,WATCHOS_DEVICE_ARM64,WATCHOS_X64,WATCHOS_SIMULATOR_ARM64,WASM_JS,WASM_WASI"
 ./gradlew clean -PKMP_TARGETS="$MACOS_TARGETS"
 ./gradlew build -PKMP_TARGETS="$MACOS_TARGETS"
+```
+
+- Check `resource-validation` error reports for any errors
+```bash
+cat library/binary/build/reports/resource-validation/binary/ios.err
+cat library/binary/build/reports/resource-validation/binary/macos.err
+cat library/binary/build/reports/resource-validation/binary/native.err
+cat library/binary/build/reports/resource-validation/binary/tvos.err
+cat library/binary/build/reports/resource-validation/binary/watchos.err
 ```
 
 - Publish macOS build
@@ -161,7 +186,7 @@ PUBLISH_TASKS=$(./gradlew tasks -PKMP_TARGETS="$MACOS_TARGETS" |
 ```
 
 ### Linux
--->
+
 - Re-enable YubiKey touch for signing
 ```bash
 ykman openpgp keys set-touch sig on

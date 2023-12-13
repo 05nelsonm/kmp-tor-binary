@@ -15,10 +15,8 @@
  **/
 package io.matthewnelson.kmp.tor.binary.internal
 
-import io.matthewnelson.kmp.file.File
-import io.matthewnelson.kmp.file.toFile
-import io.matthewnelson.kmp.tor.binary.core.ImmutableMap
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
+import io.matthewnelson.kmp.tor.binary.core.NativeResource
 import io.matthewnelson.kmp.tor.binary.core.Resource
 
 // Native
@@ -41,13 +39,15 @@ internal actual val RESOURCE_CONFIG: Resource.Config by lazy {
             }
         }
 
-        // TODO: Tor
+        resource(ALIAS_TOR) {
+            isExecutable = true
+
+            platform {
+                nativeResource = TOR_NATIVE_RESOURCE
+            }
+        }
     }
 }
 
-// TODO: Move back to nonJvmMain (and delete jsMain impl) as no-op
 @OptIn(InternalKmpTorBinaryApi::class)
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
-internal actual fun ImmutableMap<String, File>.findLibTor(): Map<String, File> {
-    return toMutableMap().apply { put(ALIAS_TOR, "TODO".toFile()) }
-}
+internal expect val TOR_NATIVE_RESOURCE: NativeResource
