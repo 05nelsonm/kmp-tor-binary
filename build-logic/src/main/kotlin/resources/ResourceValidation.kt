@@ -58,7 +58,8 @@ sealed class ResourceValidation(
 
     protected val androidJniErrors = mutableSetOf<String>()
     protected val jvmErrors = mutableSetOf<String>()
-    protected val nativeErrors = mutableMapOf<String, String>()
+    // <SourceSet name, errors>
+    protected val nativeErrors = mutableMapOf<String, MutableSet<String>>()
 
     private var isAndroidConfigured = false
     private var isJvmConfigured = false
@@ -198,7 +199,12 @@ sealed class ResourceValidation(
                 val error = nativeResource.validate(modulePackageName, packageModuleDir)
 
                 val kotlinSrcDir = if (error != null) {
-                    nativeErrors[nativeResource.sourceSetName] = error
+                    val errors = nativeErrors[nativeResource.sourceSetName]
+                    if (errors == null) {
+                        nativeErrors[nativeResource.sourceSetName] = mutableSetOf(error)
+                    } else {
+                        errors.add(error)
+                    }
                     nativeResource.kotlinSrcDir(mockResourceModuleDir)
                 } else {
                     nativeResource.kotlinSrcDir(packageModuleDir)
