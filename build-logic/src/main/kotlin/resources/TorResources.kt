@@ -193,7 +193,12 @@ class TorResources internal constructor(
 
     override val nativeResourceHashes: Set<NativeResourceHash> = setOf(
         NativeResourceHash(
-            sourceSetName = "ios",
+            sourceSetName = "iosNonSimulator",
+            ktFileName = "resource_tor_gz.kt",
+            hash = "TODO"
+        ),
+        NativeResourceHash(
+            sourceSetName = "iosSimulatorArm64",
             ktFileName = "resource_tor_gz.kt",
             hash = "TODO"
         ),
@@ -228,12 +233,22 @@ class TorResources internal constructor(
             hash = "c817b735fadf80211b34c8e61c71aaf8824d12de177417de8346b4f589746ab2"
         ),
         NativeResourceHash(
-            sourceSetName = "tvos",
+            sourceSetName = "tvosNonSimulator",
             ktFileName = "resource_tor_gz.kt",
             hash = "TODO"
         ),
         NativeResourceHash(
-            sourceSetName = "watchos",
+            sourceSetName = "tvosSimulatorArm64",
+            ktFileName = "resource_tor_gz.kt",
+            hash = "TODO"
+        ),
+        NativeResourceHash(
+            sourceSetName = "watchosNonSimulator",
+            ktFileName = "resource_tor_gz.kt",
+            hash = "TODO"
+        ),
+        NativeResourceHash(
+            sourceSetName = "watchosSimulatorArm64",
             ktFileName = "resource_tor_gz.kt",
             hash = "TODO"
         ),
