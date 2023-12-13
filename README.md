@@ -74,6 +74,13 @@ If you are not using that, simply call:
 
 ```kotlin
 val paths = KmpTorBinary(installationDir = "/path/to/my/tor/dir").install()
+println(paths.toString())
+
+// Paths.Tor: [
+//     geoip: /path/to/my/tor/dir/geoip
+//     geoip6: /path/to/my/tor/dir/geoip6
+//     tor: /path/to/my/tor/dir/tor
+// ]
 ```
 
 It will either throw an exception or extract the resources to the specified directory
@@ -87,16 +94,6 @@ It will either throw an exception or extract the resources to the specified dire
            source the correct `tor` binary resource for the given host/architecture that the tests 
            are running on (the exact same way Jvm does it).
          - Use `testImplementation` when adding the dependency!!! Do **NOT** ship your app with that
-
-```kotlin
-println(paths)
-
-// KmpTorBinary.Paths: [
-//     geoip: /path/to/my/tor/dir/geoip
-//     geoip6: /path/to/my/tor/dir/geoip6
-//     tor: /path/to/my/tor/dir/tor
-// ]
-```
 
 See [HERE](https://github.com/05nelsonm/kmp-tor-binary/issues/85#issuecomment-1819747564) for 
 more details.
