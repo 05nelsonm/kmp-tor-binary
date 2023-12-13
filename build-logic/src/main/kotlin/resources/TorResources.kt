@@ -90,7 +90,7 @@ class TorResources internal constructor(
         }
 
         isGeoipConfigured = true
-        // TODO: Add validation task
+        generateReport(reportFileName = "jvm-geoip", errors = geoipErrors)
 
         return if (geoipErrors.isEmpty()) {
             externalResourcesSrc

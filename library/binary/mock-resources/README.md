@@ -6,6 +6,3 @@ references, as well as mitigate blowing up version control (any further).
 
 The resource source directory for the given source set is dynamically adjusted 
 at build time to use the **real** resources src directory, or a mock.
-
-Publication tasks are dependent on validation tasks such that an error is thrown
-in the event a resource is invalid.

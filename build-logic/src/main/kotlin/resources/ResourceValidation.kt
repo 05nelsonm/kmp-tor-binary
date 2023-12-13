@@ -56,16 +56,23 @@ sealed class ResourceValidation(
     protected abstract val jvmLibHashes: Set<JvmLibHash>
     protected abstract val nativeResourceHashes: Set<NativeResourceHash>
 
-    protected val androidJniErrors = mutableSetOf<String>()
-    protected val jvmErrors = mutableSetOf<String>()
+    private val androidJniErrors = mutableSetOf<String>()
+    private val jvmErrors = mutableSetOf<String>()
     // <SourceSet name, errors>
-    protected val nativeErrors = mutableMapOf<String, MutableSet<String>>()
+    private val nativeErrors = mutableMapOf<String, MutableSet<String>>()
 
     private var isAndroidConfigured = false
     private var isJvmConfigured = false
     private var isNativeConfigured = false
 
-    protected val rootProjectDir = project.rootProject.projectDir
+    protected val rootProjectDir: File = project.rootProject.projectDir
+    private val reportDir: File get() = project.layout
+        .buildDirectory
+        .asFile
+        .get()
+        .resolve("reports")
+        .resolve("resource-validation")
+        .resolve(moduleName)
 
     protected fun LibraryExtension.configureAndroidJniResources() {
         check(androidLibHashes.isNotEmpty()) { "androidLibHashes cannot be empty" }
@@ -121,7 +128,7 @@ sealed class ResourceValidation(
         }
 
         isAndroidConfigured = true
-        // TODO: Add validation task
+        generateReport(reportFileName = "android", errors = androidJniErrors)
     }
 
     protected fun jvmLibResourcesSrcDir(): File {
@@ -165,7 +172,7 @@ sealed class ResourceValidation(
         }
 
         isJvmConfigured = true
-        // TODO: Add validation task
+        generateReport(reportFileName = "jvm", errors = jvmErrors)
 
         return if (jvmErrors.isEmpty()) {
             // No errors found, return the external dir
@@ -194,17 +201,19 @@ sealed class ResourceValidation(
 
         with(sourceSets) {
             nativeResourceHashes.forEach { nativeResource ->
+                var errors = nativeErrors[nativeResource.sourceSetName]
+
+                if (errors == null) {
+                    errors = mutableSetOf()
+                    nativeErrors[nativeResource.sourceSetName] = errors
+                }
+
                 val srcSet = findByName("${nativeResource.sourceSetName}Main") ?: return@forEach
 
                 val error = nativeResource.validate(modulePackageName, packageModuleDir)
 
                 val kotlinSrcDir = if (error != null) {
-                    val errors = nativeErrors[nativeResource.sourceSetName]
-                    if (errors == null) {
-                        nativeErrors[nativeResource.sourceSetName] = mutableSetOf(error)
-                    } else {
-                        errors.add(error)
-                    }
+                    errors.add(error)
                     nativeResource.kotlinSrcDir(mockResourceModuleDir)
                 } else {
                     nativeResource.kotlinSrcDir(packageModuleDir)
@@ -215,7 +224,18 @@ sealed class ResourceValidation(
         }
 
         isNativeConfigured = true
-        // TODO: Add validation tasks
+        nativeErrors.forEach { (sourceSet, errors) ->
+            generateReport(reportFileName = sourceSet, errors = errors)
+        }
+    }
+
+    protected fun generateReport(reportFileName: String, errors: Set<String>) {
+        val dir = reportDir
+        if (!dir.exists()) dir.mkdirs()
+
+        dir.resolve("$reportFileName.err").writeText(buildString {
+            errors.forEach { appendLine(it) }
+        })
     }
 
     data class AndroidLibHash internal constructor(
