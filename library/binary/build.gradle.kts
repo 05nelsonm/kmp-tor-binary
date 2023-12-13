@@ -27,6 +27,9 @@ kmpConfiguration {
                 androidNamespace = "io.matthewnelson.kmp.tor.binary",
                 publish = true,
             ) {
+                options {
+                    nonSimulatorSourceSets = true
+                }
 
                 androidLibrary {
                     android {
