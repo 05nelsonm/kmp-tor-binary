@@ -19,7 +19,6 @@ import io.matthewnelson.kmp.file.File
 import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.SynchronizedObject
 import io.matthewnelson.kmp.file.IOException
-import io.matthewnelson.kmp.file.toFile
 import io.matthewnelson.kmp.tor.binary.core.api.Installer
 import io.matthewnelson.kmp.tor.binary.core.synchronized
 import io.matthewnelson.kmp.tor.binary.internal.*
@@ -44,23 +43,25 @@ public class KmpTorBinary(
     private inner class RealInstaller: SynchronizedObject() {
 
         @Volatile
-        private var paths: Paths.Tor? = null
+        private var isFirstInstall = true
 
-        fun install(): Paths.Tor {
-            return paths ?: synchronized(this) {
-                paths ?: RESOURCE_CONFIG.extractTo(installationDir)
-                    .findLibTor()
-                    .let { map ->
+        fun install(): Paths.Tor = synchronized(this) {
+            val map = RESOURCE_CONFIG
+                .extractTo(installationDir, onlyIfDoesNotExist = !isFirstInstall)
+                .findLibTor()
 
-                        // If an exception has not been encountered at
-                        // this point, the map will contain all 3 paths.
-                        Paths.Tor(
-                            geoip = map[ALIAS_GEOIP]!!,
-                            geoip6 = map[ALIAS_GEOIP6]!!,
-                            tor = map[ALIAS_TOR]!!,
-                        )
-                    }.also { paths = it }
-            }
+            // If an exception has not been encountered at
+            // this point, the map will contain paths for all
+            // 3 of our aliases.
+            val paths = Paths.Tor(
+                geoip = map[ALIAS_GEOIP]!!,
+                geoip6 = map[ALIAS_GEOIP6]!!,
+                tor = map[ALIAS_TOR]!!,
+            )
+
+            isFirstInstall = false
+
+            paths
         }
     }
 }

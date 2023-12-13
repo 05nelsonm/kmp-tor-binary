@@ -20,7 +20,7 @@ import io.matthewnelson.kmp.tor.binary.core.InternalKmpTorBinaryApi
 import io.matthewnelson.kmp.tor.binary.core.Resource
 
 @OptIn(DelicateFileApi::class, InternalKmpTorBinaryApi::class)
-internal actual fun Resource.extractTo(destinationDir: File): File {
+internal actual fun Resource.extractTo(destinationDir: File, onlyIfDoesNotExist: Boolean): File {
     var fileName = platform.resourcePath.substringAfterLast('/')
     val isGzipped = if (fileName.endsWith(".gz")) {
         fileName = fileName.substringBeforeLast(".gz")
@@ -30,6 +30,9 @@ internal actual fun Resource.extractTo(destinationDir: File): File {
     }
 
     val destination = destinationDir.resolve(fileName)
+
+    if (onlyIfDoesNotExist && destination.exists()) return destination
+
     val moduleResource = resolveResource(platform.moduleName + platform.resourcePath).toFile()
 
     if (destination.exists() && !destination.delete()) {

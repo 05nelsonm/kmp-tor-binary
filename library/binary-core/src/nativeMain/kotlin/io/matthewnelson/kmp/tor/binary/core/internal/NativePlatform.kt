@@ -32,7 +32,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @OptIn(DelicateFileApi::class, ExperimentalForeignApi::class, InternalKmpTorBinaryApi::class)
-internal actual fun Resource.extractTo(destinationDir: File): File {
+internal actual fun Resource.extractTo(destinationDir: File, onlyIfDoesNotExist: Boolean): File {
     val name = platform.nativeResource.name
     val destFinal = if (name.endsWith(".gz")) {
         destinationDir.resolve(name.substringBeforeLast(".gz"))
@@ -42,6 +42,11 @@ internal actual fun Resource.extractTo(destinationDir: File): File {
 
     // Could be gzipped, could not. Need to extract it to FS first
     val dest = destinationDir.resolve(name)
+
+    if (onlyIfDoesNotExist) {
+        val file = (destFinal ?: dest)
+        if (file.exists()) return file
+    }
 
     if (dest.exists() && !dest.delete()) {
         throw IOException("Failed to delete $dest")

@@ -58,7 +58,7 @@ public class Resource private constructor(
         }
 
         @Throws(IllegalStateException::class, IOException::class)
-        public fun extractTo(destinationDir: File): ImmutableMap<String, File> {
+        public fun extractTo(destinationDir: File, onlyIfDoesNotExist: Boolean): ImmutableMap<String, File> {
             check(errors.isEmpty()) {
                 buildString {
                     errors.forEach { error ->
@@ -77,7 +77,7 @@ public class Resource private constructor(
 
             try {
                 resources.forEach { resource ->
-                    val file = resource.extractTo(dir)
+                    val file = resource.extractTo(dir, onlyIfDoesNotExist)
                     map[resource.alias] = file
                 }
             } catch (t: Throwable) {

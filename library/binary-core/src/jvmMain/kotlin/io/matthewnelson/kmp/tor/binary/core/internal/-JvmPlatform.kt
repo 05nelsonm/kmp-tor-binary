@@ -22,7 +22,7 @@ import io.matthewnelson.kmp.tor.binary.core.Resource
 import java.util.zip.GZIPInputStream
 
 @OptIn(InternalKmpTorBinaryApi::class)
-internal actual fun Resource.extractTo(destinationDir: File): File {
+internal actual fun Resource.extractTo(destinationDir: File, onlyIfDoesNotExist: Boolean): File {
     var fileName = platform.resourcePath.substringAfterLast('/')
     val isGzipped = if (fileName.endsWith(".gz")) {
         fileName = fileName.substringBeforeLast(".gz")
@@ -32,6 +32,8 @@ internal actual fun Resource.extractTo(destinationDir: File): File {
     }
 
     val destination = destinationDir.resolve(fileName)
+
+    if (onlyIfDoesNotExist && destination.exists()) return destination
 
     var resourceStream = platform.resourceClass.getResourceAsStream(platform.resourcePath)
         ?: throw IOException("Failed to get resource input stream for ${platform.resourcePath}")

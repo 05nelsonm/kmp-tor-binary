@@ -58,7 +58,7 @@ class NativeResourceUnitTest {
         }
 
         val dir = SysTempDir.resolve(randomName())
-        val file = config.extractTo(dir)[alias]!!
+        val file = config.extractTo(dir, onlyIfDoesNotExist = false)[alias]!!
 
         try {
             // Check that the gz file was cleaned up
