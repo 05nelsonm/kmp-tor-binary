@@ -28,4 +28,4 @@ internal inline fun StringBuilder.appendIndent(
 ): StringBuilder = append(indent).append(value)
 
 @OptIn(InternalKmpTorBinaryApi::class)
-internal expect fun Resource.extractTo(destinationDir: File): File
+internal expect fun Resource.extractTo(destinationDir: File, onlyIfDoesNotExist: Boolean): File
