@@ -93,6 +93,8 @@ npmPublish {
             }
         }
     }
+
+    // TODO: Make Npmjs publication tasks dependant on the jvm resource validation tasks
 }
 
 fun NpmPackages.registerBinaryResources(
