@@ -680,6 +680,8 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   if [ "$os_name" = "mingw" ]; then
     # Even though -static is declared in CFLAGS, it is declared here
     # because openssl's Configure file is jank.
+    #
+    # See external/patches/openssl/0001
     __conf:OPENSSL '-static'
   fi
   __conf:OPENSSL "$openssl_target"
@@ -809,15 +811,6 @@ echo \"
 \""
   __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/openssl" "$DIR_TMP"
 cd "$DIR_TMP/openssl"'
-
-  if [ "$os_name" = "mingw" ]; then
-    # TODO: Move to patch file
-    __conf:SCRIPT "
-# https://github.com/openssl/openssl/issues/14574
-# https://github.com/netdata/netdata/pull/15842
-sed -i \"s/disable('static', 'pic', 'threads');/disable('static', 'pic');/\" \"Configure\"
-"
-  fi
 
   __conf:SCRIPT "$CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
 perl configdata.pm --dump >> \"\$DIR_SCRIPT/openssl/logs/configure.log\"

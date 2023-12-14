@@ -1,0 +1,28 @@
+From b9c34b45a2f81445287759e7e218c1606a4a411b Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Thu, 14 Dec 2023 05:02:34 -0500
+Subject: [PATCH] Modify Config to not disable threads when static enabled
+
+---
+ Configure | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/Configure b/Configure
+index 227e5daea2..81e65897ee 100755
+--- a/Configure
++++ b/Configure
+@@ -1377,8 +1377,10 @@ foreach (keys %useradd) {
+ # At this point, we can forget everything about %user and %useradd,
+ # because it's now all been merged into the corresponding $config entry
+ 
++# https://github.com/openssl/openssl/issues/14574
++# https://github.com/netdata/netdata/pull/15842
+ if (grep { $_ =~ /(?:^|\s)-static(?:\s|$)/ } @{$config{LDFLAGS}}) {
+-    disable('static', 'pic', 'threads');
++    disable('static', 'pic');
+ }
+ 
+ # Allow overriding the build file name
+-- 
+2.34.1
+
