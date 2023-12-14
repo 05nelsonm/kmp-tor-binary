@@ -764,7 +764,8 @@ function __build:configure:target:build_script {
     __conf:SCRIPT "export STRIP=\"$CONF_STRIP\""
   fi
 
-  __conf:SCRIPT "export CFLAGS=\"$CONF_CFLAGS\""
+  __conf:SCRIPT "
+export CFLAGS=\"$CONF_CFLAGS\""
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
 
   if [ "$os_name" = "mingw" ]; then
@@ -864,48 +865,39 @@ make install >> \"\$DIR_SCRIPT/tor/logs/make.log\" 2>> \"\$DIR_SCRIPT/tor/logs/m
 
   local bin_name=
   local bin_name_out=
-  if [ -n "$darwin_sdk" ]; then
-    bin_name="tor"
-    bin_name_out="tor"
-  else
-    case "$os_name" in
-      "android")
-        bin_name="tor"
-        bin_name_out="libtor.so"
-        ;;
-      "linux"|"freebsd"|"macos")
-        bin_name="tor"
-        bin_name_out="tor"
-        ;;
-      "mingw")
-        bin_name="tor.exe"
-        # Do not modify the name for Windows. Otherwise it
-        # may be flaged by Windows Defender as a virus.
-        bin_name_out="tor.exe"
-        ;;
-      *)
-        __error "Unknown os_name >> $os_name"
-        ;;
-    esac
-  fi
 
-  __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$bin_name\" \"\$DIR_OUT/$bin_name_out\""
+  case "$os_name" in
+    "android")
+      bin_name="tor"
+      bin_name_out="libtor.so"
+      ;;
+    "linux"|"freebsd"|"ios"|"macos"|"tvos"|"watchos")
+      bin_name="tor"
+      bin_name_out="tor"
+      ;;
+    "mingw")
+      bin_name="tor.exe"
+      # Do not modify the name for Windows. Otherwise it
+      # may be flaged by Windows Defender as a virus.
+      bin_name_out="tor.exe"
+      ;;
+    *)
+      __error "Unknown os_name >> $os_name"
+      ;;
+  esac
 
-  if [ -z "$darwin_sdk" ]; then
-    __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$bin_name_out\""
+  __conf:SCRIPT "cp -a \"\$DIR_SCRIPT/tor/bin/$bin_name\" \"\$DIR_OUT/$bin_name_out\""
+  __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$bin_name_out\""
 
-    if [ "$os_name" = "android" ]; then
-      __conf:SCRIPT "
+  if [ "$os_name" = "android" ]; then
+    __conf:SCRIPT "
 mkdir -p \"\$DIR_OUT_JVM\"
 cp -a \"\$DIR_OUT/$bin_name_out\" \"\$DIR_OUT_JVM/tor\"
 "
-    fi
-
-    __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$bin_name\")\""
-    __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$bin_name_out\")\""
-  else
-    __conf:SCRIPT "sha256sum \"\$DIR_OUT/$bin_name_out\""
   fi
+
+  __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$bin_name\")\""
+  __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$bin_name_out\")\""
 
   mkdir -p "$DIR_BUILD"
   echo "$CONF_SCRIPT" > "$DIR_BUILD/build.sh"
@@ -1336,14 +1328,10 @@ function __require:not_empty {
 function __require:no_build_lock {
   if [ ! -f "$FILE_BUILD_LOCK" ]; then return 0; fi
 
-  # Don't use __error here because it checks DRY_RUN
-  echo 1>&2 "
-    ERROR: A build is in progress
+  __error "A build is in progress
 
     If this is not the case, delete the following file and re-run the task
-    $FILE_BUILD_LOCK
-  "
-  exit 3
+    $FILE_BUILD_LOCK"
 }
 
 function __error {
