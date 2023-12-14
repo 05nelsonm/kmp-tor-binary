@@ -42,12 +42,22 @@ function build:all:android { ## Builds all Android targets
   build:android:x86_64
 }
 
+function build:all:darwin { ## Builds all iOS and macOS targets (non-jvm)
+  build:all:darwin:ios
+  build:darwin:macos
+}
+
 function build:all:jvm { ## Builds all Linux, macOS, Windows targets for JVM
 #  build:all:jvm:freebsd
   build:all:jvm:linux-libc
 #  build:all:jvm:linux-musl
   build:all:jvm:macos
   build:all:jvm:mingw
+}
+
+function build:all:darwin:ios { ## Builds all iOS targets
+  build:darwin:ios
+  build:darwin:ios-simulator
 }
 
 #function build:all:jvm:freebsd { ## Builds all FreeBSD targets for JVM
@@ -117,6 +127,67 @@ function build:android:x86_64 { ## Builds Android x86_64
   local cc_clang="yes"
   __build:configure:target:init
   __exec:docker:run
+}
+
+function build:darwin:ios { ## Builds iOS arm64 + armv7 + x86_64
+  local darwin_sdk="iphoneos"
+  local os_name="ios"
+  local cc_clang="yes"
+
+  local os_arch="arm64"
+  local openssl_target="ios64-xcrun"
+  __build:configure:target:init
+  __exec:darwin:run
+
+  local os_arch="armv7"
+  local openssl_target="ios-xcrun"
+  __build:configure:target:init
+  __exec:darwin:run
+
+  # TODO: Requires modifying openssl/Configurations/15-ios.conf
+#  local os_arch="x86_64"
+#  local openssl_target="iosx86_64-xcrun"
+#  __build:configure:target:init
+#  __exec:darwin:run
+
+  __exec:darwin:run:lipo "arm64" "armv7" "x86_64"
+}
+
+function build:darwin:ios-simulator { ## Builds iOS simulator arm64 + x86_64
+  local darwin_sdk="iphonesimulator"
+  local os_name="ios"
+  local os_subtype="-simulator"
+  local cc_clang="yes"
+
+  local os_arch="arm64"
+  local openssl_target="iossimulator-xcrun"
+  __build:configure:target:init
+  __exec:darwin:run
+
+  local os_arch="x86_64"
+  local openssl_target="iossimulator-xcrun"
+  __build:configure:target:init
+  __exec:darwin:run
+
+  __exec:darwin:run:lipo "arm64" "x86_64"
+}
+
+function build:darwin:macos { ## Builds macOS arm64 + x86_64
+  local darwin_sdk="macosx"
+  local os_name="macos"
+  local cc_clang="yes"
+
+  local os_arch="arm64"
+  local openssl_target="darwin64-arm64"
+  __build:configure:target:init
+  __exec:darwin:run
+
+  local os_arch="x86_64"
+  local openssl_target="darwin64-x86_64"
+  __build:configure:target:init
+  __exec:darwin:run
+
+  __exec:darwin:run:lipo "arm64" "x86_64"
 }
 
 #function build:jvm:freebsd:aarch64 { ## Builds FreeBSD aarch64 for JVM
@@ -249,16 +320,6 @@ function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
   __exec:docker:run
 }
 
-# TODO: macOS, iOS, tvOS, watchOS frameworks
-
-#function build:framework:ios:x86_64 { ## Builds iOS x86_64 Framework
-#  local os_name="ios"
-#  local os_arch="x86_64"
-#  local is_framework="yes"
-#  local openssl_target="ios64-xcrun"
-#  __build:configure:target:init
-#}
-
 function clean { ## Deletes the build dir
   rm -rf "$DIR_TASK/build"
 }
@@ -373,12 +434,12 @@ function __build:configure:target:init {
   __require:var_set "$os_arch" "os_arch"
   __require:var_set "$openssl_target" "openssl_target"
 
-  if [ -n "$is_framework" ]; then
-    # TODO: require cross_triple to be set as we're not running in docker
+  if [ -n "$darwin_sdk" ]; then
     __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
+    __require:var_set "$cc_clang" "cc_clang"
 
-    DIR_BUILD="build/framework/$os_name$os_subtype/$os_arch"
-    DIR_OUT="build/framework-out/$os_name$os_subtype/$os_arch"
+    DIR_BUILD="build/darwin/$os_name$os_subtype/$os_arch"
+    DIR_OUT="build/darwin-out/$os_name$os_subtype/$os_arch"
   else
     __require:cmd "$DOCKER" "docker"
     __require:var_set "$U_ID" "U_ID"
@@ -396,6 +457,7 @@ function __build:configure:target:init {
   fi
 
   unset CONF_CC
+  unset CONF_CXX
   unset CONF_LD
   unset CONF_AR
   unset CONF_AS
@@ -432,19 +494,40 @@ export LC_ALL=C
 export SOURCE_DATE_EPOCH="1234567890"
 export TZ=UTC
 set -e
+'
 
-if [ -z "$CROSS_TRIPLE" ]; then
+  __conf:SCRIPT "readonly TASK_TARGET=\"$os_name$os_subtype:$os_arch\""
+  __conf:SCRIPT '
+readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )'
+  if [ -z "$darwin_sdk" ]; then
+    __conf:SCRIPT '# Docker container WORKDIR
+readonly DIR_EXTERNAL="/work"'
+  else
+    __conf:SCRIPT "readonly DIR_EXTERNAL=\"$DIR_TASK\""
+  fi
+
+    __conf:SCRIPT '
+if [ ! -f "$DIR_EXTERNAL/task.sh" ]; then
   echo 1>&2 "
-    CROSS_TRIPLE environment variable must be set.
+    DIR_EXTERNAL does not exist
     Are you not using task.sh?
   "
   exit 3
 fi
 '
-  __conf:SCRIPT "readonly TASK_TARGET=\"$os_name$os_subtype:$os_arch\""
-  __conf:SCRIPT '
-readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
-readonly DIR_EXTERNAL="$(pwd)"'
+
+  if [ -z "$darwin_sdk" ]; then
+    __conf:SCRIPT '
+if [ -z "$CROSS_TRIPLE" ]; then
+  echo 1>&2 "
+    CROSS_TRIPLE environment variable must be set.
+    Are you not using task.sh & docker?
+  "
+  exit 3
+fi
+'
+  fi
+
   __conf:SCRIPT "readonly DIR_OUT=\"\$DIR_EXTERNAL/$DIR_OUT\""
   __conf:SCRIPT 'readonly DIR_TMP="$(mktemp -d)"'
   __conf:SCRIPT "trap 'rm -rf \$DIR_TMP' EXIT"
@@ -488,6 +571,16 @@ export LIBS="-L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/
 export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/lib/pkgconfig:$DIR_SCRIPT/xz/lib/pkgconfig:$DIR_SCRIPT/zlib/lib/pkgconfig"
 '
 
+  if [ -n "$darwin_sdk" ]; then
+    __conf:CC "$(__exec:xcrun "--find" "clang")"
+    __conf:CXX "$(__exec:xcrun "--find" "clang++")"
+    __conf:LD "$(__exec:xcrun "--find" "ld")"
+    __conf:AR "$(__exec:xcrun "--find" "ar")"
+    __conf:AS "$(__exec:xcrun "--find" "as")"
+    __conf:RANLIB "$(__exec:xcrun "--find" "ranlib")"
+    __conf:STRIP "$(__exec:xcrun "--find" "strip")"
+  fi
+
   # CFLAGS
   __conf:CFLAGS '-I$DIR_SCRIPT/libevent/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/openssl/include'
@@ -497,8 +590,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:CFLAGS '-frandom-seed=0'
   __conf:CFLAGS '-fstack-protector-strong'
 
-  if [ -z "$is_framework" ] && [ -z "$cc_clang" ]; then
-    # non-framework (i.e. jvm) that is using gcc
+  if [ -z "$cc_clang" ]; then
     __conf:CFLAGS '-fno-guess-branch-probability'
   fi
   if [ "$os_name" = "mingw" ]; then
@@ -513,8 +605,10 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:CFLAGS '-fPIC'
     __conf:CFLAGS '-fvisibility=hidden'
   fi
-  if [ -n "$is_framework" ]; then
+  if [ -n "$darwin_sdk" ]; then
     __conf:CFLAGS '-fembed-bitcode'
+    __conf:CFLAGS "-arch $os_arch"
+    __conf:CFLAGS "-isysroot $(__exec:xcrun --show-sdk-path)"
   fi
 
   # LDFLAGS
@@ -527,7 +621,7 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:LDFLAGS '-Wl,--no-insert-timestamp'
     __conf:LDFLAGS '-static-libgcc'
   fi
-  if [ -n "$is_framework" ]; then
+  if [ -n "$darwin_sdk" ]; then
     __conf:LDFLAGS '-fembed-bitcode'
   fi
 
@@ -545,8 +639,13 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-shared \
   --disable-xz \
   --disable-xzdec \
-  --host="$CROSS_TRIPLE" \
   --prefix="$DIR_SCRIPT/xz"'
+
+  if [ -z "$darwin_sdk" ]; then
+    __conf:XZ '--host="$CROSS_TRIPLE"'
+  else
+    __conf:XZ 'cross_compiling="yes"'
+  fi
 
   # OPENSSL
   CONF_OPENSSL='./Configure no-shared \
@@ -593,8 +692,13 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --disable-libevent-regress \
   --disable-samples \
   --disable-shared \
-  --host="$CROSS_TRIPLE" \
   --prefix="$DIR_SCRIPT/libevent"'
+
+  if [ -z "$darwin_sdk" ]; then
+    __conf:LIBEVENT '--host="$CROSS_TRIPLE"'
+  else
+    __conf:LIBEVENT 'cross_compiling="yes"'
+  fi
 
   # TOR
   CONF_TOR='./configure --disable-asciidoc \
@@ -612,9 +716,13 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --with-openssl-dir="$DIR_SCRIPT/openssl" \
   --enable-static-zlib \
   --with-zlib-dir="$DIR_SCRIPT/zlib" \
-  --host="$CROSS_TRIPLE" \
   --prefix="$DIR_SCRIPT/tor"'
 
+  if [ -z "$darwin_sdk" ]; then
+    __conf:TOR '--host="$CROSS_TRIPLE"'
+  else
+    __conf:TOR 'cross_compiling="yes"'
+  fi
   if [ "$os_name" = "android" ]; then
     __conf:TOR '--enable-android'
   fi
@@ -636,6 +744,9 @@ function __build:configure:target:build_script {
 
   if [ -n "$CONF_CC" ]; then
     __conf:SCRIPT "export CC=\"$CONF_CC\""
+  fi
+  if [ -n "$CONF_CXX" ]; then
+    __conf:SCRIPT "export CXX=\"$CONF_CXX\""
   fi
   if [ -n "$CONF_LD" ]; then
     __conf:SCRIPT "export LD=\"$CONF_LD\""
@@ -751,10 +862,12 @@ make install >> \"\$DIR_SCRIPT/tor/logs/make.log\" 2>> \"\$DIR_SCRIPT/tor/logs/m
   # out
   __conf:SCRIPT 'mkdir -p "$DIR_OUT"'
 
-  if [ -z "$is_framework" ]; then
-    local bin_name=
-    local bin_name_out=
-
+  local bin_name=
+  local bin_name_out=
+  if [ -n "$darwin_sdk" ]; then
+    bin_name="tor"
+    bin_name_out="tor"
+  else
     case "$os_name" in
       "android")
         bin_name="tor"
@@ -774,8 +887,11 @@ make install >> \"\$DIR_SCRIPT/tor/logs/make.log\" 2>> \"\$DIR_SCRIPT/tor/logs/m
         __error "Unknown os_name >> $os_name"
         ;;
     esac
+  fi
 
-    __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$bin_name\" \"\$DIR_OUT/$bin_name_out\""
+  __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$bin_name\" \"\$DIR_OUT/$bin_name_out\""
+
+  if [ -z "$darwin_sdk" ]; then
     __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$bin_name_out\""
 
     if [ "$os_name" = "android" ]; then
@@ -787,8 +903,8 @@ cp -a \"\$DIR_OUT/$bin_name_out\" \"\$DIR_OUT_JVM/tor\"
 
     __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$bin_name\")\""
     __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$bin_name_out\")\""
-  # else
-    # TODO: framework
+  else
+    __conf:SCRIPT "sha256sum \"\$DIR_OUT/$bin_name_out\""
   fi
 
   mkdir -p "$DIR_BUILD"
@@ -852,6 +968,10 @@ $1"
 
 function __conf:CC {
   CONF_CC="$1"
+}
+
+function __conf:CXX {
+  CONF_CXX="$1"
 }
 
 function __conf:LD {
@@ -920,6 +1040,29 @@ function __conf:ZLIB   {
   $1"
 }
 
+function __exec:darwin:run {
+  __build:configure:target:build_script
+
+  if $DRY_RUN; then
+    echo "Build Script >> $DIR_BUILD/build.sh"
+    return 0
+  fi
+
+  trap 'echo "
+    SIGINT intercepted... exiting...
+"; exit 1' SIGINT
+
+  ./$DIR_BUILD/build.sh
+
+  trap - SIGINT
+}
+
+function __exec:darwin:run:lipo {
+  if $DRY_RUN; then return 0; fi
+
+  # TODO
+}
+
 function __exec:docker:run {
   __build:configure:target:build_script
 
@@ -947,6 +1090,14 @@ function __exec:docker:run {
     "./$DIR_BUILD/build.sh"
 
   trap - SIGINT
+}
+
+function __exec:xcrun {
+  __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
+  __require:var_set "$darwin_sdk" "darwin_sdk"
+  __require:var_set "$1" "tool"
+
+  ${XCRUN} --sdk "$darwin_sdk" "$@"
 }
 
 function __package:geoip {
@@ -1199,7 +1350,7 @@ function __error {
   echo 1>&2 "
     ERROR: $1
   "
-  if $DRY_RUN; then return 0; fi
+#  if $DRY_RUN; then return 0; fi
   exit 3
 }
 
