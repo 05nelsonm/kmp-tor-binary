@@ -156,6 +156,12 @@ class TorResources internal constructor(
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-libc",
+            arch = "ppc64",
+            hash = "467d277cfa87a9ea5c7acdc4a55c730d911990d7e62c992f651cbb25c15401ad",
+        ),
+        JvmLibHash(
+            libname = "tor.gz",
+            machine = "linux-libc",
             arch = "x86",
             hash = "462a87918fbf5825162d874a44e5abbf5a4fc7b8170fd699888871db9153d12b",
         ),

@@ -22,7 +22,7 @@ readonly DIR_TASK=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 readonly FILE_BUILD_LOCK="$DIR_TASK/build/.lock"
 
 # See https://github.com/05nelsonm/build-env
-readonly TAG_DOCKER_BUILD_ENV="0.1.0"
+readonly TAG_DOCKER_BUILD_ENV="0.1.1"
 
 # Programs
 readonly DOCKER=$(which docker)
@@ -58,6 +58,7 @@ function build:all:desktop { ## Builds all Linux, macOS, Windows targets
 function build:all:linux-libc { ## Builds all Linux Libc targets
   build:linux-libc:aarch64
   build:linux-libc:armv7
+  build:linux-libc:ppc64
   build:linux-libc:x86
   build:linux-libc:x86_64
 }
@@ -161,6 +162,15 @@ function build:linux-libc:armv7 { ## Builds Linux Libc armv7
   __conf:CFLAGS '-march=armv7-a'
   __conf:CFLAGS '-mfloat-abi=hard'
   __conf:CFLAGS '-mfpu=vfp'
+  __exec:docker:run
+}
+
+function build:linux-libc:ppc64 { ## Builds Linux Libc powerpc64le
+  local os_name="linux"
+  local os_subtype="-libc"
+  local os_arch="ppc64"
+  local openssl_target="linux-ppc64le"
+  __build:configure:target:init
   __exec:docker:run
 }
 
@@ -299,6 +309,7 @@ function package { ## Packages build dir output
   __package:jvm "linux-android/x86_64" "tor"
   __package:jvm "linux-libc/aarch64" "tor"
   __package:jvm "linux-libc/armv7" "tor"
+  __package:jvm "linux-libc/ppc64" "tor"
   __package:jvm "linux-libc/x86" "tor"
   __package:jvm "linux-libc/x86_64" "tor"
   __package:jvm:codesigned "macos/aarch64" "tor"
@@ -503,12 +514,6 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:CFLAGS '-fPIC'
     __conf:CFLAGS '-fvisibility=hidden'
   fi
-  # TODO: openssl configurations for darwin use -bundle which is wrong
-  #  need to modify openssl/Configurations/shared-info.pl
-  #  for its darwin-shared target the field module_ldflags
-#  if [ "$os_name" = "macos" ]; then
-#    __conf:CFLAGS '-fembed-bitcode'
-#  fi
 
   # LDFLAGS
   __conf:LDFLAGS '-L$DIR_SCRIPT/libevent/lib'
@@ -520,9 +525,6 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:LDFLAGS '-Wl,--no-insert-timestamp'
     __conf:LDFLAGS '-static-libgcc'
   fi
-#  if [ "$os_name" = "macos" ]; then
-#    __conf:LDFLAGS '-fembed-bitcode'
-#  fi
 
   # ZLIB
   CONF_ZLIB='./configure --static \
@@ -925,6 +927,7 @@ function __exec:docker:run {
   local docker_arch=
   case "$os_arch" in
     "armv7") docker_arch="armv7a"  ;;
+    "ppc64") docker_arch="ppc64le" ;;
     *)       docker_arch="$os_arch";;
   esac
 
