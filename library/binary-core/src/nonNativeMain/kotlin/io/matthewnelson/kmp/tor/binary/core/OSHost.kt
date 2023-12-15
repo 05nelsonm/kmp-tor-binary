@@ -54,6 +54,7 @@ public sealed class OSHost private constructor(
         public object Libc: Linux("libc", ImmutableSet.of(
             OSArch.Aarch64,
             OSArch.Armv7,
+            OSArch.Ppc64,
             OSArch.X86,
             OSArch.X86_64,
         ))

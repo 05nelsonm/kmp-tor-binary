@@ -19,6 +19,18 @@ git pull
 git checkout -b release_"$VERSION_NAME"
 ```
 
+- Perform a clean build
+```bash
+./gradlew clean -DKMP_TARGETS_ALL
+./gradlew build -DKMP_TARGETS_ALL
+```
+
+- Check `resource-validation` error reports for any errors (for Node.js publication)
+```bash
+cat library/npmjs/build/reports/resource-validation/binary/jvm.err
+cat library/npmjs/build/reports/resource-validation/binary/jvm-geoip.err
+```
+
 - Update `VERSION_NAME` (remove `-SNAPSHOT`) and `VERSION_CODE` in root project's `gradle.properties` file
 
 - Update `version` in project's `README.md` documentation
@@ -32,13 +44,7 @@ NPMJS_AUTH_TOKEN=<auth token>
 
 - Clean
 ```bash
-./gradlew clean
-```
-
-- Check `resource-validation` error reports for any errors
-```bash
-cat library/npmjs/build/reports/resource-validation/binary/jvm.err
-cat library/npmjs/build/reports/resource-validation/binary/jvm-geoip.err
+./gradlew clean -DKMP_TARGETS_ALL
 ```
 
 - Publish assets to `Npmjs`
@@ -111,6 +117,8 @@ cat library/binary/build/reports/resource-validation/binary/native.err
 ```bash
 git push -u origin release_"$VERSION_NAME"
 ```
+
+<!-- TODO: Move darwin native libs over to macOS machine somehow -->
 
 ### Macos
 
