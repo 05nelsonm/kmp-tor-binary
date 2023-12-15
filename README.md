@@ -21,14 +21,28 @@ resources for Kotlin Multiplatform, primarily to be consumed as a dependency by 
 **NOTE:** Support for [kmp-tor][url-kmp-tor] version `1.x.x` is 
 maintained [HERE](https://github.com/05nelsonm/kmp-tor-binary/tree/1.x.x)
 
+### Jvm/Node.js Supported Operating Systems & Architectures
+
+**NOTE:** `macOS` and `Windows` binaries are code signed, so they work out of the box.
+
+|                 | x86 | x86_64 | armv7 | aarch64 | ppc64 |
+|-----------------|-----|--------|-------|---------|-------|
+| Windows         | ✔   | ✔      |       |         |       |
+| macOS           |     | ✔      |       | ✔       |       |
+| Linux (android) | ✔   | ✔      | ✔     | ✔       |       |
+| Linux (libc)    | ✔   | ✔      | ✔     | ✔       | ✔     |
+| Linux (musl)    |     |        |       |         |       |
+| FreeBSD         |     |        |       |         |       |
+
 ### Compilation
 
-`tor` is compiled via the `external/task.sh` script using `Docker` (for Android/Jvm/Node.js) in order 
-to maintain reproducability. The maintainer then creates detached code signatures for Apple/Windows targets 
-which are checked into `git`; this is so others wishing to verify reproducability of the `tor` binaries 
-they are running (or providing to their users) can do so. More on that later.
+`tor` is compiled via the `external/task.sh` script using `Docker` in order to maintain 
+reproducability. The maintainer then creates detached code signatures for Apple/Windows 
+targets which are checked into `git`; this is so others wishing to verify reproducability 
+of the `tor` binaries they are running (or providing to their users) can do so. More on that later.
 
-You can view the `help` output of `task.sh` by running `./external/task.sh` from the project's root directory.
+You can view the `help` output of `task.sh` by running `./external/task.sh` from the project's 
+root directory.
 
 ```
 # clone repository
@@ -40,9 +54,9 @@ $ ./external/task.sh
 
 ### Packaging
 
-The compiled output from `task.sh`'s `build` tasks are "packaged" for the given platforms (currently 
-only Android/Jvm/Node.js) and moved to their designated gradle module resource directories 
-(e.g. `library/binary/src/jvmMain/resources`).
+The compiled output from `task.sh`'s `build` tasks are "packaged" for the given platforms and 
+moved to their designated package module's resource directories 
+(e.g. `external/build/package/binary/src/jvmMain/resources`).
 
 Running `./external/task.sh package` after a `build` task will do the following.
 
@@ -51,11 +65,11 @@ Running `./external/task.sh package` after a `build` task will do the following.
  - `geoip` & `geoip6` files are `gzipped` and moved to the `src/jvmAndroidMain/resources` directory
  - Detached code signatures for macOS and Windows are applied to the compilied `tor` binaries (if needed)
  - `tor` binaries are `gzipped` and moved to the `src/jvmMain/resources` directory for their respective 
-   host and architecture.
+   hosts and architectures.
 
-**iOS/macOS/tvOS/watchOS:**
- - Supporting darwin targets for Kotlin Multiplatform is a work in progress. See Issue 
-   [[#120]](https://github.com/05nelsonm/kmp-tor-binary/issues/120)
+**Native:**
+ - The same process occurs as above, but after being `gzipped` each resource is transformed into 
+   a `NativeResource` (e.g. `resource_tor_gz.kt`).
 
 After "packaging" all resources, an additional step for Node.js is performed.
  - `geoip`, `geoip6`, and all `tor` files are published to `Npmjs` via the
