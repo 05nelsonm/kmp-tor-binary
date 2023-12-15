@@ -68,9 +68,8 @@ function build:all:linux-libc { ## Builds all Linux Libc targets
 #  build:linux-musl:x86_64
 #}
 
-function build:all:macos { ## Builds all macOS targets
-  build:macos:aarch64
-  build:macos:x86_64
+function build:all:macos { ## Builds all macOS targets (alias for build:macos:universal)
+  build:macos:universal
 }
 
 function build:all:mingw { ## Builds all Windows targets
@@ -229,6 +228,14 @@ function build:macos:x86_64 { ## Builds macOS x86_64
   local cc_clang="yes"
   __build:configure:target:init
   __exec:docker:run
+}
+
+function build:macos:universal { ## Builds macOS aarch64 & x86_64 and merges them using lipo
+  build:macos:aarch64
+  build:macos:x86_64
+
+  local os_name="macos"
+  __exec:docker:run:lipo "aarch64" "x86_64"
 }
 
 function build:mingw:x86 { ## Builds Windows x86
@@ -503,12 +510,9 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:CFLAGS '-fPIC'
     __conf:CFLAGS '-fvisibility=hidden'
   fi
-  # TODO: openssl configurations for darwin use -bundle which is wrong
-  #  need to modify openssl/Configurations/shared-info.pl
-  #  for its darwin-shared target the field module_ldflags
-#  if [ "$os_name" = "macos" ]; then
-#    __conf:CFLAGS '-fembed-bitcode'
-#  fi
+  if [ "$os_name" = "macos" ]; then
+    __conf:CFLAGS '-fembed-bitcode'
+  fi
 
   # LDFLAGS
   __conf:LDFLAGS '-L$DIR_SCRIPT/libevent/lib'
@@ -520,9 +524,9 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:LDFLAGS '-Wl,--no-insert-timestamp'
     __conf:LDFLAGS '-static-libgcc'
   fi
-#  if [ "$os_name" = "macos" ]; then
-#    __conf:LDFLAGS '-fembed-bitcode'
-#  fi
+  if [ "$os_name" = "macos" ]; then
+    __conf:LDFLAGS '-fembed-bitcode'
+  fi
 
   # ZLIB
   CONF_ZLIB='./configure --static \
@@ -690,16 +694,6 @@ echo \"
 \""
   __conf:SCRIPT 'cp -R "$DIR_EXTERNAL/openssl" "$DIR_TMP"
 cd "$DIR_TMP/openssl"'
-
-  if [ "$os_name" = "mingw" ]; then
-    # TODO: Move to patch file
-    __conf:SCRIPT "
-# https://github.com/openssl/openssl/issues/14574
-# https://github.com/netdata/netdata/pull/15842
-sed -i \"s/disable('static', 'pic', 'threads');/disable('static', 'pic');/\" \"Configure\"
-"
-  fi
-
   __conf:SCRIPT "$CONF_OPENSSL > \"\$DIR_SCRIPT/openssl/logs/configure.log\" 2> \"\$DIR_SCRIPT/openssl/logs/configure.err\"
 perl configdata.pm --dump >> \"\$DIR_SCRIPT/openssl/logs/configure.log\"
 make clean > /dev/null
@@ -936,6 +930,51 @@ function __exec:docker:run {
     "./$DIR_BUILD/build.sh"
 
   trap - SIGINT
+}
+
+function __exec:docker:run:lipo {
+  __require:cmd "$DOCKER" "docker"
+  __require:var_set "$os_name" "os_name"
+
+  local cmd="lipo -create"
+  local arch=
+  local tor=
+  local dir_out="build/out/$os_name$os_subtype"
+  for arch in "$@"; do
+    tor="$dir_out/$arch/tor"
+    cmd="$cmd $tor"
+
+    if [ ! -f "$tor" ]; then
+      __error "lib not found >> $tor"
+    fi
+  done
+
+  cmd="$cmd -output $dir_out/universal/tor"
+  local docker_image="05nelsonm/build-env.$os_name$os_subtype.base:$TAG_DOCKER_BUILD_ENV"
+
+  if $DRY_RUN; then
+    echo "
+    DOCKER: $docker_image
+    CMD:    $cmd
+    "
+    return 0
+  fi
+
+  mkdir -p "$DIR_TASK/$dir_out/universal"
+  rm -rf "$DIR_TASK/$dir_out/universal/tor"
+
+  echo "
+  Creating universal lib for $os_name[$*]
+  "
+
+  # Darwin targets only use this, so will be base
+  # images for macos, ios, or ios-simulator
+  ${DOCKER} run \
+    --rm \
+    -u "$U_ID:$G_ID" \
+    -v "$DIR_TASK:/work" \
+    "$docker_image" \
+    $cmd
 }
 
 function __package:geoip {

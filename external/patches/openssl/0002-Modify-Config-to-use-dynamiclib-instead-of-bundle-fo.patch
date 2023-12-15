@@ -1,0 +1,27 @@
+From 720c2093e66f1964b976815c3898e824efff0097 Mon Sep 17 00:00:00 2001
+From: Matthew Nelson <developer@matthewnelson.io>
+Date: Thu, 14 Dec 2023 05:24:33 -0500
+Subject: [PATCH 2/2] Modify Config to use -dynamiclib instead of -bundle for
+ darwin
+
+---
+ Configurations/shared-info.pl | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Configurations/shared-info.pl b/Configurations/shared-info.pl
+index edd16f4055..b375e31b46 100644
+--- a/Configurations/shared-info.pl
++++ b/Configurations/shared-info.pl
+@@ -41,7 +41,8 @@ my %shared_info;
+     },
+     'bsd-gcc-shared' => sub { return $shared_info{'linux-shared'}; },
+     'darwin-shared' => {
+-        module_ldflags        => '-bundle',
++        # https://github.com/openssl/openssl/issues/18754
++        module_ldflags        => '-dynamiclib',
+         shared_ldflag         => '-dynamiclib -current_version $(SHLIB_VERSION_NUMBER) -compatibility_version $(SHLIB_VERSION_NUMBER)',
+         shared_sonameflag     => '-install_name $(libdir)/',
+     },
+-- 
+2.34.1
+
