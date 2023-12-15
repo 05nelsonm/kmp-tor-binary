@@ -29,7 +29,6 @@ readonly DOCKER=$(which docker)
 readonly GIT=$(which git)
 readonly OSSLSIGNCODE=$(which osslsigncode)
 readonly RCODESIGN=$(which rcodesign)
-readonly XCRUN=$(which xcrun)
 
 # Docker
 readonly U_ID=$(id -u)
@@ -42,41 +41,41 @@ function build:all:android { ## Builds all Android targets
   build:android:x86_64
 }
 
-function build:all:jvm { ## Builds all Linux, macOS, Windows targets for JVM
-#  build:all:jvm:freebsd
-  build:all:jvm:linux-libc
-#  build:all:jvm:linux-musl
-  build:all:jvm:macos
-  build:all:jvm:mingw
+function build:all:desktop { ## Builds all Linux, macOS, Windows targets
+#  build:all:freebsd
+  build:all:linux-libc
+#  build:all:linux-musl
+  build:all:macos
+  build:all:mingw
 }
 
-#function build:all:jvm:freebsd { ## Builds all FreeBSD targets for JVM
-#  build:jvm:freebsd:aarch64
-#  build:jvm:freebsd:x86
-#  build:jvm:freebsd:x86_64
+#function build:all:freebsd { ## Builds all FreeBSD targets
+#  build:freebsd:aarch64
+#  build:freebsd:x86
+#  build:freebsd:x86_64
 #}
 
-function build:all:jvm:linux-libc { ## Builds all Linux Libc targets for JVM
-  build:jvm:linux-libc:aarch64
-  build:jvm:linux-libc:armv7
-  build:jvm:linux-libc:x86
-  build:jvm:linux-libc:x86_64
+function build:all:linux-libc { ## Builds all Linux Libc targets
+  build:linux-libc:aarch64
+  build:linux-libc:armv7
+  build:linux-libc:x86
+  build:linux-libc:x86_64
 }
 
-#function build:all:jvm:linux-musl { ## Builds all Linux Musl targets for JVM
-#  build:jvm:linux-musl:aarch64
-#  build:jvm:linux-musl:x86
-#  build:jvm:linux-musl:x86_64
+#function build:all:linux-musl { ## Builds all Linux Musl targets
+#  build:linux-musl:aarch64
+#  build:linux-musl:x86
+#  build:linux-musl:x86_64
 #}
 
-function build:all:jvm:macos { ## Builds all macOS targets for JVM
-  build:jvm:macos:aarch64
-  build:jvm:macos:x86_64
+function build:all:macos { ## Builds all macOS targets
+  build:macos:aarch64
+  build:macos:x86_64
 }
 
-function build:all:jvm:mingw { ## Builds all Windows targets for JVM
-  build:jvm:mingw:x86
-  build:jvm:mingw:x86_64
+function build:all:mingw { ## Builds all Windows targets
+  build:mingw:x86
+  build:mingw:x86_64
 }
 
 function build:android:aarch64 { ## Builds Android arm64-v8a
@@ -119,7 +118,7 @@ function build:android:x86_64 { ## Builds Android x86_64
   __exec:docker:run
 }
 
-#function build:jvm:freebsd:aarch64 { ## Builds FreeBSD aarch64 for JVM
+#function build:freebsd:aarch64 { ## Builds FreeBSD aarch64
 #  local os_name="freebsd"
 #  local os_arch="aarch64"
 #  local openssl_target="BSD-aarch64"
@@ -127,7 +126,7 @@ function build:android:x86_64 { ## Builds Android x86_64
 #  # TODO __exec:docker:run
 #}
 
-#function build:jvm:freebsd:x86 { ## Builds FreeBSD x86 for JVM
+#function build:freebsd:x86 { ## Builds FreeBSD x86
 #  local os_name="freebsd"
 #  local os_arch="x86"
 #  local openssl_target="BSD-x86"
@@ -135,7 +134,7 @@ function build:android:x86_64 { ## Builds Android x86_64
 #  # TODO __exec:docker:run
 #}
 
-#function build:jvm:freebsd:x86_64 { ## Builds FreeBSD x86_64 for JVM
+#function build:freebsd:x86_64 { ## Builds FreeBSD x86_64
 #  local os_name="freebsd"
 #  local os_arch="x86_64"
 #  local openssl_target="BSD-x86_64"
@@ -143,7 +142,7 @@ function build:android:x86_64 { ## Builds Android x86_64
 #  # TODO __exec:docker:run
 #}
 
-function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
+function build:linux-libc:aarch64 { ## Builds Linux Libc aarch64
   local os_name="linux"
   local os_subtype="-libc"
   local os_arch="aarch64"
@@ -153,7 +152,7 @@ function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
+function build:linux-libc:armv7 { ## Builds Linux Libc armv7
   local os_name="linux"
   local os_subtype="-libc"
   local os_arch="armv7"
@@ -165,7 +164,7 @@ function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-libc:x86 { ## Builds Linux Libc x86 for JVM
+function build:linux-libc:x86 { ## Builds Linux Libc x86
   local os_name="linux"
   local os_subtype="-libc"
   local os_arch="x86"
@@ -176,7 +175,7 @@ function build:jvm:linux-libc:x86 { ## Builds Linux Libc x86 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
+function build:linux-libc:x86_64 { ## Builds Linux Libc x86_64
   local os_name="linux"
   local os_subtype="-libc"
   local os_arch="x86_64"
@@ -185,7 +184,7 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
   __exec:docker:run
 }
 
-#function build:jvm:linux-musl:aarch64 { ## Builds Linux Musl aarch64 for JVM
+#function build:linux-musl:aarch64 { ## Builds Linux Musl aarch64
 #  local os_name="linux"
 #  local os_subtype="-musl"
 #  local os_arch="aarch64"
@@ -194,7 +193,7 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
 #  # TODO __exec:docker:run
 #}
 
-#function build:jvm:linux-musl:x86 { ## Builds Linux Musl x86 for JVM
+#function build:linux-musl:x86 { ## Builds Linux Musl x86
 #  local os_name="linux"
 #  local os_subtype="-musl"
 #  local os_arch="x86"
@@ -205,7 +204,7 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
 #  # TODO __exec:docker:run
 #}
 
-#function build:jvm:linux-musl:x86_64 { ## Builds Linux Musl x86_64 for JVM
+#function build:linux-musl:x86_64 { ## Builds Linux Musl x86_64
 #  local os_name="linux"
 #  local os_subtype="-musl"
 #  local os_arch="x86_64"
@@ -214,7 +213,7 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
 #  # TODO __exec:docker:run
 #}
 
-function build:jvm:macos:aarch64 { ## Builds macOS aarch64 for JVM
+function build:macos:aarch64 { ## Builds macOS aarch64
   local os_name="macos"
   local os_arch="aarch64"
   local openssl_target="darwin64-arm64-cc"
@@ -223,7 +222,7 @@ function build:jvm:macos:aarch64 { ## Builds macOS aarch64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:macos:x86_64 { ## Builds macOS x86_64 for JVM
+function build:macos:x86_64 { ## Builds macOS x86_64
   local os_name="macos"
   local os_arch="x86_64"
   local openssl_target="darwin64-x86_64-cc"
@@ -232,7 +231,7 @@ function build:jvm:macos:x86_64 { ## Builds macOS x86_64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
+function build:mingw:x86 { ## Builds Windows x86
   local os_name="mingw"
   local os_arch="x86"
   local openssl_target="mingw"
@@ -241,23 +240,13 @@ function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
   __exec:docker:run
 }
 
-function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
+function build:mingw:x86_64 { ## Builds Windows x86_64
   local os_name="mingw"
   local os_arch="x86_64"
   local openssl_target="mingw64"
   __build:configure:target:init
   __exec:docker:run
 }
-
-# TODO: macOS, iOS, tvOS, watchOS frameworks
-
-#function build:framework:ios:x86_64 { ## Builds iOS x86_64 Framework
-#  local os_name="ios"
-#  local os_arch="x86_64"
-#  local is_framework="yes"
-#  local openssl_target="ios64-xcrun"
-#  __build:configure:target:init
-#}
 
 function clean { ## Deletes the build dir
   rm -rf "$DIR_TASK/build"
@@ -336,11 +325,10 @@ function sign:apple { ## 2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store
   fi
 
   __require:cmd "$RCODESIGN" "rcodesign"
-  __require:file_exists "$1" "p12 file does not exist"
-  __require:file_exists "$2" "App Store Connect api key file does not exist"
 
-  __signature:generate:apple "$1" "$2" "jvm-out/macos/aarch64"
-  __signature:generate:apple "$1" "$2" "jvm-out/macos/x86_64"
+  local os_name="macos"
+  __signature:generate:apple "$1" "$2" "aarch64"
+  __signature:generate:apple "$1" "$2" "x86_64"
 }
 
 function sign:mingw { ## 2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
@@ -350,11 +338,9 @@ function sign:mingw { ## 2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
   fi
 
   __require:cmd "$OSSLSIGNCODE" "osslsigncode"
-  __require:file_exists "$1" "key file does not exist"
-  __require:file_exists "$2" "cert file does not exist"
 
-  __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86"
-  __signature:generate:mingw "$1" "$2" "jvm-out/mingw/x86_64"
+  __signature:generate:mingw "$1" "$2" "x86"
+  __signature:generate:mingw "$1" "$2" "x86_64"
 }
 
 function __build:cleanup {
@@ -372,27 +358,19 @@ function __build:configure:target:init {
   __require:var_set "$os_name" "os_name"
   __require:var_set "$os_arch" "os_arch"
   __require:var_set "$openssl_target" "openssl_target"
+  __require:cmd "$DOCKER" "docker"
+  __require:var_set "$U_ID" "U_ID"
+  __require:var_set "$G_ID" "G_ID"
 
-  if [ -n "$is_framework" ]; then
-    # TODO: require cross_triple to be set as we're not running in docker
-    __require:cmd "$XCRUN" "xcrun (Xcode CLI tool on macOS machine)"
+  if [ "$os_name" = "android" ]; then
+    __require:var_set "$ndk_abi" "ndk_abi"
+    __require:var_set "$cc_clang"
 
-    DIR_BUILD="build/framework/$os_name$os_subtype/$os_arch"
-    DIR_OUT="build/framework-out/$os_name$os_subtype/$os_arch"
+    DIR_BUILD="build/stage/$os_name/$ndk_abi"
+    DIR_OUT="build/out/$os_name/$ndk_abi"
   else
-    __require:cmd "$DOCKER" "docker"
-    __require:var_set "$U_ID" "U_ID"
-    __require:var_set "$G_ID" "G_ID"
-
-    if [ "$os_name" = "android" ]; then
-      __require:var_set "$ndk_abi" "ndk_abi"
-
-      DIR_BUILD="build/$os_name/$ndk_abi"
-      DIR_OUT="build/$os_name-out/$ndk_abi"
-    else
-      DIR_BUILD="build/jvm/$os_name$os_subtype/$os_arch"
-      DIR_OUT="build/jvm-out/$os_name$os_subtype/$os_arch"
-    fi
+    DIR_BUILD="build/stage/$os_name$os_subtype/$os_arch"
+    DIR_OUT="build/out/$os_name$os_subtype/$os_arch"
   fi
 
   unset CONF_CC
@@ -432,6 +410,21 @@ export LC_ALL=C
 export SOURCE_DATE_EPOCH="1234567890"
 export TZ=UTC
 set -e
+'
+
+  __conf:SCRIPT "readonly TASK_TARGET=\"$os_name$os_subtype:$os_arch\""
+  __conf:SCRIPT '
+readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
+# Docker container WORKDIR
+readonly DIR_EXTERNAL=/work
+
+if [ ! -f "$DIR_EXTERNAL/task.sh" ]; then
+  echo 1>&2 "
+    DIR_EXTERNAL does not exist
+    Are you not using task.sh?
+  "
+  exit 3
+fi
 
 if [ -z "$CROSS_TRIPLE" ]; then
   echo 1>&2 "
@@ -441,10 +434,7 @@ if [ -z "$CROSS_TRIPLE" ]; then
   exit 3
 fi
 '
-  __conf:SCRIPT "readonly TASK_TARGET=\"$os_name$os_subtype:$os_arch\""
-  __conf:SCRIPT '
-readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
-readonly DIR_EXTERNAL="$(pwd)"'
+
   __conf:SCRIPT "readonly DIR_OUT=\"\$DIR_EXTERNAL/$DIR_OUT\""
   __conf:SCRIPT 'readonly DIR_TMP="$(mktemp -d)"'
   __conf:SCRIPT "trap 'rm -rf \$DIR_TMP' EXIT"
@@ -453,9 +443,9 @@ readonly NUM_JOBS="$(nproc)"
 '
 
   if [ "$os_name" = "android" ]; then
-    __conf:SCRIPT "readonly DIR_OUT_JVM=\"\$DIR_EXTERNAL/build/jvm-out/linux-$os_name/$os_arch\""
+    __conf:SCRIPT "readonly DIR_OUT_ALT=\"\$DIR_EXTERNAL/build/out/linux-$os_name/$os_arch\""
     __conf:SCRIPT '
-rm -rf "$DIR_OUT_JVM"'
+rm -rf "$DIR_OUT_ALT"'
   fi
 
   __conf:SCRIPT 'rm -rf "$DIR_OUT"
@@ -497,8 +487,8 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:CFLAGS '-frandom-seed=0'
   __conf:CFLAGS '-fstack-protector-strong'
 
-  if [ -z "$is_framework" ] && [ -z "$cc_clang" ]; then
-    # non-framework (i.e. jvm) that is using gcc
+  if [ -z "$cc_clang" ]; then
+    # gcc only
     __conf:CFLAGS '-fno-guess-branch-probability'
   fi
   if [ "$os_name" = "mingw" ]; then
@@ -513,9 +503,12 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:CFLAGS '-fPIC'
     __conf:CFLAGS '-fvisibility=hidden'
   fi
-  if [ -n "$is_framework" ]; then
-    __conf:CFLAGS '-fembed-bitcode'
-  fi
+  # TODO: openssl configurations for darwin use -bundle which is wrong
+  #  need to modify openssl/Configurations/shared-info.pl
+  #  for its darwin-shared target the field module_ldflags
+#  if [ "$os_name" = "macos" ]; then
+#    __conf:CFLAGS '-fembed-bitcode'
+#  fi
 
   # LDFLAGS
   __conf:LDFLAGS '-L$DIR_SCRIPT/libevent/lib'
@@ -527,9 +520,9 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     __conf:LDFLAGS '-Wl,--no-insert-timestamp'
     __conf:LDFLAGS '-static-libgcc'
   fi
-  if [ -n "$is_framework" ]; then
-    __conf:LDFLAGS '-fembed-bitcode'
-  fi
+#  if [ "$os_name" = "macos" ]; then
+#    __conf:LDFLAGS '-fembed-bitcode'
+#  fi
 
   # ZLIB
   CONF_ZLIB='./configure --static \
@@ -751,45 +744,41 @@ make install >> \"\$DIR_SCRIPT/tor/logs/make.log\" 2>> \"\$DIR_SCRIPT/tor/logs/m
   # out
   __conf:SCRIPT 'mkdir -p "$DIR_OUT"'
 
-  if [ -z "$is_framework" ]; then
-    local bin_name=
-    local bin_name_out=
+  local bin_name=
+  local bin_name_out=
 
-    case "$os_name" in
-      "android")
-        bin_name="tor"
-        bin_name_out="libtor.so"
-        ;;
-      "linux"|"freebsd"|"macos")
-        bin_name="tor"
-        bin_name_out="tor"
-        ;;
-      "mingw")
-        bin_name="tor.exe"
-        # Do not modify the name for Windows. Otherwise it
-        # may be flaged by Windows Defender as a virus.
-        bin_name_out="tor.exe"
-        ;;
-      *)
-        __error "Unknown os_name >> $os_name"
-        ;;
-    esac
+  case "$os_name" in
+    "android")
+      bin_name="tor"
+      bin_name_out="libtor.so"
+      ;;
+    "linux"|"freebsd"|"macos")
+      bin_name="tor"
+      bin_name_out="tor"
+      ;;
+    "mingw")
+      bin_name="tor.exe"
+      # Do not modify the name for Windows. Otherwise it
+      # may be flaged by Windows Defender as a virus.
+      bin_name_out="tor.exe"
+      ;;
+    *)
+      __error "Unknown os_name >> $os_name"
+      ;;
+  esac
 
-    __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$bin_name\" \"\$DIR_OUT/$bin_name_out\""
-    __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$bin_name_out\""
+  __conf:SCRIPT "cp \"\$DIR_SCRIPT/tor/bin/$bin_name\" \"\$DIR_OUT/$bin_name_out\""
+  __conf:SCRIPT "\${STRIP} -D \"\$DIR_OUT/$bin_name_out\""
 
-    if [ "$os_name" = "android" ]; then
-      __conf:SCRIPT "
-mkdir -p \"\$DIR_OUT_JVM\"
-cp -a \"\$DIR_OUT/$bin_name_out\" \"\$DIR_OUT_JVM/tor\"
+  if [ "$os_name" = "android" ]; then
+    __conf:SCRIPT "
+mkdir -p \"\$DIR_OUT_ALT\"
+cp -a \"\$DIR_OUT/$bin_name_out\" \"\$DIR_OUT_ALT/tor\"
 "
-    fi
-
-    __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$bin_name\")\""
-    __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$bin_name_out\")\""
-  # else
-    # TODO: framework
   fi
+
+  __conf:SCRIPT "echo \"Unstripped: \$(sha256sum \"\$DIR_SCRIPT/tor/bin/$bin_name\")\""
+  __conf:SCRIPT "echo \"Stripped:   \$(sha256sum \"\$DIR_OUT/$bin_name_out\")\""
 
   mkdir -p "$DIR_BUILD"
   echo "$CONF_SCRIPT" > "$DIR_BUILD/build.sh"
@@ -962,17 +951,17 @@ function __package:geoip {
 function __package:android {
   local permissions="755"
   # no gzip
-  __package "build/android-out/$1" "androidMain/jniLibs/$1" "libtor.so"
+  __package "build/out/android/$1" "androidMain/jniLibs/$1" "libtor.so"
 }
 
 function __package:jvm {
   local permissions="755"
   local gzip="yes"
-  __package "build/jvm-out/$1" "jvmMain/resources/io/matthewnelson/kmp/tor/binary/native/$1" "$2"
+  __package "build/out/$1" "jvmMain/resources/io/matthewnelson/kmp/tor/binary/native/$1" "$2"
 }
 
 function __package:jvm:codesigned {
-  local detached_sig="jvm-out/$1"
+  local detached_sig="$1"
   __package:jvm "$@"
 }
 
@@ -980,11 +969,11 @@ function __package:native {
   local permissions="755"
   local gzip="yes"
   local native_resource="io.matthewnelson.kmp.tor.binary.internal"
-  __package "build/jvm-out/$1" "$3" "$2"
+  __package "build/out/$1" "$3" "$2"
 }
 
 function __package:native:codesigned {
-  local detached_sig="jvm-out/$1"
+  local detached_sig="$1"
   __package:native "$@"
 }
 
@@ -1010,9 +999,7 @@ function __package {
   fi
 
   if [ ! -f "$DIR_TASK/$1/$3" ]; then
-    echo "
-    FileNotFound. SKIPPING >> ARGS - 1[$1] - 2[$2] - 3[$3]
-    "
+    echo "FileNotFound. SKIPPING >> ARGS - 1[$1] - 2[$2] - 3[$3]"
     return 0
   fi
 
@@ -1053,17 +1040,20 @@ function __package {
 }
 
 function __signature:generate:apple {
-  __require:var_set "$3" "build output directory path (e.g. jvm-out/macos/aarch64)"
+  __require:var_set "$os_name"
+  __require:file_exists "$1" "p12 file does not exist"
+  __require:file_exists "$2" "App Store Connect api key file does not exist"
+  __require:var_set "$3" "arch"
 
-  if [ ! -f "$DIR_TASK/build/$3/tor" ]; then
+  if [ ! -f "$DIR_TASK/build/out/$os_name/$3/tor" ]; then
     echo "
-    build/$3/tor not found. Skipping...
+    tor not found for $os_name:$3. Skipping...
     "
     return 0
   fi
 
   echo "
-    Creating detached signature for build/$3/tor
+    Creating detached signature for build/out/$os_name/$3/tor
   "
 
   DIR_TMP="$(mktemp -d)"
@@ -1086,8 +1076,8 @@ function __signature:generate:apple {
 </dict>
 </plist>' > "$dir_bundle/Contents/Info.plist"
 
-  cp "$DIR_TASK/build/$3/tor" "$dir_bundle_macos/tor.program"
-  cp "$DIR_TASK/build/$3/tor" "$dir_bundle_libs/tor"
+  cp "$DIR_TASK/build/out/$os_name/$3/tor" "$dir_bundle_macos/tor.program"
+  cp "$DIR_TASK/build/out/$os_name/$3/tor" "$dir_bundle_libs/tor"
 
   ${RCODESIGN} sign \
     --p12-file "$1" \
@@ -1102,16 +1092,16 @@ function __signature:generate:apple {
     --staple \
     "$dir_bundle"
 
-  mkdir -p "$DIR_TASK/codesign/$3"
-  rm -rf "$DIR_TASK/codesign/$3/tor.signature"
+  mkdir -p "$DIR_TASK/codesign/$os_name/$3"
+  rm -rf "$DIR_TASK/codesign/$os_name/$3/tor.signature"
 
   echo ""
 
   ../tooling diff-cli create \
     --diff-ext-name ".signature" \
-    "$DIR_TASK/build/$3/tor" \
+    "$DIR_TASK/build/out/$os_name/$3/tor" \
     "$dir_bundle_libs/tor" \
-    "$DIR_TASK/codesign/$3"
+    "$DIR_TASK/codesign/$os_name/$3"
 
   echo ""
 
@@ -1122,17 +1112,19 @@ function __signature:generate:apple {
 }
 
 function __signature:generate:mingw {
-  __require:var_set "$3" "build output directory path (e.g. jvm-out/mingw/x86)"
+  __require:file_exists "$1" "key file does not exist"
+  __require:file_exists "$2" "cert file does not exist"
+  __require:var_set "$3" "arch"
 
-  if [ ! -f "$DIR_TASK/build/$3/tor.exe" ]; then
+  if [ ! -f "$DIR_TASK/build/out/mingw/$3/tor.exe" ]; then
     echo "
-    build/$3/tor.exe not found. Skipping...
+    tor.exe not found for mingw/$3. Skipping...
     "
     return 0
   fi
 
   echo "
-    Creating detached signature for build/$3/tor.exe
+    Creating detached signature for build/out/mingw/$3/tor.exe
   "
 
   DIR_TMP="$(mktemp -d)"
@@ -1142,19 +1134,19 @@ function __signature:generate:mingw {
     -key "$1" \
     -certs "$2" \
     -t "http://timestamp.comodoca.com" \
-    -in "$DIR_TASK/build/$3/tor.exe" \
+    -in "$DIR_TASK/build/out/mingw/$3/tor.exe" \
     -out "$DIR_TMP/tor.exe"
 
-  mkdir -p "$DIR_TASK/codesign/$3"
-  rm -rf "$DIR_TASK/codesign/$3/tor.exe.signature"
+  mkdir -p "$DIR_TASK/codesign/mingw/$3"
+  rm -rf "$DIR_TASK/codesign/mingw/$3/tor.exe.signature"
 
   echo ""
 
   ../tooling diff-cli create \
     --diff-ext-name ".signature" \
-    "$DIR_TASK/build/$3/tor.exe" \
+    "$DIR_TASK/build/out/mingw/$3/tor.exe" \
     "$DIR_TMP/tor.exe" \
-    "$DIR_TASK/codesign/$3"
+    "$DIR_TASK/codesign/mingw/$3"
 
   echo ""
 
