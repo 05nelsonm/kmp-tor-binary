@@ -29,7 +29,6 @@ readonly DOCKER=$(which docker)
 readonly GIT=$(which git)
 readonly OSSLSIGNCODE=$(which osslsigncode)
 readonly RCODESIGN=$(which rcodesign)
-readonly XCRUN=$(which xcrun)
 
 # Docker
 readonly U_ID=$(id -u)
@@ -42,41 +41,41 @@ function build:all:android { ## Builds all Android targets
   build:android:x86_64
 }
 
-function build:all:jvm { ## Builds all Linux, macOS, Windows targets for JVM
-#  build:all:jvm:freebsd
-  build:all:jvm:linux-libc
-#  build:all:jvm:linux-musl
-  build:all:jvm:macos
-  build:all:jvm:mingw
+function build:all:desktop { ## Builds all Linux, macOS, Windows targets
+#  build:all:freebsd
+  build:all:linux-libc
+#  build:all:linux-musl
+  build:all:macos
+  build:all:mingw
 }
 
-#function build:all:jvm:freebsd { ## Builds all FreeBSD targets for JVM
-#  build:jvm:freebsd:aarch64
-#  build:jvm:freebsd:x86
-#  build:jvm:freebsd:x86_64
+#function build:all:freebsd { ## Builds all FreeBSD targets
+#  build:freebsd:aarch64
+#  build:freebsd:x86
+#  build:freebsd:x86_64
 #}
 
-function build:all:jvm:linux-libc { ## Builds all Linux Libc targets for JVM
-  build:jvm:linux-libc:aarch64
-  build:jvm:linux-libc:armv7
-  build:jvm:linux-libc:x86
-  build:jvm:linux-libc:x86_64
+function build:all:linux-libc { ## Builds all Linux Libc targets
+  build:linux-libc:aarch64
+  build:linux-libc:armv7
+  build:linux-libc:x86
+  build:linux-libc:x86_64
 }
 
-#function build:all:jvm:linux-musl { ## Builds all Linux Musl targets for JVM
-#  build:jvm:linux-musl:aarch64
-#  build:jvm:linux-musl:x86
-#  build:jvm:linux-musl:x86_64
+#function build:all:linux-musl { ## Builds all Linux Musl targets
+#  build:linux-musl:aarch64
+#  build:linux-musl:x86
+#  build:linux-musl:x86_64
 #}
 
-function build:all:jvm:macos { ## Builds all macOS targets for JVM
-  build:jvm:macos:aarch64
-  build:jvm:macos:x86_64
+function build:all:macos { ## Builds all macOS targets
+  build:macos:aarch64
+  build:macos:x86_64
 }
 
-function build:all:jvm:mingw { ## Builds all Windows targets for JVM
-  build:jvm:mingw:x86
-  build:jvm:mingw:x86_64
+function build:all:mingw { ## Builds all Windows targets
+  build:mingw:x86
+  build:mingw:x86_64
 }
 
 function build:android:aarch64 { ## Builds Android arm64-v8a
@@ -119,7 +118,7 @@ function build:android:x86_64 { ## Builds Android x86_64
   __exec:docker:run
 }
 
-#function build:jvm:freebsd:aarch64 { ## Builds FreeBSD aarch64 for JVM
+#function build:freebsd:aarch64 { ## Builds FreeBSD aarch64
 #  local os_name="freebsd"
 #  local os_arch="aarch64"
 #  local openssl_target="BSD-aarch64"
@@ -127,7 +126,7 @@ function build:android:x86_64 { ## Builds Android x86_64
 #  # TODO __exec:docker:run
 #}
 
-#function build:jvm:freebsd:x86 { ## Builds FreeBSD x86 for JVM
+#function build:freebsd:x86 { ## Builds FreeBSD x86
 #  local os_name="freebsd"
 #  local os_arch="x86"
 #  local openssl_target="BSD-x86"
@@ -135,7 +134,7 @@ function build:android:x86_64 { ## Builds Android x86_64
 #  # TODO __exec:docker:run
 #}
 
-#function build:jvm:freebsd:x86_64 { ## Builds FreeBSD x86_64 for JVM
+#function build:freebsd:x86_64 { ## Builds FreeBSD x86_64
 #  local os_name="freebsd"
 #  local os_arch="x86_64"
 #  local openssl_target="BSD-x86_64"
@@ -143,7 +142,7 @@ function build:android:x86_64 { ## Builds Android x86_64
 #  # TODO __exec:docker:run
 #}
 
-function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
+function build:linux-libc:aarch64 { ## Builds Linux Libc aarch64
   local os_name="linux"
   local os_subtype="-libc"
   local os_arch="aarch64"
@@ -153,7 +152,7 @@ function build:jvm:linux-libc:aarch64 { ## Builds Linux Libc aarch64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
+function build:linux-libc:armv7 { ## Builds Linux Libc armv7
   local os_name="linux"
   local os_subtype="-libc"
   local os_arch="armv7"
@@ -165,7 +164,7 @@ function build:jvm:linux-libc:armv7 { ## Builds Linux Libc armv7 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-libc:x86 { ## Builds Linux Libc x86 for JVM
+function build:linux-libc:x86 { ## Builds Linux Libc x86
   local os_name="linux"
   local os_subtype="-libc"
   local os_arch="x86"
@@ -176,7 +175,7 @@ function build:jvm:linux-libc:x86 { ## Builds Linux Libc x86 for JVM
   __exec:docker:run
 }
 
-function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
+function build:linux-libc:x86_64 { ## Builds Linux Libc x86_64
   local os_name="linux"
   local os_subtype="-libc"
   local os_arch="x86_64"
@@ -185,7 +184,7 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
   __exec:docker:run
 }
 
-#function build:jvm:linux-musl:aarch64 { ## Builds Linux Musl aarch64 for JVM
+#function build:linux-musl:aarch64 { ## Builds Linux Musl aarch64
 #  local os_name="linux"
 #  local os_subtype="-musl"
 #  local os_arch="aarch64"
@@ -194,7 +193,7 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
 #  # TODO __exec:docker:run
 #}
 
-#function build:jvm:linux-musl:x86 { ## Builds Linux Musl x86 for JVM
+#function build:linux-musl:x86 { ## Builds Linux Musl x86
 #  local os_name="linux"
 #  local os_subtype="-musl"
 #  local os_arch="x86"
@@ -205,7 +204,7 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
 #  # TODO __exec:docker:run
 #}
 
-#function build:jvm:linux-musl:x86_64 { ## Builds Linux Musl x86_64 for JVM
+#function build:linux-musl:x86_64 { ## Builds Linux Musl x86_64
 #  local os_name="linux"
 #  local os_subtype="-musl"
 #  local os_arch="x86_64"
@@ -214,7 +213,7 @@ function build:jvm:linux-libc:x86_64 { ## Builds Linux Libc x86_64 for JVM
 #  # TODO __exec:docker:run
 #}
 
-function build:jvm:macos:aarch64 { ## Builds macOS aarch64 for JVM
+function build:macos:aarch64 { ## Builds macOS aarch64
   local os_name="macos"
   local os_arch="aarch64"
   local openssl_target="darwin64-arm64-cc"
@@ -223,7 +222,7 @@ function build:jvm:macos:aarch64 { ## Builds macOS aarch64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:macos:x86_64 { ## Builds macOS x86_64 for JVM
+function build:macos:x86_64 { ## Builds macOS x86_64
   local os_name="macos"
   local os_arch="x86_64"
   local openssl_target="darwin64-x86_64-cc"
@@ -232,7 +231,7 @@ function build:jvm:macos:x86_64 { ## Builds macOS x86_64 for JVM
   __exec:docker:run
 }
 
-function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
+function build:mingw:x86 { ## Builds Windows x86
   local os_name="mingw"
   local os_arch="x86"
   local openssl_target="mingw"
@@ -241,7 +240,7 @@ function build:jvm:mingw:x86 { ## Builds Windows x86 for JVM
   __exec:docker:run
 }
 
-function build:jvm:mingw:x86_64 { ## Builds Windows x86_64 for JVM
+function build:mingw:x86_64 { ## Builds Windows x86_64
   local os_name="mingw"
   local os_arch="x86_64"
   local openssl_target="mingw64"
@@ -302,7 +301,7 @@ function package { ## Packages build dir output
   __package:jvm "linux-libc/armv7" "tor"
   __package:jvm "linux-libc/x86" "tor"
   __package:jvm "linux-libc/x86_64" "tor"
-  __package:jvm:codesigned "macos/aarch64" "tor"
+  __package:codesigned "macos/aarch64" "tor"
   __package:jvm:codesigned "macos/x86_64" "tor"
   __package:jvm:codesigned "mingw/x86" "tor.exe"
   __package:jvm:codesigned "mingw/x86_64" "tor.exe"
