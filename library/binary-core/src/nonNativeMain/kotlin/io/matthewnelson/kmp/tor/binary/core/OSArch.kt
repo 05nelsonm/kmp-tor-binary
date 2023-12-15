@@ -38,6 +38,8 @@ public sealed class OSArch private constructor(
     @InternalKmpTorBinaryApi
     public object Armv7: OSArch("armv7")
     @InternalKmpTorBinaryApi
+    public object Ppc64: OSArch("ppc64")
+    @InternalKmpTorBinaryApi
     public object X86: OSArch("x86")
     @InternalKmpTorBinaryApi
     public object X86_64: OSArch("x86_64")

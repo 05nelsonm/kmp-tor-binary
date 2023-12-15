@@ -42,6 +42,14 @@ internal val ARCH_MAP: ImmutableMap<String, OSArch> by lazy {
         Pair("em64t", OSArch.X86_64),
         Pair("universal", OSArch.X86_64),
 
+        Pair("ppc64", OSArch.Ppc64),
+        Pair("power64", OSArch.Ppc64),
+        Pair("powerpc64", OSArch.Ppc64),
+        Pair("power_pc64", OSArch.Ppc64),
+        Pair("power_rs64", OSArch.Ppc64),
+        Pair("ppc64el", OSArch.Ppc64),
+        Pair("ppc64le", OSArch.Ppc64),
+
         Pair("aarch64", OSArch.Aarch64),
         Pair("arm64", OSArch.Aarch64),
     )
