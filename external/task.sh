@@ -301,7 +301,7 @@ function package { ## Packages build dir output
   __package:jvm "linux-libc/armv7" "tor"
   __package:jvm "linux-libc/x86" "tor"
   __package:jvm "linux-libc/x86_64" "tor"
-  __package:codesigned "macos/aarch64" "tor"
+  __package:jvm:codesigned "macos/aarch64" "tor"
   __package:jvm:codesigned "macos/x86_64" "tor"
   __package:jvm:codesigned "mingw/x86" "tor.exe"
   __package:jvm:codesigned "mingw/x86_64" "tor.exe"
@@ -1118,7 +1118,7 @@ function __signature:generate:mingw {
 
   if [ ! -f "$DIR_TASK/build/out/mingw/$3/tor.exe" ]; then
     echo "
-    build/$3/tor.exe not found. Skipping...
+    tor.exe not found for mingw/$3. Skipping...
     "
     return 0
   fi
