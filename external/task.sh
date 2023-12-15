@@ -319,11 +319,9 @@ function package { ## Packages build dir output
 
   __package:native "linux-libc/aarch64" "tor" "linuxArm64Main"
   __package:native "linux-libc/x86_64" "tor" "linuxX64Main"
+  __package:native:codesigned "macos/aarch64" "tor" "macosArm64Main"
+  __package:native:codesigned "macos/x86_64" "tor" "macosX64Main"
   __package:native:codesigned "mingw/x86_64" "tor.exe" "mingwX64Main"
-
-  # TODO: Use lipo tool to combine darwin libs
-#  __package:native:codesigned "macos/aarch64" "tor" "macosArm64Main"
-#  __package:native:codesigned "macos/x86_64" "tor" "macosX64Main"
 
   rm -rf "$DIR_STAGING"
   trap - SIGINT ERR

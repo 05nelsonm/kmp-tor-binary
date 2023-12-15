@@ -198,11 +198,11 @@ class TorResources internal constructor(
     )
 
     override val nativeResourceHashes: Set<NativeResourceHash> = setOf(
-        NativeResourceHash(
-            sourceSetName = "ios",
-            ktFileName = "resource_tor_gz.kt",
-            hash = "TODO",
-        ),
+//        NativeResourceHash(
+//            sourceSetName = "ios",
+//            ktFileName = "resource_tor_gz.kt",
+//            hash = "TODO",
+//        ),
         NativeResourceHash(
             sourceSetName = "linuxArm64",
             ktFileName = "resource_tor_gz.kt",
@@ -214,9 +214,14 @@ class TorResources internal constructor(
             hash = "178b7cb1877f528de8a0bfbdfc42496146d59b9e717f3f6967574d314f5513df",
         ),
         NativeResourceHash(
-            sourceSetName = "macos",
+            sourceSetName = "macosArm64",
             ktFileName = "resource_tor_gz.kt",
-            hash = "TODO",
+            hash = "c150207d0de43a8cd465705e81f4cd6d128eed05f94264cf5f340f74e89422dc",
+        ),
+        NativeResourceHash(
+            sourceSetName = "macosX64",
+            ktFileName = "resource_tor_gz.kt",
+            hash = "891989a5be699672b1c1a276a6af152d87b4331913c9d53c1ba2f52e69d84525",
         ),
         NativeResourceHash(
             sourceSetName = "mingwX64",
@@ -233,15 +238,15 @@ class TorResources internal constructor(
             ktFileName = "resource_geoip_gz.kt",
             hash = "c817b735fadf80211b34c8e61c71aaf8824d12de177417de8346b4f589746ab2",
         ),
-        NativeResourceHash(
-            sourceSetName = "tvos",
-            ktFileName = "resource_tor_gz.kt",
-            hash = "TODO",
-        ),
-        NativeResourceHash(
-            sourceSetName = "watchos",
-            ktFileName = "resource_tor_gz.kt",
-            hash = "TODO",
-        ),
+//        NativeResourceHash(
+//            sourceSetName = "tvos",
+//            ktFileName = "resource_tor_gz.kt",
+//            hash = "TODO",
+//        ),
+//        NativeResourceHash(
+//            sourceSetName = "watchos",
+//            ktFileName = "resource_tor_gz.kt",
+//            hash = "TODO",
+//        ),
     )
 }

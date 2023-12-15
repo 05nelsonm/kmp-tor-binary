@@ -8,7 +8,9 @@
 ![badge-platform-jvm]
 ![badge-platform-js-node]
 ![badge-platform-linux]
+![badge-platform-macos]
 ![badge-platform-windows]
+![badge-support-apple-silicon]
 ![badge-support-js-ir]
 ![badge-support-linux-arm]
 

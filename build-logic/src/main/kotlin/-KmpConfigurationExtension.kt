@@ -57,8 +57,8 @@ fun KmpConfigurationExtension.configureShared(
         linuxAll()
         macosAll()
         mingwAll()
-        tvosAll()
-        watchosAll()
+//        tvosAll()
+//        watchosAll()
 
         common {
             if (publish) pluginIds("publication")
