@@ -65,7 +65,7 @@ internal actual fun Resource.extractTo(destinationDir: File, onlyIfDoesNotExist:
                 }
             }
         }
-    } catch (e: IOException) {
+    } catch (e: Exception) {
         dest.delete()
         throw e
     }
