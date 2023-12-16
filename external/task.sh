@@ -333,8 +333,6 @@ function sign:apple { ## 2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store
     __error "Usage: $0 $FUNCNAME /path/to/key.p12 /path/to/app/store/connect/api_key.json"
   fi
 
-  __require:cmd "$RCODESIGN" "rcodesign"
-
   local os_name="macos"
   __signature:generate:apple "$1" "$2" "aarch64"
   __signature:generate:apple "$1" "$2" "x86_64"
@@ -345,8 +343,6 @@ function sign:mingw { ## 2 ARGS - [1]: /path/to/file.key [2]: /path/to/cert.cer
   if [ $# -ne 2 ]; then
     __error "Usage: $0 $FUNCNAME /path/to/file.key /path/to/cert.cer"
   fi
-
-  __require:cmd "$OSSLSIGNCODE" "osslsigncode"
 
   __signature:generate:mingw "$1" "$2" "x86"
   __signature:generate:mingw "$1" "$2" "x86_64"
@@ -371,23 +367,20 @@ function __build:configure:target:init {
   __require:var_set "$U_ID" "U_ID"
   __require:var_set "$G_ID" "G_ID"
 
-  if [ "$os_name" = "android" ]; then
-    __require:var_set "$ndk_abi" "ndk_abi"
-    __require:var_set "$cc_clang"
+  case "$os_name" in
+    "android")
+      __require:var_set "$ndk_abi" "ndk_abi"
+      __require:var_set "$cc_clang"
 
-    DIR_BUILD="build/stage/$os_name/$ndk_abi"
-    DIR_OUT="build/out/$os_name/$ndk_abi"
-  else
-    DIR_BUILD="build/stage/$os_name$os_subtype/$os_arch"
-    DIR_OUT="build/out/$os_name$os_subtype/$os_arch"
-  fi
+      DIR_BUILD="build/stage/$os_name/$ndk_abi"
+      DIR_OUT="build/out/$os_name/$ndk_abi"
+      ;;
+    *)
+      DIR_BUILD="build/stage/$os_name$os_subtype/$os_arch"
+      DIR_OUT="build/out/$os_name$os_subtype/$os_arch"
+      ;;
+  esac
 
-  unset CONF_CC
-  unset CONF_LD
-  unset CONF_AR
-  unset CONF_AS
-  unset CONF_RANLIB
-  unset CONF_STRIP
   unset CONF_CFLAGS
   unset CONF_LDFLAGS
   unset CONF_SCRIPT
@@ -627,25 +620,6 @@ function __build:configure:target:build_script {
   __require:var_set "$DIR_BUILD" "DIR_BUILD"
   __require:var_set "$DIR_OUT" "DIR_OUT"
 
-  if [ -n "$CONF_CC" ]; then
-    __conf:SCRIPT "export CC=\"$CONF_CC\""
-  fi
-  if [ -n "$CONF_LD" ]; then
-    __conf:SCRIPT "export LD=\"$CONF_LD\""
-  fi
-  if [ -n "$CONF_AR" ]; then
-    __conf:SCRIPT "export AR=\"$CONF_AR\""
-  fi
-  if [ -n "$CONF_AS" ]; then
-    __conf:SCRIPT "export AS=\"$CONF_AS\""
-  fi
-  if [ -n "$CONF_RANLIB" ]; then
-    __conf:SCRIPT "export RANLIB=\"$CONF_RANLIB\""
-  fi
-  if [ -n "$CONF_STRIP" ]; then
-    __conf:SCRIPT "export STRIP=\"$CONF_STRIP\""
-  fi
-
   __conf:SCRIPT "export CFLAGS=\"$CONF_CFLAGS\""
   __conf:SCRIPT "export LDFLAGS=\"$CONF_LDFLAGS\""
 
@@ -839,30 +813,6 @@ function __conf:SCRIPT {
 $1"
 }
 
-function __conf:CC {
-  CONF_CC="$1"
-}
-
-function __conf:LD {
-  CONF_LD="$1"
-}
-
-function __conf:AR {
-  CONF_AR="$1"
-}
-
-function __conf:AS {
-  CONF_AS="$1"
-}
-
-function __conf:RANLIB {
-  CONF_RANLIB="$1"
-}
-
-function __conf:STRIP {
-  CONF_STRIP="$1"
-}
-
 function __conf:CFLAGS {
   if [ -z "$CONF_CFLAGS" ]; then
     CONF_CFLAGS="$1"
@@ -1042,19 +992,20 @@ function __package {
 
 function __signature:generate:apple {
   __require:var_set "$os_name"
+  __require:cmd "$RCODESIGN" "rcodesign"
   __require:file_exists "$1" "p12 file does not exist"
   __require:file_exists "$2" "App Store Connect api key file does not exist"
   __require:var_set "$3" "arch"
 
-  if [ ! -f "$DIR_TASK/build/out/$os_name/$3/tor" ]; then
+  if [ ! -f "$DIR_TASK/build/out/$os_name$os_subtype/$3/tor" ]; then
     echo "
-    tor not found for $os_name:$3. Skipping...
+    tor not found for $os_name$os_subtype:$3. Skipping...
     "
     return 0
   fi
 
   echo "
-    Creating detached signature for build/out/$os_name/$3/tor
+    Creating detached signature for build/out/$os_name$os_subtype/$3/tor
   "
 
   DIR_TMP="$(mktemp -d)"
@@ -1077,8 +1028,8 @@ function __signature:generate:apple {
 </dict>
 </plist>' > "$dir_bundle/Contents/Info.plist"
 
-  cp "$DIR_TASK/build/out/$os_name/$3/tor" "$dir_bundle_macos/tor.program"
-  cp "$DIR_TASK/build/out/$os_name/$3/tor" "$dir_bundle_libs/tor"
+  cp "$DIR_TASK/build/out/$os_name$os_subtype/$3/tor" "$dir_bundle_macos/tor.program"
+  cp -a "$DIR_TASK/build/out/$os_name$os_subtype/$3/tor" "$dir_bundle_libs/tor"
 
   ${RCODESIGN} sign \
     --p12-file "$1" \
@@ -1093,26 +1044,26 @@ function __signature:generate:apple {
     --staple \
     "$dir_bundle"
 
-  mkdir -p "$DIR_TASK/codesign/$os_name/$3"
-  rm -rf "$DIR_TASK/codesign/$os_name/$3/tor.signature"
+  mkdir -p "$DIR_TASK/codesign/$os_name$os_subtype/$3"
+  rm -rf "$DIR_TASK/codesign/$os_name$os_subtype/$3/tor.signature"
 
   echo ""
 
   ../tooling diff-cli create \
     --diff-ext-name ".signature" \
-    "$DIR_TASK/build/out/$os_name/$3/tor" \
+    "$DIR_TASK/build/out/$os_name$os_subtype/$3/tor" \
     "$dir_bundle_libs/tor" \
-    "$DIR_TASK/codesign/$os_name/$3"
+    "$DIR_TASK/codesign/$os_name$os_subtype/$3"
 
   echo ""
 
-  local dir_tmp="$DIR_TMP"
+  rm -rf "$DIR_TMP"
   unset DIR_TMP
   trap - SIGINT ERR
-  rm -rf "$dir_tmp"
 }
 
 function __signature:generate:mingw {
+  __require:cmd "$OSSLSIGNCODE" "osslsigncode"
   __require:file_exists "$1" "key file does not exist"
   __require:file_exists "$2" "cert file does not exist"
   __require:var_set "$3" "arch"
@@ -1178,21 +1129,17 @@ function __require:not_empty {
 function __require:no_build_lock {
   if [ ! -f "$FILE_BUILD_LOCK" ]; then return 0; fi
 
-  # Don't use __error here because it checks DRY_RUN
-  echo 1>&2 "
-    ERROR: A build is in progress
+  __error "A build is in progress
 
     If this is not the case, delete the following file and re-run the task
-    $FILE_BUILD_LOCK
-  "
-  exit 3
+    $FILE_BUILD_LOCK"
 }
 
 function __error {
   echo 1>&2 "
     ERROR: $1
   "
-  if $DRY_RUN; then return 0; fi
+
   exit 3
 }
 
@@ -1201,9 +1148,7 @@ if [ -z "$1" ] || [ "$1" = "help" ] || echo "$1" | grep -q "^__"; then
   help
 elif ! grep -qE "^function $1 {" "$0"; then
   help
-  echo 1>&2 "
-    ERROR: Unknown task '$1'
-  "
+  __error "Unknown task '$1'"
 else
   __require:no_build_lock
 
@@ -1234,7 +1179,7 @@ else
     __require:cmd "$GIT" "git"
 
     ${GIT} submodule update --init "$DIR_TASK/tor"
-    __build:git:clean tor
+    __build:git:clean "tor"
 
     __require:no_build_lock
     trap 'rm -rf "$FILE_BUILD_LOCK"' EXIT
