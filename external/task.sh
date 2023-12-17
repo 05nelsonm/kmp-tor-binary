@@ -22,7 +22,7 @@ readonly DIR_TASK=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 readonly FILE_BUILD_LOCK="$DIR_TASK/build/.lock"
 
 # See https://github.com/05nelsonm/build-env
-readonly TAG_DOCKER_BUILD_ENV="0.1.1"
+readonly TAG_DOCKER_BUILD_ENV="0.1.2"
 
 # Programs
 readonly DOCKER=$(which docker)
@@ -70,6 +70,8 @@ function build:all:linux-libc { ## Builds all Linux Libc targets
 #}
 
 function build:all:macos { ## Builds all macOS targets
+  build:macos-lts:aarch64
+  build:macos-lts:x86_64
   build:macos:aarch64
   build:macos:x86_64
 }
@@ -223,7 +225,17 @@ function build:linux-libc:x86_64 { ## Builds Linux Libc x86_64
 #  # TODO __exec:docker:run
 #}
 
-function build:macos:aarch64 { ## Builds macOS aarch64
+function build:macos-lts:aarch64 { ## Builds macOS LTS (SDK 12.3 - Jvm/Js) aarch64
+  local os_subtype="-lts"
+  build:macos:aarch64
+}
+
+function build:macos-lts:x86_64 { ## Builds macOS LTS (SDK 12.3 - Jvm/Js) x86_64
+  local os_subtype="-lts"
+  build:macos:x86_64
+}
+
+function build:macos:aarch64 { ## Builds macOS     (SDK 14.0 - Native) aarch64
   local os_name="macos"
   local os_arch="aarch64"
   local openssl_target="darwin64-arm64-cc"
@@ -232,7 +244,7 @@ function build:macos:aarch64 { ## Builds macOS aarch64
   __exec:docker:run
 }
 
-function build:macos:x86_64 { ## Builds macOS x86_64
+function build:macos:x86_64 { ## Builds macOS     (SDK 14.0 - Native) x86_64
   local os_name="macos"
   local os_arch="x86_64"
   local openssl_target="darwin64-x86_64-cc"
@@ -312,8 +324,16 @@ function package { ## Packages build dir output
   __package:jvm "linux-libc/ppc64" "tor"
   __package:jvm "linux-libc/x86" "tor"
   __package:jvm "linux-libc/x86_64" "tor"
-  __package:jvm:codesigned "macos/aarch64" "tor"
-  __package:jvm:codesigned "macos/x86_64" "tor"
+
+  __package:jvm:codesigned "macos-lts/aarch64" "tor"
+  __package:jvm:codesigned "macos-lts/x86_64" "tor"
+
+  local dir_native="build/package/binary/src/jvmMain/resources/io/matthewnelson/kmp/tor/binary/native"
+  if [ -d "$dir_native/macos-lts" ]; then
+    rm -rf "$dir_native/macos"
+    mv -v "$dir_native/macos-lts" "$dir_native/macos"
+  fi
+
   __package:jvm:codesigned "mingw/x86" "tor.exe"
   __package:jvm:codesigned "mingw/x86_64" "tor.exe"
 
@@ -334,6 +354,9 @@ function sign:apple { ## 2 ARGS - [1]: /path/to/key.p12  [2]: /path/to/app/store
   fi
 
   local os_name="macos"
+  __signature:generate:apple "$1" "$2" "aarch64"
+  __signature:generate:apple "$1" "$2" "x86_64"
+  local os_subtype="-lts"
   __signature:generate:apple "$1" "$2" "aarch64"
   __signature:generate:apple "$1" "$2" "x86_64"
 }
@@ -929,7 +952,7 @@ function __package:native:codesigned {
 }
 
 function __package {
-  __require:var_set "$1" "Packaging target dir (relative to dir kmp-tor-binary/external)"
+  __require:var_set "$1" "Packaging target dir (relative to dir external/build/)"
   __require:var_set "$2" "Binary module src path (relative to dir kmp-tor-binary/library/binary/src)"
   __require:var_set "$3" "File name"
   __require:var_set "$module" "module"
