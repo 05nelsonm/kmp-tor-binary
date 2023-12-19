@@ -175,13 +175,13 @@ class TorResources internal constructor(
             libname = "tor.gz",
             machine = "macos",
             arch = "aarch64",
-            hash = "6ea6d08578293f5ef9dce42eb6e8dee1f148c223a70639db1bfa4a174a200dc6",
+            hash = "285833671872f81872d525690eb5f713df02391bdcf15a1b12b7d6a4e2abf32a",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "macos",
             arch = "x86_64",
-            hash = "f0289fd16cc9bd4c3da54715fef51dc18d83922abdbfc9508c2647d0219e01bd",
+            hash = "87635bb7e8461bfa9b283893b45604ac8c86dfe0347ebfb1d6e31568120d1368",
         ),
         JvmLibHash(
             libname = "tor.exe.gz",
@@ -216,12 +216,12 @@ class TorResources internal constructor(
         NativeResourceHash(
             sourceSetName = "macosArm64",
             ktFileName = "resource_tor_gz.kt",
-            hash = "e61b9e7b8a3521010e661181ab6e42f66f46a64d39237a90135be595e66d7287",
+            hash = "3310bafbd140bdfd038306e6973ae2c4a8fdd6c6aa18b6200cdf5212eb41c6eb",
         ),
         NativeResourceHash(
             sourceSetName = "macosX64",
             ktFileName = "resource_tor_gz.kt",
-            hash = "03800df75a81bd4bba15179c0881b5dd82f4979154a83108d0ce9c8c149b0cc1",
+            hash = "742af4cd55a8bea10639262b210c6b763aad0b5032bea19335bdd21378a99536",
         ),
         NativeResourceHash(
             sourceSetName = "mingwX64",

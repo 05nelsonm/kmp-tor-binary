@@ -21,8 +21,9 @@ readonly DRY_RUN=$(if [ "$2" = "--dry-run" ]; then echo "true"; else echo "false
 readonly DIR_TASK=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 readonly FILE_BUILD_LOCK="$DIR_TASK/build/.lock"
 
+# NOTE: If changing, also change versions in docker/Dockerfile.*
 # See https://github.com/05nelsonm/build-env
-readonly TAG_DOCKER_BUILD_ENV="0.1.2"
+readonly TAG_DOCKER_BUILD_ENV="0.1.3"
 
 # Programs
 readonly DOCKER=$(which docker)
@@ -33,6 +34,11 @@ readonly RCODESIGN=$(which rcodesign)
 # Docker
 readonly U_ID=$(id -u)
 readonly G_ID=$(id -g)
+
+function build:all { ## Builds all targets
+  build:all:desktop
+  build:all:mobile
+}
 
 function build:all:android { ## Builds all Android targets
   build:android:aarch64
@@ -55,6 +61,12 @@ function build:all:desktop { ## Builds all Linux, macOS, Windows targets
 #  build:freebsd:x86_64
 #}
 
+function build:all:ios { ## Builds all iOS targets
+  build:ios-simulator:aarch64
+  build:ios-simulator:x86_64
+  build:ios:aarch64
+}
+
 function build:all:linux-libc { ## Builds all Linux Libc targets
   build:linux-libc:aarch64
   build:linux-libc:armv7
@@ -69,11 +81,16 @@ function build:all:linux-libc { ## Builds all Linux Libc targets
 #  build:linux-musl:x86_64
 #}
 
-function build:all:macos { ## Builds all macOS targets
+function build:all:macos { ## Builds all macOS and macOS LTS targets
   build:macos-lts:aarch64
   build:macos-lts:x86_64
   build:macos:aarch64
   build:macos:x86_64
+}
+
+function build:all:mobile { ## Builds all Android and iOS targets
+  build:all:android
+  build:all:ios
 }
 
 function build:all:mingw { ## Builds all Windows targets
@@ -116,6 +133,35 @@ function build:android:x86_64 { ## Builds Android x86_64
   local os_arch="x86_64"
   local openssl_target="android-x86_64"
   local ndk_abi="x86_64"
+  local cc_clang="yes"
+  __build:configure:target:init
+  __exec:docker:run
+}
+
+function build:ios-simulator:aarch64 { ## Builds iOS Simulator arm64
+  local os_name="ios"
+  local os_subtype="-simulator"
+  local os_arch="aarch64"
+  local openssl_target="iossimulator-xcrun"
+  local cc_clang="yes"
+  __build:configure:target:init
+  __exec:docker:run
+}
+
+function build:ios-simulator:x86_64 { ## Builds iOS Simulator x86_64
+  local os_name="ios"
+  local os_subtype="-simulator"
+  local os_arch="x86_64"
+  local openssl_target="iossimulator-xcrun"
+  local cc_clang="yes"
+  __build:configure:target:init
+  __exec:docker:run
+}
+
+function build:ios:aarch64 { ## Builds iOS arm64
+  local os_name="ios"
+  local os_arch="aarch64"
+  local openssl_target="ios64-xcrun"
   local cc_clang="yes"
   __build:configure:target:init
   __exec:docker:run
@@ -328,11 +374,14 @@ function package { ## Packages build dir output
   __package:jvm:codesigned "macos-lts/aarch64" "tor"
   __package:jvm:codesigned "macos-lts/x86_64" "tor"
 
+  # Jvm/Js utilize the LTS builds. Need to move them into
+  # their final resting place 'macos-lts' -> 'macos'
   local dir_native="build/package/binary/src/jvmMain/resources/io/matthewnelson/kmp/tor/binary/native"
   if [ -d "$dir_native/macos-lts" ]; then
     rm -rf "$dir_native/macos"
     mv -v "$dir_native/macos-lts" "$dir_native/macos"
   fi
+  unset dir_native
 
   __package:jvm:codesigned "mingw/x86" "tor.exe"
   __package:jvm:codesigned "mingw/x86_64" "tor.exe"
@@ -393,7 +442,6 @@ function __build:configure:target:init {
   case "$os_name" in
     "android")
       __require:var_set "$ndk_abi" "ndk_abi"
-      __require:var_set "$cc_clang"
 
       DIR_BUILD="build/stage/$os_name/$ndk_abi"
       DIR_OUT="build/out/$os_name/$ndk_abi"
@@ -441,7 +489,7 @@ set -e
   __conf:SCRIPT '
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 # Docker container WORKDIR
-readonly DIR_EXTERNAL=/work
+readonly DIR_EXTERNAL="/work"
 
 if [ ! -f "$DIR_EXTERNAL/task.sh" ]; then
   echo 1>&2 "
@@ -503,6 +551,10 @@ export LIBS="-L$DIR_SCRIPT/libevent/lib -L$DIR_SCRIPT/openssl/lib -L$DIR_SCRIPT/
 export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/lib/pkgconfig:$DIR_SCRIPT/xz/lib/pkgconfig:$DIR_SCRIPT/zlib/lib/pkgconfig"
 '
 
+  if [ "$os_name" = "macos" ]; then
+    __conf:SCRIPT 'export OSXCROSS_PKG_CONFIG_PATH=$PKG_CONFIG_PATH'
+  fi
+
   # CFLAGS
   __conf:CFLAGS '-I$DIR_SCRIPT/libevent/include'
   __conf:CFLAGS '-I$DIR_SCRIPT/openssl/include'
@@ -516,18 +568,21 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
     # gcc only
     __conf:CFLAGS '-fno-guess-branch-probability'
   fi
-  if [ "$os_name" = "mingw" ]; then
-    # In order to utilize the -fstack-protector-strong flag,
-    # we also must comiple with -static to ensure libssp-0.dll
-    # will not be included in the final product.
-    #
-    # $ objdump -p build/jvm-out/mingw/<arch>/tor.exe | grep "DLL Name"
-    __conf:CFLAGS '-static'
-    __conf:CFLAGS '-fno-strict-overflow'
-  else
-    __conf:CFLAGS '-fPIC'
-    __conf:CFLAGS '-fvisibility=hidden'
-  fi
+  case "$os_name" in
+    "mingw")
+      # In order to utilize the -fstack-protector-strong flag,
+      # we also must comiple with -static to ensure libssp-0.dll
+      # will not be included in the final product.
+      #
+      # $ objdump -p build/jvm-out/mingw/<arch>/tor.exe | grep "DLL Name"
+      __conf:CFLAGS '-static'
+      __conf:CFLAGS '-fno-strict-overflow'
+      ;;
+    *)
+      __conf:CFLAGS '-fPIC'
+      __conf:CFLAGS '-fvisibility=hidden'
+      ;;
+  esac
 
   # LDFLAGS
   __conf:LDFLAGS '-L$DIR_SCRIPT/libevent/lib'
@@ -535,10 +590,12 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   __conf:LDFLAGS '-L$DIR_SCRIPT/xz/lib'
   __conf:LDFLAGS '-L$DIR_SCRIPT/zlib/lib'
 
-  if [ "$os_name" = "mingw" ]; then
-    __conf:LDFLAGS '-Wl,--no-insert-timestamp'
-    __conf:LDFLAGS '-static-libgcc'
-  fi
+  case "$os_name" in
+    "mingw")
+      __conf:LDFLAGS '-Wl,--no-insert-timestamp'
+      __conf:LDFLAGS '-static-libgcc'
+      ;;
+  esac
 
   # ZLIB
   CONF_ZLIB='./configure --static \
@@ -584,14 +641,16 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   if [ "${os_arch: -2}" = "64" ]; then
     __conf:OPENSSL 'enable-ec_nistp_64_gcc_128'
   fi
-  if [ "$os_name" = "android" ]; then
-    __conf:OPENSSL '-D__ANDROID_API__=21'
-  fi
-  if [ "$os_name" = "mingw" ]; then
-    # Even though -static is declared in CFLAGS, it is declared here
-    # because openssl's Configure file is jank.
-    __conf:OPENSSL '-static'
-  fi
+  case "$os_name" in
+    "android")
+      __conf:OPENSSL '-D__ANDROID_API__=21'
+      ;;
+    "mingw")
+      # Even though -static is declared in CFLAGS, it is declared here
+      # because openssl's Configure file is jank.
+      __conf:OPENSSL '-static'
+      ;;
+  esac
   __conf:OPENSSL "$openssl_target"
 
   # LIBEVENT
@@ -624,16 +683,25 @@ export PKG_CONFIG_PATH="$DIR_SCRIPT/libevent/lib/pkgconfig:$DIR_SCRIPT/openssl/l
   --host="$CROSS_TRIPLE" \
   --prefix="$DIR_SCRIPT/tor"'
 
-  if [ "$os_name" = "android" ]; then
-    __conf:TOR '--enable-android'
-  fi
-  if [ "$os_name" = "mingw" ]; then
-    __conf:TOR '--enable-static-tor'
-    # So if tor.exe is clicked on, it opens in console.
-    # This is the same behavior as the tor.exe output by
-    # tor-browser-build.
-    __conf:TOR 'LDFLAGS="$LDFLAGS -Wl,--subsystem,console"'
-  fi
+  case "$os_name" in
+    "android")
+      __conf:TOR '--enable-android'
+      ;;
+    "ios"|"macos"|"tvos"|"watchos")
+      __conf:TOR 'ac_cv_func__NSGetEnviron="no"'
+
+      # external calls that are not liked by darwin targets
+      __conf:TOR 'ac_cv_func_clock_gettime="no"'
+      __conf:TOR 'ac_cv_func_getentropy="no"'
+      ;;
+    "mingw")
+      __conf:TOR '--enable-static-tor'
+      # So if tor.exe is clicked on, it opens in console.
+      # This is the same behavior as the tor.exe output by
+      # tor-browser-build.
+      __conf:TOR 'LDFLAGS="$LDFLAGS -Wl,--subsystem,console"'
+      ;;
+  esac
 }
 
 # shellcheck disable=SC2016
@@ -749,7 +817,7 @@ make install >> \"\$DIR_SCRIPT/tor/logs/make.log\" 2>> \"\$DIR_SCRIPT/tor/logs/m
       bin_name="tor"
       bin_name_out="libtor.so"
       ;;
-    "linux"|"freebsd"|"macos")
+    "ios"|"linux"|"freebsd"|"macos"|"tvos"|"watchos")
       bin_name="tor"
       bin_name_out="tor"
       ;;
@@ -895,11 +963,26 @@ function __exec:docker:run {
 "; exit 1' SIGINT
 
   # map os_arch to what docker container expects
-  local docker_arch=
+  local docker_arch="$os_arch"
   case "$os_arch" in
     "armv7") docker_arch="armv7a"  ;;
     "ppc64") docker_arch="ppc64le" ;;
-    *)       docker_arch="$os_arch";;
+  esac
+
+  case "$os_name" in
+    "ios"|"tvos"|"watchos")
+      # Currently have to build containers locally until they
+      # are moved to the build-env project
+      ${DOCKER} build \
+        -f $DIR_TASK/docker/Dockerfile.$os_name.base \
+        -t 05nelsonm/build-env.$os_name.base:$TAG_DOCKER_BUILD_ENV \
+        $DIR_TASK/docker
+
+      ${DOCKER} build \
+        -f $DIR_TASK/docker/Dockerfile.$os_name$os_subtype.$os_arch \
+        -t 05nelsonm/build-env.$os_name$os_subtype.$os_arch:$TAG_DOCKER_BUILD_ENV \
+        $DIR_TASK/docker
+      ;;
   esac
 
   ${DOCKER} run \
