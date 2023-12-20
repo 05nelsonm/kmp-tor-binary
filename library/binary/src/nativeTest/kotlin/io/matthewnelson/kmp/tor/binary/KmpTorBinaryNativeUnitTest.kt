@@ -15,12 +15,13 @@
  **/
 package io.matthewnelson.kmp.tor.binary
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.test.Test
 
 class KmpTorBinaryNativeUnitTest: KmpTorBinaryBaseTest() {
 
-    // TODO: Implement File.isExecutable() test function
-    override val isWindows: Boolean = true
+    @OptIn(ExperimentalNativeApi::class)
+    override val isWindows: Boolean = Platform.osFamily == OsFamily.WINDOWS
 
     @Test
     fun stub() {}
