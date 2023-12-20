@@ -129,7 +129,7 @@ dependency. You need to add the dependencies for the platform(s) you wish to sup
    // build.gradle.kts
 
    dependencies {
-       val vTor = "4.8.6-0"
+       val vTor = "4.8.10-0"
        val vKmpTor = "1.4.4" // <-- see kmp-tor repo for latest version
        implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
@@ -207,7 +207,7 @@ TAG_VERSION
   // build.gradle.kts
 
   dependencies {
-      val vTor = "4.8.6-0"
+      val vTor = "4.8.10-0"
       val vKmpTor = "1.4.4" // <-- see kmp-tor repo for latest version
       implementation("io.matthewnelson.kotlin-components:kmp-tor:$vTor-$vKmpTor")
 
@@ -269,7 +269,7 @@ Binaries are reproducibly built via Tor Project's [tor-browser-build][url-tor-br
 You can verify the reproducability of published binaries by following the [BUILD.md](BUILD.md) guide.
 
 <!-- TAG_VERSION -->
-[badge-latest-release]: https://img.shields.io/badge/latest--release-4.8.6--0-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
+[badge-latest-release]: https://img.shields.io/badge/latest--release-4.8.10--0-5d2f68.svg?logo=torproject&style=flat&logoColor=5d2f68
 [badge-license]: https://img.shields.io/badge/license-Apache%20License%202.0-blue.svg?style=flat
 
 <!-- TAG_DEPENDENCIES -->

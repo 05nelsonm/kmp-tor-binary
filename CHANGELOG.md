@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Version 4.8.10-0 (2023-12-20)
+ - Update dependencies
+     - Tor -> `0.4.8.10`
+
 ## Version 4.8.6-0 (2023-09-29)
  - Update dependencies
      - Kotlin -> `1.9.10`
