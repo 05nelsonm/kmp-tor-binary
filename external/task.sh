@@ -88,7 +88,7 @@ function build:all:macos { ## Builds all macOS and macOS LTS targets
   build:macos:x86_64
 }
 
-function build:all:mobile { ## Builds all Android and iOS targets
+function build:all:mobile { ## Builds all Android targets
   build:all:android
 #  build:all:ios
 }
@@ -984,8 +984,8 @@ function __exec:docker:run {
         $DIR_TASK/docker
 
       ${DOCKER} build \
-        -f $DIR_TASK/docker/Dockerfile.$os_name$os_subtype.$os_arch \
-        -t 05nelsonm/build-env.$os_name$os_subtype.$os_arch:$TAG_DOCKER_BUILD_ENV \
+        -f $DIR_TASK/docker/Dockerfile.$os_name$os_subtype.$docker_arch \
+        -t 05nelsonm/build-env.$os_name$os_subtype.$docker_arch:$TAG_DOCKER_BUILD_ENV \
         $DIR_TASK/docker
       ;;
   esac
