@@ -59,6 +59,7 @@ kmpConfiguration {
             }
         }
 
+        iosAll()
         tvosAll()
         watchosAll()
 
@@ -73,12 +74,11 @@ kmpConfiguration {
 
         kotlin {
             with(sourceSets) {
-                // binary is not available for watchos/tvos
+                // binary is not available for iOS/tvOS/watchOS
                 // currently, so cannot add to commonMain.
                 listOf(
                     findByName("jvmAndroidMain"),
                     findByName("jsMain"),
-                    findByName("iosMain"),
                     findByName("linuxMain"),
                     findByName("macosMain"),
                     findByName("mingwMain"),

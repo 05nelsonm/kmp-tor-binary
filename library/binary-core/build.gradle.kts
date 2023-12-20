@@ -29,6 +29,7 @@ kmpConfiguration {
             }
         }
 
+        iosAll()
         tvosAll()
         watchosAll()
 

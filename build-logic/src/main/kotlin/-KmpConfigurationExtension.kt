@@ -53,7 +53,7 @@ fun KmpConfigurationExtension.configureShared(
             }
         }
 
-        iosAll()
+//        iosAll()
         linuxAll()
         macosAll()
         mingwAll()
