@@ -19,6 +19,10 @@ plugins {
 
 kmpConfiguration {
     configureShared(publish = true) {
+        iosAll()
+        tvosAll()
+        watchosAll()
+
         common {
             sourceSetMain {
                 dependencies {

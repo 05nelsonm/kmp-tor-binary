@@ -53,12 +53,12 @@ fun KmpConfigurationExtension.configureShared(
             }
         }
 
-        iosAll()
+//        iosAll()
         linuxAll()
         macosAll()
         mingwAll()
-        tvosAll()
-        watchosAll()
+//        tvosAll()
+//        watchosAll()
 
         common {
             if (publish) pluginIds("publication")

@@ -176,11 +176,9 @@ MACOS_TARGETS="JVM,JS,IOS_ARM64,IOS_X64,IOS_SIMULATOR_ARM64,MACOS_ARM64,MACOS_X6
 
 - Check `resource-validation` error reports for any errors
 ```bash
-cat library/binary/build/reports/resource-validation/binary/ios.err
-cat library/binary/build/reports/resource-validation/binary/macos.err
+cat library/binary/build/reports/resource-validation/binary/macosArm64.err
+cat library/binary/build/reports/resource-validation/binary/macosX64.err
 cat library/binary/build/reports/resource-validation/binary/native.err
-cat library/binary/build/reports/resource-validation/binary/tvos.err
-cat library/binary/build/reports/resource-validation/binary/watchos.err
 ```
 
 - Publish macOS build

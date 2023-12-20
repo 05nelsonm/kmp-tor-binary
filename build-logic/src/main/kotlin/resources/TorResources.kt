@@ -175,13 +175,13 @@ class TorResources internal constructor(
             libname = "tor.gz",
             machine = "macos",
             arch = "aarch64",
-            hash = "c150207d0de43a8cd465705e81f4cd6d128eed05f94264cf5f340f74e89422dc",
+            hash = "285833671872f81872d525690eb5f713df02391bdcf15a1b12b7d6a4e2abf32a",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "macos",
             arch = "x86_64",
-            hash = "891989a5be699672b1c1a276a6af152d87b4331913c9d53c1ba2f52e69d84525",
+            hash = "87635bb7e8461bfa9b283893b45604ac8c86dfe0347ebfb1d6e31568120d1368",
         ),
         JvmLibHash(
             libname = "tor.exe.gz",
@@ -198,11 +198,11 @@ class TorResources internal constructor(
     )
 
     override val nativeResourceHashes: Set<NativeResourceHash> = setOf(
-        NativeResourceHash(
-            sourceSetName = "ios",
-            ktFileName = "resource_tor_gz.kt",
-            hash = "TODO",
-        ),
+//        NativeResourceHash(
+//            sourceSetName = "ios",
+//            ktFileName = "resource_tor_gz.kt",
+//            hash = "TODO",
+//        ),
         NativeResourceHash(
             sourceSetName = "linuxArm64",
             ktFileName = "resource_tor_gz.kt",
@@ -214,9 +214,14 @@ class TorResources internal constructor(
             hash = "178b7cb1877f528de8a0bfbdfc42496146d59b9e717f3f6967574d314f5513df",
         ),
         NativeResourceHash(
-            sourceSetName = "macos",
+            sourceSetName = "macosArm64",
             ktFileName = "resource_tor_gz.kt",
-            hash = "TODO",
+            hash = "3310bafbd140bdfd038306e6973ae2c4a8fdd6c6aa18b6200cdf5212eb41c6eb",
+        ),
+        NativeResourceHash(
+            sourceSetName = "macosX64",
+            ktFileName = "resource_tor_gz.kt",
+            hash = "742af4cd55a8bea10639262b210c6b763aad0b5032bea19335bdd21378a99536",
         ),
         NativeResourceHash(
             sourceSetName = "mingwX64",
@@ -233,15 +238,15 @@ class TorResources internal constructor(
             ktFileName = "resource_geoip_gz.kt",
             hash = "c817b735fadf80211b34c8e61c71aaf8824d12de177417de8346b4f589746ab2",
         ),
-        NativeResourceHash(
-            sourceSetName = "tvos",
-            ktFileName = "resource_tor_gz.kt",
-            hash = "TODO",
-        ),
-        NativeResourceHash(
-            sourceSetName = "watchos",
-            ktFileName = "resource_tor_gz.kt",
-            hash = "TODO",
-        ),
+//        NativeResourceHash(
+//            sourceSetName = "tvos",
+//            ktFileName = "resource_tor_gz.kt",
+//            hash = "TODO",
+//        ),
+//        NativeResourceHash(
+//            sourceSetName = "watchos",
+//            ktFileName = "resource_tor_gz.kt",
+//            hash = "TODO",
+//        ),
     )
 }

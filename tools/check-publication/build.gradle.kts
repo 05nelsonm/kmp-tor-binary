@@ -39,9 +39,8 @@ kmpConfiguration {
         androidLibrary {
             sourceSetMain {
                 dependencies {
-                    // Should be a SEPARATE publication and not use binary-jvm
+                    // Should be a SEPARATE publication from binary-jvm
                     implementation("$group:binary-android:$version")
-
                     implementation("$group:binary-initializer:$version")
                 }
             }
@@ -60,12 +59,33 @@ kmpConfiguration {
             }
         }
 
+        iosAll()
+        tvosAll()
+        watchosAll()
+
         common {
             sourceSetMain {
                 dependencies {
-                    implementation("$group:binary:$version")
                     implementation("$group:binary-core:$version")
                     implementation("$group:binary-core-api:$version")
+                }
+            }
+        }
+
+        kotlin {
+            with(sourceSets) {
+                // binary is not available for iOS/tvOS/watchOS
+                // currently, so cannot add to commonMain.
+                listOf(
+                    findByName("jvmAndroidMain"),
+                    findByName("jsMain"),
+                    findByName("linuxMain"),
+                    findByName("macosMain"),
+                    findByName("mingwMain"),
+                ).forEach { sourceSet ->
+                    sourceSet?.dependencies {
+                        implementation("$group:binary:$version")
+                    }
                 }
             }
         }

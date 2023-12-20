@@ -29,6 +29,10 @@ kmpConfiguration {
             }
         }
 
+        iosAll()
+        tvosAll()
+        watchosAll()
+
         common {
             sourceSetMain {
                 dependencies {
