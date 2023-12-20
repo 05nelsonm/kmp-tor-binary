@@ -53,35 +53,35 @@ public actual sealed class TorResource private actual constructor() {
 public object TorResourceLinuxX64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/linux/x64"
     /* LINUX_X64 */ override val resourceManifest: List<String> get() = listOf("libcrypto.so.3.gz", "libevent-2.1.so.7.gz", "libssl.so.3.gz", "libstdc++.so.6.gz", "tor.gz")
-    /* LINUX_X64 */ override val sha256sum: String get() = "88d8a49defbb8ecdcb3e4a0f148a6ee6f6c9cbee91d030cb6e464ba35d5d32e1"
+    /* LINUX_X64 */ override val sha256sum: String get() = "9337f2861e1dce1be6a7029048fec0d5c4bb8d513c849f3a348e601e2cd59c60"
 }
 
 public object TorResourceLinuxX86: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/linux/x86"
     /* LINUX_X86 */ override val resourceManifest: List<String> get() = listOf("libcrypto.so.3.gz", "libevent-2.1.so.7.gz", "libssl.so.3.gz", "libstdc++.so.6.gz", "tor.gz")
-    /* LINUX_X86 */ override val sha256sum: String get() = "2a2cb711898a890a9b801238782bf7ea340d2d9824aa4deea4d87f00d6f05d90"
+    /* LINUX_X86 */ override val sha256sum: String get() = "208ecd5b1748c14988ee1c8d5135a115bf2613c5af1cba2f6a12501f925a88bc"
 }
 
 public object TorResourceMacosX64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/macos/x64"
     /* MACOS_X64 */ override val resourceManifest: List<String> get() = listOf("libevent-2.1.7.dylib.gz", "tor.gz")
-    /* MACOS_X64 */ override val sha256sum: String get() = "3fbd008f480dc03abc736f16418bd90e3816de1c4b835c6f25f476dd9feb1ffe"
+    /* MACOS_X64 */ override val sha256sum: String get() = "44373f166a05b9bc381e54215841ddc75777532e5de911d89fb2287a032128d1"
 }
 
 public object TorResourceMacosArm64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/macos/arm64"
     /* MACOS_ARM64 */ override val resourceManifest: List<String> get() = listOf("libevent-2.1.7.dylib.gz", "tor.gz")
-    /* MACOS_ARM64 */ override val sha256sum: String get() = "f623e8f6e0e386a4918cb18b90f2c78aed08ac2ad9f218d4b3fd4e664f8679c8"
+    /* MACOS_ARM64 */ override val sha256sum: String get() = "2fa2704459000db6b4539aa0d034b69fcff5c16c1c30baf598f6a04068a22dab"
 }
 
 public object TorResourceMingwX64: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/mingw/x64"
     /* MINGW_X64 */ override val resourceManifest: List<String> get() = listOf("tor-gencert.exe.gz", "tor.exe.gz")
-    /* MINGW_X64 */ override val sha256sum: String get() = "5bc038e640bb9773a8eea1a2220cc5f264a19b47e521190250e9b0ede00631ca"
+    /* MINGW_X64 */ override val sha256sum: String get() = "a5e681100dd4d61735117f580598ddac8be149a6b552ed8d23ccdcc75af4fea4"
 }
 
 public object TorResourceMingwX86: TorResource.Binaries() {
     override val resourceDirPath: String get() = "kmptor/mingw/x86"
     /* MINGW_X86 */ override val resourceManifest: List<String> get() = listOf("tor-gencert.exe.gz", "tor.exe.gz")
-    /* MINGW_X86 */ override val sha256sum: String get() = "3fd75c25fdcdba601ec8bbae4fa98fa6566a8a449934d47f50e5ef708f2a2f3b"
+    /* MINGW_X86 */ override val sha256sum: String get() = "05e71ec79f9deb9a3e04ee564d4633c806db45bc5b76a116efad25e776c45222"
 }
