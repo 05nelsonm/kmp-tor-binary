@@ -16,7 +16,11 @@ TOOL="$1"; shift 1
 
 readonly DIR_SCRIPT=$( cd "$( dirname "$0" )" >/dev/null && pwd )
 
-if [ -z "${TOOL}" ] || [ "${TOOL}" = "cli-core" ] || [ ! -d "$DIR_SCRIPT/tools/${TOOL}" ]; then
+if [ -z "${TOOL}" ] ||
+  [ "${TOOL}" = "cli-core" ] ||
+  [ "${TOOL}" = "check-publication" ] ||
+  [ ! -d "$DIR_SCRIPT/tools/${TOOL}" ]; then
+
   echo "Unknown tool: '${TOOL}'"
   exit 1
 fi
@@ -27,7 +31,7 @@ args="${args%"${args##*[![:space:]]}"}"
 cd "$DIR_SCRIPT" || exit 3
 
 if [ -z "$args" ]; then
-  ./gradlew --quiet ":tools:${TOOL}:jvmRun"
+  ./gradlew --quiet ":tools:${TOOL}:jvmRun" -PKMP_TARGETS="JVM"
 else
-  ./gradlew --quiet ":tools:${TOOL}:jvmRun" --args="$args"
+  ./gradlew --quiet ":tools:${TOOL}:jvmRun" --args="$args" -PKMP_TARGETS="JVM"
 fi
