@@ -37,9 +37,7 @@ NPMJS_AUTH_TOKEN=<auth token>
 
 - Assemble `Npmjs` packages
 ```bash
-./gradlew assembleBinaryResourcesReleasePackage \
-  assembleBinaryResourcesSnapshotPackage \
-  -DKMP_TARGETS_ALL
+./gradlew assembleBinaryResourcesReleasePackage assembleBinaryResourcesSnapshotPackage -DKMP_TARGETS_ALL
 ```
 
 - Check for resource validation errors
@@ -58,14 +56,18 @@ cat library/npmjs/build/reports/resource-validation/binary/jvm-geoip.err
 
 - Publish assets to `Npmjs`
 ```bash
-./gradlew publishBinaryResourcesReleasePackageToNpmjsRegistry \
-  publishBinaryResourcesSnapshotPackageToNpmjsRegistry \
-  -DKMP_TARGETS_ALL
+./gradlew publishBinaryResourcesReleasePackageToNpmjsRegistry publishBinaryResourcesSnapshotPackageToNpmjsRegistry -DKMP_TARGETS_ALL
 ```
 
 - Update `.kotlin-js-store/yarn.lock`
 ```bash
 ./gradlew kotlinUpgradeYarnLock -DKMP_TARGETS_ALL
+```
+
+- Verify that `.kotlin-js-store/yarn.lock` is using the release 
+  publication dependency (should not be using `SNAPSHOT` version).
+```bash
+cat .kotlin-js-store/yarn.lock | grep "kmp-tor-binary-resources@"
 ```
 
 - Commit Changes
