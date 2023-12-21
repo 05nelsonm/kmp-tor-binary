@@ -15,12 +15,11 @@
  **/
 import dev.petuska.npm.publish.extension.domain.NpmPackage
 import dev.petuska.npm.publish.extension.domain.NpmPackages
-import resources.ResourceValidation.Companion.resourceValidation
 
 plugins {
     id("base")
-    id("build_logic")
     alias(libs.plugins.publish.npm)
+    id("resource-validation")
 }
 
 // Have to have as a standalone gradle module so that the publication
@@ -39,58 +38,53 @@ npmPublish {
         }
     }
 
-    resourceValidation {
-        torResources {
+    val jvmGeoipSrcDir = torResourceValidation.jvmGeoipResourcesSrcDir
+    val jvmTorLibsSrcDir = torResourceValidation.jvmTorLibResourcesSrcDir
 
-            val jvmGeoipSrcDir = jvmGeoipResourcesSrcDir()
-            val jvmTorLibsSrcDir = jvmTorLibResourcesSrcDir()
+    packages {
+        val snapshotVersion = properties["NPMJS_SNAPSHOT_VERSION"]!!
+            .toString()
+            .toInt()
 
-            packages {
-                val snapshotVersion = properties["NPMJS_SNAPSHOT_VERSION"]!!
-                    .toString()
-                    .toInt()
+        check(snapshotVersion >= 0) {
+            "NPMJS_SNAPSHOT_VERSION cannot be negative"
+        }
 
-                check(snapshotVersion >= 0) {
-                    "NPMJS_SNAPSHOT_VERSION cannot be negative"
-                }
+        val vProject = "${project.version}"
+        if (vProject.endsWith("-SNAPSHOT")) {
 
-                val vProject = "${project.version}"
-                if (vProject.endsWith("-SNAPSHOT")) {
-
-                    // Only register snapshot task when project version is -SNAPSHOT
-                    registerBinaryResources(
-                        releaseVersion = "$vProject.$snapshotVersion",
-                        geoipResourcesDir = jvmGeoipSrcDir,
-                        torResourcesDir = jvmTorLibsSrcDir,
-                    )
-                } else {
-                    check(snapshotVersion == 0) {
-                        "NPMJS_SNAPSHOT_VERSION must be 0 for releases"
-                    }
-
-                    // Release will be X.X.X-#
-                    // Increment the # for the next SNAPSHOT version
-                    val increment = vProject.last().toString().toInt() + 1
-                    val nextVersion = vProject
-                        .substringBefore('-') +
-                            "-$increment"
-
-                    // Register both snapshot and release tasks when project
-                    // version indicates a release so after maven publication
-                    // and git tagging, updating VERSION_NAME with -SNAPSHOT
-                    // there will be a "next release" waiting
-                    registerBinaryResources(
-                        releaseVersion = vProject,
-                        geoipResourcesDir = jvmGeoipSrcDir,
-                        torResourcesDir = jvmTorLibsSrcDir,
-                    )
-                    registerBinaryResources(
-                        releaseVersion = "$nextVersion-SNAPSHOT.0",
-                        geoipResourcesDir = jvmGeoipSrcDir,
-                        torResourcesDir = jvmTorLibsSrcDir,
-                    )
-                }
+            // Only register snapshot task when project version is -SNAPSHOT
+            registerBinaryResources(
+                releaseVersion = "$vProject.$snapshotVersion",
+                geoipResourcesDir = jvmGeoipSrcDir,
+                torResourcesDir = jvmTorLibsSrcDir,
+            )
+        } else {
+            check(snapshotVersion == 0) {
+                "NPMJS_SNAPSHOT_VERSION must be 0 for releases"
             }
+
+            // Release will be X.X.X-#
+            // Increment the # for the next SNAPSHOT version
+            val increment = vProject.last().toString().toInt() + 1
+            val nextVersion = vProject
+                .substringBefore('-') +
+                    "-$increment"
+
+            // Register both snapshot and release tasks when project
+            // version indicates a release so after maven publication
+            // and git tagging, updating VERSION_NAME with -SNAPSHOT
+            // there will be a "next release" waiting
+            registerBinaryResources(
+                releaseVersion = vProject,
+                geoipResourcesDir = jvmGeoipSrcDir,
+                torResourcesDir = jvmTorLibsSrcDir,
+            )
+            registerBinaryResources(
+                releaseVersion = "$nextVersion-SNAPSHOT.0",
+                geoipResourcesDir = jvmGeoipSrcDir,
+                torResourcesDir = jvmTorLibsSrcDir,
+            )
         }
     }
 

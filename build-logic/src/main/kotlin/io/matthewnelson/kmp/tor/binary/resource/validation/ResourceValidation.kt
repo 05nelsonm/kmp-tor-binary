@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/package resources
+ **/package io.matthewnelson.kmp.tor.binary.resource.validation
 
 import com.android.build.api.dsl.LibraryExtension
 import io.matthewnelson.encoding.base16.Base16
@@ -28,29 +28,6 @@ sealed class ResourceValidation(
     protected val moduleName: String,
     protected val modulePackageName: String,
 ) {
-
-    companion object {
-
-        @JvmStatic
-        fun Project.resourceValidation(
-            block: Builder.() -> Unit
-        ) { Builder(this).apply(block).build() }
-    }
-
-    @ResourceDsl
-    class Builder internal constructor(
-        private val project: Project
-    ) {
-
-        @ResourceDsl
-        fun torResources(block: TorResources.() -> Unit) {
-            TorResources(project).apply(block).build()
-        }
-
-        internal fun build() {
-            // TODO: publication task dependencies
-        }
-    }
 
     protected abstract val androidLibHashes: Set<AndroidLibHash>
     protected abstract val jvmLibHashes: Set<JvmLibHash>

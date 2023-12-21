@@ -12,16 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- **/package resources
+ **/
+package io.matthewnelson.kmp.tor.binary.resource.validation
 
-/**
- * A marker annotations for DSLs.
- */
-@DslMarker
-@Target(
-    AnnotationTarget.CLASS,
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.TYPEALIAS,
-    AnnotationTarget.TYPE,
-)
-annotation class ResourceDsl
+import org.gradle.api.Plugin
+import org.gradle.api.Project
+
+open class ResourceValidationPlugin internal constructor(): Plugin<Project> {
+    override fun apply(target: Project) {
+        target.extensions.create(
+            TorResourceValidationExtension.NAME,
+            TorResourceValidationExtension::class.java,
+            target,
+        )
+    }
+}

@@ -1,5 +1,3 @@
-import resources.ResourceValidation.Companion.resourceValidation
-
 /*
  * Copyright (c) 2023 Matthew Nelson
  *
@@ -17,30 +15,27 @@ import resources.ResourceValidation.Companion.resourceValidation
  **/
 plugins {
     id("configuration")
+    id("resource-validation")
 }
 
 kmpConfiguration {
-    resourceValidation {
-        torResources {
-            configure {
-                androidLibrary(namespace = "io.matthewnelson.kmp.tor.binary.android.unit.test") {
-                    target { publishLibraryVariants("release") }
+    configure {
+        androidLibrary(namespace = "io.matthewnelson.kmp.tor.binary.android.unit.test") {
+            target { publishLibraryVariants("release") }
 
-                    android {
-                        // Only want to include binary resources from jvmMain
-                        // and not geoip files which are positioned at
-                        // jvmAndroidMain/resources.
-                        //
-                        // Doing so would cause a conflict for anyone depending
-                        // on both :library:binary and :library:binary-android-unit-test
-                        sourceSets.getByName("main").resources {
-                            srcDir(jvmTorLibResourcesSrcDir())
-                        }
-                    }
+            android {
+                sourceSets.getByName("main").resources {
+                    // Only want to include binary resources from jvmMain
+                    // and not geoip files which are positioned at
+                    // jvmAndroidMain/resources.
+                    //
+                    // Doing so would cause a conflict for anyone depending
+                    // on both :library:binary and :library:binary-android-unit-test
+                    srcDir(torResourceValidation.jvmTorLibResourcesSrcDir)
                 }
-
-                common { pluginIds("publication") }
             }
         }
+
+        common { pluginIds("publication") }
     }
 }

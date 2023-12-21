@@ -13,120 +13,114 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-import resources.ResourceValidation.Companion.resourceValidation
-
 plugins {
     id("configuration")
+    id("resource-validation")
 }
 
 kmpConfiguration {
-    resourceValidation {
-        torResources {
+    configureShared(
+        androidNamespace = "io.matthewnelson.kmp.tor.binary",
+        publish = true,
+    ) {
 
-            configureShared(
-                androidNamespace = "io.matthewnelson.kmp.tor.binary",
-                publish = true,
-            ) {
+        androidLibrary {
+            android {
 
-                androidLibrary {
-                    android {
+                torResourceValidation.configureTorAndroidJniResources()
 
-                        configureTorJniResources()
-
-                        defaultConfig {
-                            testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                        }
-
-                        sourceSets.getByName("main") {
-                            resources.srcDirs(jvmGeoipResourcesSrcDir())
-                        }
-                    }
-
-                    sourceSetMain {
-                        dependencies {
-                            implementation(project(":library:binary-initializer"))
-                        }
-                    }
-
-                    sourceSetTest {
-                        dependencies {
-                            implementation(project(":library:binary-android-unit-test"))
-                        }
-                    }
-
-                    sourceSetTestInstrumented {
-                        dependencies {
-                            implementation(libs.androidx.test.core)
-                            implementation(libs.androidx.test.runner)
-                        }
-                    }
+                defaultConfig {
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 }
 
-                jvm {
-                    sourceSetMain {
-                        resources.srcDir(jvmTorLibResourcesSrcDir())
-                        resources.srcDir(jvmGeoipResourcesSrcDir())
-                    }
-                }
-
-                js {
-                    sourceSetMain {
-                        dependencies {
-                            val npmVersion = if ("$version".endsWith("-SNAPSHOT")) {
-                                val snapshotVersion = properties["NPMJS_SNAPSHOT_VERSION"]!!
-                                    .toString()
-                                    .toInt()
-
-                                "$version.$snapshotVersion"
-                            } else {
-                                // If project version is not SNAPSHOT, this
-                                // will inhibit releasing to MavenCentral w/o
-                                // firsting making a release publication to
-                                // Npmjs of the resources.
-                                "$version"
-                            }
-
-                            implementation(npm("kmp-tor-binary-resources", npmVersion))
-                        }
-                    }
-                }
-
-                common {
-                    sourceSetMain {
-                        dependencies {
-                            implementation(project(":library:binary-core"))
-                            api(project(":library:binary-core-api"))
-                        }
-                    }
-
-                    sourceSetTest {
-                        dependencies {
-                            implementation(libs.encoding.base16)
-                        }
-                    }
-                }
-
-                kotlin {
-                    with(sourceSets) {
-                        val jsMain = findByName("jsMain")
-                        val jvmAndroidMain = findByName("jvmAndroidMain")
-
-                        if (jsMain != null || jvmAndroidMain != null) {
-                            val nonNativeMain = maybeCreate("nonNativeMain")
-                            nonNativeMain.dependsOn(getByName("commonMain"))
-                            jvmAndroidMain?.apply { dependsOn(nonNativeMain) }
-                            jsMain?.apply { dependsOn(nonNativeMain) }
-
-                            val nonNativeTest = maybeCreate("nonNativeTest")
-                            nonNativeTest.dependsOn(getByName("commonTest"))
-                            findByName("jvmAndroidTest")?.apply { dependsOn(nonNativeTest) }
-                            findByName("jsTest")?.apply { dependsOn(nonNativeTest) }
-                        }
-                    }
-
-                    configureTorNativeResources()
+                sourceSets.getByName("main") {
+                    resources.srcDirs(torResourceValidation.jvmGeoipResourcesSrcDir)
                 }
             }
+
+            sourceSetMain {
+                dependencies {
+                    implementation(project(":library:binary-initializer"))
+                }
+            }
+
+            sourceSetTest {
+                dependencies {
+                    implementation(project(":library:binary-android-unit-test"))
+                }
+            }
+
+            sourceSetTestInstrumented {
+                dependencies {
+                    implementation(libs.androidx.test.core)
+                    implementation(libs.androidx.test.runner)
+                }
+            }
+        }
+
+        jvm {
+            sourceSetMain {
+                resources.srcDir(torResourceValidation.jvmTorLibResourcesSrcDir)
+                resources.srcDir(torResourceValidation.jvmGeoipResourcesSrcDir)
+            }
+        }
+
+        js {
+            sourceSetMain {
+                dependencies {
+                    val npmVersion = if ("$version".endsWith("-SNAPSHOT")) {
+                        val snapshotVersion = properties["NPMJS_SNAPSHOT_VERSION"]!!
+                            .toString()
+                            .toInt()
+
+                        "$version.$snapshotVersion"
+                    } else {
+                        // If project version is not SNAPSHOT, this
+                        // will inhibit releasing to MavenCentral w/o
+                        // firsting making a release publication to
+                        // Npmjs of the resources.
+                        "$version"
+                    }
+
+                    implementation(npm("kmp-tor-binary-resources", npmVersion))
+                }
+            }
+        }
+
+        common {
+            sourceSetMain {
+                dependencies {
+                    implementation(project(":library:binary-core"))
+                    api(project(":library:binary-core-api"))
+                }
+            }
+
+            sourceSetTest {
+                dependencies {
+                    implementation(libs.encoding.base16)
+                }
+            }
+        }
+
+        kotlin {
+            with(sourceSets) {
+                val jsMain = findByName("jsMain")
+                val jvmAndroidMain = findByName("jvmAndroidMain")
+
+                if (jsMain != null || jvmAndroidMain != null) {
+                    val nonNativeMain = maybeCreate("nonNativeMain")
+                    nonNativeMain.dependsOn(getByName("commonMain"))
+                    jvmAndroidMain?.apply { dependsOn(nonNativeMain) }
+                    jsMain?.apply { dependsOn(nonNativeMain) }
+
+                    val nonNativeTest = maybeCreate("nonNativeTest")
+                    nonNativeTest.dependsOn(getByName("commonTest"))
+                    findByName("jvmAndroidTest")?.apply { dependsOn(nonNativeTest) }
+                    findByName("jsTest")?.apply { dependsOn(nonNativeTest) }
+                }
+            }
+
+            torResourceValidation.configureTorNativeResources()
         }
     }
 }
