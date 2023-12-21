@@ -15,6 +15,16 @@
  **/
 plugins {
     `kotlin-dsl`
+    `java-gradle-plugin`
+}
+
+gradlePlugin {
+    plugins {
+        create("resource-validation") {
+            id = "resource-validation"
+            implementationClass = "io.matthewnelson.kmp.tor.binary.resource.validation.ResourceValidationPlugin"
+        }
+    }
 }
 
 dependencies {

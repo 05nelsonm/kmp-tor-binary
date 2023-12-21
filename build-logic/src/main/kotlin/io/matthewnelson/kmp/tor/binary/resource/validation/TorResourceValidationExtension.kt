@@ -13,15 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
-package resources
+package io.matthewnelson.kmp.tor.binary.resource.validation
 
 import com.android.build.api.dsl.LibraryExtension
+import org.gradle.api.GradleException
 import org.gradle.api.Project
+import org.gradle.kotlin.dsl.getByName
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.File
+import javax.inject.Inject
 
-@ResourceDsl
-class TorResources internal constructor(
+/**
+ * Validates packaged resources within the `external/build/pacakge` directory
+ * using [androidLibHashes], [jvmGeoipHashes], [jvmLibHashes], [nativeResourceHashes]
+ * and configures those platform source sets to utilize either mock resources
+ * from `library/binary/mock_resources`, or the actual built products from
+ * `external/build/package`. This is to maintain runtime referecnes and
+ * mitigate checking resources into version control.
+ *
+ * Any errors are written to the project's `build/reports/resource-validation/binary`
+ * directory for the respective files.
+ * */
+abstract class TorResourceValidationExtension @Inject internal constructor(
     project: Project
 ): ResourceValidation(
     project = project,
@@ -32,21 +45,31 @@ class TorResources internal constructor(
     private val geoipErrors = mutableSetOf<String>()
     private var isGeoipConfigured = false
 
-    @ResourceDsl
-    fun LibraryExtension.configureTorJniResources() {
-        configureAndroidJniResources()
+    @Throws(IllegalStateException::class)
+    fun configureTorAndroidJniResources() {
+        check(project.plugins.hasPlugin("com.android.library")) {
+            "The 'com.android.library' plugin is required to utilize this function"
+        }
+
+        project.extensions.getByName<LibraryExtension>("android").apply {
+            configureAndroidJniResources()
+        }
     }
 
-    @ResourceDsl
-    fun jvmTorLibResourcesSrcDir(): File = jvmLibResourcesSrcDir()
+    val jvmTorLibResourcesSrcDir: File get() = jvmLibResourcesSrcDir()
 
-    @ResourceDsl
-    fun KotlinMultiplatformExtension.configureTorNativeResources() {
-        configureNativeResources()
+    @Throws(IllegalStateException::class)
+    fun configureTorNativeResources() {
+        check(project.plugins.hasPlugin("org.jetbrains.kotlin.multiplatform")) {
+            "The 'org.jetbrains.kotlin.multiplatform' plugin is required to utilize this function"
+        }
+
+        project.extensions.getByName<KotlinMultiplatformExtension>("kotlin").apply {
+            configureNativeResources()
+        }
     }
 
-    @ResourceDsl
-    fun jvmGeoipResourcesSrcDir(): File {
+    val jvmGeoipResourcesSrcDir: File get() {
         val mockResourcesSrc = rootProjectDir
             .resolve("library")
             .resolve(moduleName)
@@ -98,8 +121,6 @@ class TorResources internal constructor(
             mockResourcesSrc
         }
     }
-
-    internal fun build(): Set<String> = geoipErrors
 
     private val jvmGeoipHashes = setOf(
         "geoip.gz" to "a18e0233ccc5e97579d96dba6b498c9e1bb2597db1f9f355b4d95fa718b793d3",
@@ -249,4 +270,8 @@ class TorResources internal constructor(
 //            hash = "TODO",
 //        ),
     )
+
+    internal companion object {
+        internal const val NAME = "torResourceValidation"
+    }
 }
