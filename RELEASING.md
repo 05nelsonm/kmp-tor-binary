@@ -19,18 +19,6 @@ git pull
 git checkout -b release_"$VERSION_NAME"
 ```
 
-- Perform a clean build
-```bash
-./gradlew clean -DKMP_TARGETS_ALL
-./gradlew build -DKMP_TARGETS_ALL
-```
-
-- Check `resource-validation` error reports for any errors (for Node.js publication)
-```bash
-cat library/npmjs/build/reports/resource-validation/binary/jvm.err
-cat library/npmjs/build/reports/resource-validation/binary/jvm-geoip.err
-```
-
 - Update `VERSION_NAME` (remove `-SNAPSHOT`) and `VERSION_CODE` in root project's `gradle.properties` file
 
 - Update `version` in project's `README.md` documentation
@@ -47,15 +35,39 @@ NPMJS_AUTH_TOKEN=<auth token>
 ./gradlew clean -DKMP_TARGETS_ALL
 ```
 
+- Assemble `Npmjs` packages
+```bash
+./gradlew assembleBinaryResourcesReleasePackage assembleBinaryResourcesSnapshotPackage -DKMP_TARGETS_ALL
+```
+
+- Check for resource validation errors
+```bash
+cat library/npmjs/build/reports/resource-validation/binary/jvm.err
+cat library/npmjs/build/reports/resource-validation/binary/jvm-geoip.err
+```
+
+- Inspect contents of the assembled packages in `npmjs/build/packages` for correctness
+    - `index.js`
+    - `package.json`
+    - `README.md`
+    - `io/matthewnelson/kmp/tor/binary/geoip.gz`
+    - `io/matthewnelson/kmp/tor/binary/geoip6.gz`
+    - All binaries within `io/matthewnelson/kmp/tor/binary/native/`
+
 - Publish assets to `Npmjs`
 ```bash
-./gradlew publishBinaryResourcesReleasePackageToNpmjsRegistry \
-  publishBinaryResourcesSnapshotPackageToNpmjsRegistry
+./gradlew publishBinaryResourcesReleasePackageToNpmjsRegistry publishBinaryResourcesSnapshotPackageToNpmjsRegistry -DKMP_TARGETS_ALL
 ```
 
 - Update `.kotlin-js-store/yarn.lock`
 ```bash
 ./gradlew kotlinUpgradeYarnLock -DKMP_TARGETS_ALL
+```
+
+- Verify that `.kotlin-js-store/yarn.lock` is using the release 
+  publication dependency (should not be using `SNAPSHOT` version).
+```bash
+cat .kotlin-js-store/yarn.lock | grep "kmp-tor-binary-resources@"
 ```
 
 - Commit Changes
