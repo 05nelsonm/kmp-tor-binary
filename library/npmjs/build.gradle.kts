@@ -116,6 +116,7 @@ fun NpmPackages.registerBinaryResources(
         readme.set(projectDir.resolve("README.md"))
 
         files {
+            from("index.js")
             from(geoipResourcesDir)
             from(torResourcesDir)
         }
