@@ -102,17 +102,17 @@ class TorResources internal constructor(
     internal fun build(): Set<String> = geoipErrors
 
     private val jvmGeoipHashes = setOf(
-        "geoip.gz" to "c817b735fadf80211b34c8e61c71aaf8824d12de177417de8346b4f589746ab2",
-        "geoip6.gz" to "7f398d48ba2ad81a18d6a056f6edd6bd18a368380e01a17cbba5c188c2407db1",
+        "geoip.gz" to "a18e0233ccc5e97579d96dba6b498c9e1bb2597db1f9f355b4d95fa718b793d3",
+        "geoip6.gz" to "1ae4187df1b2c47331b07422f9de6404adee2b394dc48d984dfa50dd753833bc",
     )
 
     override val androidLibHashes = setOf(
         AndroidLibHash(
             libname = "libtor.so",
-            hashArm64 = "b03cf9818b879d9ba5995224bc1a7a7f7314e07992be2487bf7f858e829563ec",
-            hashArmv7 = "bf2cafbbaca3f51e2eb12dc796d0c167f6719fc4aad701b69e1e35f79c950c52",
-            hashX86 = "b1b218bbb21b21be0987ffa09f6a65fe20b01a31c19bc6d41b1cfd49e53e1cc4",
-            hashX86_64 = "8a5013e2f48c2fa1925a35e180b86d8f074ecfc4d705383fa615edd248fd20d9",
+            hashArm64 = "7baf8b9711ddb5ce5c0ca83aa2e68e1f2a0b72cbe95bdb5b0902cebc35ebc9c9",
+            hashArmv7 = "55d7846bdabad21e9e2bad0237d8af5033a2e3f9cb6b6f91755a79d47b7b9f9b",
+            hashX86 = "55dc360ec73584eb7c04ca01cf51a71ba4935112647489d2c1e5c189d542172b",
+            hashX86_64 = "32a55003d07165aded62a4dcb37e066d00ec057ccd19da866581cb5e0086a501",
         ),
     )
 
@@ -121,79 +121,79 @@ class TorResources internal constructor(
             libname = "tor.gz",
             machine = "linux-android",
             arch = "aarch64",
-            hash = "26e91345834e5a1262062697c6a90c8954c9abb05ed37f63973b35dec0ed2166",
+            hash = "2a156313ccb0ceac6aeaa25c32f712d56faf05fbd6151ede3c297701da42e467",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-android",
             arch = "armv7",
-            hash = "a363a5367a2142ad9eb6be4f0589a3f6beed319f1df71eac12a79f536e24885c",
+            hash = "5d19ce6b1ff92fbbf9c0184a206037cfe5bcb8126c132125e906238e4851eb17",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-android",
             arch = "x86",
-            hash = "5e788843d65290a0bdfbeb24525b8c6b94d3654bd1dd5a0432344a399193b0ed",
+            hash = "b55781550aa39cbc601097264cc4a4066643042825f26a223150db82ec077ff4",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-android",
             arch = "x86_64",
-            hash = "f9be1aa2c9efda7d0ffc75ba78e38b0254f60de6b8190357d75d0f7308c6b613",
+            hash = "5c28687cad9d5f38b023b66f317042054a2a596b6e4067068628896d300ede54",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-libc",
             arch = "aarch64",
-            hash = "763be6f5a4ec95265d5db195681c5cf2a783be33638aea6902485c327425de04",
+            hash = "595ea8dc60601d2eeaae03b1d8b05fb94992a9e49f80d3a7a6a09e6b3c892876",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-libc",
             arch = "armv7",
-            hash = "d25961c761d6bfe29128cf3bb07c73e995a0b622c7c939637682432ba85dc572",
+            hash = "aaa469323ac4cf5d4414d51c6bfe0df8caf80fd8d8bfe7dee3f392e6089c5e1b",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-libc",
             arch = "ppc64",
-            hash = "467d277cfa87a9ea5c7acdc4a55c730d911990d7e62c992f651cbb25c15401ad",
+            hash = "87e9428a671ec0888d5593fb6c9c221fb26d0772a218ac1fb3c84faf9760aa2c",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-libc",
             arch = "x86",
-            hash = "462a87918fbf5825162d874a44e5abbf5a4fc7b8170fd699888871db9153d12b",
+            hash = "1bb6a9e49ba702d326d1bb6062cbc76034090d0fa4906e3cb2e40fafc85c3b5c",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "linux-libc",
             arch = "x86_64",
-            hash = "178b7cb1877f528de8a0bfbdfc42496146d59b9e717f3f6967574d314f5513df",
+            hash = "f2bf2fac487b003c20e20b3605f0d9375f0f4c464b83311f06d5c7eaec60ab13",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "macos",
             arch = "aarch64",
-            hash = "285833671872f81872d525690eb5f713df02391bdcf15a1b12b7d6a4e2abf32a",
+            hash = "62b070f1ce9f990470d13fa0cbee418f203b2d0051cbeac4fda5d5d2d60601ec",
         ),
         JvmLibHash(
             libname = "tor.gz",
             machine = "macos",
             arch = "x86_64",
-            hash = "87635bb7e8461bfa9b283893b45604ac8c86dfe0347ebfb1d6e31568120d1368",
+            hash = "0b84dbafedc8db05e4e3d5ca8b7dd17ba43b92e36f2980d0e0f467a36e86faed",
         ),
         JvmLibHash(
             libname = "tor.exe.gz",
             machine = "mingw",
             arch = "x86",
-            hash = "c53b8b78249edd72833f86e2618acd1f212c8601581deb2584ab994ea4042933",
+            hash = "62a2911c50ac2afa14528445029a88bff4a6171b6fd469ee9f5220b454542d5c",
         ),
         JvmLibHash(
             libname = "tor.exe.gz",
             machine = "mingw",
             arch = "x86_64",
-            hash = "51c03b5754f9691894fd7dc32f2a4e40ca252c58ae7e76f53736e3eef89008e1",
+            hash = "703bf885fd522aafef03286a8fc6b8a2bccd022afa5bb447e1180f08e4d45b7e",
         ),
     )
 
@@ -206,37 +206,37 @@ class TorResources internal constructor(
         NativeResourceHash(
             sourceSetName = "linuxArm64",
             ktFileName = "resource_tor_gz.kt",
-            hash = "763be6f5a4ec95265d5db195681c5cf2a783be33638aea6902485c327425de04",
+            hash = "595ea8dc60601d2eeaae03b1d8b05fb94992a9e49f80d3a7a6a09e6b3c892876",
         ),
         NativeResourceHash(
             sourceSetName = "linuxX64",
             ktFileName = "resource_tor_gz.kt",
-            hash = "178b7cb1877f528de8a0bfbdfc42496146d59b9e717f3f6967574d314f5513df",
+            hash = "f2bf2fac487b003c20e20b3605f0d9375f0f4c464b83311f06d5c7eaec60ab13",
         ),
         NativeResourceHash(
             sourceSetName = "macosArm64",
             ktFileName = "resource_tor_gz.kt",
-            hash = "3310bafbd140bdfd038306e6973ae2c4a8fdd6c6aa18b6200cdf5212eb41c6eb",
+            hash = "470bbfebd35a9c842eead7563ef2f1b87f0622785533613d934e9f69221be0bf",
         ),
         NativeResourceHash(
             sourceSetName = "macosX64",
             ktFileName = "resource_tor_gz.kt",
-            hash = "742af4cd55a8bea10639262b210c6b763aad0b5032bea19335bdd21378a99536",
+            hash = "4a97441cba84e782f7bb9fdf9689f14215fc04927b6fbd3b334f9c62282424cb",
         ),
         NativeResourceHash(
             sourceSetName = "mingwX64",
             ktFileName = "resource_tor_exe_gz.kt",
-            hash = "51c03b5754f9691894fd7dc32f2a4e40ca252c58ae7e76f53736e3eef89008e1",
+            hash = "703bf885fd522aafef03286a8fc6b8a2bccd022afa5bb447e1180f08e4d45b7e",
         ),
         NativeResourceHash(
             sourceSetName = "native",
             ktFileName = "resource_geoip6_gz.kt",
-            hash = "7f398d48ba2ad81a18d6a056f6edd6bd18a368380e01a17cbba5c188c2407db1",
+            hash = "1ae4187df1b2c47331b07422f9de6404adee2b394dc48d984dfa50dd753833bc",
         ),
         NativeResourceHash(
             sourceSetName = "native",
             ktFileName = "resource_geoip_gz.kt",
-            hash = "c817b735fadf80211b34c8e61c71aaf8824d12de177417de8346b4f589746ab2",
+            hash = "a18e0233ccc5e97579d96dba6b498c9e1bb2597db1f9f355b4d95fa718b793d3",
         ),
 //        NativeResourceHash(
 //            sourceSetName = "tvos",
