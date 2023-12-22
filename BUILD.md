@@ -7,7 +7,7 @@ you can do so by following along below.
     - A `Linux x86_64` machine
     - Git
     - Docker
-    - Java 17+
+    - Java 11+
 
 
 1) Clone the repository

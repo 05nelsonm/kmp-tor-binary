@@ -1065,6 +1065,8 @@ function __package {
     return 0
   fi
 
+  __require:cmd "$DOCKER" "docker"
+
   cp -a "$DIR_TASK/$1/$3" "$DIR_STAGING"
 
   if [ -n "$detached_sig" ]; then
@@ -1075,7 +1077,14 @@ function __package {
 
   local file_ext=""
   if [ -n "$gzip" ]; then
-    ../tooling gzip-cli "$DIR_STAGING/$3"
+    # Must utilize docker for reproducable results
+    ${DOCKER} run \
+      --rm \
+      -u "$U_ID:$G_ID" \
+      -v "$DIR_STAGING:/work" \
+      "05nelsonm/build-env.linux-libc.base:$TAG_DOCKER_BUILD_ENV" \
+      gzip --no-name --best --verbose "/work/$3"
+
     file_ext=".gz"
   fi
 

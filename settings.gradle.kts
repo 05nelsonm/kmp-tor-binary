@@ -31,7 +31,6 @@ if (CHECK_PUBLICATION != null) {
         "cli-core",
         "diff-cli",
         "diff-cli:core",
-        "gzip-cli",
         "resource-cli",
     ).forEach { module ->
         include(":tools:$module")
