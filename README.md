@@ -12,10 +12,9 @@
 ![badge-support-js-ir]
 -->
 
-Tor binary resource distribution for the [kmp-tor][url-kmp-tor] project  
+### **NOTICE:** This repository is no longer supported. All funtionality has been migrated to [kmp-tor-resource][url-kmp-tor-resource]
 
-**NOTE:** This branch is for [kmp-tor][url-kmp-tor] `1.x.x` support and is feature frozen. 
-See [master](https://github.com/05nelsonm/kmp-tor-binary/tree/master) branch for the latest and greatest.
+Tor binary resource distribution for the [kmp-tor][url-kmp-tor] project  
 
 ## Getting Started (Configuration)
 
@@ -296,6 +295,7 @@ You can verify the reproducability of published binaries by following the [BUILD
 [url-license]: https://www.apache.org/licenses/LICENSE-2.0
 [url-kotlin]: https://kotlinlang.org
 [url-kmp-tor]: https://github.com/05nelsonm/kmp-tor
+[url-kmp-tor-resource]: https://github.com/05nelsonm/kmp-tor-resource
 [url-kmp-tor-platform-installer]: https://github.com/05nelsonm/kmp-tor/blob/master/library/kmp-tor/src/jvmMain/kotlin/io/matthewnelson/kmp/tor/PlatformInstaller.kt
 [url-tor-browser-build]: https://gitlab.torproject.org/tpo/applications/tor-browser-build/
 [url-tor-binary-resource]: https://github.com/05nelsonm/kmp-tor-binary/blob/master/library/kmp-tor-binary-extract/src/jvmJsMain/kotlin/io/matthewnelson/kmp/tor/binary/extract/TorBinaryResource.kt
